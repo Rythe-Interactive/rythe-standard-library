@@ -103,7 +103,7 @@ namespace rsl
                 const_view_type src
                 ) noexcept(copy_construct_noexcept);
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr static contiguous_container_base from_string_length(T* str, T terminator = T{}) noexcept
+        [[nodiscard]] [[rythe_always_inline]] constexpr static contiguous_container_base from_string_length(const T* str, T terminator = T{}) noexcept
             requires char_type<T>;
 
         template<explicitly_convertible_to<T>... ItemTypes>
@@ -371,7 +371,7 @@ namespace rsl
         [[rythe_always_inline]] constexpr void copy_assign_impl(
                 const value_type* src,
                 size_type srcSize,
-                void* allocOrFactory = nullptr
+                const void* allocOrFactory = nullptr
                 )
             noexcept(copy_assign_noexcept && copy_construct_noexcept);
 

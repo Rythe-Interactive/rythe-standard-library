@@ -17,7 +17,10 @@ namespace rsl
         using allocator_t = Alloc;
         using factory_storage_type = factory_storage<Factory>;
         using factory_t = Factory;
-
+        
+        [[nodiscard]] [[rythe_always_inline]] bool operator==(const typed_allocator_impl&) const noexcept = default;
+        [[nodiscard]] [[rythe_always_inline]] bool operator!=(const typed_allocator_impl&) const noexcept = default;
+        
         [[nodiscard]] [[rythe_always_inline]] constexpr size_type type_size() const noexcept;
 
         [[nodiscard]] [[rythe_allocating]] [[rythe_always_inline]] constexpr value_type* allocate(size_type count = 1) noexcept;
@@ -104,6 +107,10 @@ namespace rsl
             destroy_and_deallocate_aligned(value_type* ptr, size_type count, size_type alignment) noexcept;
 
     private:
+        RULE_OF_5_CONSTEXPR_NOEXCEPT(typed_allocator_impl)
+        
+        friend TypedAllocator;
+        
         [[nodiscard]] [[rythe_always_inline]] constexpr TypedAllocator& self() noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr const TypedAllocator& self() const noexcept;
     };
