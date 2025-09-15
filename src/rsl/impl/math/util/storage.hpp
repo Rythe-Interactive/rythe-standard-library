@@ -19,7 +19,7 @@ namespace rsl::math
 	#endif
 #endif
 
-	enum struct storage_mode : uint8
+	enum struct [[rythe_closed_enum]] storage_mode : uint8
 	{
 #if RSL_DEFAULT_ALIGNED_MATH
 		aligned,

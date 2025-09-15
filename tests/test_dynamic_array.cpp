@@ -8,10 +8,10 @@ namespace
 	{
 	public:
 		using value_type = void;
-		rsl::id_type id = 1012234;
+		rsl::id_type id = 1012234ull;
 
 		using rsl::heap_allocator::heap_allocator;
-		explicit constexpr test_heap_allocator(rsl::id_type _id) noexcept
+		explicit constexpr test_heap_allocator(const rsl::id_type _id) noexcept
 			: id(_id)
 		{
 		}
@@ -42,7 +42,7 @@ namespace
 	{
 		int value = CONST1;
 		test1() = default;
-		test1(int i)
+		test1(const int i)
 			: value(i)
 		{
 		}
@@ -52,7 +52,7 @@ namespace
 	{
 		int value = CONST2;
 		test2() = default;
-		test2(int i)
+		test2(const int i)
 			: value(i)
 		{
 		}
@@ -62,7 +62,7 @@ namespace
 	{
 		int value = CONST3;
 		test3() = default;
-		test3(int i)
+		test3(const int i)
 			: value(i)
 		{
 		}
@@ -72,7 +72,7 @@ namespace
 	{
 		int value = CONST4;
 		test4() = default;
-		test4(int i)
+		test4(const int i)
 			: value(i)
 		{
 		}
@@ -87,18 +87,18 @@ TEST_CASE("dynamic_array", "[containers]")
 	{
 		{
 			rsl::dynamic_array<int> list{};
-			REQUIRE(list.get_allocator().id == 1012234);
+			CHECK(list.get_allocator().id == 1012234_id);
 		}
 		{
-			test_heap_allocator alloc{1234};
+			test_heap_allocator alloc{1234_id};
 			rsl::dynamic_array<int, test_heap_allocator> list{alloc};
-			REQUIRE(list.get_allocator().id == 1234);
+			CHECK(list.get_allocator().id == 1234_id);
 		}
 		{
 			default_pmu_allocator alloc;
 			allocator_storage<polymorphic_allocator> store(&alloc);
 			rsl::dynamic_array<int, polymorphic_allocator> list{store};
-			REQUIRE((&(list.get_allocator())) == &alloc);
+			CHECK((&(list.get_allocator())) == &alloc);
 		}
 	}
 

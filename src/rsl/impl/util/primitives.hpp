@@ -89,6 +89,11 @@ namespace rsl
 
 	using id_type = ptr_type;
 
+    consteval id_type operator""_id(const uint64 value) noexcept
+    {
+        return static_cast<::rsl::id_type>(value);
+    }
+
 #define invalid_id 0
 
 	using days = int32;

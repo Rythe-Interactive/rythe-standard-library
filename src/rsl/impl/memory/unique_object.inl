@@ -143,9 +143,16 @@ namespace rsl
         noexcept(is_nothrow_constructible_v<T, Args...>)
         requires (Factory::valid_factory)
     {
-        T* ptr = static_cast<T*>(this->get_allocator().allocate(m_factory->type_size()));
-        m_factory->construct(ptr, 1, forward<Args>(args)...);
-
-        unique_rsc::arm(deleter{ .factory = m_factory, .allocator = this->get_allocator_storage() }, ptr);
+        if (is_constant_evaluated())
+        {
+            T* ptr = new T(forward<Args>(args)...);
+            unique_rsc::arm(deleter{ .factory = m_factory, .allocator = this->get_allocator_storage() }, ptr);
+        }
+        else
+        {
+            T* ptr = static_cast<T*>(this->get_allocator().allocate(m_factory->type_size()));
+            m_factory->construct(ptr, 1, forward<Args>(args)...);
+            unique_rsc::arm(deleter{ .factory = m_factory, .allocator = this->get_allocator_storage() }, ptr);
+        }
     }
 }

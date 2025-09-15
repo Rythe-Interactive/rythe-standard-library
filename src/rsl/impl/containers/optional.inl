@@ -249,7 +249,16 @@ namespace rsl
 	{
 		reset();
 		m_hasValue = true;
-		m_factory->construct(&m_value, 1, forward<Args>(args)...);
+		
+		if (is_constant_evaluated())
+		{
+			m_value = T(forward<Args>(args)...);	
+		}
+		else
+		{
+			m_factory->construct(&m_value, 1, forward<Args>(args)...);
+		}
+		
 		return m_value;
 	}
 

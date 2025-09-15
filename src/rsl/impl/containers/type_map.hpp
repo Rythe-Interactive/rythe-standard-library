@@ -190,7 +190,7 @@ namespace rsl
 		};
 
 		alloc_type<pair<id_type, entry_item>> m_allocator;
-		dynamic_map<id_type, entry_item, hash_map_flags::defaultFlags, allocator_t> m_storage;
+		dynamic_map<id_type, entry_item, hash_map_flags::default_flags, allocator_t> m_storage;
 	};
 
 	using type_map = basic_type_map<>;

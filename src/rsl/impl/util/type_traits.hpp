@@ -53,7 +53,7 @@ namespace rsl
         template <typename T>
         consteval auto compiler_dependent_type_name() noexcept
         {
-            constexpr string_view functionName = string_view::from_array(__RYTHE_FULL_FUNC__);
+            constexpr string_view functionName = __RYTHE_FULL_FUNC__;
 
             constexpr_string<functionName.size()> ret{};
             #if defined(RYTHE_MSVC)
@@ -62,13 +62,13 @@ namespace rsl
 
             ret.copy_from(functionName.subview(first, end - first));
             #elif defined(RYTHE_GCC)
-            auto first = linear_search_not_eq(functionName, ' ', linear_search(functionName, '=') + 1);
+            auto first = reverse_linear_search(functionName, '=') + 2ull;
             auto end = reverse_linear_search(functionName, ';');
             if (end == std::string_view::npos) { end = reverse_linear_search(functionName, ']'); }
 
             ret.copy_from(functionName.subview(first, end - first));
             #elif defined(RYTHE_CLANG)
-            auto first = linear_search_not_eq(functionName, ' ', linear_search(functionName, '=') + 1);
+            auto first = reverse_linear_search(functionName, '=') + 2ull;
             ret.copy_from(functionName.subview(first, reverse_linear_search(functionName, ']') - first));
             #else
             ret.copy_from(functionName);
@@ -80,7 +80,7 @@ namespace rsl
         template <template <typename...> typename T>
         consteval auto compiler_dependent_templated_type_name() noexcept
         {
-            constexpr string_view functionName = string_view::from_array(__RYTHE_FULL_FUNC__);
+            constexpr string_view functionName = __RYTHE_FULL_FUNC__;
 
             constexpr_string<functionName.size()> ret{};
             #if defined(RYTHE_MSVC)
@@ -244,57 +244,4 @@ namespace rsl
             return addressof(val);
         }
     };
-
-    template <typename T>
-    struct reference_wrapper
-    {
-        static_assert(is_object_v<T> || is_function_v<T>, "reference_wrapper<T> requires T to be an object type or a function type.");
-
-        using type = T;
-
-        [[rythe_always_inline]] constexpr reference_wrapper(T& value) noexcept
-            : m_ptr(addressof(value)) {}
-
-
-        [[nodiscard]] [[rythe_always_inline]] constexpr T& get() const noexcept { return *m_ptr; }
-        [[rythe_always_inline]] constexpr operator T&() const noexcept { return *m_ptr; }
-
-    private:
-        T* m_ptr{};
-    };
-
-    template <typename T>
-    reference_wrapper(T&) -> reference_wrapper<T>;
-
-    template <typename T>
-    [[nodiscard]] [[rythe_always_inline]] constexpr reference_wrapper<T> ref(T& value) noexcept
-    {
-        return reference_wrapper<T>(value);
-    }
-
-    template <typename T>
-    void ref(const T&&) = delete;
-
-    template <class T>
-    [[nodiscard]] [[rythe_always_inline]] constexpr reference_wrapper<T> ref(reference_wrapper<T> value) noexcept
-    {
-        return value;
-    }
-
-    template <typename T>
-    [[nodiscard]] [[rythe_always_inline]] constexpr reference_wrapper<const T> cref(const T& value) noexcept
-    {
-        return reference_wrapper<const T>(value);
-    }
-
-    template <typename T>
-    void cref(const T&&) = delete;
-
-    template <typename T>
-    [[nodiscard]] [[rythe_always_inline]] constexpr reference_wrapper<const T> cref(reference_wrapper<T> value) noexcept
-    {
-        return value;
-    }
-
-
 } // namespace rsl

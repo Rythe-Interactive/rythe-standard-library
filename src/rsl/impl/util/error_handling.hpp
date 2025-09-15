@@ -41,7 +41,10 @@ namespace rsl
     template <typename ErrC>
     concept error_code = is_enum_v<ErrC> && is_same_v<std::underlying_type_t<ErrC>, errc>;
 
-    enum struct error_severity : uint8
+    template <error_code ErrorType>
+    constexpr string_view default_error_message(ErrorType);
+
+    enum struct [[rythe_closed_enum]] error_severity : uint8
     {
         warning,
         error,
@@ -57,12 +60,8 @@ namespace rsl
         error_severity severity;
         errid errorBlockStart;
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr operator errc() const noexcept { return code; }
-
-        [[nodiscard]] [[rythe_always_inline]] constexpr bool operator==(const error_type& other) const noexcept
-        {
-            return code == other.code;
-        }
+        [[nodiscard]] [[rythe_always_inline]] constexpr operator errc() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr bool operator==(const error_type& other) const noexcept;
     };
 
     constexpr static error_type success = error_type{
@@ -80,28 +79,26 @@ namespace rsl
         virtual ~error_handler() = default;
 
         virtual void handle_assert(
-                const string_view expression,
-                const string_view file,
-                const size_type line,
-                const string_view message,
-                const bool soft,
+                string_view expression,
+                string_view file,
+                size_type line,
+                string_view message,
+                bool soft,
                 bool* ignore
-                )
-        {
-            rsl::asserts::internal::default_assert_handler(expression, file, line, message, soft, ignore);
-        }
+                );
 
         virtual void handle_error(const error_type& error, bool assertError);
     };
 
     struct error_context
     {
-        thread_local static error_list errors;
-        thread_local static errid currentError;
-        thread_local static error_handler* errorHandlerOverride;
-        thread_local static bool assertOnError;
-        static error_handler defaultErrorHandler;
+        error_list errors;
+        errid currentError = invalid_err_id;
+        error_handler* errorHandlerOverride = nullptr;
+        bool assertOnError = true;
     };
+
+    DECLARE_SINGLETON(error_context)
 
     void enable_assert_on_error(bool enabled = true) noexcept;
     void disable_assert_on_error() noexcept;
@@ -139,223 +136,113 @@ namespace rsl
         errid m_errid = invalid_err_id;
 
         constexpr result_base() noexcept = default;
-        result_base(error_signal) noexcept : m_errid(error_context::currentError) {}
-
+        result_base(error_signal) noexcept;
         friend errid& internal::get_errid(result_base&) noexcept;
 
     public:
-        [[nodiscard]] [[rythe_always_inline]] bool is_okay() const noexcept { return get_error() == success; }
+        [[nodiscard]] [[rythe_always_inline]] bool is_okay() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] const error_type& get_error() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] error_view get_errors() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] errid id() const noexcept;
 
-        [[nodiscard]] [[rythe_always_inline]] const error_type& get_error() const noexcept
-        {
-            return m_errid == invalid_err_id ? success : error_context::errors[m_errid];
-        }
+        [[rythe_always_inline]] void resolve() noexcept;
+        [[nodiscard]] [[rythe_always_inline]] static error_signal propagate() noexcept;
+        [[nodiscard]] [[rythe_always_inline]] bool reduce_and_discard() noexcept;
 
-        [[nodiscard]] [[rythe_always_inline]] error_view get_errors() const noexcept
-        {
-            if (m_errid == invalid_err_id)
-            {
-                return error_view{};
-            }
+        [[rythe_always_inline]] errc report_errors() noexcept;
 
-            errid blockStart = error_context::errors[m_errid].errorBlockStart;
-            return error_view::from_buffer(&error_context::errors[blockStart], static_cast<size_type>((m_errid - blockStart) + 1));
-        }
-
-        [[rythe_always_inline]] void resolve() noexcept
-        {
-            rsl_assert_msg_hard(!is_okay(), "Tried to resolve a valid result without error.");
-            rsl_assert_msg_hard(
-                    m_errid == error_context::currentError,
-                    "Errors not resolved in order. Earlier result remains unresolved."
-                    );
-
-            auto& error = error_context::errors[error_context::currentError];
-            error_context::errors.reduce((error_context::currentError - error.errorBlockStart) + 1);
-            error_context::currentError = static_cast<errid>(error_context::errors.size() - 1);
-            m_errid = invalid_err_id;
-        }
-
-        [[nodiscard]] [[rythe_always_inline]] errid id() const noexcept { return m_errid; }
-
-        errc report_errors() noexcept
-        {
-            error_handler* errorHandler = get_error_handler();
-
-            for (auto& error : get_errors())
-            {
-                errorHandler->handle_error(error, assert_on_error_enabled());
-            }
-
-            errc errorCode = no_error_code;
-            if (m_errid != invalid_err_id)
-            {
-                errorCode = get_error().code;
-                resolve();
-            }
-
-            return errorCode;
-        }
-
-        virtual ~result_base()
-        {
-            #if RYTHE_VALIDATION_LEVEL != RYTHE_VALIDATION_LEVEL_NONE
-            report_errors();
-            #endif
-        }
+        virtual ~result_base();
     };
 
     template <typename...>
     struct result;
 
     template <typename T>
-    struct result<T> final : public result_base
+    struct [[nodiscard]] result<T> final : public result_base
     {
+    public:
+        using result_type = remove_cvr_t<T>;
+
+        [[rythe_always_inline]] result(error_signal) noexcept;
+
+        template <typename... Args>
+            requires(rsl::constructible_from<T, Args...>)
+        [[rythe_always_inline]] constexpr result(Args&&... args) noexcept(rsl::is_nothrow_constructible_v<T, Args...>);
+
+        [[nodiscard]] [[rythe_always_inline]] bool carries_value() const noexcept;
+
+        [[nodiscard]] [[rythe_always_inline]] result_type& value() noexcept;
+        [[nodiscard]] [[rythe_always_inline]] result_type* operator->() noexcept;
+        [[nodiscard]] [[rythe_always_inline]] result_type& operator*() noexcept;
+
     private:
         union
         {
             T m_value;
             byte m_dummy;
         };
-
-    public:
-        using result_type = remove_cvr_t<T>;
-
-        [[rythe_always_inline]] result(error_signal) noexcept
-            : result_base(error_signal{}),
-              m_dummy(0) {}
-
-        template <typename... Args>
-            requires(rsl::constructible_from<T, Args...>)
-        [[rythe_always_inline]] constexpr result(Args&&... args) noexcept(rsl::is_nothrow_constructible_v<T, Args...>)
-            : result_base(),
-              m_value(rsl::forward<Args>(args)...) {}
-
-        [[nodiscard]] [[rythe_always_inline]] bool carries_value() const noexcept
-        {
-            for (auto& error : get_errors())
-            {
-                if (error.severity != error_severity::warning)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        [[nodiscard]] [[rythe_always_inline]] result_type& value() noexcept
-        {
-            rsl_assert_msg_hard(is_okay(), "Tried to get value of result with unresolved error.");
-            return m_value;
-        }
-
-        [[nodiscard]] [[rythe_always_inline]] const result_type& value() const noexcept
-        {
-            rsl_assert_msg_hard(is_okay(), "Tried to get value of result with unresolved error.");
-            return m_value;
-        }
     };
 
     template <>
-    struct result<void> final : public result_base
+    struct [[nodiscard]] result<void> final : public result_base
     {
         [[rythe_always_inline]] result(error_signal) noexcept : result_base(error_signal{}) {}
-
         [[rythe_always_inline]] constexpr result() noexcept : result_base() {}
     };
 
-    namespace internal
-    {
-        template <error_code ErrorType>
-        [[rythe_always_inline]] constexpr void append_error(
-                const errid errorBlockStart,
-                ErrorType errorType,
-                const string_view message,
-                const error_severity severity
-                ) noexcept
-        {
-            rsl_assert_msg_hard(
-                    error_context::errors.size() != RSL_ERR_MAX_COUNT,
-                    "Max error count overflow, consider changing RSL_ERR_ID_UNDERLYING to a larger type."
-                    );
-
-            error_context::currentError = static_cast<errid>(error_context::errors.size());
-            error_context::errors.emplace_back(
-                    error_type{
-                        .code = static_cast<errc>(errorType),
-                        .message = error_message::from_view(message),
-                        .severity = severity,
-                        .errorBlockStart = errorBlockStart,
-                    }
-                    );
-        }
-    } // namespace internal
-
     template <error_code ErrorType>
-    [[nodiscard]] [[rythe_always_inline]] constexpr auto make_error(
+    [[nodiscard]] [[rythe_always_inline]] constexpr error_signal make_error(
             ErrorType errorType,
             string_view message,
             error_severity severity = error_severity::error
-            ) noexcept
-    {
-        internal::append_error(static_cast<errid>(error_context::errors.size()), errorType, message, severity);
-        return error_signal{};
-    }
+            ) noexcept;
 
     template <error_code ErrorType>
-    [[nodiscard]] [[rythe_always_inline]] constexpr auto make_warning(ErrorType errorType, std::string_view message) noexcept
-    {
-        return make_error(errorType, message, error_severity::warning);
-    }
+    [[nodiscard]] [[rythe_always_inline]] constexpr error_signal make_error(
+            ErrorType errorType,
+            error_severity severity = error_severity::error
+            ) noexcept;
 
     template <error_code ErrorType>
-    [[nodiscard]] [[rythe_always_inline]] constexpr auto make_fatal(ErrorType errorType, std::string_view message) noexcept
-    {
-        return make_error(errorType, message, error_severity::fatal);
-    }
+    [[nodiscard]] [[rythe_always_inline]] constexpr error_signal make_warning(ErrorType errorType, string_view message) noexcept;
+    template <error_code ErrorType>
+    [[nodiscard]] [[rythe_always_inline]] constexpr error_signal make_warning(ErrorType errorType) noexcept;
+
+    template <error_code ErrorType>
+    [[nodiscard]] [[rythe_always_inline]] constexpr error_signal make_fatal(ErrorType errorType, string_view message) noexcept;
+    template <error_code ErrorType>
+    [[nodiscard]] [[rythe_always_inline]] constexpr error_signal make_fatal(ErrorType errorType) noexcept;
 
     template <typename T, error_code ErrorType>
     [[rythe_always_inline]] constexpr void append_error(
             result<T>& result,
             ErrorType errorType,
-            std::string_view message,
+            string_view message,
             error_severity severity = error_severity::error
-            ) noexcept
-    {
-        errid blockStart = 0;
-        if (error_context::currentError != invalid_err_id)
-        {
-            blockStart = error_context::errors[error_context::currentError].errorBlockStart;
-        }
-        else if (result.id() != invalid_err_id)
-        {
-            blockStart = result.id();
-        }
-
-        internal::append_error(blockStart, errorType, message, severity);
-        internal::get_errid(result) = error_context::currentError;
-    }
+            ) noexcept;
 
     template <typename T, error_code ErrorType>
-    [[rythe_always_inline]] constexpr void append_warning(result<T>& result, ErrorType errorType, std::string_view message) noexcept
-    {
-        append_error(result, errorType, message, error_severity::warning);
-    }
+    [[rythe_always_inline]] constexpr void append_error(
+            result<T>& result,
+            ErrorType errorType,
+            error_severity severity = error_severity::error
+            ) noexcept;
 
     template <typename T, error_code ErrorType>
-    [[rythe_always_inline]] constexpr void append_fatal(result<T>& result, ErrorType errorType, std::string_view message) noexcept
-    {
-        append_error(result, errorType, message, error_severity::fatal);
-    }
+    [[rythe_always_inline]] constexpr void append_warning(result<T>& result, ErrorType errorType, string_view message) noexcept;
+    template <typename T, error_code ErrorType>
+    [[rythe_always_inline]] constexpr void append_warning(result<T>& result, ErrorType errorType) noexcept;
+
+    template <typename T, error_code ErrorType>
+    [[rythe_always_inline]] constexpr void append_fatal(result<T>& result, ErrorType errorType, string_view message) noexcept;
+    template <typename T, error_code ErrorType>
+    [[rythe_always_inline]] constexpr void append_fatal(result<T>& result, ErrorType errorType) noexcept;
 
     template <typename T, typename... Args>
     [[nodiscard]] [[rythe_always_inline]] constexpr result<T> make_result(
             Args&&... args
             )
-        noexcept(rsl::is_nothrow_constructible_v<result<T>, Args...>)
-    {
-        return result<T>(rsl::forward<Args>(args)...);
-    }
+        noexcept(rsl::is_nothrow_constructible_v<result<T>, Args...>);
 
     inline static result<void> okay = result<void>();
 
@@ -367,11 +254,10 @@ namespace rsl
         };
 
         template <typename T>
-        operator result<T>()
-        {
-            return make_error(unspecified_error_code::unspecified, "Unspecified error"_sv);
-        }
+        operator result<T>();
     };
 
     inline static unspecified_error error = unspecified_error{};
 } // namespace rsl
+
+#include "error_handling.inl"

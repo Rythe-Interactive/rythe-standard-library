@@ -1,3 +1,4 @@
 #pragma once
 
 #include "impl/containers/map/dynamic_map.hpp"
+#include "impl/containers/map/stable_map.hpp"

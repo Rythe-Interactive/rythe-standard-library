@@ -1,14 +1,8 @@
 #pragma once
 
-#include "impl/util/string_util.hpp"
-
-#include "impl/containers/array.hpp"
-#include "impl/containers/buffered_string.hpp"
-#include "impl/containers/constexpr_string.hpp"
-#include "impl/containers/delegate.hpp"
-#include "impl/containers/hashed_string.hpp"
-#include "impl/containers/multicast_delegate.hpp"
-#include "impl/containers/optional.hpp"
-#include "impl/containers/string.hpp"
-#include "impl/containers/string_literal.hpp"
-#include "impl/containers/type_map.hpp"
+#include "array"
+#include "string"
+#include "map"
+#include "optional"
+#include "delegate"
+#include "type_map"

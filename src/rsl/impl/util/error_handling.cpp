@@ -3,19 +3,31 @@
 
 namespace rsl
 {
-	void error_handler::handle_error(const error_type& err, bool assertError)
+    void error_handler::handle_assert(
+            const string_view expression,
+            const string_view file,
+            const size_type line,
+            const string_view message,
+            const bool soft,
+            bool* ignore
+            )
+    {
+        asserts::internal::default_assert_handler(expression, file, line, message, soft, ignore);
+    }
+
+	void error_handler::handle_error(const error_type& error, const bool assertError)
 	{
-		switch (err.severity)
+		switch (error.severity)
 		{
 			case error_severity::warning:
 			{
 				if (assertError)
 				{
-					rsl_assert_msg_soft_consistent(false, err.message);
+					rsl_assert_msg_soft_consistent(false, error.message);
 				}
 				else
 				{
-					log::warn("{}: {}", err.code, err.message);
+					log::warn("{}: {}", error.code, error.message);
 				}
 				break;
 			}
@@ -23,11 +35,11 @@ namespace rsl
 			{
 				if (assertError)
 				{
-					rsl_assert_msg_hard(false, err.message);
+					rsl_assert_msg_hard(false, error.message);
 				}
 				else
 				{
-					log::error("{}: {}", err.code, err.message);
+					log::error("{}: {}", error.code, error.message);
 				}
 				break;
 			}
@@ -35,22 +47,16 @@ namespace rsl
 			{
 				if (assertError)
 				{
-					rsl_assert_msg_hard(false, err.message);
+					rsl_assert_msg_hard(false, error.message);
 				}
 				else
 				{
-					log::fatal("{}: {}", err.code, err.message);
+					log::fatal("{}: {}", error.code, error.message);
 				}
 				break;
 			}
 		}
 	}
-
-	thread_local error_list error_context::errors;
-	thread_local errid error_context::currentError = invalid_err_id;
-	thread_local error_handler* error_context::errorHandlerOverride = nullptr;
-	thread_local bool error_context::assertOnError = true;
-	error_handler error_context::defaultErrorHandler;
 
 	namespace internal
 	{
@@ -58,11 +64,28 @@ namespace rsl
 		{
 			return r.m_errid;
 		}
+
+        namespace
+        {
+		    error_handler* get_default_error_handler() noexcept
+		    {
+		        static error_handler defaultErrorHandler;
+		        return &defaultErrorHandler;
+		    }
+        }
+
+        error_context& get_default_error_context() noexcept
+        {
+            thread_local error_context context;
+            return context;
+        }
 	} // namespace internal
 
-	void enable_assert_on_error(bool enabled) noexcept
+    get_error_context_func get_error_context = &internal::get_default_error_context;
+
+	void enable_assert_on_error(const bool enabled) noexcept
 	{
-		error_context::assertOnError = enabled;
+		get_error_context().assertOnError = enabled;
 	}
 
 	void disable_assert_on_error() noexcept
@@ -72,10 +95,10 @@ namespace rsl
 
 	bool assert_on_error_enabled() noexcept
 	{
-		return error_context::assertOnError;
+		return get_error_context().assertOnError;
 	}
 
-	scoped_assert_on_error::scoped_assert_on_error(bool enabled)
+	scoped_assert_on_error::scoped_assert_on_error(const bool enabled)
 		: wasEnabled(assert_on_error_enabled())
 	{
 		enable_assert_on_error(enabled);
@@ -99,13 +122,13 @@ namespace rsl
 	void set_error_handler(error_handler* errorHandler) noexcept
 	{
 		asserts::assert_handler = &error_handler_based_assert_handler;
-		error_context::errorHandlerOverride = errorHandler;
+		get_error_context().errorHandlerOverride = errorHandler;
 	}
 
 	error_handler* get_error_handler() noexcept
 	{
-		return error_context::errorHandlerOverride ? error_context::errorHandlerOverride
-												   : &error_context::defaultErrorHandler;
+		return get_error_context().errorHandlerOverride ? get_error_context().errorHandlerOverride
+												   : internal::get_default_error_handler();
 	}
 
 	scoped_error_handler::scoped_error_handler(error_handler* errorHandler)
@@ -118,5 +141,4 @@ namespace rsl
 	{
 		set_error_handler(previousErrorHandler);
 	}
-
 } // namespace rsl

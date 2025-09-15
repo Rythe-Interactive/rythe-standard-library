@@ -1,14 +1,13 @@
 #pragma once
-
-#include <rsl/type_util>
-#include <rsl/utilities>
+#include "../util/common.hpp"
+#include "../util/error_handling.hpp"
 
 namespace rsl
 {
-	template <size_type PLATFORM_INDEX>
+	template <size_type PlatformIndex>
 	struct platform_tag
 	{
-		constexpr static size_type index = PLATFORM_INDEX;
+		constexpr static size_type index = PlatformIndex;
 	};
 
 	using windows_tag = platform_tag<RYTHE_WINDOWS_INDEX>;
@@ -53,32 +52,44 @@ namespace rsl
 		template <typename T, typename... Others>
 		struct is_same_value_type
 		{
-			constexpr static bool value = (std::is_same_v<typename T::value_type, typename Others::value_type> && ...);
+			constexpr static bool value = (rsl::is_same_v<typename T::value_type, typename Others::value_type> && ...);
 		};
 	} // namespace internal
 
-	template <typename T, size_type MAX_PLATFORMS = RYTHE_MAX_PLATFORMS>
+	template <typename T, size_type MaxPlatforms = RYTHE_MAX_PLATFORMS>
 	struct platform_dependent_var
 	{
 		template <typename Var, typename... Vars>
 			requires internal::is_same_value_type<Var, Vars...>::value
 		constexpr platform_dependent_var(Var&& var, Vars&&... vars)
 		{
-			assign(var.index, var.value);
-			(assign(vars.index, vars.value), ...);
+			assign<Var>(var.index, var.value);
+			(assign<Vars>(vars.index, vars.value), ...);
 		}
 
 		constexpr platform_dependent_var() = default;
 
 		using value_type = T;
-		constexpr value_type get() const { return m_values[RYTHE_PLATFORM_INDEX]; }
-		constexpr operator value_type() const { return get(); }
-
+		constexpr const value_type& get() const { return m_values[RYTHE_PLATFORM_INDEX]; }
+		constexpr value_type& get() { return m_values[RYTHE_PLATFORM_INDEX]; }
+		constexpr operator const value_type&() const { return get(); }
+		constexpr operator value_type&() { return get(); }
 
 	private:
-		constexpr void assign(size_type index, T value) { m_values[index] = value; }
+	    template<typename Var, typename Val>
+		constexpr void assign(size_type index, Val&& value)
+	    {
+	        if constexpr (is_rvalue_reference_v<Var>)
+	        {
+	            m_values[index] = rsl::move(value);
+	        }
+	        else
+	        {
+	            m_values[index] = value;
+	        }
+	    }
 
-		T m_values[MAX_PLATFORMS];
+		T m_values[MaxPlatforms];
 	};
 
 	template <typename Var, typename... Vars>

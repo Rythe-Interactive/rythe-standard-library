@@ -365,6 +365,15 @@ namespace rsl
     };                                                                                                                                \
     [[maybe_unused]] constexpr name invalid_##name = name::invalid;
 
+#define DECLARE_SINGLETON(name)                                                                                                       \
+namespace internal                                                                                                                    \
+{                                                                                                                                     \
+    [[nodiscard]] name& get_default_##name() noexcept;                                                                                \
+}                                                                                                                                     \
+                                                                                                                                      \
+using get_##name##_func = name& (*)();                                                                                                \
+extern get_##name##_func get_##name;
+
 #define RULE_OF_5(type)                                                                                                               \
     type() = default;                                                                                                                 \
     type(const type&) = default;                                                                                                      \
@@ -372,6 +381,14 @@ namespace rsl
     type& operator=(const type&) = default;                                                                                           \
     type& operator=(type&&) = default;                                                                                                \
     ~type() = default;
+
+#define VIRTUAL_RULE_OF_5(type)                                                                                                       \
+    type() = default;                                                                                                                 \
+    type(const type&) = default;                                                                                                      \
+    type(type&&) = default;                                                                                                           \
+    type& operator=(const type&) = default;                                                                                           \
+    type& operator=(type&&) = default;                                                                                                \
+    virtual ~type() = default;
 
 #define RULE_OF_5_NOEXCEPT(type)                                                                                                      \
     type() noexcept = default;                                                                                                        \
@@ -435,6 +452,10 @@ namespace rsl
 #define COPY_FUNCS_NOEXCEPT(type)                                                                                                     \
     type(const type&) noexcept = default;                                                                                             \
     type& operator=(const type&) noexcept = default;
+
+#define COPY_FUNCS_CONSTEXPR_NOEXCEPT(type)                                                                                           \
+    constexpr type(const type&) noexcept = default;                                                                                   \
+    constexpr type& operator=(const type&) noexcept = default;
 
 #define MOVE_FUNCS(type)                                                                                                              \
     type(type&&) = default;                                                                                                           \

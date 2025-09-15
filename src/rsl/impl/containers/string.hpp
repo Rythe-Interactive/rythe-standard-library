@@ -45,9 +45,35 @@ namespace rsl
         using container_base::operator[];
         using container_base::operator=;
 
-        // operator+=
         [[rythe_always_inline]] constexpr basic_dynamic_string& operator+=(const_view_type rhs);
+        [[rythe_always_inline]] constexpr basic_dynamic_string& operator+=(CharType rhs);
     };
+
+    template <char_type CharType, allocator_type Alloc, size_type StaticCapacity>
+    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, Alloc, StaticCapacity> operator+(
+            const basic_dynamic_string<CharType, Alloc, StaticCapacity>& lhs,
+            const basic_dynamic_string<CharType, Alloc, StaticCapacity>& rhs
+            );
+    template <char_type CharType, allocator_type Alloc, size_type StaticCapacity>
+    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, Alloc, StaticCapacity> operator+(
+            const basic_dynamic_string<CharType, Alloc, StaticCapacity>& lhs,
+            typename basic_dynamic_string<CharType, Alloc, StaticCapacity>::const_view_type rhs
+            );
+    template <char_type CharType, allocator_type Alloc, size_type StaticCapacity>
+    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, Alloc, StaticCapacity> operator+(
+            const basic_dynamic_string<CharType, Alloc, StaticCapacity>& lhs,
+            CharType rhs
+            );
+    template <char_type CharType, allocator_type Alloc, size_type StaticCapacity>
+    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, Alloc, StaticCapacity> operator+(
+            typename basic_dynamic_string<CharType, Alloc, StaticCapacity>::const_view_type lhs,
+            const basic_dynamic_string<CharType, Alloc, StaticCapacity>& rhs
+            );
+    template <char_type CharType, allocator_type Alloc, size_type StaticCapacity>
+    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, Alloc, StaticCapacity> operator+(
+            CharType lhs,
+            const basic_dynamic_string<CharType, Alloc, StaticCapacity>& rhs
+            );
 
     using dynamic_string = basic_dynamic_string<>;
 
@@ -65,15 +91,50 @@ namespace rsl
     template <size_type StaticCapacity>
     using static_wstring = basic_dynamic_string<utf16, mock_allocator, StaticCapacity>;
 
-    dynamic_wstring to_utf16(dynamic_string::const_view_type str);
+    [[nodiscard]] dynamic_wstring to_utf16(dynamic_string::const_view_type str);
+    [[nodiscard]] [[rythe_always_inline]] constexpr char to_upper(char ch);
+    [[nodiscard]] [[rythe_always_inline]] constexpr char to_lower(char ch);
+    [[nodiscard]] [[rythe_always_inline]] constexpr dynamic_string to_upper(dynamic_string::const_view_type str);
+    [[nodiscard]] [[rythe_always_inline]] constexpr dynamic_string to_lower(dynamic_string::const_view_type str);
 
     using static_string64 = static_string<64>;
     using static_string128 = static_string<128>;
     using static_string256 = static_string<256>;
     using static_string512 = static_string<512>;
 
+    struct white_space
+    {
+        [[nodiscard]] [[rythe_always_inline]] constexpr bool operator==(const white_space) const noexcept { return true; }
+        [[nodiscard]] [[rythe_always_inline]] constexpr bool operator!=(const white_space) const noexcept { return false; }
+
+        [[nodiscard]] [[rythe_always_inline]] constexpr bool operator==(const char ch) const noexcept
+        {
+            return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' || ch == '\f' || ch == '\v';
+        }
+
+        [[nodiscard]] [[rythe_always_inline]] constexpr bool operator!=(const char ch) const noexcept
+        {
+            return !(*this == ch);
+        }
+    };
+
+    [[nodiscard]] [[rythe_always_inline]] constexpr bool operator==(const char ch, white_space) noexcept
+    {
+        return white_space{} == ch;
+    }
+
+    [[nodiscard]] [[rythe_always_inline]] constexpr bool operator!=(const char ch, white_space) noexcept
+    {
+        return white_space{} != ch;
+    }
+
     template <typename T>
     [[nodiscard]] [[rythe_always_inline]] dynamic_string to_string(const T& value);
+
+    [[nodiscard]] [[rythe_always_inline]] constexpr dynamic_string operator""_ds(const cstring str, const size_type size) noexcept
+    {
+        return dynamic_string::from_buffer(str, size);
+    }
 } // namespace rsl
 
 #include "string.inl"

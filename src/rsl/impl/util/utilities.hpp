@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../defines.hpp"
+
 #include "common.hpp"
 #include "primitives.hpp"
 
@@ -12,7 +13,7 @@
 
 namespace rsl
 {
-	enum class endian : uint16
+	enum struct [[rythe_closed_enum]] endian : uint16
 	{
 #if RYTHE_PLATFORM_WINDOWS
 		little = 0,
@@ -25,7 +26,7 @@ namespace rsl
 #endif
 	};
 
-	[[rythe_always_inline]] [[maybe_unused]] static size_type count_leading_zeros(size_type mask) noexcept
+	[[rythe_always_inline]] [[maybe_unused]] static size_type count_leading_zeros(const size_type mask) noexcept
 	{
 #if defined(RYTHE_MSVC)
 		unsigned long index;
@@ -37,7 +38,7 @@ namespace rsl
 #endif
 	}
 
-	[[rythe_always_inline]] [[maybe_unused]] static size_type count_trailing_zeros(size_type mask) noexcept
+	[[rythe_always_inline]] [[maybe_unused]] static size_type count_trailing_zeros(const size_type mask) noexcept
 	{
 #if defined(RYTHE_MSVC)
 		unsigned long index;

@@ -6,18 +6,13 @@ namespace rsl
 	namespace internal
 	{
 		template <typename T>
-		struct memset_zero : false_type
+		struct memset_zero : bool_constant<is_char_v<T>>
 		{
 		};
 
 		template <typename T>
 			requires requires{ T::memset_zero; }
 		struct memset_zero<T> : bool_constant<T::memset_zero>
-		{
-		};
-
-		template <>
-		struct memset_zero<char> : bool_constant<true>
 		{
 		};
 

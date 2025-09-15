@@ -2,7 +2,6 @@
 
 #include "../defines.hpp"
 #include "../util/concepts.hpp"
-#include "../util/hash.hpp"
 #include "../util/utilities.hpp"
 
 #include "../memory/managed_resource.hpp"
@@ -26,7 +25,7 @@ namespace rsl
 		using factory_t = typename managed_resource<void*, Alloc, Factory>::mem_rsc::factory_t;
 		using typed_alloc_type = typename managed_resource<void*, Alloc, Factory>::mem_rsc::typed_alloc_type;
 
-		constexpr static deleter_type defaultDeleter = []([[maybe_unused]] void*) {};
+		constexpr static deleter_type default_deleter = []([[maybe_unused]] void*) {};
 
 		struct invocation_element
 		{

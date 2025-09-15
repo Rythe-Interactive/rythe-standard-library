@@ -1,5 +1,6 @@
 #pragma once
 #include "../../util/primitives.hpp"
+
 #include "type_util.hpp"
 
 namespace rsl::math

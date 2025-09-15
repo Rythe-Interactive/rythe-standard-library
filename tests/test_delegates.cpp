@@ -34,7 +34,7 @@ namespace
 
 	struct Object
 	{
-		std::vector<rsl::size_type> ints;
+		rsl::dynamic_array<rsl::size_type> ints;
 
 		void memberFunc()
 		{
@@ -70,9 +70,9 @@ namespace
 		}
 	};
 
-	std::vector<rsl::size_type> createVec(rsl::size_type idx)
+	rsl::dynamic_array<rsl::size_type> createVec(rsl::size_type idx)
 	{
-		std::vector<rsl::size_type> vec;
+		rsl::dynamic_array<rsl::size_type> vec;
 		for (rsl::size_type i = idx + 20; i > idx; i--)
 		{
 			vec.push_back(i);
@@ -80,19 +80,13 @@ namespace
 		return vec;
 	}
 
-	struct testComp
-	{
-		std::string content;
-		const char* printout() { return content.c_str(); }
-	};
-
 	template <typename delegate_type, typename delegate_type2>
 	void test_delegate_type()
 	{
 		delegate_type2 del2;
 
-		REQUIRE(del2.empty());
-		REQUIRE(del2 == nullptr);
+		CHECK(del2.empty());
+		CHECK(del2 == nullptr);
 
 		counter = 0;
 
@@ -100,39 +94,39 @@ namespace
 			del2 = &funcParam;
 		}
 
-		REQUIRE(!del2.empty());
-		REQUIRE(del2 != nullptr);
-		REQUIRE(counter == 0);
+		CHECK(!del2.empty());
+		CHECK(del2 != nullptr);
+		CHECK(counter == 0);
 
 		{
 			rsl::uint32 v = 3u;
 			del2(v);
-			REQUIRE(counter == 3);
-			REQUIRE(v == 4);
+			CHECK(counter == 3);
+			CHECK(v == 4);
 		}
 
 		counter = 0;
 
 		delegate_type del;
 
-		REQUIRE(del.empty());
-		REQUIRE(del == nullptr);
+		CHECK(del.empty());
+		CHECK(del == nullptr);
 
 		{
 			del = &func;
 		}
 
-		REQUIRE(!del.empty());
-		REQUIRE(del != nullptr);
-		REQUIRE(counter == 0);
+		CHECK(!del.empty());
+		CHECK(del != nullptr);
+		CHECK(counter == 0);
 
 		del();
 
-		REQUIRE(counter == 1);
+		CHECK(counter == 1);
 
 		del.clear();
-		REQUIRE(del.empty());
-		REQUIRE(del == nullptr);
+		CHECK(del.empty());
+		CHECK(del == nullptr);
 
 		counter = 0;
 
@@ -140,17 +134,17 @@ namespace
 			del = []() { counter++; };
 		}
 
-		REQUIRE(!del.empty());
-		REQUIRE(counter == 0);
+		CHECK(!del.empty());
+		CHECK(counter == 0);
 
 		del();
 
-		REQUIRE(counter == 1);
+		CHECK(counter == 1);
 
 		counter = 0;
 
 		{
-			std::vector<size_t> ints = createVec(100);
+			rsl::dynamic_array<size_t> ints = createVec(100);
 			del = [ints]()
 			{
 				for (size_t i : ints)
@@ -161,11 +155,11 @@ namespace
 			};
 		}
 
-		REQUIRE(counter == 0);
+		CHECK(counter == 0);
 
 		del();
 
-		REQUIRE(counter == 2230);
+		CHECK(counter == 2230);
 
 		counter = 0;
 
@@ -173,11 +167,11 @@ namespace
 			Object obj{createVec(100)};
 			del.template assign<Object, &Object::memberFunc>(obj);
 
-			REQUIRE(counter == 0);
+			CHECK(counter == 0);
 
 			del();
 
-			REQUIRE(counter == 2230);
+			CHECK(counter == 2230);
 		}
 
 		counter = 0;
@@ -186,15 +180,15 @@ namespace
 			const Object obj{createVec(100)};
 			del.template assign<Object, &Object::constMemberFunc>(obj);
 
-			REQUIRE(counter == 0);
+			CHECK(counter == 0);
 
 			del();
 
-			REQUIRE(counter == 2210);
+			CHECK(counter == 2210);
 
 			del();
 
-			REQUIRE(counter == 4420);
+			CHECK(counter == 4420);
 		}
 
 		counter = 0;
@@ -222,9 +216,9 @@ TEST_CASE("multicast_delegate", "[delegates]")
 
 		rsl::multicast_delegate<void(rsl::uint32&)> del2;
 
-		REQUIRE(del2.empty());
-		REQUIRE(del2 == nullptr);
-		REQUIRE(del2.size() == 0);
+		CHECK(del2.empty());
+		CHECK(del2 == nullptr);
+		CHECK(del2.size() == 0);
 
 		counter = 0;
 
@@ -232,45 +226,45 @@ TEST_CASE("multicast_delegate", "[delegates]")
 			del2 += &funcParam;
 		}
 
-		REQUIRE(del2.size() == 1);
+		CHECK(del2.size() == 1);
 
 		{
 			del2 += &funcParam2;
 		}
 
-		REQUIRE(del2.size() == 2);
+		CHECK(del2.size() == 2);
 
-		REQUIRE(!del2.empty());
-		REQUIRE(del2 != nullptr);
-		REQUIRE(counter == 0);
+		CHECK(!del2.empty());
+		CHECK(del2 != nullptr);
+		CHECK(counter == 0);
 
 		{
 			rsl::uint32 v = 3u;
 			del2(v);
-			REQUIRE(counter == 7);
-			REQUIRE(v == 8);
+			CHECK(counter == 7);
+			CHECK(v == 8);
 			del2(v);
-			REQUIRE(counter == 24);
-			REQUIRE(v == 18);
+			CHECK(counter == 24);
+			CHECK(v == 18);
 			del2(v);
-			REQUIRE(counter == 61);
-			REQUIRE(v == 38);
+			CHECK(counter == 61);
+			CHECK(v == 38);
 		}
 
 		del2.remove(funcParam);
-		REQUIRE(!del2.empty());
-		REQUIRE(del2 != nullptr);
-		REQUIRE(del2.size() == 1);
+		CHECK(!del2.empty());
+		CHECK(del2 != nullptr);
+		CHECK(del2.size() == 1);
 
 		del2.remove(funcParam);
-		REQUIRE(!del2.empty());
-		REQUIRE(del2 != nullptr);
-		REQUIRE(del2.size() == 1);
+		CHECK(!del2.empty());
+		CHECK(del2 != nullptr);
+		CHECK(del2.size() == 1);
 
 		del2 -= funcParam2;
-		REQUIRE(del2.empty());
-		REQUIRE(del2 == nullptr);
-		REQUIRE(del2.size() == 0);
+		CHECK(del2.empty());
+		CHECK(del2 == nullptr);
+		CHECK(del2.size() == 0);
 
 		counter = 0;
 
@@ -283,19 +277,19 @@ TEST_CASE("multicast_delegate", "[delegates]")
 			del += &func2;
 		}
 
-		REQUIRE(counter == 0);
+		CHECK(counter == 0);
 
 		del();
-		REQUIRE(counter == 2);
+		CHECK(counter == 2);
 		del();
-		REQUIRE(counter == 6);
+		CHECK(counter == 6);
 		del();
-		REQUIRE(counter == 14);
+		CHECK(counter == 14);
 
 		del.clear();
-		REQUIRE(del.empty());
-		REQUIRE(del == nullptr);
-		REQUIRE(del.size() == 0);
+		CHECK(del.empty());
+		CHECK(del == nullptr);
+		CHECK(del.size() == 0);
 
 		counter = 0;
 
@@ -306,37 +300,37 @@ TEST_CASE("multicast_delegate", "[delegates]")
 			auto lambda = []() { counter *= 3; };
 			del += lambda;
 
-			REQUIRE(!del.empty());
-			REQUIRE(del != nullptr);
-			REQUIRE(del.size() == 2);
+			CHECK(!del.empty());
+			CHECK(del != nullptr);
+			CHECK(del.size() == 2);
 
-			REQUIRE(counter == 0);
+			CHECK(counter == 0);
 
 			del();
-			REQUIRE(counter == 3);
+			CHECK(counter == 3);
 			del();
-			REQUIRE(counter == 12);
+			CHECK(counter == 12);
 			del();
-			REQUIRE(counter == 39);
+			CHECK(counter == 39);
 
 			del -= lambda;
 
-			REQUIRE(!del.empty());
-			REQUIRE(del != nullptr);
-			REQUIRE(del.size() == 1);
-			REQUIRE(!del.contains(lambda));
+			CHECK(!del.empty());
+			CHECK(del != nullptr);
+			CHECK(del.size() == 1);
+			CHECK(!del.contains(lambda));
 		}
 
 		del.clear();
 
-		REQUIRE(del.empty());
-		REQUIRE(del == nullptr);
-		REQUIRE(del.size() == 0);
+		CHECK(del.empty());
+		CHECK(del == nullptr);
+		CHECK(del.size() == 0);
 
 		counter = 0;
 
 		{
-			std::vector<size_t> ints = createVec(100);
+			rsl::dynamic_array<size_t> ints = createVec(100);
 			del = [&ints]()
 			{
 				for (size_t i : ints)
@@ -352,14 +346,14 @@ TEST_CASE("multicast_delegate", "[delegates]")
 				}
 			};
 
-			REQUIRE(counter == 0);
+			CHECK(counter == 0);
 
 			del();
-			REQUIRE(counter == 2210);
+			CHECK(counter == 2210);
 			del();
-			REQUIRE(counter == 4440);
+			CHECK(counter == 4440);
 			del();
-			REQUIRE(counter == 6690);
+			CHECK(counter == 6690);
 		}
 
 		counter = 0;
@@ -369,32 +363,32 @@ TEST_CASE("multicast_delegate", "[delegates]")
 			del.assign<Object, &Object::memberFunc>(obj);
 			del.push_back<Object, &Object::memberFunc2>(obj);
 
-			REQUIRE(counter == 0);
+			CHECK(counter == 0);
 
 			del();
-			REQUIRE(counter == 2230);
+			CHECK(counter == 2230);
 			del();
-			REQUIRE(counter == 4520);
+			CHECK(counter == 4520);
 			del();
-			REQUIRE(counter == 6870);
+			CHECK(counter == 6870);
 			del();
-			REQUIRE(counter == 9280);
+			CHECK(counter == 9280);
 
 			del.pop_back();
 
-			REQUIRE(!del.empty());
-			REQUIRE(del != nullptr);
-			REQUIRE(del.size() == 1);
-			REQUIRE(del.contains<Object, &Object::memberFunc>(obj));
-			REQUIRE(!del.contains<Object, &Object::memberFunc2>(obj));
+			CHECK(!del.empty());
+			CHECK(del != nullptr);
+			CHECK(del.size() == 1);
+			CHECK(del.contains<Object, &Object::memberFunc>(obj));
+			CHECK(!del.contains<Object, &Object::memberFunc2>(obj));
 
 			del.pop_back();
 
-			REQUIRE(del.empty());
-			REQUIRE(del == nullptr);
-			REQUIRE(del.size() == 0);
-			REQUIRE(!del.contains<Object, &Object::memberFunc>(obj));
-			REQUIRE(!del.contains<Object, &Object::memberFunc2>(obj));
+			CHECK(del.empty());
+			CHECK(del == nullptr);
+			CHECK(del.size() == 0);
+			CHECK(!del.contains<Object, &Object::memberFunc>(obj));
+			CHECK(!del.contains<Object, &Object::memberFunc2>(obj));
 		}
 
 		counter = 0;
@@ -404,12 +398,12 @@ TEST_CASE("multicast_delegate", "[delegates]")
 			del.assign<Object, &Object::constMemberFunc>(obj);
 			del.push_back<Object, &Object::constMemberFunc2>(obj);
 
-			REQUIRE(counter == 0);
+			CHECK(counter == 0);
 
 			del();
-			REQUIRE(counter == 4380);
+			CHECK(counter == 4380);
 			del();
-			REQUIRE(counter == 8760);
+			CHECK(counter == 8760);
 		}
 
 		counter = 0;

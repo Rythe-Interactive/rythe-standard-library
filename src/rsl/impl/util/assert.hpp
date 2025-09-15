@@ -1,7 +1,9 @@
 #pragma once
 
-#include "primitives.hpp"
 #include "../defines.hpp"
+
+#include "primitives.hpp"
+
 #include "../containers/views.hpp"
 #include "../util/container_util.hpp"
 
@@ -59,31 +61,14 @@ namespace rsl
 
     namespace internal
     {
-        template<typename StrType>
-        constexpr string_view __rsl_view_from_stringish(StrType&& str) noexcept
-        {
-            if constexpr (is_same_v<StrType, string_view>)
-            {
-                return str;
-            }
-            else if constexpr (has_view_v<StrType, string_view()>)
-            {
-                return str.view();
-            }
-            else
-            {
-                return string_view::from_string_length(str);
-            }
-        }
-
         template<typename ExprType, typename FileType, typename MsgType>
         constexpr void __rsl_assert_impl(ExprType&& expr, FileType&& file, const size_type line, MsgType&& msg, const bool soft, bool* ignore)
         {
             if(!is_constant_evaluated())
             {
-                const string_view exprView = __rsl_view_from_stringish(expr);
-                const string_view fileView = __rsl_view_from_stringish(file);
-                const string_view msgView = __rsl_view_from_stringish(msg);
+                const string_view exprView = view_from_stringish(expr);
+                const string_view fileView = view_from_stringish(file);
+                const string_view msgView = view_from_stringish(msg);
 
                 if (!asserts::assert_handler)
                 {
@@ -221,6 +206,7 @@ namespace rsl
 #define rsl_assert_invalid_access(expr) rsl_assert_msg_frequent(expr, "invalid access")
 #define rsl_assert_invalid_parameters(expr) rsl_assert_msg_rarely(expr, "invalid parameters")
 #define rsl_assert_invalid_operation(expr) rsl_assert_msg_rarely(expr, "invalid operation")
+#define rsl_assert_invalid_operation_frequent(expr) rsl_assert_msg_frequent(expr, "invalid operation")
 #define rsl_assert_invalid_object(expr) rsl_assert_msg_rarely(expr, "invalid object")
 #define rsl_assert_duplicate_object(expr) rsl_assert_msg_consistent(expr, "duplicate object")
 #define rsl_assert_borrow_release_mismatch(expr) rsl_assert_msg_consistent(expr, "borrow release mismatch")

@@ -7,10 +7,10 @@ namespace rsl
 	struct source_location
 	{
 		[[nodiscard]] static consteval source_location current(
-			const uint32 line = __builtin_LINE(),
-			const uint32 column = __builtin_COLUMN(),
-			cstring const file = __builtin_FILE(),
-			cstring const function = __builtin_FUNCTION()
+			const uint32 line = static_cast<uint32>(__builtin_LINE()),
+			const uint32 column = static_cast<uint32>(__builtin_COLUMN()),
+			const cstring file = static_cast<cstring>(__builtin_FILE()),
+			const cstring function = static_cast<cstring>(__builtin_FUNCTION())
 		) noexcept
 		{
 			source_location result;

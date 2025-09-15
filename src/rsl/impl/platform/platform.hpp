@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../containers/string.hpp"
 #include "../util/common.hpp"
 #include "../util/primitives.hpp"
 
@@ -20,6 +21,8 @@ namespace rsl
 
 		static void* get_symbol(dynamic_library library, cstring symbolName);
 
+	    static bool is_debugger_attached();
+
 		static thread create_thread(native_thread_start startFunction, void* userData = nullptr, string_view name = "unknown thread"_sv, pmu_allocator& allocator = *allocator_context::globalAllocator);
 		static uint32 destroy_thread(thread thread);
 
@@ -34,6 +37,15 @@ namespace rsl
 		static void set_thread_name(thread_id threadId, string_view name);
 		static string_view get_thread_name(thread thread);
 		static string_view get_thread_name(thread_id threadId);
+
+	    static dynamic_array<dynamic_string> enumerate_drives();
+	    static bool is_path_valid(string_view absolutePath);
+	    static bool is_regular_file(string_view absolutePath);
+	    static bool is_directory(string_view absolutePath);
+	    static bool is_file_writable(string_view absolutePath);
+	    static bool is_file_readable(string_view absolutePath);
+	    static bool does_path_entry_exist(string_view absolutePath);
+	    static dynamic_array<dynamic_string> enumerate_directory(string_view absolutePath);
 	};
 
 #if !defined(RYTHE_DYNAMIC_LIBRARY_HANDLE_IMPL)

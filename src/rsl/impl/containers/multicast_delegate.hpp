@@ -154,7 +154,7 @@ namespace rsl
 		[[rythe_always_inline]] constexpr multicast_delegate& operator+=(const Functor& instance);
 
 		[[rythe_always_inline]] constexpr size_type erase(size_type pos);
-		[[rythe_always_inline]] constexpr size_type erase(size_type first, size_type last);
+		[[rythe_always_inline]] constexpr size_type erase(size_type pos, size_type count);
 
 		[[rythe_always_inline]] constexpr void pop_back();
 
