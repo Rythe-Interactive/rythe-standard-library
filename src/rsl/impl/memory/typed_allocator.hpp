@@ -134,6 +134,9 @@ namespace rsl
                 ) noexcept(is_nothrow_constructible_v<allocator_storage_type> && is_nothrow_constructible_v<factory_storage_type>)
         = default;
 
+        [[nodiscard]] [[rythe_always_inline]] bool operator==(const typed_allocator&) const noexcept = default;
+        [[nodiscard]] [[rythe_always_inline]] bool operator!=(const typed_allocator&) const noexcept = default;
+
         [[rythe_always_inline]] explicit typed_allocator(
                 const allocator_storage_type& allocStorage
                 ) noexcept(is_nothrow_copy_constructible_v<allocator_storage_type> && is_nothrow_constructible_v<factory_storage_type>)
@@ -206,7 +209,9 @@ namespace rsl
         using retarget = typed_allocator<Other, Alloc, typename Factory::template retarget<Other>>;
 
         [[rythe_always_inline]] typed_allocator() noexcept = default;
-
+        [[nodiscard]] [[rythe_always_inline]] bool operator==(const typed_allocator&) const noexcept = default;
+        [[nodiscard]] [[rythe_always_inline]] bool operator!=(const typed_allocator&) const noexcept = default;
+        
         [[rythe_always_inline]] explicit typed_allocator(const allocator_storage_type&) noexcept {}
         [[rythe_always_inline]] explicit typed_allocator(const allocator_storage_type&, construct_type_signal_type<T>) noexcept {}
 
@@ -273,7 +278,10 @@ namespace rsl
         template <typename Other>
         using retarget = type_erased_allocator<Alloc>;
 
-        type_erased_allocator() = default;
+         [[rythe_always_inline]] type_erased_allocator() noexcept = default;
+        [[nodiscard]] [[rythe_always_inline]] bool operator==(const type_erased_allocator&) const noexcept = default;
+        [[nodiscard]] [[rythe_always_inline]] bool operator!=(const type_erased_allocator&) const noexcept = default;
+        
         template <typename T>
         type_erased_allocator(
                 const allocator_storage_type& allocStorage,
