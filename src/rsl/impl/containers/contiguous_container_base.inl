@@ -165,7 +165,7 @@ namespace rsl
 
         result.copy_construct_from_unsafe_impl(0ull, result.m_size, ptr);
 
-        if constexpr (char_type<value_type>)
+        if constexpr (char_type < value_type >)
         {
             if (result.m_size > 0)
             {
@@ -307,8 +307,8 @@ namespace rsl
     template <typename T, allocator_type Alloc, factory_type Factory, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
               ContiguousContainerInfo>
     constexpr contiguous_container_base<T, Alloc, Factory, Iter, ConstIter, ContiguousContainerInfo> contiguous_container_base<T, Alloc
-        , Factory, Iter, ConstIter, ContiguousContainerInfo>::from_string_length(T* str, T terminator) noexcept
-        requires char_type<T>
+        , Factory, Iter, ConstIter, ContiguousContainerInfo>::from_string_length(const T* str, T terminator) noexcept
+        requires char_type < T >
     {
         return from_buffer(str, string_length(str, terminator));
     }
@@ -1523,7 +1523,7 @@ namespace rsl
     copy_assign_impl(
             const value_type* src,
             size_type srcSize,
-            void* allocOrFactory
+            const void* allocOrFactory
             ) noexcept(copy_assign_noexcept && copy_construct_noexcept)
     {
         if constexpr (!can_resize)
@@ -1552,7 +1552,7 @@ namespace rsl
 
                 if (allocOrFactory)
                 {
-                    mem_rsc::m_alloc = *static_cast<mem_rsc::typed_alloc_type*>(allocOrFactory);
+                    mem_rsc::m_alloc = *static_cast<const mem_rsc::typed_alloc_type*>(allocOrFactory);
                 }
 
                 rsl_ensure(resize_capacity_unsafe(srcFootprint));
@@ -1649,7 +1649,7 @@ namespace rsl
             m_size = srcSize;
         }
 
-        if constexpr (char_type<value_type>)
+        if constexpr (char_type < value_type >)
         {
             if (m_size > 0)
             {

@@ -17,7 +17,10 @@ namespace rsl
         using allocator_t = Alloc;
         using factory_storage_type = factory_storage<Factory>;
         using factory_t = Factory;
-
+        
+        [[nodiscard]] [[rythe_always_inline]] bool operator==(const typed_allocator_impl&) const noexcept = default;
+        [[nodiscard]] [[rythe_always_inline]] bool operator!=(const typed_allocator_impl&) const noexcept = default;
+        
         [[nodiscard]] [[rythe_always_inline]] constexpr size_type type_size() const noexcept;
 
         [[nodiscard]] [[rythe_allocating]] [[rythe_always_inline]] constexpr value_type* allocate(size_type count = 1) noexcept;
@@ -104,6 +107,10 @@ namespace rsl
             destroy_and_deallocate_aligned(value_type* ptr, size_type count, size_type alignment) noexcept;
 
     private:
+        RULE_OF_5_CONSTEXPR_NOEXCEPT(typed_allocator_impl)
+        
+        friend TypedAllocator;
+        
         [[nodiscard]] [[rythe_always_inline]] constexpr TypedAllocator& self() noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr const TypedAllocator& self() const noexcept;
     };
@@ -133,6 +140,9 @@ namespace rsl
         [[rythe_always_inline]] typed_allocator(
                 ) noexcept(is_nothrow_constructible_v<allocator_storage_type> && is_nothrow_constructible_v<factory_storage_type>)
         = default;
+
+        [[nodiscard]] [[rythe_always_inline]] bool operator==(const typed_allocator&) const noexcept = default;
+        [[nodiscard]] [[rythe_always_inline]] bool operator!=(const typed_allocator&) const noexcept = default;
 
         [[rythe_always_inline]] explicit typed_allocator(
                 const allocator_storage_type& allocStorage
@@ -206,7 +216,9 @@ namespace rsl
         using retarget = typed_allocator<Other, Alloc, typename Factory::template retarget<Other>>;
 
         [[rythe_always_inline]] typed_allocator() noexcept = default;
-
+        [[nodiscard]] [[rythe_always_inline]] bool operator==(const typed_allocator&) const noexcept = default;
+        [[nodiscard]] [[rythe_always_inline]] bool operator!=(const typed_allocator&) const noexcept = default;
+        
         [[rythe_always_inline]] explicit typed_allocator(const allocator_storage_type&) noexcept {}
         [[rythe_always_inline]] explicit typed_allocator(const allocator_storage_type&, construct_type_signal_type<T>) noexcept {}
 
@@ -273,7 +285,10 @@ namespace rsl
         template <typename Other>
         using retarget = type_erased_allocator<Alloc>;
 
-        type_erased_allocator() = default;
+         [[rythe_always_inline]] type_erased_allocator() noexcept = default;
+        [[nodiscard]] [[rythe_always_inline]] bool operator==(const type_erased_allocator&) const noexcept = default;
+        [[nodiscard]] [[rythe_always_inline]] bool operator!=(const type_erased_allocator&) const noexcept = default;
+        
         template <typename T>
         type_erased_allocator(
                 const allocator_storage_type& allocStorage,

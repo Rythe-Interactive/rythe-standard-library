@@ -131,7 +131,7 @@ namespace rsl
                 ) noexcept(copy_construct_noexcept);
 
         [[nodiscard]] [[rythe_always_inline]] constexpr static contiguous_container_base from_string_length(
-                T* str,
+                const T* str,
                 T terminator = T{}
                 ) noexcept
             requires char_type<T>;
@@ -426,7 +426,7 @@ namespace rsl
         [[rythe_always_inline]] constexpr void copy_assign_impl(
                 const value_type* src,
                 size_type srcSize,
-                void* allocOrFactory = nullptr
+                const void* allocOrFactory = nullptr
                 )
             noexcept(copy_assign_noexcept && copy_construct_noexcept);
 
