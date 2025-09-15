@@ -104,26 +104,26 @@ namespace rsl
 
     struct white_space
     {
-        [[nodiscard]] [[rythe_always_inline]] bool operator==(const white_space) const noexcept { return true; }
-        [[nodiscard]] [[rythe_always_inline]] bool operator!=(const white_space) const noexcept { return false; }
+        [[nodiscard]] [[rythe_always_inline]] constexpr bool operator==(const white_space) const noexcept { return true; }
+        [[nodiscard]] [[rythe_always_inline]] constexpr bool operator!=(const white_space) const noexcept { return false; }
 
-        [[nodiscard]] [[rythe_always_inline]] bool operator==(const char ch) const noexcept
+        [[nodiscard]] [[rythe_always_inline]] constexpr bool operator==(const char ch) const noexcept
         {
             return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' || ch == '\f' || ch == '\v';
         }
 
-        [[nodiscard]] [[rythe_always_inline]] bool operator!=(const char ch) const noexcept
+        [[nodiscard]] [[rythe_always_inline]] constexpr bool operator!=(const char ch) const noexcept
         {
             return !(*this == ch);
         }
     };
 
-    [[nodiscard]] [[rythe_always_inline]] bool operator==(const char ch, white_space) noexcept
+    [[nodiscard]] [[rythe_always_inline]] constexpr bool operator==(const char ch, white_space) noexcept
     {
         return white_space{} == ch;
     }
 
-    [[nodiscard]] [[rythe_always_inline]] bool operator!=(const char ch, white_space) noexcept
+    [[nodiscard]] [[rythe_always_inline]] constexpr bool operator!=(const char ch, white_space) noexcept
     {
         return white_space{} != ch;
     }

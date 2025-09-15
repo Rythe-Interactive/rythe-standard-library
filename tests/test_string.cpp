@@ -11,7 +11,7 @@ TEST_CASE("string","[containers]")
 	{
 		{//operator=
 			rsl::dynamic_string s;
-			s = "hello world";
+			s = "hello world"_ds;
 			CHECK(!s.empty());
 			CHECK(s.size() == 11);
 		}

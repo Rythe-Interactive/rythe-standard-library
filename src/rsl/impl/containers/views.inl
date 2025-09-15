@@ -54,7 +54,15 @@ namespace rsl
         requires same_as<byte, remove_cvr_t<T>> && (is_const_v<T> || !is_const_v<Other>)
     {
         array_view result;
-        result.m_src = bit_cast<T*>(ptr);
+        if (is_constant_evaluated())
+        {
+            result.m_src = static_cast<T*>(ptr);
+        }
+        else
+        {
+            result.m_src = bit_cast<T*>(ptr);
+        }
+        
         result.m_count = count * sizeof(Other);
         return result;
     }
@@ -281,7 +289,7 @@ namespace rsl
             count = m_count + count;
         }
 
-        const size_type maxCount = m_count - offset;
+        const diff_type maxCount = m_count - offset;
         if (count > maxCount)
         {
             count = maxCount;
@@ -340,6 +348,11 @@ namespace rsl
             size_type endSearch
             ) noexcept
     {
+        if (offset >= endSearch)
+        {
+            return npos;
+        }
+        
         if (key.size() > arr.size())
         {
             return npos;
@@ -431,7 +444,7 @@ namespace rsl
             size_type endSearch
             ) noexcept
     {
-        if (endSearch >= offset)
+        if (offset >= endSearch)
         {
             return npos;
         }

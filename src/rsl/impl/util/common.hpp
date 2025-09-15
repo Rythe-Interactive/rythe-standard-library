@@ -1877,16 +1877,17 @@ namespace rsl
 
     namespace internal
     {
-        void* get_global_empty_type_placeholder_ptr();
+        [[nodiscard]] void* get_global_empty_type_placeholder_ptr();
     }
 
     template <typename T>
         requires (is_empty_v<T>)
-    constexpr T* address_of_empty() noexcept
+    [[nodiscard]] [[rythe_always_inline]] constexpr T* address_of_empty() noexcept
     {
         if (is_constant_evaluated())
         {
-            return bit_cast<T*>(ptr_type{ 0x10 });
+            static constexpr T tmp;
+            return const_cast<T*>(&tmp);
         }
         else
         {

@@ -228,7 +228,7 @@ namespace rsl
         dynamic_array<dynamic_string> result;
         const char* start = buffer;
         size_type count = 0ull;
-        for (int i = 0; i < charCount; i++)
+        for (size_type i = 0; i < charCount; i++)
         {
             if (buffer[i] == '\0')
             {

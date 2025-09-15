@@ -1,5 +1,4 @@
 #pragma once
-#include "delegate_base.hpp"
 
 namespace rsl
 {

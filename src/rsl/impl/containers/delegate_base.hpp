@@ -2,6 +2,7 @@
 
 #include "../defines.hpp"
 #include "../util/concepts.hpp"
+#include "../util/utilities.hpp"
 
 #include "../memory/managed_resource.hpp"
 

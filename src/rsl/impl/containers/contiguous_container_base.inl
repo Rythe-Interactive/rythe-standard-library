@@ -20,6 +20,11 @@ namespace rsl
             ) noexcept(copy_construct_container_noexcept)
         : mem_rsc(internal::alloc_and_factory_only_signal, src)
     {
+        if (src.m_memorySize == 0ull)
+        {
+            return;
+        }
+        
         reserve(src.m_size);
         m_size = src.m_size;
         // will copy postfix from src if `use_post_fix`
@@ -362,7 +367,7 @@ namespace rsl
     constexpr size_type contiguous_container_base<T, Alloc, Factory, Iter, ConstIter,
                                                   ContiguousContainerInfo>::capacity() const noexcept
     {
-        return m_memorySize;
+        return calc_max_size();
     }
 
     template <typename T, allocator_type Alloc, factory_type Factory, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
