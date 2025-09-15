@@ -6,19 +6,6 @@
 
 namespace rsl
 {
-    template <char_type T>
-    [[nodiscard]] constexpr size_type string_length(add_const_t<T>* str, T terminator = T{}) noexcept
-    {
-        size_type length = 0;
-        while (*str != terminator)
-        {
-            ++length;
-            ++str;
-        }
-
-        return length;
-    }
-
     template <bool UsePostFix, size_type StaticCapacity, bool CanAllocate, bool CanResize>
     struct contiguous_container_info
     {

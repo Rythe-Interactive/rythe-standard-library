@@ -36,7 +36,7 @@ namespace rsl
         template <size_type N>
         [[rythe_always_inline]] constexpr array_view(T (& arr)[N]) noexcept;
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr operator array_view<const value_type, const_iterator_type>() noexcept
+        [[nodiscard]] [[rythe_always_inline]] constexpr operator array_view<const value_type, const_iterator_type>() const noexcept
             requires(!is_const_v<T>);
 
         [[nodiscard]] [[rythe_always_inline]] constexpr static array_view from_value(T& src) noexcept;
@@ -61,12 +61,12 @@ namespace rsl
 
         [[rythe_always_inline]] constexpr array_view& operator=(const array_view&) = default;
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr bool operator==(const array_view& rhs);
-        [[nodiscard]] [[rythe_always_inline]] constexpr bool operator!=(const array_view& rhs);
+        [[nodiscard]] [[rythe_always_inline]] constexpr bool operator==(const array_view& rhs) const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr bool operator!=(const array_view& rhs) const noexcept;
         template <size_type N>
-        [[nodiscard]] [[rythe_always_inline]] constexpr bool operator==(const value_type (& rhs)[N]);
+        [[nodiscard]] [[rythe_always_inline]] constexpr bool operator==(const value_type (& rhs)[N]) const noexcept;
         template <size_type N>
-        [[nodiscard]] [[rythe_always_inline]] constexpr bool operator!=(const value_type (& rhs)[N]);
+        [[nodiscard]] [[rythe_always_inline]] constexpr bool operator!=(const value_type (& rhs)[N]) const noexcept;
 
         [[nodiscard]] [[rythe_always_inline]] constexpr iterator_type begin() noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr const_iterator_type begin() const noexcept;
@@ -131,15 +131,16 @@ namespace rsl
     template<typename StrType>
     constexpr string_view view_from_stringish(StrType&& str) noexcept
     {
-        if constexpr (is_same_v<StrType, string_view>)
+        using string_type = remove_cvr_t<StrType>;
+        if constexpr (is_same_v<string_type, string_view>)
         {
             return str;
         }
-        else if constexpr (has_view_v<StrType, string_view()>)
+        else if constexpr (has_view_v<string_type, string_view()>)
         {
             return str.view();
         }
-        else if constexpr (is_char_v<StrType>)
+        else if constexpr (is_char_v<string_type>)
         {
             return string_view::from_value(str);
         }
@@ -390,14 +391,14 @@ namespace rsl
     }
 
     template <typename Container>
-        requires has_size<Container, size_type()> && has_data<Container, any_type()> && !has_view<Container, any_type()>
+        requires has_size<Container, size_type()> && has_data<Container, any_type()> && invert<has_view<Container, any_type()>>
     [[nodiscard]] constexpr auto view(Container&& container) noexcept
     {
         return array_view<container_value_type<Container>>::from_buffer(container.data(), container.size());
     }
 
     template <typename Container>
-        requires has_begin<Container, any_type()> && has_end<Container, any_type()> && !has_data<Container, any_type()>
+        requires has_begin<Container, any_type()> && has_end<Container, any_type()> && invert<has_data<Container, any_type()>>
     [[nodiscard]] constexpr auto view(Container&& container) noexcept
     {
         return iterator_view<container_value_type<Container>, container_iter_type<Container>>(container.begin(), container.end());

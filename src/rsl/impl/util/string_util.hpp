@@ -44,11 +44,11 @@ namespace rsl
     template <weakly_equality_comparable_with<char> C>
     [[nodiscard]] [[rythe_always_inline]] constexpr string_view trim(string_view str, const C& key) noexcept;
 
-    template <typename Func>
+    template <invocable<bool(char)> Func>
     [[nodiscard]] [[rythe_always_inline]] constexpr string_view trim_left(string_view str, Func&& comparer) noexcept;
-    template <typename Func>
+    template <invocable<bool(char)> Func>
     [[nodiscard]] [[rythe_always_inline]] constexpr string_view trim_right(string_view str, Func&& comparer) noexcept;
-    template <typename Func>
+    template <invocable<bool(char)> Func>
     [[nodiscard]] [[rythe_always_inline]] constexpr string_view trim(string_view str, Func&& comparer) noexcept;
 } // namespace rsl
 

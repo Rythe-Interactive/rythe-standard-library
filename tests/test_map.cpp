@@ -11,7 +11,7 @@ namespace
 		rsl::id_type id = 1012234;
 
 		using rsl::heap_allocator::heap_allocator;
-		explicit constexpr test_heap_allocator(rsl::id_type _id) noexcept
+		explicit constexpr test_heap_allocator(const rsl::id_type _id) noexcept
 			: id(_id)
 		{
 		}
@@ -25,7 +25,7 @@ namespace
 
 #define RSL_DEFAULT_ALLOCATOR_OVERRIDE test_heap_allocator
 
-#include <rsl/map>
+#include <rsl/containers>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -175,8 +175,63 @@ TEST_CASE("dynamic_map", "[containers]")
 		CHECK(!map.contains(key4));
 	}
 
+	SECTION("find") {}
 	SECTION("get") {}
 	SECTION("erase") {}
 	SECTION("get_or_emplace") {}
 	SECTION("emplace_or_replace") {}
+
+    SECTION("view alternative access")
+	{
+		rsl::dynamic_map<dynamic_string, int32> map{};
+
+	    map.emplace("Hi"_ds, 4);
+	    map.emplace("Hey"_ds, 7);
+	    map.emplace("Hello"_ds, 11);
+	    map.emplace("Bye"_ds, 13);
+	    map.emplace("Cioa"_ds, 5);
+	    map.emplace("Cya"_ds, 9);
+
+	    CHECK(map.contains("Hi"_sv));
+	    {
+		    int32* result = map.find("Hi"_sv);
+		    REQUIRE(result != nullptr);
+		    CHECK(*result == 4);
+	    }
+
+	    CHECK(map.contains("Hey"_sv));
+	    {
+		    int32* result = map.find("Hey"_sv);
+		    REQUIRE(result != nullptr);
+		    CHECK(*result == 7);
+	    }
+
+	    CHECK(map.contains("Hello"_sv));
+	    {
+		    int32* result = map.find("Hello"_sv);
+		    REQUIRE(result != nullptr);
+		    CHECK(*result == 11);
+	    }
+
+	    CHECK(map.contains("Bye"_sv));
+	    {
+		    int32* result = map.find("Bye"_sv);
+		    REQUIRE(result != nullptr);
+		    CHECK(*result == 13);
+	    }
+
+	    CHECK(map.contains("Cioa"_sv));
+	    {
+		    int32* result = map.find("Cioa"_sv);
+		    REQUIRE(result != nullptr);
+		    CHECK(*result == 5);
+	    }
+
+	    CHECK(map.contains("Cya"_sv));
+	    {
+		    int32* result = map.find("Cya"_sv);
+		    REQUIRE(result != nullptr);
+		    CHECK(*result == 9);
+	    }
+	}
 }

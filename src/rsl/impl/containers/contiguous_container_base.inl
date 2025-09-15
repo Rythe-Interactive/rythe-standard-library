@@ -284,18 +284,19 @@ namespace rsl
         contiguous_container_base result;
         if constexpr (can_allocate)
         {
-            result.reserve(internal::calc_total_variadic_item_size<T>(items));
+            result.reserve(internal::calc_total_variadic_item_size<T>(rsl::forward<ItemTypes>(items)...));
         }
         else
         {
             rsl_assert_invalid_operation(
-                    contiguous_container_base::calc_memory_size(internal::calc_total_variadic_item_size<T>(items)) <= static_capacity
+                    contiguous_container_base::calc_memory_size(internal::calc_total_variadic_item_size<T>(rsl::forward<ItemTypes>(
+                        items)...)) <= static_capacity
                     );
         }
 
         if constexpr (can_resize)
         {
-            result.m_size = internal::calc_total_variadic_item_size<T>(items);
+            result.m_size = internal::calc_total_variadic_item_size<T>(rsl::forward<ItemTypes>(items)...);
         }
 
         internal::container_construct_items(result, 0ull, rsl::forward<ItemTypes>(items)...);
@@ -770,7 +771,7 @@ namespace rsl
         requires (can_resize)
     {
         const size_type count = other.size();
-        split_reserve(pos, count, m_size + count);
+        split_reserve(pos, count);
 
         copy_construct_from_unsafe_impl(pos, pos + count, other.begin());
 
@@ -787,7 +788,7 @@ namespace rsl
         requires (can_resize)
     {
         const size_type count = other.size();
-        split_reserve(pos, count, m_size + count);
+        split_reserve(pos, count);
 
         move_construct_from_unsafe_impl(pos, pos + count, other.begin());
 
@@ -802,7 +803,7 @@ namespace rsl
             ) noexcept(move_construct_noexcept && copy_construct_noexcept)
         requires (can_resize)
     {
-        split_reserve(pos, 1, m_size + 1);
+        split_reserve(pos, 1);
         mem_rsc::construct(1, pos, value);
         return pos;
     }
@@ -815,7 +816,7 @@ namespace rsl
             ) noexcept(move_construct_noexcept)
         requires (can_resize)
     {
-        split_reserve(pos, 1, m_size + 1);
+        split_reserve(pos, 1);
         mem_rsc::construct(1, pos, move(value));
         return pos;
     }
@@ -829,7 +830,7 @@ namespace rsl
             ) noexcept(move_construct_noexcept && copy_construct_noexcept)
         requires (can_resize)
     {
-        split_reserve(pos, count, m_size + count);
+        split_reserve(pos, count);
         mem_rsc::construct(count, pos, value);
         return pos;
     }
@@ -846,7 +847,7 @@ namespace rsl
             can_resize)
     {
         size_type count = iterator_diff(first, last);
-        split_reserve(pos, count, m_size + count);
+        split_reserve(pos, count);
 
         copy_construct_from_unsafe_impl(pos, pos + count, first);
 
@@ -862,7 +863,7 @@ namespace rsl
             ) noexcept(move_construct_noexcept && copy_construct_noexcept)
         requires (can_resize)
     {
-        split_reserve(pos, count, m_size + count);
+        split_reserve(pos, count);
 
         copy_construct_from_unsafe_impl(pos, pos + count, ptr);
 
@@ -879,7 +880,7 @@ namespace rsl
         requires (can_resize
         )
     {
-        split_reserve(pos, N, m_size + N);
+        split_reserve(pos, N);
 
         copy_construct_from_unsafe_impl(pos, pos + N, src);
 
@@ -895,7 +896,7 @@ namespace rsl
             ) noexcept(move_construct_noexcept)
         requires (can_resize)
     {
-        split_reserve(pos, N, m_size + N);
+        split_reserve(pos, N);
 
         move_construct_from_unsafe_impl(pos, pos + N, src);
 

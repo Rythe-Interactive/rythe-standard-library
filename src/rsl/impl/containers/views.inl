@@ -3,7 +3,7 @@
 namespace rsl
 {
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
-    constexpr array_view<T, Iter, ConstIter>::operator array_view<const T, ConstIter>() noexcept
+    constexpr array_view<T, Iter, ConstIter>::operator array_view<const T, ConstIter>() const noexcept
         requires(!is_const_v<T>)
     {
         return array_view<const T, ConstIter>::from_buffer(m_src, m_count);
@@ -78,7 +78,7 @@ namespace rsl
     }
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
-    constexpr bool array_view<T, Iter, ConstIter>::operator==(const array_view& rhs)
+    constexpr bool array_view<T, Iter, ConstIter>::operator==(const array_view& rhs) const noexcept
     {
         for (size_type i = 0; i < this->size(); ++i)
         {
@@ -89,14 +89,14 @@ namespace rsl
     }
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
-    constexpr bool array_view<T, Iter, ConstIter>::operator!=(const array_view& rhs)
+    constexpr bool array_view<T, Iter, ConstIter>::operator!=(const array_view& rhs) const noexcept
     {
         return !(*this == rhs);
     }
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
     template <size_type N>
-    constexpr bool array_view<T, Iter, ConstIter>::operator==(const value_type (& rhs)[N])
+    constexpr bool array_view<T, Iter, ConstIter>::operator==(const value_type (& rhs)[N]) const noexcept
     {
         bool result = true;
         for (size_type i = 0; i < this->size(); ++i) { result &= this->at(i) == rhs[i]; }
@@ -106,7 +106,7 @@ namespace rsl
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
     template <size_type N>
-    constexpr bool array_view<T, Iter, ConstIter>::operator!=(const value_type (& rhs)[N])
+    constexpr bool array_view<T, Iter, ConstIter>::operator!=(const value_type (& rhs)[N]) const noexcept
     {
         return !(*this == rhs);
     }

@@ -224,12 +224,12 @@ namespace rsl
             using parameter_list = type_sequence<Args...>;
 
             template <typename Func>
-            auto test_func(Func&&) -> decltype(std::invoke(rsl::declval<Func>(), rsl::declval<Args>()...)); // NOLINT
+            auto test_func(Func&&) -> decltype(rsl::declval<Func>()(rsl::declval<Args>()...)); // NOLINT
 
             template <typename Func>
             constexpr static bool is_compatible_with = requires(Func&& func, Args&&... args)
                 {
-                    { std::invoke(forward<Func>(func), forward<Args>(args)...) } -> convertible_to<Ret>;
+                    { func(forward<Args>(args)...) } -> convertible_to<Ret>;
                 };
         };
     } // namespace internal

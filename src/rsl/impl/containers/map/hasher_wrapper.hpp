@@ -17,8 +17,8 @@ namespace rsl
     namespace internal
     {
         template <typename Key>
-        concept has_key_view_alternative = container_like<Key> && requires { typename Key::view_type; } &&
-                has_view_v<Key, typename Key::view_type()> && convertible_to<Key, typename Key::view_type> &&
+        concept has_key_view_alternative = container_like<Key> && requires { typename Key::const_view_type; } &&
+                has_view_v<Key, typename Key::const_view_type()> && convertible_to<Key, typename Key::const_view_type> &&
                 (!has_view_hash_identical<Key>::value || Key::view_hash_identical);
 
         template <typename KeyType, typename Hasher, bool HasIsTransparent = has_is_transparent<Hasher>::value>
@@ -105,7 +105,7 @@ namespace rsl
         template <has_key_view_alternative KeyType, template<typename> typename Hasher>
         struct select_hasher_wrapper<KeyType, Hasher<KeyType>, true>
         {
-            using type = hasher_wrapper<KeyType, Hasher<typename KeyType::view_type>>;
+            using type = hasher_wrapper<typename KeyType::const_view_type, Hasher<typename KeyType::const_view_type>>;
         };
 
         template <typename KeyType, typename Hasher>

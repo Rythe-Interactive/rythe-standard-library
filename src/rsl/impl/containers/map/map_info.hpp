@@ -24,7 +24,7 @@ namespace rsl
         template <has_key_view_alternative Key>
         struct key_view_alternative<Key>
         {
-            using type = Key::view_type;
+            using type = Key::const_view_type;
         };
 
         template <typename, typename>
@@ -45,7 +45,7 @@ namespace rsl
         template <has_key_view_alternative KeyType, template<typename> typename Comparer>
         struct select_comparer<KeyType, Comparer<KeyType>, true>
         {
-            using type = Comparer<typename KeyType::view_type>;
+            using type = Comparer<typename KeyType::const_view_type>;
         };
 
         template <typename KeyType, typename Comparer>
@@ -101,10 +101,10 @@ namespace rsl
                 internal::can_compare_key_view_alternative<Key, KeyEqual>::value && internal::can_hash_key_view_alternative<
                     Key, Hash>::value;
 
-        using key_view_alternative = internal::key_view_alternative<Key>::type;
+        using key_view_alternative = optional_param_t<typename internal::key_view_alternative<Key>::type>;
 
-        using hasher_type = internal::select_hasher_wrapper<Key, Hash, has_key_view_alternative>;
-        using key_comparer_type = internal::select_comparer<Key, KeyEqual, has_key_view_alternative>;
+        using hasher_type = internal::select_hasher_wrapper<Key, Hash, has_key_view_alternative>::type;
+        using key_comparer_type = internal::select_comparer<Key, KeyEqual, has_key_view_alternative>::type;
 
         static constexpr bool is_map = !is_void<mapped_type>::value;
         static constexpr bool is_set = !is_map;

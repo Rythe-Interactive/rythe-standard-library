@@ -118,6 +118,16 @@ namespace rsl
         }
     };
 
+    [[nodiscard]] [[rythe_always_inline]] bool operator==(const char ch, white_space) noexcept
+    {
+        return white_space{} == ch;
+    }
+
+    [[nodiscard]] [[rythe_always_inline]] bool operator!=(const char ch, white_space) noexcept
+    {
+        return white_space{} != ch;
+    }
+
     template <typename T>
     [[nodiscard]] [[rythe_always_inline]] dynamic_string to_string(const T& value);
 

@@ -4,7 +4,7 @@
 
 namespace rsl
 {
-	/// Will either be T with all decoration signals applied, or void in the case T is void.
+	/// Will either be T with all decoration signals applied, or and empty dummy in the case T is void.
 	template <typename T, typename... DecorationSignals>
 	struct optional_param
 	{
@@ -14,7 +14,7 @@ namespace rsl
 	template <typename... DecorationSignals>
 	struct optional_param<void, DecorationSignals...>
 	{
-		using type = void;
+        struct type{};
 	};
 
 	template <typename T, typename... DecorationSignals>

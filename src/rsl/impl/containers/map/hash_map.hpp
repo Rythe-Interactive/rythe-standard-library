@@ -4,6 +4,7 @@
 #include "../array.hpp"
 #include "../optional.hpp"
 #include "../pair.hpp"
+#include "../reference_wrapper.hpp"
 #include "../views.hpp"
 #include "../../memory/memory_pool.hpp"
 #include "../util/comparers.hpp"
@@ -150,7 +151,9 @@ namespace rsl
 		mapped_type& emplace_or_replace(const key_type& key, Args&&... args);
 
 		template <typename... Args>
-		pair<mapped_type&, bool> try_emplace(const key_type& key, Args&&... args);
+	    pair<mapped_type&, bool> try_emplace(const key_type& key, Args&&... args);
+	    template <typename... Args>
+        pair<mapped_type&, bool> try_emplace(key_type&& key, Args&&... args);
 
 		[[rythe_always_inline]] constexpr void erase(const key_type& key) noexcept;
 		[[rythe_always_inline]] constexpr void erase(key_view_alternative key) noexcept requires(has_key_view_alternative);
@@ -184,7 +187,9 @@ namespace rsl
 
 	protected:
 		template <typename... Args>
-		[[nodiscard]] [[rythe_always_inline]] constexpr node_type create_node(const key_type& key, Args&&... args);
+	    [[nodiscard]] [[rythe_always_inline]] constexpr node_type create_node(const key_type& key, Args&&... args);
+	    template <typename... Args>
+        [[nodiscard]] [[rythe_always_inline]] constexpr node_type create_node(key_type&& key, Args&&... args);
 
 		[[rythe_always_inline]] constexpr void destroy_node(node_type& node) noexcept;
 

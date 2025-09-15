@@ -6,6 +6,19 @@
 
 namespace rsl
 {
+    template <char_type T>
+    [[nodiscard]] constexpr size_type string_length(add_const_t<T>* str, T terminator = T{}) noexcept
+    {
+        size_type length = 0;
+        while (*str != terminator)
+        {
+            ++length;
+            ++str;
+        }
+
+        return length;
+    }
+
     RYTHE_HAS_FUNC(begin)
     RYTHE_HAS_FUNC(end)
     RYTHE_HAS_FUNC(cbegin)

@@ -144,7 +144,7 @@ namespace rsl
         return trim_left(trim_right(str, key), key);
     }
 
-    template <typename Func>
+    template <invocable<bool(char)> Func>
     constexpr string_view trim_left(const string_view str, Func&& comparer) noexcept
     {
         const size_type offset = linear_search_custom(str, [&](const char c) { return !comparer(c); });
@@ -156,7 +156,7 @@ namespace rsl
         return str.subview(offset);
     }
 
-    template <typename Func>
+    template <invocable<bool(char)> Func>
     constexpr string_view trim_right(const string_view str, Func&& comparer) noexcept
     {
         const size_type offset = reverse_linear_search_custom(str, [&](const char c) { return !comparer(c); });
@@ -168,7 +168,7 @@ namespace rsl
         return str.subview(0ull, -offset);
     }
 
-    template <typename Func>
+    template <invocable<bool(char)> Func>
     constexpr string_view trim(const string_view str, Func&& comparer) noexcept
     {
         return trim_left(trim_right(str, comparer), comparer);
