@@ -87,8 +87,8 @@ namespace rsl::math
 	struct limits<T>
 	{
 		constexpr static size_type bit_count = sizeof(T) * 8;
-		constexpr static T min = 0u;
-		constexpr static T max = static_cast<T>(~0u);
+		constexpr static T min = 0ull;
+		constexpr static T max = ~static_cast<T>(0ull);
 	};
 
 	template <arithmetic_type T>
@@ -97,6 +97,6 @@ namespace rsl::math
 	{
 		constexpr static size_type bit_count = sizeof(T) * 8;
 		constexpr static T min = sign_bit<T>;
-		constexpr static T max = ~0 & ~sign_bit<T>;
+		constexpr static T max = ~static_cast<T>(0) & ~sign_bit<T>;
 	};
 } // namespace rsl::math
