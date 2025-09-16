@@ -60,7 +60,7 @@ namespace rsl::filesystem
 
     void view::set_path(dynamic_string&& path)
     {
-        m_path = std::move(path);
+        m_path = rsl::move(path);
         if (m_solution)
         {
             m_solution->release();

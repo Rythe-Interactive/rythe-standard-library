@@ -10,7 +10,7 @@ namespace rsl
 
 	constexpr void manual_reference_counter::release() noexcept
 	{
-		rsl_assert_borrow_release_mismatch(occupied());
+		rsl_assert_borrow_release_mismatch(is_occupied());
 		m_count--;
 	}
 
@@ -19,14 +19,14 @@ namespace rsl
 		return m_count;
 	}
 
-	constexpr bool manual_reference_counter::occupied() const noexcept
+	constexpr bool manual_reference_counter::is_occupied() const noexcept
 	{
 		return m_count != 0;
 	}
 
-	constexpr bool manual_reference_counter::free() const noexcept
+	constexpr bool manual_reference_counter::is_free() const noexcept
 	{
-		return !occupied();
+		return !is_occupied();
 	}
 
 	template <reference_counted Counter, allocator_type Alloc, factory_type Factory>
@@ -134,7 +134,7 @@ namespace rsl
 
         on_disarm();
 
-		if (free())
+		if (is_free())
 		{
 			mem_rsc::get_ptr()->reset();
 			mem_rsc::destroy_and_deallocate();
@@ -163,7 +163,7 @@ namespace rsl
 	constexpr void basic_reference_counter<Counter, Alloc, Factory>::release() noexcept
 	{
 		rsl_assert_invalid_object(is_armed());
-		rsl_assert_borrow_release_mismatch(occupied());
+		rsl_assert_borrow_release_mismatch(is_occupied());
 		mem_rsc::get_ptr()->release();
 	}
 
@@ -174,16 +174,16 @@ namespace rsl
 	}
 
 	template <reference_counted Counter, allocator_type Alloc, factory_type Factory>
-	constexpr bool basic_reference_counter<Counter, Alloc, Factory>::occupied() const noexcept
+	constexpr bool basic_reference_counter<Counter, Alloc, Factory>::is_occupied() const noexcept
 	{
 		// Don't count ourselves, we will release the last reference upon destruction.
 		return is_armed() && mem_rsc::get_ptr()->count() > 1;
 	}
 
 	template <reference_counted Counter, allocator_type Alloc, factory_type Factory>
-	constexpr bool basic_reference_counter<Counter, Alloc, Factory>::free() const noexcept
+	constexpr bool basic_reference_counter<Counter, Alloc, Factory>::is_free() const noexcept
 	{
-		return !occupied();
+		return !is_occupied();
 	}
 
 	template <reference_counted Counter, allocator_type Alloc, factory_type Factory>

@@ -42,6 +42,7 @@ namespace rsl
 	    static bool is_path_valid(string_view absolutePath);
 	    static bool is_regular_file(string_view absolutePath);
 	    static bool is_directory(string_view absolutePath);
+	    static bool is_path_readonly(string_view absolutePath);
 	    static bool is_file_writable(string_view absolutePath);
 	    static bool is_file_readable(string_view absolutePath);
 	    static bool does_path_entry_exist(string_view absolutePath);

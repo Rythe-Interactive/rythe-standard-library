@@ -281,6 +281,12 @@ namespace rsl
         return std::filesystem::is_directory(std::filesystem::path(std::string_view(absolutePath.data(), absolutePath.size())), ec);
     }
 
+    bool platform::is_path_readonly(string_view absolutePath)
+    {
+        std::error_code ec;
+        return (std::filesystem::status(std::filesystem::path(std::string_view(absolutePath.data(), absolutePath.size())), ec).permissions() & std::filesystem::perms::owner_write) != std::filesystem::perms::none;
+    }
+
     bool platform::is_file_writable(const string_view absolutePath)
     {
         if (!is_path_valid(absolutePath))

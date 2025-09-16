@@ -17,6 +17,7 @@ namespace rsl::filesystem
         RULE_OF_5_CONSTEXPR_NOEXCEPT(view)
 
         constexpr view(string_view path) noexcept;
+        constexpr view(dynamic_string&& path) noexcept;
 
         [[nodiscard]] [[rythe_always_inline]] operator bool() const noexcept;
         [[nodiscard]] [[rythe_always_inline]] bool is_valid(bool deepCheck = false) const;

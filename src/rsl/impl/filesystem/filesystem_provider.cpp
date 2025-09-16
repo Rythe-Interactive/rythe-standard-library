@@ -15,14 +15,22 @@ namespace rsl::filesystem
         return m_domains;
     }
 
+    filesystem_traits filesystem_provider::filesystem_info() const
+    {
+        return filesystem_traits{
+            .isReadonly = is_readonly(),
+            .isValid = is_valid(),
+        };
+    }
+
     void filesystem_provider::set_solution_provider(file_solution* solution, filesystem_provider* provider)
     {
         solution->m_provider = provider;
     }
 
-    pair<index_type, bool> filesystem_provider::create_solution_reference(const dynamic_string& path)
+    pair<index_type, bool> filesystem_provider::create_solution_reference(const string_view path)
     {
-        auto [index, newValue] = m_solutionMap.try_emplace(path);
+        auto [index, newValue] = m_solutionMap.try_emplace(dynamic_string::from_view(path));
         if (newValue)
         {
             index = m_solutionIndexAllocator.allocate_index();
@@ -42,7 +50,7 @@ namespace rsl::filesystem
         const index_type index = m_solutionMap.at(path);
         m_solutionReferences[index].release();
 
-        if (m_solutionReferences[index].free())
+        if (m_solutionReferences[index].is_free())
         {
             m_solutionMap.erase(path);
             m_solutionIndexAllocator.free_index(index);

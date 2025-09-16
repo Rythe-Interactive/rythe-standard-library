@@ -5,6 +5,8 @@ namespace rsl::filesystem
 {
     constexpr view::view(const string_view path) noexcept : m_path(dynamic_string::from_view(path)) {}
 
+    constexpr view::view(dynamic_string&& path) noexcept : m_path(rsl::move(path)) {}
+
     inline view::operator bool() const noexcept
     {
         return is_valid();

@@ -2,6 +2,7 @@
 
 #include "file_solution.hpp"
 #include "filesystem_provider.hpp"
+#include "path_util.hpp"
 
 namespace rsl::filesystem
 {
@@ -21,6 +22,7 @@ namespace rsl::filesystem
 
     private:
         friend class drive_filesystem_provider;
+        dynamic_string m_virtualPath;
         dynamic_string m_absolutePath;
     };
 
@@ -32,8 +34,9 @@ namespace rsl::filesystem
         template <string_like Domain, string_like... Domains>
         drive_filesystem_provider(string_view rootPath, Domain&& domain, Domains&&... domains);
 
-        [[nodiscard]] filesystem_traits filesystem_info() const override;
         [[nodiscard]] result<dynamic_array<view>> ls() const override;
+        [[nodiscard]] bool is_readonly() const override;
+        [[nodiscard]] bool is_valid() const override;
         [[nodiscard]] result<file_solution*> create_solution(string_view path) override;
         void release_solution(file_solution* solution) override;
 

@@ -59,7 +59,7 @@ namespace rsl
 	template <typename T, allocator_type Alloc, untyped_factory_type Factory>
 	constexpr void managed_resource<T, Alloc, Factory>::disarm_impl() noexcept
 	{
-		if (ref_counter::is_armed() && ref_counter::free())
+		if (ref_counter::is_armed() && ref_counter::is_free())
 		{
 			mem_rsc::get_ptr()->destroy(get());
 		}

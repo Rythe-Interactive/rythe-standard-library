@@ -23,8 +23,10 @@ namespace rsl::filesystem
 
         filesystem_provider& register_domain(string_view domain) noexcept;
         [[nodiscard]] array_view<const domain_string> get_domains() const noexcept;
-        [[nodiscard]] virtual filesystem_traits filesystem_info() const = 0;
+        [[nodiscard]] filesystem_traits filesystem_info() const;
         [[nodiscard]] virtual result<dynamic_array<view>> ls() const = 0;
+        [[nodiscard]] virtual bool is_readonly() const = 0;
+        [[nodiscard]] virtual bool is_valid() const = 0;
 
         [[nodiscard]] virtual result<file_solution*> create_solution(string_view path) = 0;
         virtual void release_solution(file_solution* solution) = 0;
@@ -32,7 +34,7 @@ namespace rsl::filesystem
     protected:
         static void set_solution_provider(file_solution* solution, filesystem_provider* provider);
 
-        pair<index_type, bool> create_solution_reference(const dynamic_string& path);
+        pair<index_type, bool> create_solution_reference(string_view path);
         void destroy_solution_reference(string_view path);
         index_type find_existing_solution(string_view path);
         const manual_reference_counter& get_reference_count_status(index_type index) const;

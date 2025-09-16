@@ -14,6 +14,7 @@ namespace rsl
         no_solution_found,
         multiple_solutions_found,
         invalid_solution,
+        invalid_filesystem,
     };
 
     template <>
@@ -28,6 +29,7 @@ namespace rsl
             case filesystem_error::no_solution_found: return "No solution found.";
             case filesystem_error::multiple_solutions_found: return "Multiple solutions found.";
             case filesystem_error::invalid_solution: return "Invalid solution.";
+            case filesystem_error::invalid_filesystem: return "Invalid filesystem.";
             default: return "Unknown filesystem_error.";
         }
     }
