@@ -1,13 +1,12 @@
 ﻿#pragma once
 #include "../defines.hpp"
-#include "../containers/string.hpp"
 #include "../util/error_handling.hpp"
 
 namespace rsl
 {
     enum struct [[rythe_closed_enum]] filesystem_error : errc
     {
-        no_error = 0,
+        no_error = no_error_code,
         domain_not_found,
         directory_not_found,
         file_not_found,
@@ -15,6 +14,7 @@ namespace rsl
         multiple_solutions_found,
         invalid_solution,
         invalid_filesystem,
+        invalid_operation,
     };
 
     template <>
@@ -30,22 +30,8 @@ namespace rsl
             case filesystem_error::multiple_solutions_found: return "Multiple solutions found.";
             case filesystem_error::invalid_solution: return "Invalid solution.";
             case filesystem_error::invalid_filesystem: return "Invalid filesystem.";
+            case filesystem_error::invalid_operation: return "Invalid operation.";
             default: return "Unknown filesystem_error.";
         }
     }
 }
-
-template <>
-struct fmt::formatter<rsl::filesystem_error>
-{
-    static constexpr const char* parse(format_parse_context& ctx)
-    {
-        return formatter<string_view>{}.parse(ctx);
-    }
-
-    template <typename FormatContext>
-    static constexpr auto format(const rsl::filesystem_error& err, FormatContext& ctx)
-    {
-        return format_to(ctx.out(), "{}", rsl::default_error_message(err));
-    }
-};

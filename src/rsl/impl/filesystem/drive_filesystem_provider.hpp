@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "../platform/platform.hpp"
 
 #include "file_solution.hpp"
 #include "filesystem_provider.hpp"
@@ -13,7 +14,14 @@ namespace rsl::filesystem
 
         [[nodiscard]] [[rythe_always_inline]] string_view get_absolute_path() const noexcept { return m_absolutePath; }
 
-        [[nodiscard]] file_traits file_info() const override;
+        [[nodiscard]] bool is_file() const override;
+        [[nodiscard]] bool is_directory() const override;
+        [[nodiscard]] bool is_valid_path() const override;
+        [[nodiscard]] bool can_be_written() const override;
+        [[nodiscard]] bool can_be_read() const override;
+        [[nodiscard]] bool can_be_created() const override;
+        [[nodiscard]] bool exists() const override;
+
         [[nodiscard]] result<dynamic_array<view>> ls() const override;
         [[nodiscard]] result<byte_view> read() const override;
         [[nodiscard]] result<void> write(byte_view data) override;
@@ -24,6 +32,8 @@ namespace rsl::filesystem
         friend class drive_filesystem_provider;
         dynamic_string m_virtualPath;
         dynamic_string m_absolutePath;
+        mutable bool m_openForWrite;
+        mutable file m_openFile;
     };
 
     class drive_filesystem_provider : public filesystem_provider
@@ -41,6 +51,11 @@ namespace rsl::filesystem
         void release_solution(file_solution* solution) override;
 
     protected:
+        [[nodiscard]] result<void> open_file_for_read(const file_solution* solution) const override;
+        [[nodiscard]] result<void> open_file_for_write(file_solution* solution) override;
+        [[nodiscard]] result<void> close_file(const file_solution* solution) const override;
+        [[nodiscard]] result<void> flush_file(const file_solution* solution) const override;
+
         dynamic_string m_rootPath;
         dynamic_array<drive_file_solution> m_solutions;
     };

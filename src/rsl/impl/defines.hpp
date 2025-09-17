@@ -64,10 +64,13 @@
 namespace rsl
 {
 #if defined(RYTHE_VALIDATE)
-    constexpr bool RYTHE_VALIDATE_ON = true;
+    constexpr bool rythe_validate_on = true;
 #else
-    constexpr bool RYTHE_VALIDATE_ON = false;
+    constexpr bool rythe_validate_on = false;
 #endif
+    constexpr bool rythe_validate_high_impact = RYTHE_VALIDATION_LEVEL >= RYTHE_HIGH_IMPACT_VALIDATION_LEVEL;
+    constexpr bool rythe_validate_medium_impact = RYTHE_VALIDATION_LEVEL >= RYTHE_MEDIUM_IMPACT_VALIDATION_LEVEL;
+    constexpr bool rythe_validate_low_impact = RYTHE_VALIDATION_LEVEL >= RYTHE_LOW_IMPACT_VALIDATION_LEVEL;
 } // namespace rsl
 
 
@@ -468,6 +471,10 @@ extern get_##name##_func get_##name;
 #define MOVE_FUNCS_NOEXCEPT(type)                                                                                                     \
     type(type&&) noexcept = default;                                                                                                  \
     type& operator=(type&&) noexcept = default;
+
+#define MOVE_FUNCS_CONSTEXPR_NOEXCEPT(type)                                                                                           \
+    constexpr type(type&&) noexcept = default;                                                                                        \
+    constexpr type& operator=(type&&) noexcept = default;
 
 #define RYTHE_BIT_FLAG_OPERATORS(EnumType)                                                                                            \
     constexpr EnumType operator|(EnumType lhs, EnumType rhs) noexcept                                                                 \

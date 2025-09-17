@@ -20,18 +20,32 @@
 #include <process.h>
 
 #define RYTHE_DYNAMIC_LIBRARY_HANDLE_IMPL HMODULE
+#define RYTHE_NATIVE_FILE_HANDLE_IMPL HANDLE
+#define RYTHE_DIRECTORY_ITERATOR_HANDLE_IMPL rsl::native_win_directory_iterator_handle*
+
+namespace rsl
+{
+    struct native_win_directory_iterator_handle;
+}
+
 #include "../platform.hpp"
+#include "../platform_error.hpp"
 
 #define RYTHE_THREAD_HANDLE_IMPL HANDLE
 
 #include "../../containers/string.hpp"
+#include "../../filesystem/path_util.hpp"
 #include "../../threading/current_thread.inl"
 #include "../../threading/thread.hpp"
 
-#include <filesystem>
-
 namespace rsl
 {
+    struct native_win_directory_iterator_handle
+    {
+        HANDLE directory;
+        WIN32_FIND_DATAW findData;
+    };
+
     namespace
     {
         struct native_thread_name
@@ -63,6 +77,53 @@ namespace rsl
             allocator->deallocate(&context);
 
             return result;
+        }
+
+        platform_error translate_platform_error(const uint32 error) noexcept
+        {
+            switch (error)
+            {
+                case ERROR_SUCCESS: return platform_error::no_error;
+                case ERROR_FILE_NOT_FOUND: return platform_error::file_not_found;
+                case ERROR_PATH_NOT_FOUND: return platform_error::file_not_found;
+                case ERROR_ACCESS_DENIED: return platform_error::no_permission;
+                case ERROR_INVALID_HANDLE: return platform_error::invalid_argument;
+                case ERROR_NOT_ENOUGH_MEMORY: return platform_error::out_of_memory;
+                case ERROR_OUTOFMEMORY: return platform_error::out_of_memory;
+                case ERROR_HANDLE_EOF: return platform_error::eof_reached;
+                case ERROR_ALREADY_EXISTS: return platform_error::already_exists;
+                case ERROR_DISK_FULL: return platform_error::disk_full;
+                case ERROR_NOT_SUPPORTED: return platform_error::not_supported;
+                case ERROR_BROKEN_PIPE: return platform_error::broken_pipe;
+                case ERROR_INVALID_NAME: return platform_error::invalid_argument;
+                case STILL_ACTIVE: return platform_error::temporary_still_running;
+                case ERROR_DIR_NOT_EMPTY: return platform_error::directory_not_empty;
+                case ERROR_SHARING_VIOLATION: return platform_error::sharing_violation;
+                case ERROR_OPERATION_ABORTED: return platform_error::canceled;
+                case ERROR_IO_PENDING: return platform_error::temporary_time_out;
+                case ERROR_BUFFER_OVERFLOW: return platform_error::buffer_too_small;
+                case ERROR_TOO_MANY_LINKS: return platform_error::too_many_links;
+                case ERROR_NO_NETWORK: return platform_error::network_down;
+                case ERROR_CONNECTION_REFUSED: return platform_error::connection_refused;
+                case ERROR_ADDRESS_ALREADY_ASSOCIATED: return platform_error::address_in_use;
+                case ERROR_ADDRESS_NOT_ASSOCIATED: return platform_error::address_not_available;
+                case ERROR_CONNECTION_INVALID: return platform_error::no_connection;
+                case ERROR_NETWORK_UNREACHABLE: return platform_error::network_unreachable;
+                case ERROR_GRACEFUL_DISCONNECT: return platform_error::connection_closed;
+                case ERROR_FILENAME_EXCED_RANGE: return platform_error::path_too_long;
+                default: return platform_error::generic_error;
+            }
+        }
+
+        uint64 combine_dwords(const DWORD lower, const DWORD upper) noexcept
+        {
+            return static_cast<uint64>(upper << 32ull) | static_cast<uint64>(lower);
+        }
+
+        time::date translate_timestamp(const FILETIME fileTime) noexcept
+        {
+            const uint64 windowsTime = combine_dwords(fileTime.dwLowDateTime, fileTime.dwHighDateTime);
+            return { .epochTime = static_cast<int64>(windowsTime / 10000000ull - 11644473600ull) };
         }
     }
 
@@ -268,23 +329,42 @@ namespace rsl
         return true;
     }
 
-    // TODO(Glyn): Use windows api.
-    bool platform::is_regular_file(string_view absolutePath)
+    bool platform::is_regular_file(const string_view absolutePath)
     {
-        std::error_code ec;
-        return std::filesystem::is_regular_file(std::filesystem::path(std::string_view(absolutePath.data(), absolutePath.size())), ec);
+        result<file_info> result = get_file_info(absolutePath);
+        if (!result.reduce_and_discard())
+        {
+            return false;
+        }
+
+        return result->isFile;
     }
 
-    bool platform::is_directory(string_view absolutePath)
+    bool platform::is_directory(const string_view absolutePath)
     {
-        std::error_code ec;
-        return std::filesystem::is_directory(std::filesystem::path(std::string_view(absolutePath.data(), absolutePath.size())), ec);
+        result<file_info> result = get_file_info(absolutePath);
+        if (!result.reduce_and_discard())
+        {
+            return false;
+        }
+
+        return result->isDirectory;
     }
 
-    bool platform::is_path_readonly(string_view absolutePath)
+    bool platform::is_path_writable(const string_view absolutePath)
     {
-        std::error_code ec;
-        return (std::filesystem::status(std::filesystem::path(std::string_view(absolutePath.data(), absolutePath.size())), ec).permissions() & std::filesystem::perms::owner_write) != std::filesystem::perms::none;
+        result<file_info> result = get_file_info(absolutePath);
+        if (!result.reduce_and_discard())
+        {
+            return false;
+        }
+
+        return result->isWritable;
+    }
+
+    bool platform::is_path_readable(const string_view absolutePath)
+    {
+        return get_file_info(absolutePath).reduce_and_discard();
     }
 
     bool platform::is_file_writable(const string_view absolutePath)
@@ -344,25 +424,216 @@ namespace rsl
         return true;
     }
 
-    // TODO(Glyn): Use windows api.
-    bool platform::does_path_entry_exist(string_view absolutePath)
+    bool platform::does_path_entry_exist(const string_view absolutePath)
     {
-        std::error_code ec;
-        return std::filesystem::exists(std::filesystem::path(std::string_view(absolutePath.data(), absolutePath.size())), ec);
+        dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
+        return ::GetFileAttributesW(widePath.data()) != INVALID_FILE_ATTRIBUTES;
     }
 
-    dynamic_array<dynamic_string> platform::enumerate_directory(string_view absolutePath)
+    result<directory_iterator> platform::iterate_directory(const string_view absolutePath)
     {
-        dynamic_array<dynamic_string> result;
-        for (const auto& entry : std::filesystem::directory_iterator(
-                     std::filesystem::path(std::string_view(absolutePath.data(), absolutePath.size()))
-                     ))
+        dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
+
+        WIN32_FIND_DATAW findData;
+        const HANDLE directory = FindFirstFileW(widePath.data(), &findData);
+
+        const platform_error error = translate_platform_error(GetLastError());
+        if (error != platform_error::no_error)
         {
-            auto path = entry.path().string();
-            result.push_back(dynamic_string::from_buffer(path.data(), path.size()));
+            FindClose(directory);
+            return make_error(error);
+        }
+
+        directory_iterator result;
+        result.m_handle = new native_win_directory_iterator_handle{ .directory = directory, .findData = findData };
+
+        if (!next_directory_entry(result))
+        {
+            return {};
         }
 
         return result;
+    }
+
+    bool platform::next_directory_entry(directory_iterator& iter)
+    {
+        if (iter == directory_end)
+        {
+            return false;
+        }
+
+        auto& [directory, findData] = *iter.m_handle;
+
+        if (!FindNextFileW(directory, &findData))
+        {
+            FindClose(directory);
+            delete iter.m_handle;
+            iter.m_handle = nullptr;
+            return false;
+        }
+
+        return true;
+    }
+
+    result<dynamic_array<dynamic_string>> platform::enumerate_directory(const string_view absolutePath)
+    {
+        dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
+
+        dynamic_array<dynamic_string> result;
+
+        WIN32_FIND_DATAW findData;
+        const HANDLE directory = FindFirstFileW(widePath.data(), &findData);
+
+        while (FindNextFileW(directory, &findData))
+        {
+            bool hasEncodingError;
+            result.push_back(fs::standardize(to_utf8(findData.cFileName, &hasEncodingError)));
+            if (hasEncodingError)
+            {
+                FindClose(directory);
+                return make_error(platform_error::encoding_error);
+            }
+        }
+
+        const platform_error error = translate_platform_error(GetLastError());
+
+        FindClose(directory);
+
+        if (error != platform_error::no_error)
+        {
+            return make_error(error);
+        }
+
+        return result;
+    }
+
+    result<file> platform::open_file(string_view absolutePath, file_access_mode mode) {}
+
+    result<void> platform::close_file(file file) {}
+
+    result<size_type> platform::read_file(file file, size_type offset, array_view<byte> target) {}
+
+    result<void> platform::read_all_from_file(file file, size_type offset, array_view<byte> target) {}
+
+    result<size_type> platform::write_file(file file, size_type offset, array_view<byte const> data) {}
+
+    result<void> platform::write_all_to_file(file file, size_type offset, array_view<byte const> data) {}
+
+    result<void> platform::truncate_file(file file, size_type offset) {}
+
+    result<uint64> platform::get_file_size(string_view absolutePath) {}
+
+    result<uint64> platform::get_file_size(file file) {}
+
+    result<void> platform::flush_file_write_buffer(file file) {}
+
+    result<void> platform::rename_file(string_view oldAbsolutePath, string_view newAbsolutePath) {}
+
+    result<void> platform::delete_file(string_view absolutePath, file_delete_flags flags) {}
+
+
+    result<file_info> platform::get_file_info(const string_view absolutePath) noexcept
+    {
+        dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
+
+        const HANDLE fileHandle = ::CreateFileW(
+                widePath.data(),
+                0u,
+                FILE_SHARE_READ,
+                NULL,
+                OPEN_EXISTING,
+                FILE_ATTRIBUTE_NORMAL | FILE_FLAG_BACKUP_SEMANTICS,
+                NULL
+                );
+        if (fileHandle == INVALID_HANDLE_VALUE)
+        {
+            return make_error(translate_platform_error(GetLastError()));
+        }
+
+        BY_HANDLE_FILE_INFORMATION information;
+        if (GetFileInformationByHandle(fileHandle, &information) == FALSE)
+        {
+            const platform_error error = translate_platform_error(GetLastError());
+            CloseHandle(fileHandle);
+
+            return make_error(error);
+        }
+        CloseHandle(fileHandle);
+
+        return file_info{
+                    .lastWriteTimestamp = translate_timestamp(information.ftLastWriteTime),
+                    .size = combine_dwords(information.nFileSizeLow, information.nFileSizeHigh),
+                    .isWritable = (information.dwFileAttributes & FILE_ATTRIBUTE_READONLY) == 0u,
+                    .isDirectory = (information.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0u,
+                    .isFile = (information.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_ARCHIVE |
+                        FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_REPARSE_POINT)) == 0u,
+                };
+    }
+
+    result<file_info> platform::get_file_info(const file file) noexcept
+    {
+        BY_HANDLE_FILE_INFORMATION information;
+        if (GetFileInformationByHandle(file.m_handle, &information) == FALSE)
+        {
+            return make_error(translate_platform_error(GetLastError()));
+        }
+
+        return file_info{
+                    .lastWriteTimestamp = translate_timestamp(information.ftLastWriteTime),
+                    .size = combine_dwords(information.nFileSizeLow, information.nFileSizeHigh),
+                    .isWritable = (information.dwFileAttributes & FILE_ATTRIBUTE_READONLY) == 0u,
+                    .isDirectory = false,
+                };
+    }
+
+    bool file::operator==(const file& other) const
+    {
+        return m_handle == other.m_handle;
+    }
+
+    directory_iterator::directory_iterator(directory_iterator&& other) noexcept
+        : m_handle(other.m_handle)
+    {
+        other.m_handle = nullptr;
+    }
+
+    directory_iterator& directory_iterator::operator=(directory_iterator&& other) noexcept
+    {
+        m_handle = other.m_handle;
+        other.m_handle = nullptr;
+        return *this;
+    }
+
+    directory_iterator::~directory_iterator()
+    {
+        if (m_handle)
+        {
+            FindClose(m_handle->directory);
+            delete m_handle;
+            m_handle = nullptr;
+        }
+    }
+
+    result<dynamic_string> directory_iterator::get_path() const
+    {
+        bool hasEncodingError;
+        dynamic_string result = fs::standardize(to_utf8(m_handle->findData.cFileName, &hasEncodingError));
+        if (hasEncodingError)
+        {
+            return make_error(platform_error::encoding_error);
+        }
+
+        return result;
+    }
+
+    bool directory_iterator::operator==(const directory_iterator& other) const
+    {
+        return m_handle == other.m_handle;
+    }
+
+    bool dynamic_library::operator==(const dynamic_library& other) const
+    {
+        return m_handle == other.m_handle;
     }
 } // namespace rsl
 

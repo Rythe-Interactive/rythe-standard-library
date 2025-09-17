@@ -39,7 +39,7 @@ namespace rsl
     constexpr errc no_error_code = 0;
 
     template <typename ErrC>
-    concept error_code = is_enum_v<ErrC> && is_same_v<std::underlying_type_t<ErrC>, errc>;
+    concept error_code = is_enum_v<ErrC> && is_same_v<underlying_type_t<ErrC>, errc>;
 
     template <error_code ErrorType>
     constexpr string_view default_error_message(ErrorType);
@@ -259,5 +259,20 @@ namespace rsl
 
     inline static unspecified_error error = unspecified_error{};
 } // namespace rsl
+
+template <rsl::error_code Errc>
+struct fmt::formatter<Errc>
+{
+    static constexpr const char* parse(format_parse_context& ctx)
+    {
+        return formatter<string_view>{}.parse(ctx);
+    }
+
+    template <typename FormatContext>
+    static constexpr auto format(const Errc& err, FormatContext& ctx)
+    {
+        return format_to(ctx.out(), "{}", rsl::default_error_message(err));
+    }
+};
 
 #include "error_handling.inl"

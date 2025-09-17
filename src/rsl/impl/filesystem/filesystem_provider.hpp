@@ -9,12 +9,13 @@
 namespace rsl::filesystem
 {
     class view;
-    class file_solution;
 
     using domain_string = hybrid_string<16>;
 
     class filesystem_provider
     {
+        friend class file_solution;
+
     public:
         VIRTUAL_RULE_OF_5(filesystem_provider);
 
@@ -33,6 +34,11 @@ namespace rsl::filesystem
 
     protected:
         static void set_solution_provider(file_solution* solution, filesystem_provider* provider);
+
+        [[nodiscard]] virtual result<void> open_file_for_read(const file_solution* solution) const = 0;
+        [[nodiscard]] virtual result<void> open_file_for_write(file_solution* solution) = 0;
+        [[nodiscard]] virtual result<void> close_file(const file_solution* solution) const = 0;
+        [[nodiscard]] virtual result<void> flush_file(const file_solution* solution) const = 0;
 
         pair<index_type, bool> create_solution_reference(string_view path);
         void destroy_solution_reference(string_view path);

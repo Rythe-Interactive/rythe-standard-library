@@ -55,7 +55,7 @@ namespace rsl
         };
     }
 
-    enum struct [[rythe_open_enum]] hash_map_flags
+    enum struct [[rythe_open_enum]] hash_map_flags : uint8
     {
         none          = 0,
         flat          = 1 << 0,
@@ -63,7 +63,6 @@ namespace rsl
         all           = flat | large,
         default_flags = all,
     };
-
     RYTHE_BIT_FLAG_OPERATORS(hash_map_flags)
 
     constexpr bool hash_map_flags_is_flat(const hash_map_flags flags) noexcept

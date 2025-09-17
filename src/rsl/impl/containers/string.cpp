@@ -44,9 +44,40 @@ namespace rsl
 			output = character;
 			return width;
 		}
+
+	    [[nodiscard]] bool write_utf8(dynamic_string& str, const uint32 character)
+		{
+            if (character < 0x80u)
+            {
+                str.push_back(static_cast<utf8>(character));
+            }
+            else if (character < 0x800u)
+            {
+                str.push_back(static_cast<utf8>((character >> 6u) & 31u) | 0xc0u);
+                str.push_back(static_cast<utf8>(static_cast<utf8>(character & 63u) | 0x80u));
+            }
+            else if (character < 0x10000u)
+            {
+                str.push_back(static_cast<utf8>(static_cast<utf8>((character >> 12u) & 15u) | 0xe0u));
+                str.push_back(static_cast<utf8>(static_cast<utf8>((character >> 6) & 63) | 0x80u));
+                str.push_back(static_cast<utf8>(static_cast<utf8>(character & 63) | 0x80u));
+            }
+            else if (character < 0x200000u)
+            {
+                str.push_back(static_cast<utf8>(static_cast<utf8>((character >> 18u) & 7u) | 0xf0u));
+                str.push_back(static_cast<utf8>(static_cast<utf8>((character >> 12u) & 63u) | 0x80u));
+                str.push_back(static_cast<utf8>(static_cast<utf8>((character >> 6u) & 63u) | 0x80u));
+                str.push_back(static_cast<utf8>(static_cast<utf8>(character & 63u) | 0x80u));
+            }
+            else
+            {
+                return false;
+            }
+            return true;
+		}
 	}
 
-	dynamic_wstring to_utf16(dynamic_string::const_view_type str)
+	dynamic_wstring to_utf16(const dynamic_string::const_view_type str)
 	{
 		dynamic_wstring result;
 		result.reserve(str.size());
@@ -73,5 +104,50 @@ namespace rsl
 		}
 
 		return result;
+	}
+
+    dynamic_string to_utf8(const dynamic_wstring::const_view_type str, bool* succeeded)
+	{
+	    dynamic_string result;
+	    result.reserve(str.size());
+
+	    const utf16* data = str.data();
+	    utf16 const * const end = data + str.size();
+	    while( data != end )
+	    {
+	        uint32 character = *data++;
+	        if( ( character & 0xf800u ) == 0xd800u )
+	        {
+	            // surrogate pair
+	            if constexpr (rythe_validate_low_impact)
+	            {
+	                if( ( character & 0xfc00u ) != 0xd800u || ( *data & 0xfc00u ) != 0xdc00u )
+	                {
+	                    if (succeeded)
+	                    {
+	                        *succeeded = false;
+	                    }
+	                    return {};
+	                }
+	            }
+
+	            character = ( ( character & 0x3ffu ) << 10u ) | ( *data++ & 0x3ffu ) | 0x10000u;
+	        }
+	        if (!write_utf8( result, character ))
+	        {
+	            if (succeeded)
+	            {
+	                *succeeded = false;
+	            }
+	            return {};
+	        }
+	    }
+
+	    if (succeeded)
+	    {
+	        *succeeded = true;
+	    }
+
+	    return result;
 	}
 }

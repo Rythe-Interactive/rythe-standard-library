@@ -49,4 +49,9 @@ namespace rsl::filesystem
     [[rythe_always_inline]] constexpr void replace_domain(in_place_signal_type, StringType& path, string_view replacement) noexcept;
 }
 
+namespace rsl
+{
+    namespace fs = filesystem;
+}
+
 #include "path_util.inl"
