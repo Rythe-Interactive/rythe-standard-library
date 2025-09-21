@@ -1,4 +1,5 @@
 // ReSharper disable CppWrongIncludesOrder
+// ReSharper disable CppZeroConstantCanBeReplacedWithNullptr
 #include "../../defines.hpp"
 
 #if RYTHE_PLATFORM_WINDOWS
@@ -37,6 +38,7 @@ namespace rsl
 #include "../../filesystem/path_util.hpp"
 #include "../../threading/current_thread.inl"
 #include "../../threading/thread.hpp"
+#include "../../util/enum_flags.hpp"
 
 namespace rsl
 {
@@ -507,13 +509,108 @@ namespace rsl
         return result;
     }
 
-    result<file> platform::open_file(string_view absolutePath, file_access_mode mode) {}
+    result<file> platform::open_file(const string_view absolutePath, const file_access_mode mode, const file_access_flags flags)
+    {
+        DWORD accessMode;
+        DWORD creationDisposition;
+        DWORD shareMode = FILE_SHARE_READ;
+        DWORD flagsAndAttributes = FILE_ATTRIBUTE_NORMAL;
+
+        switch (mode)
+        {
+            case file_access_mode::read:
+            {
+                accessMode = GENERIC_READ;
+                creationDisposition = OPEN_EXISTING;
+                shareMode |= FILE_SHARE_DELETE;
+                break;
+            }
+            case file_access_mode::write_shared_read:
+            {
+                accessMode = GENERIC_READ;
+                creationDisposition = OPEN_EXISTING;
+                shareMode |= FILE_SHARE_WRITE | FILE_SHARE_DELETE;
+                break;
+            }
+            case file_access_mode::exclusive_read:
+            {
+                accessMode = GENERIC_READ | GENERIC_WRITE;
+                creationDisposition = OPEN_EXISTING;
+                break;
+            }
+            case file_access_mode::write:
+            {
+                accessMode = GENERIC_WRITE;
+                creationDisposition = CREATE_ALWAYS;
+                break;
+            }
+            case file_access_mode::append:
+            {
+                accessMode = GENERIC_WRITE;
+                creationDisposition = OPEN_ALWAYS;
+                break;
+            }
+            case file_access_mode::read_write_append:
+            {
+                accessMode = GENERIC_READ | GENERIC_WRITE;
+                creationDisposition = OPEN_ALWAYS;
+                break;
+            }
+            default:
+            {
+                return make_error(platform_error::invalid_argument, "Unsupported file_access_mode.");
+            }
+        }
+
+        if (enum_flags::has_flag(flags, file_access_flags::async))
+        {
+            flagsAndAttributes |= FILE_FLAG_OVERLAPPED;
+        }
+
+        if (enum_flags::has_flag(flags, file_access_flags::random))
+        {
+            flagsAndAttributes |= FILE_FLAG_RANDOM_ACCESS;
+        }
+
+        if (enum_flags::has_flag(flags, file_access_flags::sequential))
+        {
+            flagsAndAttributes |= FILE_FLAG_SEQUENTIAL_SCAN;
+        }
+
+        dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
+
+        file result;
+        result.m_accessMode = mode;
+        result.m_accessFlags = flags;
+
+        result.m_handle = CreateFileW(widePath.data(), accessMode, shareMode, NULL, creationDisposition, flagsAndAttributes, NULL);
+
+        if (result.m_handle == INVALID_HANDLE_VALUE)
+        {
+            return make_error(translate_platform_error(GetLastError()));
+        }
+
+        if (mode == file_access_mode::append ||
+            mode == file_access_mode::read_write_append)
+        {
+            LARGE_INTEGER largePosition;
+            largePosition.QuadPart = 0u;
+            if (!SetFilePointerEx(result.m_handle, largePosition, nullptr, FILE_END))
+            {
+                const platform_error error = translate_platform_error(GetLastError());
+                CloseHandle(result.m_handle);
+                return make_error(error);
+            }
+        }
+
+        return result;
+    }
 
     result<void> platform::close_file(file file) {}
 
-    result<size_type> platform::read_file(file file, size_type offset, array_view<byte> target) {}
+    result<size_type> platform::read_file_section(file file, array_view<byte> target, size_type amountOfBytes, size_type offset) {}
 
-    result<void> platform::read_all_from_file(file file, size_type offset, array_view<byte> target) {}
+    result<void> platform::read_file(file file, array_view<byte> target, size_type offset) {}
 
     result<size_type> platform::write_file(file file, size_type offset, array_view<byte const> data) {}
 

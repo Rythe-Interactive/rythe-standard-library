@@ -16,6 +16,15 @@ namespace rsl
     class file;
     class directory_iterator;
 
+    struct file_info
+    {
+        time::date lastWriteTimestamp;
+        size_type size;
+        bool isWritable;
+        bool isDirectory;
+        bool isFile;
+    };
+
     enum struct [[rythe_closed_enum]] file_access_mode : uint8
     {
         read,
@@ -26,14 +35,14 @@ namespace rsl
         read_write_append,
     };
 
-    struct file_info
+    enum struct [[rythe_open_enum]] file_access_flags : uint8
     {
-        time::date lastWriteTimestamp;
-        size_type size;
-        bool isWritable;
-        bool isDirectory;
-        bool isFile;
+        no_preference = 0,
+        async = 1 << 0,
+        random = 1 << 1,
+        sequential = 1 << 2,
     };
+    RYTHE_BIT_FLAG_OPERATORS(file_access_flags)
 
     enum struct [[rythe_open_enum]] file_delete_flags : uint8
     {
@@ -41,7 +50,6 @@ namespace rsl
         force     = 1 << 0,
         recursive = 1 << 1,
     };
-
     RYTHE_BIT_FLAG_OPERATORS(file_delete_flags)
 
     class platform
@@ -89,10 +97,10 @@ namespace rsl
         static bool next_directory_entry(directory_iterator& iter);
         static result<dynamic_array<dynamic_string>> enumerate_directory(string_view absolutePath);
 
-        static result<file> open_file(string_view absolutePath, file_access_mode mode);
+        static result<file> open_file(string_view absolutePath, file_access_mode mode, file_access_flags flags = file_access_flags::no_preference);
         static result<void> close_file(file file);
-        static result<size_type> read_file(file file, size_type offset, array_view<byte> target);
-        static result<void> read_all_from_file(file file, size_type offset, array_view<byte> target);
+        static result<size_type> read_file_section(file file, array_view<byte> target, size_type amountOfBytes, size_type offset = 0ull);
+        static result<void> read_file(file file, array_view<byte> target, size_type offset = 0ull);
         static result<size_type> write_file(file file, size_type offset, array_view<const byte> data);
         static result<void> write_all_to_file(file file, size_type offset, array_view<const byte> data);
         static result<void> truncate_file(file file, size_type offset = 0ull);
@@ -127,6 +135,13 @@ namespace rsl
 
         bool operator==(const file& other) const;
         bool operator!=(const file& other) const { return !(*this == other); }
+
+        [[nodiscard]] [[rythe_always_inline]] file_access_mode get_mode() const noexcept { return m_accessMode; }
+        [[nodiscard]] [[rythe_always_inline]] file_access_flags get_flags() const noexcept { return m_accessFlags; }
+
+    private:
+        file_access_mode m_accessMode;
+        file_access_flags m_accessFlags;
     };
 
     #if !defined(RYTHE_DIRECTORY_ITERATOR_HANDLE_IMPL)

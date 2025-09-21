@@ -484,5 +484,10 @@ extern get_##name##_func get_##name;
     constexpr EnumType operator&(EnumType lhs, EnumType rhs) noexcept                                                                 \
     {                                                                                                                                 \
         return static_cast<EnumType>(static_cast<underlying_type_t<EnumType>>(lhs) & static_cast<underlying_type_t<EnumType>>(rhs));  \
+    }                                                                                                                                 \
+    constexpr EnumType operator^(EnumType lhs, EnumType rhs) noexcept                                                                 \
+    {                                                                                                                                 \
+        return static_cast<EnumType>(static_cast<underlying_type_t<EnumType>>(lhs) ^ static_cast<underlying_type_t<EnumType>>(rhs));  \
     }
+
 #pragma endregion
