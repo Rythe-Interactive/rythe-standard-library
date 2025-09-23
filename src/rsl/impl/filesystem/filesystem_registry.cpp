@@ -112,8 +112,8 @@ namespace rsl::filesystem
         return m_providers;
     }
 
-    iterator_view<const domain_string, domain_iterator> filesystem_registry::domains() const noexcept
+    iterator_view<domain_iterator> filesystem_registry::domains() const noexcept
     {
-        return iterator_view<const domain_string, domain_iterator>(domain_iterator(m_providers.begin()), domain_iterator(m_providers.end()));
+        return iterator_view(domain_iterator(m_providers.begin()), domain_iterator(m_providers.end()));
     }
 }

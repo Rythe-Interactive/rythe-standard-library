@@ -24,7 +24,7 @@ namespace rsl
         {
             return;
         }
-        
+
         reserve(src.m_size);
         m_size = src.m_size;
         // will copy postfix from src if `use_post_fix`
@@ -726,7 +726,7 @@ namespace rsl
     constexpr size_type contiguous_container_base<T, Alloc, Factory, Iter, ConstIter, ContiguousContainerInfo>::append(
             InputIt first,
             InputIt last
-            ) noexcept(move_construct_noexcept && construct_noexcept<iter_value_t<InputIt>>)
+            ) noexcept(move_construct_noexcept && construct_noexcept<iter_read_t<InputIt>>)
         requires (
             can_resize)
     {
@@ -847,7 +847,7 @@ namespace rsl
             size_type pos,
             InputIt first,
             InputIt last
-            ) noexcept(move_construct_noexcept && construct_noexcept<iter_value_t<InputIt>>)
+            ) noexcept(move_construct_noexcept && construct_noexcept<iter_read_t<InputIt>>)
         requires (
             can_resize)
     {
@@ -1675,7 +1675,7 @@ namespace rsl
         requires (can_resize)
     {
         rsl_assert_out_of_range(pos < m_size);
-        rsl_assert_invalid_operation_frequent(static_cast<diff_type>(pos) + offset >= 0ull);
+        rsl_assert_invalid_operation_frequent(static_cast<diff_type>(pos) + offset >= 0ll);
 
         const size_type newSize = m_size + offset;
         const size_type newFootprint = calc_memory_size(newSize);
@@ -1866,7 +1866,7 @@ namespace rsl
             const diff_type shift
             ) noexcept(move_construct_noexcept)
     {
-        if (shift > 0ull)
+        if (shift > 0ll)
         {
             for (size_type i = end; i != offset; --i)
             {

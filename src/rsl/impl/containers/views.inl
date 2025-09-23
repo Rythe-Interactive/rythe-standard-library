@@ -62,7 +62,7 @@ namespace rsl
         {
             result.m_src = bit_cast<T*>(ptr);
         }
-        
+
         result.m_count = count * sizeof(Other);
         return result;
     }
@@ -352,7 +352,7 @@ namespace rsl
         {
             return npos;
         }
-        
+
         if (key.size() > arr.size())
         {
             return npos;
@@ -695,149 +695,157 @@ namespace rsl
         return count;
     }
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr iterator_view<T, Iter, ConstIter>::iterator_view(iterator_type start, iterator_type end) noexcept
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr iterator_view<Iter, ConstIter>::iterator_view(iterator_type start, iterator_type end) noexcept
         : m_start(start),
           m_end(end) {}
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr iterator_view<T, Iter, ConstIter>::iterator_view(pointer ptr, size_type count) noexcept
-        requires same_as<Iter, T*>
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr iterator_view<Iter, ConstIter>::iterator_view(pointer ptr, size_type count) noexcept
+        requires same_as<Iter, pointer>
         : m_start(ptr),
           m_end(ptr + count) {}
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
     template <size_type N>
-    constexpr iterator_view<T, Iter, ConstIter>::iterator_view(value_type (& arr)[N]) noexcept
-        requires same_as<Iter, T*>
+    constexpr iterator_view<Iter, ConstIter>::iterator_view(value_type (& arr)[N]) noexcept
+        requires same_as<Iter, pointer>
         : m_start(arr),
           m_end(arr + N) {}
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr iterator_view<T, Iter, ConstIter>::iterator_view(const value_type& other) noexcept
-        requires same_as<Iter, T*>
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr iterator_view<Iter, ConstIter>::iterator_view(const value_type& other) noexcept
+        requires same_as<Iter, pointer>
         : m_start(&other),
           m_end((&other) + 1u) {}
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr iterator_view<T, Iter, ConstIter>::operator iterator_view<const T, ConstIter>() noexcept
-        requires(!is_const_v<T>)
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr iterator_view<Iter, ConstIter>::operator iterator_view<ConstIter>() noexcept
+        requires(!is_const_v<value_type>)
     {
-        return iterator_view<const T, const_iterator_type>(m_start, m_end);
+        return iterator_view<const_iterator_type>(m_start, m_end);
     }
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr iterator_view<T, Iter, ConstIter>::operator contiguous_view_type() noexcept
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr iterator_view<Iter, ConstIter>::operator contiguous_view_type() noexcept
         requires(contiguous_iterator<Iter> && contiguous_iterator<ConstIter>)
     {
         if constexpr (!is_void_v<contiguous_view_type>) { return contiguous_view_type(&*m_start, size()); }
         else { return contiguous_view_type(); }
     }
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr iterator_view<T, Iter, ConstIter> iterator_view<T, Iter, ConstIter>::from_string_length(T* str, T terminator) noexcept
-        requires(char_type<T> && same_as<Iter, T*>)
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr iterator_view<Iter, ConstIter> iterator_view<Iter, ConstIter>::from_string_length(
+            pointer str,
+            value_type terminator
+            ) noexcept
+        requires(char_type<value_type> && same_as<Iter, pointer>)
     {
         return iterator_view(str, str + string_length(str, terminator));
     }
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr bool iterator_view<T, Iter, ConstIter>::operator==(const iterator_view& rhs)
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr bool iterator_view<Iter, ConstIter>::operator==(const iterator_view& rhs)
     {
         return m_start == rhs.m_start && m_end == rhs.m_end;
     }
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr bool iterator_view<T, Iter, ConstIter>::operator!=(const iterator_view& rhs)
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr bool iterator_view<Iter, ConstIter>::operator!=(const iterator_view& rhs)
     {
         return !(*this == rhs);
     }
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr typename iterator_view<T, Iter, ConstIter>::iterator_type iterator_view<T, Iter, ConstIter>::begin() noexcept
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr typename iterator_view<Iter, ConstIter>::iterator_type iterator_view<Iter, ConstIter>::begin() noexcept
     {
         return m_start;
     }
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr typename iterator_view<T, Iter, ConstIter>::const_iterator_type iterator_view<T, Iter, ConstIter>::begin() const noexcept
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr typename iterator_view<Iter, ConstIter>::const_iterator_type iterator_view<Iter, ConstIter>::begin() const noexcept
     {
         return m_start;
     }
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr typename iterator_view<T, Iter, ConstIter>::const_iterator_type iterator_view<
-        T, Iter, ConstIter>::cbegin() const noexcept
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr typename iterator_view<Iter, ConstIter>::const_iterator_type iterator_view<Iter, ConstIter>::cbegin() const noexcept
     {
         return m_start;
     }
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr typename iterator_view<T, Iter, ConstIter>::iterator_type iterator_view<T, Iter, ConstIter>::end() noexcept
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr typename iterator_view<Iter, ConstIter>::iterator_type iterator_view<Iter, ConstIter>::end() noexcept
     {
         return m_end;
     }
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr typename iterator_view<T, Iter, ConstIter>::const_iterator_type iterator_view<T, Iter, ConstIter>::end() const noexcept
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr typename iterator_view<Iter, ConstIter>::const_iterator_type iterator_view<Iter, ConstIter>::end() const noexcept
     {
         return m_end;
     }
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr typename iterator_view<T, Iter, ConstIter>::const_iterator_type iterator_view<T, Iter, ConstIter>::cend() const noexcept
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr typename iterator_view<Iter, ConstIter>::const_iterator_type iterator_view<Iter, ConstIter>::cend() const noexcept
     {
         return m_end;
     }
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr typename iterator_view<T, Iter, ConstIter>::reverse_iterator_type iterator_view<T, Iter, ConstIter>::rbegin() noexcept
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr typename iterator_view<Iter, ConstIter>::reverse_iterator_type iterator_view<Iter, ConstIter>::rbegin() noexcept
+        requires(reverse_iterable)
     {
         return reverse_iterator(end());
     }
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr typename iterator_view<T, Iter, ConstIter>::const_reverse_iterator_type iterator_view<
-        T, Iter, ConstIter>::rbegin() const noexcept
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr typename iterator_view<Iter, ConstIter>::const_reverse_iterator_type iterator_view<
+        Iter, ConstIter>::rbegin() const noexcept
+        requires(reverse_iterable)
     {
         return crbegin();
     }
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr typename iterator_view<T, Iter, ConstIter>::const_reverse_iterator_type iterator_view<
-        T, Iter, ConstIter>::crbegin() const noexcept
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr typename iterator_view<Iter, ConstIter>::const_reverse_iterator_type iterator_view<
+        Iter, ConstIter>::crbegin() const noexcept
+        requires(reverse_iterable)
     {
         return const_reverse_iterator_type(cend());
     }
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr typename iterator_view<T, Iter, ConstIter>::reverse_iterator_type iterator_view<T, Iter, ConstIter>::rend() noexcept
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr typename iterator_view<Iter, ConstIter>::reverse_iterator_type iterator_view<Iter, ConstIter>::rend() noexcept
+        requires(reverse_iterable)
     {
         return reverse_iterator(begin());
     }
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr typename iterator_view<T, Iter, ConstIter>::const_reverse_iterator_type iterator_view<
-        T, Iter, ConstIter>::rend() const noexcept
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr typename iterator_view<Iter, ConstIter>::const_reverse_iterator_type iterator_view<
+        Iter, ConstIter>::rend() const noexcept
+        requires(reverse_iterable)
     {
         return crend();
     }
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr typename iterator_view<T, Iter, ConstIter>::const_reverse_iterator_type iterator_view<
-        T, Iter, ConstIter>::crend() const noexcept
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr typename iterator_view<Iter, ConstIter>::const_reverse_iterator_type iterator_view<
+        Iter, ConstIter>::crend() const noexcept
+        requires(reverse_iterable)
     {
         return const_reverse_iterator_type(cbegin());
     }
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr typename iterator_view<T, Iter, ConstIter>::reference iterator_view<T, Iter, ConstIter>::front()
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr typename iterator_view<Iter, ConstIter>::reference iterator_view<Iter, ConstIter>::front()
     {
         return *m_start;
     }
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr typename iterator_view<T, Iter, ConstIter>::reference iterator_view<T, Iter, ConstIter>::front() const
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr typename iterator_view<Iter, ConstIter>::reference iterator_view<Iter, ConstIter>::front() const
     {
         return *m_start;
     }
@@ -868,26 +876,26 @@ namespace rsl
         }
     } // namespace internal
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr typename iterator_view<T, Iter, ConstIter>::reference iterator_view<T, Iter, ConstIter>::back()
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr typename iterator_view<Iter, ConstIter>::reference iterator_view<Iter, ConstIter>::back()
     {
         return internal::find_last_iter(m_start, m_end);
     }
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr typename iterator_view<T, Iter, ConstIter>::reference iterator_view<T, Iter, ConstIter>::back() const
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr typename iterator_view<Iter, ConstIter>::reference iterator_view<Iter, ConstIter>::back() const
     {
         return internal::find_last_iter(m_start, m_end);
     }
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr size_type iterator_view<T, Iter, ConstIter>::size() const noexcept
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr size_type iterator_view<Iter, ConstIter>::size() const noexcept
     {
         return static_cast<size_type>(iterator_diff(m_start, m_end));
     }
 
-    template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
-    constexpr bool iterator_view<T, Iter, ConstIter>::empty() const noexcept
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    constexpr bool iterator_view<Iter, ConstIter>::empty() const noexcept
     {
         return m_start == m_end;
     }

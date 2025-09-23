@@ -53,13 +53,13 @@ namespace rsl
 		using with_reference = T&;
 
 		template <typename T>
-		concept can_reference = requires { typename with_reference<T>; };
+		concept can_reference = requires { typename with_reference<remove_reference_t<T>>; };
 
 		template <typename T>
-		concept dereferenceable = requires(T& val) { { *val } -> can_reference; };
+		concept dereferenceable = requires(const T& val) { { *val } -> can_reference; };
 
 		template <typename T>
-		concept pointable = requires(T& val) { { val.operator->() } -> dereferenceable; } || (is_pointer_v<T>);
+		concept pointable = requires(const T& val) { { val.operator->() } -> dereferenceable; } || (is_pointer_v<T>);
 
 		template <typename>
 		struct cond_value_type {};
@@ -170,8 +170,6 @@ namespace rsl
 	template <typename T>
 	concept weakly_incrementable = movable<T> && requires(T i)
 	{
-		typename iter_difference_t<T>;
-		requires internal::signed_integer_like<iter_difference_t<T>>;
 		{ ++i } -> same_as<T&>;
 		i++;
 	};

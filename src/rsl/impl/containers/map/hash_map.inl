@@ -116,7 +116,7 @@ namespace rsl
 
     template <typename MapInfo>
     template <typename Iter, typename ConstIter>
-    constexpr hash_map_base<MapInfo> hash_map_base<MapInfo>::from_view(const iterator_view<value_type, Iter, ConstIter> src)
+    constexpr hash_map_base<MapInfo> hash_map_base<MapInfo>::from_view(const iterator_view<Iter, ConstIter> src)
     {
         hash_map_base result;
 
@@ -130,7 +130,7 @@ namespace rsl
 
     template <typename MapInfo>
     template <typename Iter, typename ConstIter>
-    constexpr hash_map_base<MapInfo> hash_map_base<MapInfo>::move_from_view(iterator_view<value_type, Iter, ConstIter> src)
+    constexpr hash_map_base<MapInfo> hash_map_base<MapInfo>::move_from_view(iterator_view<Iter, ConstIter> src)
     {
         hash_map_base result;
 

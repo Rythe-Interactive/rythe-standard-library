@@ -30,7 +30,6 @@ namespace rsl
 }
 
 #include "../platform.hpp"
-#include "../platform_error.hpp"
 
 #define RYTHE_THREAD_HANDLE_IMPL HANDLE
 
@@ -44,7 +43,7 @@ namespace rsl
 {
     struct native_win_directory_iterator_handle
     {
-        HANDLE directory;
+        managed_resource<HANDLE> directory;
         WIN32_FIND_DATAW findData;
     };
 
@@ -119,7 +118,7 @@ namespace rsl
 
         uint64 combine_dwords(const DWORD lower, const DWORD upper) noexcept
         {
-            return static_cast<uint64>(upper << 32ull) | static_cast<uint64>(lower);
+            return (static_cast<uint64>(upper) << 32ull) | static_cast<uint64>(lower);
         }
 
         time::date translate_timestamp(const FILETIME fileTime) noexcept
@@ -432,7 +431,7 @@ namespace rsl
         return ::GetFileAttributesW(widePath.data()) != INVALID_FILE_ATTRIBUTES;
     }
 
-    result<directory_iterator> platform::iterate_directory(const string_view absolutePath)
+    result<iterator_view<directory_iterator>> platform::iterate_directory(const string_view absolutePath)
     {
         dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
 
@@ -446,15 +445,16 @@ namespace rsl
             return make_error(error);
         }
 
-        directory_iterator result;
-        result.m_handle = new native_win_directory_iterator_handle{ .directory = directory, .findData = findData };
+        directory_iterator startIterator;
+        startIterator.m_handle = new native_win_directory_iterator_handle{ .directory = managed_resource<HANDLE>(FindClose, directory),
+                                                                           .findData = findData };
 
-        if (!next_directory_entry(result))
+        if (!next_directory_entry(startIterator))
         {
             return {};
         }
 
-        return result;
+        return iterator_view(startIterator, directory_end);
     }
 
     bool platform::next_directory_entry(directory_iterator& iter)
@@ -466,11 +466,9 @@ namespace rsl
 
         auto& [directory, findData] = *iter.m_handle;
 
-        if (!FindNextFileW(directory, &findData))
+        if (!FindNextFileW(*directory, &findData))
         {
-            FindClose(directory);
-            delete iter.m_handle;
-            iter.m_handle = nullptr;
+            iter = directory_end;
             return false;
         }
 
@@ -694,6 +692,9 @@ namespace rsl
         other.m_handle = nullptr;
     }
 
+    constexpr directory_iterator::directory_iterator(const directory_iterator& other) noexcept
+        : m_handle(other.m_handle ? new native_win_directory_iterator_handle(*other.m_handle) : nullptr) {}
+
     directory_iterator& directory_iterator::operator=(directory_iterator&& other) noexcept
     {
         m_handle = other.m_handle;
@@ -701,11 +702,26 @@ namespace rsl
         return *this;
     }
 
+    constexpr directory_iterator& directory_iterator::operator=(const directory_iterator& other) noexcept
+    {
+        if (m_handle)
+        {
+            delete m_handle;
+            m_handle = nullptr;
+        }
+
+        if (other.m_handle)
+        {
+            m_handle = new native_win_directory_iterator_handle(*other.m_handle);
+        }
+
+        return *this;
+    }
+
     directory_iterator::~directory_iterator()
     {
         if (m_handle)
         {
-            FindClose(m_handle->directory);
             delete m_handle;
             m_handle = nullptr;
         }
@@ -726,6 +742,29 @@ namespace rsl
     bool directory_iterator::operator==(const directory_iterator& other) const
     {
         return m_handle == other.m_handle;
+    }
+
+    const directory_entry& directory_iterator::operator*() const
+    {
+        return m_entry;
+    }
+
+    const directory_entry* directory_iterator::operator->() const
+    {
+        return &m_entry;
+    }
+
+    directory_iterator directory_iterator::operator++(int)
+    {
+        directory_iterator result = *this;
+        platform::next_directory_entry(*this);
+        return result;
+    }
+
+    directory_iterator& directory_iterator::operator++()
+    {
+        platform::next_directory_entry(*this);
+        return *this;
     }
 
     bool dynamic_library::operator==(const dynamic_library& other) const

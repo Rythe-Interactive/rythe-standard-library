@@ -123,14 +123,14 @@ namespace rsl
 
     struct error_signal {};
 
-    struct result_base;
+    class result_base;
 
     namespace internal
     {
         errid& get_errid(result_base&) noexcept;
     }
 
-    struct result_base
+    class result_base
     {
     protected:
         errid m_errid = invalid_err_id;
@@ -155,15 +155,16 @@ namespace rsl
     };
 
     template <typename...>
-    struct result;
+    class result;
 
     template <typename T>
-    struct [[nodiscard]] result<T> final : public result_base
+    class [[nodiscard]] result<T> final : public result_base
     {
     public:
         using result_type = remove_cvr_t<T>;
 
         [[rythe_always_inline]] result(error_signal) noexcept;
+        [[rythe_always_inline]] ~result() override;
 
         template <typename... Args>
             requires(rsl::constructible_from<T, Args...>)
@@ -184,8 +185,9 @@ namespace rsl
     };
 
     template <>
-    struct [[nodiscard]] result<void> final : public result_base
+    class [[nodiscard]] result<void> final : public result_base
     {
+    public:
         [[rythe_always_inline]] result(error_signal) noexcept : result_base(error_signal{}) {}
         [[rythe_always_inline]] constexpr result() noexcept : result_base() {}
     };

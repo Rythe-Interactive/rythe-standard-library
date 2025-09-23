@@ -76,7 +76,7 @@ namespace rsl
 		using reverse_iterator_type = hash_map_iterator<hash_map_base, typename value_container::reverse_iterator_type>;
 		using const_reverse_iterator_type = hash_map_iterator<hash_map_base, typename value_container::const_reverse_iterator_type>;
 
-		using view_type = iterator_view<value_type, iterator_type, const_iterator_type>;
+		using view_type = iterator_view<iterator_type, const_iterator_type>;
 		using const_view_type = typename view_type::const_view_type;
 
 		[[rythe_always_inline]] constexpr hash_map_base() noexcept(MapInfo::nothrow_constructible);
@@ -102,10 +102,10 @@ namespace rsl
 		) noexcept(nothrow_constructible_alloc_fact);
 
 		template <typename Iter, typename ConstIter>
-		[[rythe_always_inline]] constexpr static hash_map_base from_view(iterator_view<value_type, Iter, ConstIter> src);
+		[[rythe_always_inline]] constexpr static hash_map_base from_view(iterator_view<Iter, ConstIter> src);
 
 		template <typename Iter, typename ConstIter>
-		[[rythe_always_inline]] constexpr static hash_map_base move_from_view(iterator_view<value_type, Iter, ConstIter> src);
+		[[rythe_always_inline]] constexpr static hash_map_base move_from_view(iterator_view<Iter, ConstIter> src);
 
 		[[rythe_always_inline]] constexpr static hash_map_base create_reserved(size_type capacity)
 			noexcept(noexcept(declval<hash_map_base>().reserve(0)));

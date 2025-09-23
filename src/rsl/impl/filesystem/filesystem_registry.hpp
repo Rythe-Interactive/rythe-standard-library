@@ -49,7 +49,7 @@ namespace rsl::filesystem
 
         bool has_domain(string_view domain) const noexcept;
         array_view<const unique_object<filesystem_provider>> providers() const noexcept;
-        iterator_view<const domain_string, domain_iterator> domains() const noexcept;
+        iterator_view<domain_iterator> domains() const noexcept;
 
     protected:
         dynamic_map<string_view, dynamic_array<filesystem_provider*>> m_domainMap;

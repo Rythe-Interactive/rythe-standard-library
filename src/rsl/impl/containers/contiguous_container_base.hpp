@@ -242,7 +242,7 @@ namespace rsl
                 InputIt first,
                 InputIt last
                 )
-            noexcept(move_construct_noexcept && construct_noexcept<iter_value_t<InputIt>>)
+            noexcept(move_construct_noexcept && construct_noexcept<iter_read_t<InputIt>>)
             requires(can_resize);
         [[rythe_always_inline]] constexpr size_type append(
                 const value_type* ptr,
@@ -294,7 +294,7 @@ namespace rsl
                 InputIt first,
                 InputIt last
                 )
-            noexcept(move_construct_noexcept && construct_noexcept<iter_value_t<InputIt>>)
+            noexcept(move_construct_noexcept && construct_noexcept<iter_read_t<InputIt>>)
             requires(can_resize);
         [[rythe_always_inline]] constexpr size_type insert(
                 size_type pos,

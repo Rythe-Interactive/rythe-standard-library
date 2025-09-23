@@ -113,6 +113,17 @@ namespace rsl
           m_dummy(0) {}
 
     template <typename T>
+    result<T>::~result()
+    {
+        if (carries_value())
+        {
+            m_value.~T();
+        }
+
+        result_base::~result_base();
+    }
+
+    template <typename T>
     template <typename... Args>
         requires (rsl::constructible_from<T, Args...>)
     constexpr result<T>::result(Args&&... args) noexcept(rsl::is_nothrow_constructible_v<T, Args...>)
