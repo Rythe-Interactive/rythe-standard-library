@@ -378,103 +378,103 @@ using get_##name##_func = name& (*)();                                          
 extern get_##name##_func get_##name;
 
 #define RULE_OF_5(type)                                                                                                               \
-    type() = default;                                                                                                                 \
-    type(const type&) = default;                                                                                                      \
-    type(type&&) = default;                                                                                                           \
-    type& operator=(const type&) = default;                                                                                           \
-    type& operator=(type&&) = default;                                                                                                \
-    ~type() = default;
+    [[rythe_always_inline]] type() = default;                                                                                         \
+    [[rythe_always_inline]] type(const type&) = default;                                                                              \
+    [[rythe_always_inline]] type(type&&) = default;                                                                                   \
+    [[rythe_always_inline]] type& operator=(const type&) = default;                                                                   \
+    [[rythe_always_inline]] type& operator=(type&&) = default;                                                                        \
+    [[rythe_always_inline]] ~type() = default;
 
 #define VIRTUAL_RULE_OF_5(type)                                                                                                       \
-    type() = default;                                                                                                                 \
-    type(const type&) = default;                                                                                                      \
-    type(type&&) = default;                                                                                                           \
-    type& operator=(const type&) = default;                                                                                           \
-    type& operator=(type&&) = default;                                                                                                \
+    [[rythe_always_inline]] type() = default;                                                                                         \
+    [[rythe_always_inline]] type(const type&) = default;                                                                              \
+    [[rythe_always_inline]] type(type&&) = default;                                                                                   \
+    [[rythe_always_inline]] type& operator=(const type&) = default;                                                                   \
+    [[rythe_always_inline]] type& operator=(type&&) = default;                                                                        \
     virtual ~type() = default;
 
 #define RULE_OF_5_NOEXCEPT(type)                                                                                                      \
-    type() noexcept = default;                                                                                                        \
-    type(const type&) noexcept = default;                                                                                             \
-    type(type&&) noexcept = default;                                                                                                  \
-    type& operator=(const type&) noexcept = default;                                                                                  \
-    type& operator=(type&&) noexcept = default;                                                                                       \
-    ~type() = default;
+    [[rythe_always_inline]] type() noexcept = default;                                                                                \
+    [[rythe_always_inline]] type(const type&) noexcept = default;                                                                     \
+    [[rythe_always_inline]] type(type&&) noexcept = default;                                                                          \
+    [[rythe_always_inline]] type& operator=(const type&) noexcept = default;                                                          \
+    [[rythe_always_inline]] type& operator=(type&&) noexcept = default;                                                               \
+    [[rythe_always_inline]] ~type() = default;
 
 #define RULE_OF_5_CONSTEXPR_NOEXCEPT(type)                                                                                            \
-    constexpr type() noexcept = default;                                                                                              \
-    constexpr type(const type&) noexcept = default;                                                                                   \
-    constexpr type(type&&) noexcept = default;                                                                                        \
-    constexpr type& operator=(const type&) noexcept = default;                                                                        \
-    constexpr type& operator=(type&&) noexcept = default;                                                                             \
-    constexpr ~type() = default;
+    [[rythe_always_inline]] constexpr type() noexcept = default;                                                                      \
+    [[rythe_always_inline]] constexpr type(const type&) noexcept = default;                                                           \
+    [[rythe_always_inline]] constexpr type(type&&) noexcept = default;                                                                \
+    [[rythe_always_inline]] constexpr type& operator=(const type&) noexcept = default;                                                \
+    [[rythe_always_inline]] constexpr type& operator=(type&&) noexcept = default;                                                     \
+    [[rythe_always_inline]] constexpr ~type() = default;
 
 #define NO_DEF_CTOR_RULE5(type)                                                                                                       \
-    type(const type&) = default;                                                                                                      \
-    type(type&&) = default;                                                                                                           \
-    type& operator=(const type&) = default;                                                                                           \
-    type& operator=(type&&) = default;                                                                                                \
-    ~type() = default;
+    [[rythe_always_inline]] type(const type&) = default;                                                                              \
+    [[rythe_always_inline]] type(type&&) = default;                                                                                   \
+    [[rythe_always_inline]] type& operator=(const type&) = default;                                                                   \
+    [[rythe_always_inline]] type& operator=(type&&) = default;                                                                        \
+    [[rythe_always_inline]] ~type() = default;
 
 #define NO_DEF_CTOR_RULE5_NOEXCEPT(type)                                                                                              \
-    type(const type&) noexcept = default;                                                                                             \
-    type(type&&) noexcept = default;                                                                                                  \
-    type& operator=(const type&) noexcept = default;                                                                                  \
-    type& operator=(type&&) noexcept = default;                                                                                       \
-    ~type() = default;
+    [[rythe_always_inline]] type(const type&) noexcept = default;                                                                     \
+    [[rythe_always_inline]] type(type&&) noexcept = default;                                                                          \
+    [[rythe_always_inline]] type& operator=(const type&) noexcept = default;                                                          \
+    [[rythe_always_inline]] type& operator=(type&&) noexcept = default;                                                               \
+    [[rythe_always_inline]] ~type() = default;
 
 #define NO_DTOR_RULE5(type)                                                                                                           \
-    type() = default;                                                                                                                 \
-    type(const type&) = default;                                                                                                      \
-    type(type&&) = default;                                                                                                           \
-    type& operator=(const type&) = default;                                                                                           \
-    type& operator=(type&&) = default;
+    [[rythe_always_inline]] type() = default;                                                                                         \
+    [[rythe_always_inline]] type(const type&) = default;                                                                              \
+    [[rythe_always_inline]] type(type&&) = default;                                                                                   \
+    [[rythe_always_inline]] type& operator=(const type&) = default;                                                                   \
+    [[rythe_always_inline]] type& operator=(type&&) = default;
 
 #define NO_DTOR_RULE5_NOEXCEPT(type)                                                                                                  \
-    type() noexcept = default;                                                                                                        \
-    type(const type&) noexcept = default;                                                                                             \
-    type(type&&) noexcept = default;                                                                                                  \
-    type& operator=(const type&) noexcept = default;                                                                                  \
-    type& operator=(type&&) noexcept = default;
+    [[rythe_always_inline]] type() noexcept = default;                                                                                \
+    [[rythe_always_inline]] type(const type&) noexcept = default;                                                                     \
+    [[rythe_always_inline]] type(type&&) noexcept = default;                                                                          \
+    [[rythe_always_inline]] type& operator=(const type&) noexcept = default;                                                          \
+    [[rythe_always_inline]] type& operator=(type&&) noexcept = default;
 
 #define NO_DTOR_RULE5_CONSTEXPR_NOEXCEPT(type)                                                                                        \
-    constexpr type() noexcept = default;                                                                                              \
-    constexpr type(const type&) noexcept = default;                                                                                   \
-    constexpr type(type&&) noexcept = default;                                                                                        \
-    constexpr type& operator=(const type&) noexcept = default;                                                                        \
-    constexpr type& operator=(type&&) noexcept = default;
+    [[rythe_always_inline]] constexpr type() noexcept = default;                                                                      \
+    [[rythe_always_inline]] constexpr type(const type&) noexcept = default;                                                           \
+    [[rythe_always_inline]] constexpr type(type&&) noexcept = default;                                                                \
+    [[rythe_always_inline]] constexpr type& operator=(const type&) noexcept = default;                                                \
+    [[rythe_always_inline]] constexpr type& operator=(type&&) noexcept = default;
 
 #define COPY_FUNCS(type)                                                                                                              \
-    type(const type&) = default;                                                                                                      \
-    type& operator=(const type&) = default;
+    [[rythe_always_inline]] type(const type&) = default;                                                                              \
+    [[rythe_always_inline]] type& operator=(const type&) = default;
 
 #define COPY_FUNCS_DECO(pre, type, post)                                                                                              \
     pre type(const type&) post = default;                                                                                             \
     pre type& operator=(const type&) post = default;
 
 #define COPY_FUNCS_NOEXCEPT(type)                                                                                                     \
-    type(const type&) noexcept = default;                                                                                             \
-    type& operator=(const type&) noexcept = default;
+    [[rythe_always_inline]] type(const type&) noexcept = default;                                                                     \
+    [[rythe_always_inline]] type& operator=(const type&) noexcept = default;
 
 #define COPY_FUNCS_CONSTEXPR_NOEXCEPT(type)                                                                                           \
-    constexpr type(const type&) noexcept = default;                                                                                   \
-    constexpr type& operator=(const type&) noexcept = default;
+    [[rythe_always_inline]] constexpr type(const type&) noexcept = default;                                                           \
+    [[rythe_always_inline]] constexpr type& operator=(const type&) noexcept = default;
 
 #define MOVE_FUNCS(type)                                                                                                              \
-    type(type&&) = default;                                                                                                           \
-    type& operator=(type&&) = default;
+    [[rythe_always_inline]] type(type&&) = default;                                                                                   \
+    [[rythe_always_inline]] type& operator=(type&&) = default;
 
 #define MOVE_FUNCS_DECO(pre, type, post)                                                                                              \
     pre type(type&&) post = default;                                                                                                  \
     pre type& operator=(type&&) post = default;
 
 #define MOVE_FUNCS_NOEXCEPT(type)                                                                                                     \
-    type(type&&) noexcept = default;                                                                                                  \
-    type& operator=(type&&) noexcept = default;
+    [[rythe_always_inline]] type(type&&) noexcept = default;                                                                          \
+    [[rythe_always_inline]] type& operator=(type&&) noexcept = default;
 
 #define MOVE_FUNCS_CONSTEXPR_NOEXCEPT(type)                                                                                           \
-    constexpr type(type&&) noexcept = default;                                                                                        \
-    constexpr type& operator=(type&&) noexcept = default;
+    [[rythe_always_inline]] constexpr type(type&&) noexcept = default;                                                                \
+    [[rythe_always_inline]] constexpr type& operator=(type&&) noexcept = default;
 
 #define RYTHE_BIT_FLAG_OPERATORS(EnumType)                                                                                            \
     constexpr EnumType operator|(EnumType lhs, EnumType rhs) noexcept                                                                 \
@@ -488,6 +488,10 @@ extern get_##name##_func get_##name;
     constexpr EnumType operator^(EnumType lhs, EnumType rhs) noexcept                                                                 \
     {                                                                                                                                 \
         return static_cast<EnumType>(static_cast<underlying_type_t<EnumType>>(lhs) ^ static_cast<underlying_type_t<EnumType>>(rhs));  \
+    }                                                                                                                                 \
+    constexpr EnumType operator~(EnumType val) noexcept                                                                               \
+    {                                                                                                                                 \
+        return static_cast<EnumType>(~static_cast<underlying_type_t<EnumType>>(val));                                                 \
     }
 
 #pragma endregion

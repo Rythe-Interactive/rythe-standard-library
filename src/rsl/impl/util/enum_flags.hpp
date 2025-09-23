@@ -14,7 +14,7 @@ namespace rsl::enum_flags
     template <enum_type EnumType>
     [[nodiscard]] [[rythe_always_inline]] constexpr bool has_flag(EnumType value, EnumType flag) noexcept
     {
-        return (value & flag) != 0;
+        return (value & flag) != static_cast<EnumType>(0);
     }
 
     template <enum_type EnumType>
@@ -32,7 +32,7 @@ namespace rsl::enum_flags
             ) noexcept
     {
         EnumType flag = combine_flags(first, second, rest...);
-        return (value & flag) != 0;
+        return (value & flag) != static_cast<EnumType>(0);
     }
 
     template <enum_type EnumType>

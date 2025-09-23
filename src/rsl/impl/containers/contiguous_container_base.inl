@@ -237,6 +237,7 @@ namespace rsl
             }
         }
 
+        // TODO(Glyn): construct is protected member, this util function also needs to be a member function
         template <typename Container, typename Type, typename... Types>
         void container_construct_items(Container& container, const size_type offset, Type&& arg, Types&&... args)
         {

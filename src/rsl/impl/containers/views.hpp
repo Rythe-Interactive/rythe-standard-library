@@ -338,7 +338,8 @@ namespace rsl
         using const_view_type = conditional_t<is_const_v<value_type>, iterator_view, iterator_view<const_iterator_type>>;
         using contiguous_view_type = internal::select_contiguous_view<value_type, iterator_type, const_iterator_type>;
 
-        [[rythe_always_inline]] constexpr iterator_view() noexcept = default;
+        RULE_OF_5_CONSTEXPR_NOEXCEPT(iterator_view);
+
         [[rythe_always_inline]] constexpr iterator_view(iterator_type start, iterator_type end) noexcept;
         [[rythe_always_inline]] constexpr iterator_view(pointer ptr, size_type count) noexcept
             requires same_as<Iter, pointer>;
@@ -355,8 +356,6 @@ namespace rsl
 
         [[nodiscard]] [[rythe_always_inline]] constexpr static iterator_view from_string_length(pointer str, value_type terminator = value_type{}) noexcept
             requires(char_type<value_type> && same_as<Iter, pointer>);
-
-        [[rythe_always_inline]] constexpr iterator_view& operator=(const iterator_view&) = default;
 
         [[nodiscard]] [[rythe_always_inline]] constexpr bool operator==(const iterator_view& rhs);
         [[nodiscard]] [[rythe_always_inline]] constexpr bool operator!=(const iterator_view& rhs);

@@ -33,11 +33,11 @@ namespace rsl
         using value_type = directory_entry;
 
         constexpr directory_iterator() noexcept = default;
-        constexpr directory_iterator(directory_iterator&& other) noexcept;
-        constexpr directory_iterator(const directory_iterator& other) noexcept;
-        constexpr directory_iterator& operator=(directory_iterator&& other) noexcept;
-        constexpr directory_iterator& operator=(const directory_iterator& other) noexcept;
-        constexpr ~directory_iterator();
+        directory_iterator(directory_iterator&& other) noexcept;
+        directory_iterator(const directory_iterator& other) noexcept;
+        directory_iterator& operator=(directory_iterator&& other) noexcept;
+        directory_iterator& operator=(const directory_iterator& other) noexcept;
+        ~directory_iterator();
 
         result<dynamic_string> get_path() const;
 

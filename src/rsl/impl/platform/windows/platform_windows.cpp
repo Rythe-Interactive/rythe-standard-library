@@ -604,27 +604,67 @@ namespace rsl
         return result;
     }
 
-    result<void> platform::close_file(file file) {}
+    result<void> platform::close_file([[maybe_unused]] file file)
+    {
+        return rsl::error;
+    }
 
-    result<size_type> platform::read_file_section(file file, array_view<byte> target, size_type amountOfBytes, size_type offset) {}
+    result<size_type> platform::read_file_section(
+            [[maybe_unused]] file file,
+            [[maybe_unused]] array_view<byte> target,
+            [[maybe_unused]] size_type amountOfBytes,
+            [[maybe_unused]] size_type offset)
+    {
+        return rsl::error;
+    }
 
-    result<void> platform::read_file(file file, array_view<byte> target, size_type offset) {}
+    result<void> platform::read_file(
+            [[maybe_unused]] file file, [[maybe_unused]] array_view<byte> target, [[maybe_unused]] size_type offset)
+    {
+        return rsl::error;
+    }
 
-    result<size_type> platform::write_file(file file, size_type offset, array_view<byte const> data) {}
+    result<size_type> platform::write_file(
+            [[maybe_unused]] file file, [[maybe_unused]] size_type offset, [[maybe_unused]] array_view<byte const> data)
+    {
+        return rsl::error;
+    }
 
-    result<void> platform::write_all_to_file(file file, size_type offset, array_view<byte const> data) {}
+    result<void> platform::write_all_to_file(
+            [[maybe_unused]] file file, [[maybe_unused]] size_type offset, [[maybe_unused]] array_view<byte const> data)
+    {
+        return rsl::error;
+    }
 
-    result<void> platform::truncate_file(file file, size_type offset) {}
+    result<void> platform::truncate_file([[maybe_unused]] file file, [[maybe_unused]] size_type offset)
+    {
+        return rsl::error;
+    }
 
-    result<uint64> platform::get_file_size(string_view absolutePath) {}
+    result<uint64> platform::get_file_size([[maybe_unused]] string_view absolutePath)
+    {
+        return rsl::error;
+    }
 
-    result<uint64> platform::get_file_size(file file) {}
+    result<uint64> platform::get_file_size([[maybe_unused]] file file)
+    {
+        return rsl::error;
+    }
 
-    result<void> platform::flush_file_write_buffer(file file) {}
+    result<void> platform::flush_file_write_buffer([[maybe_unused]] file file)
+    {
+        return rsl::error;
+    }
 
-    result<void> platform::rename_file(string_view oldAbsolutePath, string_view newAbsolutePath) {}
+    result<void> platform::rename_file([[maybe_unused]] string_view oldAbsolutePath, [[maybe_unused]] string_view newAbsolutePath)
+    {
+        return rsl::error;
+    }
 
-    result<void> platform::delete_file(string_view absolutePath, file_delete_flags flags) {}
+    result<void> platform::delete_file([[maybe_unused]] string_view absolutePath, [[maybe_unused]] file_delete_flags flags)
+    {
+        return rsl::error;
+    }
 
 
     result<file_info> platform::get_file_info(const string_view absolutePath) noexcept
@@ -677,7 +717,9 @@ namespace rsl
                     .lastWriteTimestamp = translate_timestamp(information.ftLastWriteTime),
                     .size = combine_dwords(information.nFileSizeLow, information.nFileSizeHigh),
                     .isWritable = (information.dwFileAttributes & FILE_ATTRIBUTE_READONLY) == 0u,
-                    .isDirectory = false,
+                    .isDirectory = (information.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0u,
+                    .isFile = (information.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_ARCHIVE |
+                        FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_REPARSE_POINT)) == 0u,
                 };
     }
 
