@@ -1,20 +1,18 @@
-#include "quintic.hpp"
 #pragma once
-#include <array>
 
 namespace rsl::math::internal
 {
 	template <typename T>
 	[[nodiscard]] [[rythe_always_inline]] constexpr auto _quintic_impl_(T&& v) noexcept
 	{
-		using scalar = ::std::remove_cvref_t<T>;
+		using scalar = remove_cvr_t<T>;
 		return v * v * v * (v * (v * static_cast<scalar>(6) - static_cast<scalar>(15)) + static_cast<scalar>(10));
 	}
 
 	template <typename T>
 	[[nodiscard]] [[rythe_always_inline]] constexpr auto _quintic_derivative_impl_(T&& v) noexcept
 	{
-		using scalar = ::std::remove_cvref_t<T>;
+		using scalar = remove_cvr_t<T>;
 		const auto sqr = v - static_cast<scalar>(1);
 		return static_cast<scalar>(30) * sqr * sqr * v * v;
 	}
@@ -22,7 +20,7 @@ namespace rsl::math::internal
 	template <typename T>
 	[[nodiscard]] [[rythe_always_inline]] auto _inverse_quintic_impl_(T&& v) noexcept
 	{
-		using scalar = ::std::remove_cvref_t<T>;
+		using scalar = remove_cvr_t<T>;
 
 		// TODO: find an inverse with a smaller average error.
 		return static_cast<scalar>(0.5) -
@@ -34,26 +32,26 @@ namespace rsl::math::internal
 				   static_cast<scalar>(1.78);
 
 		// Numerical integration
-		constexpr size_type stepCount = 10;
-
-		scalar pos = static_cast<scalar>(0.5);
-		auto offsetFromCenter = v - pos;
-		auto stepSize = offsetFromCenter / static_cast<scalar>(stepCount);
-
-		scalar result = 0;
-		for (size_type i = 0; i < stepCount; i++)
-		{
-			result += _inverse_quintic_derivative_impl_(pos) *
-					  static_cast<scalar>(stepSize < static_cast<scalar>(0) ? -1 : 1);
-			pos += stepSize;
-		}
-		return result;
+		// constexpr size_type stepCount = 10;
+		//
+		// scalar pos = static_cast<scalar>(0.5);
+		// auto offsetFromCenter = v - pos;
+		// auto stepSize = offsetFromCenter / static_cast<scalar>(stepCount);
+		//
+		// scalar result = 0;
+		// for (size_type i = 0; i < stepCount; i++)
+		// {
+		// 	result += _inverse_quintic_derivative_impl_(pos) *
+		// 			  static_cast<scalar>(stepSize < static_cast<scalar>(0) ? -1 : 1);
+		// 	pos += stepSize;
+		// }
+		// return result;
 	}
 
 	template <typename T>
 	[[nodiscard]] [[rythe_always_inline]] constexpr auto _inverse_quintic_derivative_impl_(T&& v) noexcept
 	{
-		using scalar = ::std::remove_cvref_t<T>;
+		using scalar = remove_cvr_t<T>;
 		constexpr auto sqr = static_cast<scalar>(1) - v;
 		return static_cast<scalar>(1) / (static_cast<scalar>(30) * sqr * sqr * v * v);
 	}
@@ -69,9 +67,9 @@ namespace rsl::math
 	template <typename TypeMin, typename TypeMax, typename ValueType>
 	[[nodiscard]] constexpr auto quintic(TypeMin&& edgeMin, TypeMax&& edgeMax, ValueType&& value) noexcept
 	{
-		using A = ::std::remove_cvref_t<TypeMin>;
-		using B = ::std::remove_cvref_t<TypeMax>;
-		using T = ::std::remove_cvref_t<ValueType>;
+		using A = remove_cvr_t<TypeMin>;
+		using B = remove_cvr_t<TypeMax>;
+		using T = remove_cvr_t<ValueType>;
 
 		if constexpr (is_quat_v<A> && is_quat_v<B> && is_quat_v<T>)
 		{
@@ -90,7 +88,7 @@ namespace rsl::math
 		if constexpr (is_vector_v<A> && is_vector_v<B> && is_vector_v<T>)
 		{
 			using scalar = elevated_t<typename A::scalar, elevated_t<typename B::scalar, typename T::scalar>>;
-			constexpr size_type size = min(A::size, min(B::size, T::size))));
+			constexpr size_type size = min(A::size, min(B::size, T::size));
 			return internal::compute_quintic<vector<scalar, size>>::compute(
 				forward<TypeMin>(edgeMin), forward<TypeMax>(edgeMax), forward<ValueType>(value)
 			);
@@ -107,7 +105,7 @@ namespace rsl::math
 	template <typename ValueType>
 	[[nodiscard]] constexpr auto quintic(ValueType&& value) noexcept
 	{
-		using T = ::std::remove_cvref_t<ValueType>;
+		using T = remove_cvr_t<ValueType>;
 
 		if constexpr (is_quat_v<T>)
 		{
@@ -133,9 +131,9 @@ namespace rsl::math
 	template <typename TypeMin, typename TypeMax, typename ValueType>
 	[[nodiscard]] constexpr auto quintic_derivative(TypeMin&& edgeMin, TypeMax&& edgeMax, ValueType&& value) noexcept
 	{
-		using A = ::std::remove_cvref_t<TypeMin>;
-		using B = ::std::remove_cvref_t<TypeMax>;
-		using T = ::std::remove_cvref_t<ValueType>;
+		using A = remove_cvr_t<TypeMin>;
+		using B = remove_cvr_t<TypeMax>;
+		using T = remove_cvr_t<ValueType>;
 
 		if constexpr (is_quat_v<A> && is_quat_v<B> && is_quat_v<T>)
 		{
@@ -154,7 +152,7 @@ namespace rsl::math
 		if constexpr (is_vector_v<A> && is_vector_v<B> && is_vector_v<T>)
 		{
 			using scalar = elevated_t<typename A::scalar, elevated_t<typename B::scalar, typename T::scalar>>;
-			constexpr size_type size = min(A::size, min(B::size, T::size))));
+			constexpr size_type size = min(A::size, min(B::size, T::size));
 			return internal::compute_quintic<vector<scalar, size>>::compute_derivative(
 				forward<TypeMin>(edgeMin), forward<TypeMax>(edgeMax), forward<ValueType>(value)
 			);
@@ -171,7 +169,7 @@ namespace rsl::math
 	template <typename ValueType>
 	[[nodiscard]] constexpr auto quintic_derivative(ValueType&& value) noexcept
 	{
-		using T = ::std::remove_cvref_t<ValueType>;
+		using T = remove_cvr_t<ValueType>;
 
 		if constexpr (is_quat_v<T>)
 		{
@@ -200,9 +198,9 @@ namespace rsl::math
 	template <typename TypeMin, typename TypeMax, typename ValueType>
 	[[nodiscard]] auto inverse_quintic(TypeMin&& edgeMin, TypeMax&& edgeMax, ValueType&& value) noexcept
 	{
-		using A = ::std::remove_cvref_t<TypeMin>;
-		using B = ::std::remove_cvref_t<TypeMax>;
-		using T = ::std::remove_cvref_t<ValueType>;
+		using A = remove_cvr_t<TypeMin>;
+		using B = remove_cvr_t<TypeMax>;
+		using T = remove_cvr_t<ValueType>;
 
 		if constexpr (is_quat_v<A> && is_quat_v<B> && is_quat_v<T>)
 		{
@@ -221,7 +219,7 @@ namespace rsl::math
 		if constexpr (is_vector_v<A> && is_vector_v<B> && is_vector_v<T>)
 		{
 			using scalar = elevated_t<typename A::scalar, elevated_t<typename B::scalar, typename T::scalar>>;
-			constexpr size_type size = min(A::size, min(B::size, T::size))));
+			constexpr size_type size = min(A::size, min(B::size, T::size));
 			return internal::compute_quintic<vector<scalar, size>>::compute_inverse(
 				forward<TypeMin>(edgeMin), forward<TypeMax>(edgeMax), forward<ValueType>(value)
 			);
@@ -238,7 +236,7 @@ namespace rsl::math
 	template <typename ValueType>
 	[[nodiscard]] auto inverse_quintic(ValueType&& value) noexcept
 	{
-		using T = ::std::remove_cvref_t<ValueType>;
+		using T = remove_cvr_t<ValueType>;
 
 		if constexpr (is_quat_v<T>)
 		{
@@ -267,9 +265,9 @@ namespace rsl::math
 	template <typename TypeMin, typename TypeMax, typename ValueType>
 	[[nodiscard]] auto inverse_quintic_derivative(TypeMin&& edgeMin, TypeMax&& edgeMax, ValueType&& value) noexcept
 	{
-		using A = ::std::remove_cvref_t<TypeMin>;
-		using B = ::std::remove_cvref_t<TypeMax>;
-		using T = ::std::remove_cvref_t<ValueType>;
+		using A = remove_cvr_t<TypeMin>;
+		using B = remove_cvr_t<TypeMax>;
+		using T = remove_cvr_t<ValueType>;
 
 		if constexpr (is_quat_v<A> && is_quat_v<B> && is_quat_v<T>)
 		{
@@ -288,7 +286,7 @@ namespace rsl::math
 		if constexpr (is_vector_v<A> && is_vector_v<B> && is_vector_v<T>)
 		{
 			using scalar = elevated_t<typename A::scalar, elevated_t<typename B::scalar, typename T::scalar>>;
-			constexpr size_type size = min(A::size, min(B::size, T::size))));
+			constexpr size_type size = min(A::size, min(B::size, T::size));
 			return internal::compute_quintic<vector<scalar, size>>::compute_inverse_derivative(
 				forward<TypeMin>(edgeMin), forward<TypeMax>(edgeMax), forward<ValueType>(value)
 			);
@@ -305,7 +303,7 @@ namespace rsl::math
 	template <typename ValueType>
 	[[nodiscard]] auto inverse_quintic_derivative(ValueType&& value) noexcept
 	{
-		using T = ::std::remove_cvref_t<ValueType>;
+		using T = remove_cvr_t<ValueType>;
 
 		if constexpr (is_quat_v<T>)
 		{
