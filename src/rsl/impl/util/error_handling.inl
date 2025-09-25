@@ -26,6 +26,11 @@ namespace rsl
         return get_error() == success;
     }
 
+    inline bool result_base::has_errors() const noexcept
+    {
+        return !is_okay();
+    }
+
     inline const error_type& result_base::get_error() const noexcept
     {
         return m_errid == invalid_err_id ? success : get_error_context().errors[m_errid];
@@ -290,7 +295,7 @@ namespace rsl
         append_error(result, errorType, error_severity::fatal);
     }
 
-    template <typename T, typename ... Args>
+    template <typename T, typename... Args>
     constexpr result<T> make_result(Args&&... args) noexcept(rsl::is_nothrow_constructible_v<result<T>, Args...>)
     {
         return result<T>(rsl::forward<Args>(args)...);

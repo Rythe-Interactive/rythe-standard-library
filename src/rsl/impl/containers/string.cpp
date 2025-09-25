@@ -106,48 +106,62 @@ namespace rsl
 		return result;
 	}
 
-    dynamic_string to_utf8(const dynamic_wstring::const_view_type str, bool* succeeded)
+    namespace internal
+    {
+        template<bool ReportErrors>
+	    static dynamic_string to_utf8(const dynamic_wstring::const_view_type str, bool* succeeded)
+        {
+            dynamic_string result;
+            result.reserve(str.size());
+
+            const utf16* data = str.data();
+            utf16 const * const end = data + str.size();
+            while( data != end )
+            {
+                uint32 character = *data++;
+                if( ( character & 0xf800u ) == 0xd800u )
+                {
+                    // surrogate pair
+                    if constexpr (rythe_validate_low_impact)
+                    {
+                        if( ( character & 0xfc00u ) != 0xd800u || ( *data & 0xfc00u ) != 0xdc00u )
+                        {
+                            if constexpr (ReportErrors)
+                            {
+                                *succeeded = false;
+                            }
+                            return {};
+                        }
+                    }
+
+                    character = ( ( character & 0x3ffu ) << 10u ) | ( *data++ & 0x3ffu ) | 0x10000u;
+                }
+                if (!write_utf8( result, character ))
+                {
+                    if constexpr (ReportErrors)
+                    {
+                        *succeeded = false;
+                    }
+                    return {};
+                }
+            }
+
+            if constexpr (ReportErrors)
+            {
+                *succeeded = true;
+            }
+
+            return result;
+        }
+    }
+
+    dynamic_string to_utf8(const dynamic_wstring::const_view_type str)
 	{
-	    dynamic_string result;
-	    result.reserve(str.size());
+	    return internal::to_utf8<false>(str, nullptr);
+	}
 
-	    const utf16* data = str.data();
-	    utf16 const * const end = data + str.size();
-	    while( data != end )
-	    {
-	        uint32 character = *data++;
-	        if( ( character & 0xf800u ) == 0xd800u )
-	        {
-	            // surrogate pair
-	            if constexpr (rythe_validate_low_impact)
-	            {
-	                if( ( character & 0xfc00u ) != 0xd800u || ( *data & 0xfc00u ) != 0xdc00u )
-	                {
-	                    if (succeeded)
-	                    {
-	                        *succeeded = false;
-	                    }
-	                    return {};
-	                }
-	            }
-
-	            character = ( ( character & 0x3ffu ) << 10u ) | ( *data++ & 0x3ffu ) | 0x10000u;
-	        }
-	        if (!write_utf8( result, character ))
-	        {
-	            if (succeeded)
-	            {
-	                *succeeded = false;
-	            }
-	            return {};
-	        }
-	    }
-
-	    if (succeeded)
-	    {
-	        *succeeded = true;
-	    }
-
-	    return result;
+    dynamic_string to_utf8(const dynamic_wstring::const_view_type str, bool& succeeded)
+	{
+	    return internal::to_utf8<true>(str, &succeeded);
 	}
 }

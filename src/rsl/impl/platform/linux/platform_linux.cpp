@@ -12,21 +12,23 @@
 
 namespace rsl
 {
+    NATIVE_API_TYPE_ACCESSORS(dynamic_library, void*)
+
 	dynamic_library platform::load_library(cstring path)
 	{
 		dynamic_library result;
-		result.m_handle = dlopen(path, RTLD_NOW);
+		set_native_handle(result, dlopen(path, RTLD_NOW));
 		return result;
 	}
 
 	void platform::release_library(const dynamic_library library)
 	{
-		dlclose(library.m_handle);
+		dlclose(get_native_handle(library));
 	}
 
-	void* platform::get_symbol(dynamic_library library, cstring symbolName)
+	void* platform::get_symbol(const dynamic_library library, cstring symbolName)
 	{
-		return dlsym(library.m_handle, symbolName);
+		return dlsym(get_native_handle(library), symbolName);
 	}
 
 	thread_id platform::get_current_thread_id()
@@ -40,7 +42,7 @@ namespace rsl
 		sched_yield();
 	}
 
-	void platform::sleep_current_thread(uint32 milliseconds)
+	void platform::sleep_current_thread(const uint32 milliseconds)
 	{
 		timespec sleepTime;
 		timespec remainingTime;

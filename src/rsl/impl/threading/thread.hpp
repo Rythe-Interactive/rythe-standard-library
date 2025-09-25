@@ -3,13 +3,7 @@
 
 namespace rsl
 {
-	#if !defined(RYTHE_THREAD_HANDLE_IMPL)
-	#define RYTHE_THREAD_HANDLE_IMPL void*
-	#endif
-
-	#if !defined(RYTHE_THREAD_HANDLE_DEFAULT_VALUE)
-	#define RYTHE_THREAD_HANDLE_DEFAULT_VALUE nullptr
-	#endif
+    DECLARE_NATIVE_API_TYPE(thread)
 
 	class thread
 	{
@@ -19,11 +13,7 @@ namespace rsl
 		thread_id get_id() const;
 		uint32 join() const;
 
-	private:
-		using platform_specific_handle = RYTHE_THREAD_HANDLE_IMPL;
-
-		platform_specific_handle m_handle = RYTHE_THREAD_HANDLE_DEFAULT_VALUE;
-
-		friend class platform;
+    private:
+        NATIVE_API_TYPE_PRIVATE_MEMBERS(thread)
 	};
 }

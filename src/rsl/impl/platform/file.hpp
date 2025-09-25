@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "../time/date_time.hpp"
-#include "../util/error_handling.hpp"
 
 namespace rsl
 {
@@ -40,22 +39,12 @@ namespace rsl
     };
     RYTHE_BIT_FLAG_OPERATORS(file_delete_flags)
 
-    #if !defined(RYTHE_NATIVE_FILE_HANDLE_IMPL)
-    #define RYTHE_NATIVE_FILE_HANDLE_IMPL void*
-    #endif
-
-    #if !defined(RYTHE_NATIVE_FILE_HANDLE_DEFAULT_VALUE)
-    #define RYTHE_NATIVE_FILE_HANDLE_DEFAULT_VALUE nullptr
-    #endif
+    DECLARE_NATIVE_API_TYPE(file)
+    [[maybe_unused]] [[rythe_always_inline]] static void set_file_access_mode(file&, file_access_mode) noexcept;
+    [[maybe_unused]] [[rythe_always_inline]] static void set_file_access_flags(file&, file_access_flags) noexcept;
 
     class file
     {
-        using platform_specific_handle = RYTHE_NATIVE_FILE_HANDLE_IMPL;
-
-        platform_specific_handle m_handle = RYTHE_NATIVE_FILE_HANDLE_DEFAULT_VALUE;
-
-        friend class platform;
-
     public:
         RULE_OF_5_CONSTEXPR_NOEXCEPT(file);
 
@@ -65,7 +54,13 @@ namespace rsl
         [[nodiscard]] [[rythe_always_inline]] file_access_mode get_mode() const noexcept { return m_accessMode; }
         [[nodiscard]] [[rythe_always_inline]] file_access_flags get_flags() const noexcept { return m_accessFlags; }
 
+        [[nodiscard]] [[rythe_always_inline]] operator bool() const { return m_handle != native_file::invalid; }
+
     private:
+        NATIVE_API_TYPE_PRIVATE_MEMBERS(file)
+        friend void set_file_access_mode(file&, file_access_mode) noexcept;
+        friend void set_file_access_flags(file&, file_access_flags) noexcept;
+
         file_access_mode m_accessMode;
         file_access_flags m_accessFlags;
     };

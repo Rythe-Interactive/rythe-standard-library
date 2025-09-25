@@ -111,7 +111,8 @@ namespace rsl
     template <typename T, size_type N>
     array_view(T (& )[N]) -> array_view<T>;
 
-    using string_view = rsl::array_view<const char>;
+    using string_view = rsl::array_view<const utf8>;
+    using wstring_view = rsl::array_view<const utf16>;
     using byte_view = rsl::array_view<const byte>;
 
     [[nodiscard]] [[rythe_always_inline]] consteval string_view operator""_sv(const cstring str, const size_type size) noexcept

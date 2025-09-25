@@ -368,6 +368,35 @@ namespace rsl
     };                                                                                                                                \
     [[maybe_unused]] constexpr name invalid_##name = name::invalid;
 
+#define DECLARE_NATIVE_API_TYPE(type)                                                                                                 \
+    DECLARE_OPAQUE_HANDLE(native_##type);                                                                                             \
+    class type;                                                                                                                       \
+    [[maybe_unused]] [[rythe_always_inline]] static void set_native_handle_impl(type&, native_##type) noexcept;                       \
+    [[maybe_unused]] [[rythe_always_inline]] static native_##type get_native_handle_impl(const type&) noexcept;
+
+#define NATIVE_API_TYPE_PRIVATE_MEMBERS(type)                                                                                         \
+    friend void set_native_handle_impl(type&, native_##type) noexcept;                                                                \
+    friend native_##type get_native_handle_impl(const type&) noexcept;                                                                \
+    native_##type m_handle = native_##type::invalid;
+
+#define NATIVE_API_TYPE_ACCESSORS(type, underlyingType)                                                                               \
+    [[maybe_unused]] [[rythe_always_inline]] static void set_native_handle_impl(type& val, native_##type handle) noexcept             \
+    {                                                                                                                                 \
+        val.m_handle = handle;                                                                                                        \
+    }                                                                                                                                 \
+    [[nodiscard, maybe_unused]] [[rythe_always_inline]] static native_##type get_native_handle_impl(const type& val) noexcept         \
+    {                                                                                                                                 \
+        return val.m_handle;                                                                                                          \
+    }                                                                                                                                 \
+    [[maybe_unused]] [[rythe_always_inline]] static void set_native_handle(type& val, underlyingType handle) noexcept                 \
+    {                                                                                                                                 \
+        set_native_handle_impl(val, bit_cast<native_##type>(handle));                                                                 \
+    }                                                                                                                                 \
+    [[nodiscard, maybe_unused]] [[rythe_always_inline]] static underlyingType get_native_handle(const type& val) noexcept             \
+    {                                                                                                                                 \
+        return bit_cast<underlyingType>(get_native_handle_impl(val));                                                                 \
+    }
+
 #define DECLARE_SINGLETON(name)                                                                                                       \
 namespace internal                                                                                                                    \
 {                                                                                                                                     \

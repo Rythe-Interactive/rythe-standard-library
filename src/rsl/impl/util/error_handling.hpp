@@ -141,6 +141,7 @@ namespace rsl
 
     public:
         [[nodiscard]] [[rythe_always_inline]] bool is_okay() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] bool has_errors() const noexcept;
         [[nodiscard]] [[rythe_always_inline]] const error_type& get_error() const noexcept;
         [[nodiscard]] [[rythe_always_inline]] error_view get_errors() const noexcept;
         [[nodiscard]] [[rythe_always_inline]] errid id() const noexcept;

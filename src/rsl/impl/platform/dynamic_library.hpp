@@ -1,14 +1,9 @@
 ﻿#pragma once
+#include "../defines.hpp"
 
 namespace rsl
 {
-    #if !defined(RYTHE_DYNAMIC_LIBRARY_HANDLE_IMPL)
-    #define RYTHE_DYNAMIC_LIBRARY_HANDLE_IMPL void*
-    #endif
-
-    #if !defined(RYTHE_DYNAMIC_LIBRARY_HANDLE_DEFAULT_VALUE)
-    #define RYTHE_DYNAMIC_LIBRARY_HANDLE_DEFAULT_VALUE nullptr
-    #endif
+    DECLARE_NATIVE_API_TYPE(dynamic_library)
 
     class dynamic_library
     {
@@ -21,15 +16,11 @@ namespace rsl
         template <typename T>
         [[nodiscard]] [[rythe_always_inline]] T get_symbol(cstring symbolName) const;
 
-        [[nodiscard]] [[rythe_always_inline]] operator bool() const { return m_handle; }
+        [[nodiscard]] [[rythe_always_inline]] operator bool() const { return m_handle != native_dynamic_library::invalid; }
 
         [[rythe_always_inline]] void release();
 
     private:
-        using platform_specific_handle = RYTHE_DYNAMIC_LIBRARY_HANDLE_IMPL;
-
-        platform_specific_handle m_handle = RYTHE_DYNAMIC_LIBRARY_HANDLE_DEFAULT_VALUE;
-
-        friend class platform;
+        NATIVE_API_TYPE_PRIVATE_MEMBERS(dynamic_library)
     };
 }

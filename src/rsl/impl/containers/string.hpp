@@ -92,7 +92,12 @@ namespace rsl
     using static_wstring = basic_dynamic_string<utf16, mock_allocator, StaticCapacity>;
 
     [[nodiscard]] dynamic_wstring to_utf16(dynamic_string::const_view_type str);
-    [[nodiscard]] dynamic_string to_utf8(dynamic_wstring::const_view_type str, bool* succeeded = nullptr);
+
+    // Returns empty string upon encoding error and succeeded will be set to false, otherwise true.
+    [[nodiscard]] dynamic_string to_utf8(dynamic_wstring::const_view_type str, bool& succeeded);
+    // Returns empty string upon encoding error.
+    [[nodiscard]] dynamic_string to_utf8(dynamic_wstring::const_view_type str);
+
     [[nodiscard]] [[rythe_always_inline]] constexpr char to_upper(char ch);
     [[nodiscard]] [[rythe_always_inline]] constexpr char to_lower(char ch);
     [[nodiscard]] [[rythe_always_inline]] constexpr dynamic_string to_upper(dynamic_string::const_view_type str);

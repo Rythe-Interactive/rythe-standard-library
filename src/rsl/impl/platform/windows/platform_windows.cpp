@@ -20,18 +20,7 @@
 #include <processthreadsapi.h>
 #include <process.h>
 
-#define RYTHE_DYNAMIC_LIBRARY_HANDLE_IMPL HMODULE
-#define RYTHE_NATIVE_FILE_HANDLE_IMPL HANDLE
-#define RYTHE_DIRECTORY_ITERATOR_HANDLE_IMPL rsl::native_win_directory_iterator_handle*
-
-namespace rsl
-{
-    struct native_win_directory_iterator_handle;
-}
-
 #include "../platform.hpp"
-
-#define RYTHE_THREAD_HANDLE_IMPL HANDLE
 
 #include "../../containers/string.hpp"
 #include "../../filesystem/path_util.hpp"
@@ -47,8 +36,35 @@ namespace rsl
         WIN32_FIND_DATAW findData;
     };
 
+    NATIVE_API_TYPE_ACCESSORS(file, HANDLE)
+    NATIVE_API_TYPE_ACCESSORS(directory_iterator, native_win_directory_iterator_handle*)
+    NATIVE_API_TYPE_ACCESSORS(dynamic_library, HMODULE)
+    NATIVE_API_TYPE_ACCESSORS(thread, HANDLE)
+
+    [[maybe_unused]] [[rythe_always_inline]] static void set_file_access_mode(file& val, const file_access_mode mode) noexcept
+    {
+        val.m_accessMode = mode;
+    }
+
+    [[maybe_unused]] [[rythe_always_inline]] static void set_file_access_flags(file& val, const file_access_flags flags) noexcept
+    {
+        val.m_accessFlags = flags;
+    }
+
     namespace
     {
+
+        bool is_regular_file_attributes(const DWORD attributes)
+        {
+            constexpr static DWORD excludingAttributes =
+                    FILE_ATTRIBUTE_DIRECTORY |
+                    FILE_ATTRIBUTE_ARCHIVE |
+                    FILE_ATTRIBUTE_DEVICE |
+                    FILE_ATTRIBUTE_REPARSE_POINT;
+
+            return (attributes & excludingAttributes) == 0u;
+        }
+
         struct native_thread_name
         {
             dynamic_wstring wideName;
@@ -126,23 +142,127 @@ namespace rsl
             const uint64 windowsTime = combine_dwords(fileTime.dwLowDateTime, fileTime.dwHighDateTime);
             return { .epochTime = static_cast<int64>(windowsTime / 10000000ull - 11644473600ull) };
         }
+
+        result<file> open_file_impl(wstring_view absolutePath, const file_access_mode mode, const file_access_flags flags)
+        {
+            DWORD accessMode;
+            DWORD creationDisposition;
+            DWORD shareMode = FILE_SHARE_READ;
+            DWORD flagsAndAttributes = FILE_ATTRIBUTE_NORMAL;
+
+            switch (mode)
+            {
+                case file_access_mode::read:
+                {
+                    accessMode = GENERIC_READ;
+                    creationDisposition = OPEN_EXISTING;
+                    shareMode |= FILE_SHARE_DELETE;
+                    break;
+                }
+                case file_access_mode::write_shared_read:
+                {
+                    accessMode = GENERIC_READ;
+                    creationDisposition = OPEN_EXISTING;
+                    shareMode |= FILE_SHARE_WRITE | FILE_SHARE_DELETE;
+                    break;
+                }
+                case file_access_mode::exclusive_read:
+                {
+                    accessMode = GENERIC_READ | GENERIC_WRITE;
+                    creationDisposition = OPEN_EXISTING;
+                    break;
+                }
+                case file_access_mode::write:
+                {
+                    accessMode = GENERIC_WRITE;
+                    creationDisposition = CREATE_ALWAYS;
+                    break;
+                }
+                case file_access_mode::append:
+                {
+                    accessMode = GENERIC_WRITE;
+                    creationDisposition = OPEN_ALWAYS;
+                    break;
+                }
+                case file_access_mode::read_write_append:
+                {
+                    accessMode = GENERIC_READ | GENERIC_WRITE;
+                    creationDisposition = OPEN_ALWAYS;
+                    break;
+                }
+                default:
+                {
+                    return make_error(platform_error::invalid_argument, "Unsupported file_access_mode.");
+                }
+            }
+
+            if (enum_flags::has_flag(flags, file_access_flags::async))
+            {
+                flagsAndAttributes |= FILE_FLAG_OVERLAPPED;
+            }
+
+            if (enum_flags::has_flag(flags, file_access_flags::random))
+            {
+                flagsAndAttributes |= FILE_FLAG_RANDOM_ACCESS;
+            }
+
+            if (enum_flags::has_flag(flags, file_access_flags::sequential))
+            {
+                flagsAndAttributes |= FILE_FLAG_SEQUENTIAL_SCAN;
+            }
+
+            HANDLE fileHandle = CreateFileW(
+                    absolutePath.data(),
+                    accessMode,
+                    shareMode,
+                    NULL,
+                    creationDisposition,
+                    flagsAndAttributes,
+                    NULL
+                    );
+
+            if (fileHandle == INVALID_HANDLE_VALUE)
+            {
+                return make_error(translate_platform_error(GetLastError()));
+            }
+
+            if (mode == file_access_mode::append ||
+                mode == file_access_mode::read_write_append)
+            {
+                LARGE_INTEGER largePosition;
+                largePosition.QuadPart = 0u;
+                if (!SetFilePointerEx(fileHandle, largePosition, nullptr, FILE_END))
+                {
+                    const platform_error error = translate_platform_error(GetLastError());
+                    CloseHandle(fileHandle);
+                    return make_error(error);
+                }
+            }
+
+            file result;
+            set_native_handle(result, fileHandle);
+            set_file_access_mode(result, mode);
+            set_file_access_flags(result, flags);
+
+            return result;
+        }
     }
 
     dynamic_library platform::load_library(const cstring path)
     {
         dynamic_library result;
-        result.m_handle = ::LoadLibraryA(path);
+        set_native_handle(result, LoadLibraryA(path));
         return result;
     }
 
     void platform::release_library(const dynamic_library library)
     {
-        ::FreeLibrary(library.m_handle);
+        FreeLibrary(get_native_handle(library));
     }
 
     void* platform::get_symbol(const dynamic_library library, const cstring symbolName)
     {
-        return bit_cast<void*>(::GetProcAddress(library.m_handle, symbolName));
+        return bit_cast<void*>(GetProcAddress(get_native_handle(library), symbolName));
     }
 
     bool platform::is_debugger_attached()
@@ -174,7 +294,7 @@ namespace rsl
         threadContext->function = startFunction;
         threadContext->userData = userData;
 
-        const HANDLE threadHandle = ::CreateThread(
+        const HANDLE threadHandle = CreateThread(
                 nullptr,
                 0,
                 &internal_native_thread_start,
@@ -190,35 +310,37 @@ namespace rsl
             return result;
         }
 
-        result.m_handle = threadHandle;
+        set_native_handle(result, threadHandle);
 
-        ::ResumeThread(threadHandle);
+        ResumeThread(threadHandle);
 
         return result;
     }
 
     uint32 platform::destroy_thread(const thread thread)
     {
-        ::WaitForSingleObject(thread.m_handle, INFINITE);
+        const HANDLE threadHandle = get_native_handle(thread);
+        WaitForSingleObject(threadHandle, INFINITE);
 
         DWORD exitCode = 0u;
-        ::GetExitCodeThread(thread.m_handle, &exitCode);
+        GetExitCodeThread(threadHandle, &exitCode);
 
-        ::CloseHandle(thread.m_handle);
+        CloseHandle(threadHandle);
 
         return static_cast<uint32>(exitCode);
     }
 
     bool platform::is_thread_active(const thread thread)
     {
-        if (!thread.m_handle)
+        const HANDLE threadHandle = get_native_handle(thread);
+        if (!threadHandle)
         {
             return false;
         }
 
-        const DWORD waitResult = ::WaitForSingleObject(thread.m_handle, 0);
+        const DWORD waitResult = WaitForSingleObject(threadHandle, 0);
         DWORD exitCode = 0u;
-        const bool exitCodeResult = ::GetExitCodeThread(thread.m_handle, &exitCode);
+        const bool exitCodeResult = GetExitCodeThread(threadHandle, &exitCode);
 
         const bool threadIsInactive = (waitResult == WAIT_OBJECT_0 || waitResult == WAIT_FAILED) && (
             exitCode != STILL_ACTIVE || !exitCodeResult);
@@ -227,22 +349,22 @@ namespace rsl
 
     thread_id platform::get_current_thread_id()
     {
-        return thread_id{ .nativeId = static_cast<id_type>(::GetCurrentThreadId()) };
+        return thread_id{ .nativeId = static_cast<id_type>(GetCurrentThreadId()) };
     }
 
     thread_id platform::get_thread_id(const thread thread)
     {
-        return thread_id{ .nativeId = static_cast<id_type>(::GetThreadId(thread.m_handle)) };
+        return thread_id{ .nativeId = static_cast<id_type>(GetThreadId(get_native_handle(thread))) };
     }
 
     void platform::yield_current_thread()
     {
-        ::SwitchToThread();
+        SwitchToThread();
     }
 
     void platform::sleep_current_thread(const uint32 milliseconds)
     {
-        ::Sleep(milliseconds);
+        Sleep(milliseconds);
     }
 
     void platform::set_thread_name(const thread thread, const string_view name)
@@ -256,7 +378,7 @@ namespace rsl
                 threadId,
                 native_thread_name{ .wideName = to_utf16(name), .name = dynamic_string::from_view(name) }
                 ).wideName;
-        [[maybe_unused]] HRESULT _ = ::SetThreadDescription(::GetCurrentThread(), wideName.data());
+        [[maybe_unused]] HRESULT _ = SetThreadDescription(GetCurrentThread(), wideName.data());
     }
 
     string_view platform::get_thread_name(const thread thread)
@@ -275,7 +397,7 @@ namespace rsl
         nativeThreadName.name = to_string(threadId.nativeId);
         nativeThreadName.wideName = to_utf16(nativeThreadName.name);
 
-        return thread_names.emplace(threadId, rsl::move(nativeThreadName)).name;
+        return thread_names.emplace(threadId, move(nativeThreadName)).name;
     }
 
     dynamic_array<dynamic_string> platform::enumerate_drives()
@@ -428,7 +550,7 @@ namespace rsl
     bool platform::does_path_entry_exist(const string_view absolutePath)
     {
         dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
-        return ::GetFileAttributesW(widePath.data()) != INVALID_FILE_ATTRIBUTES;
+        return GetFileAttributesW(widePath.data()) != INVALID_FILE_ATTRIBUTES;
     }
 
     result<iterator_view<directory_iterator>> platform::iterate_directory(const string_view absolutePath)
@@ -446,8 +568,11 @@ namespace rsl
         }
 
         directory_iterator startIterator;
-        startIterator.m_handle = new native_win_directory_iterator_handle{ .directory = managed_resource<HANDLE>(FindClose, directory),
-                                                                           .findData = findData };
+        set_native_handle(
+                startIterator,
+                new native_win_directory_iterator_handle{ .directory = managed_resource<HANDLE>(FindClose, directory),
+                                                          .findData = findData }
+                );
 
         if (!next_directory_entry(startIterator))
         {
@@ -464,7 +589,7 @@ namespace rsl
             return false;
         }
 
-        auto& [directory, findData] = *iter.m_handle;
+        auto& [directory, findData] = *get_native_handle(iter);
 
         if (!FindNextFileW(*directory, &findData))
         {
@@ -486,13 +611,7 @@ namespace rsl
 
         while (FindNextFileW(directory, &findData))
         {
-            bool hasEncodingError;
-            result.push_back(fs::standardize(to_utf8(findData.cFileName, &hasEncodingError)));
-            if (hasEncodingError)
-            {
-                FindClose(directory);
-                return make_error(platform_error::encoding_error);
-            }
+            result.push_back(fs::standardize(to_utf8(findData.cFileName)));
         }
 
         const platform_error error = translate_platform_error(GetLastError());
@@ -509,161 +628,79 @@ namespace rsl
 
     result<file> platform::open_file(const string_view absolutePath, const file_access_mode mode, const file_access_flags flags)
     {
-        DWORD accessMode;
-        DWORD creationDisposition;
-        DWORD shareMode = FILE_SHARE_READ;
-        DWORD flagsAndAttributes = FILE_ATTRIBUTE_NORMAL;
-
-        switch (mode)
-        {
-            case file_access_mode::read:
-            {
-                accessMode = GENERIC_READ;
-                creationDisposition = OPEN_EXISTING;
-                shareMode |= FILE_SHARE_DELETE;
-                break;
-            }
-            case file_access_mode::write_shared_read:
-            {
-                accessMode = GENERIC_READ;
-                creationDisposition = OPEN_EXISTING;
-                shareMode |= FILE_SHARE_WRITE | FILE_SHARE_DELETE;
-                break;
-            }
-            case file_access_mode::exclusive_read:
-            {
-                accessMode = GENERIC_READ | GENERIC_WRITE;
-                creationDisposition = OPEN_EXISTING;
-                break;
-            }
-            case file_access_mode::write:
-            {
-                accessMode = GENERIC_WRITE;
-                creationDisposition = CREATE_ALWAYS;
-                break;
-            }
-            case file_access_mode::append:
-            {
-                accessMode = GENERIC_WRITE;
-                creationDisposition = OPEN_ALWAYS;
-                break;
-            }
-            case file_access_mode::read_write_append:
-            {
-                accessMode = GENERIC_READ | GENERIC_WRITE;
-                creationDisposition = OPEN_ALWAYS;
-                break;
-            }
-            default:
-            {
-                return make_error(platform_error::invalid_argument, "Unsupported file_access_mode.");
-            }
-        }
-
-        if (enum_flags::has_flag(flags, file_access_flags::async))
-        {
-            flagsAndAttributes |= FILE_FLAG_OVERLAPPED;
-        }
-
-        if (enum_flags::has_flag(flags, file_access_flags::random))
-        {
-            flagsAndAttributes |= FILE_FLAG_RANDOM_ACCESS;
-        }
-
-        if (enum_flags::has_flag(flags, file_access_flags::sequential))
-        {
-            flagsAndAttributes |= FILE_FLAG_SEQUENTIAL_SCAN;
-        }
-
-        dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
-
-        file result;
-        result.m_accessMode = mode;
-        result.m_accessFlags = flags;
-
-        result.m_handle = CreateFileW(widePath.data(), accessMode, shareMode, NULL, creationDisposition, flagsAndAttributes, NULL);
-
-        if (result.m_handle == INVALID_HANDLE_VALUE)
-        {
-            return make_error(translate_platform_error(GetLastError()));
-        }
-
-        if (mode == file_access_mode::append ||
-            mode == file_access_mode::read_write_append)
-        {
-            LARGE_INTEGER largePosition;
-            largePosition.QuadPart = 0u;
-            if (!SetFilePointerEx(result.m_handle, largePosition, nullptr, FILE_END))
-            {
-                const platform_error error = translate_platform_error(GetLastError());
-                CloseHandle(result.m_handle);
-                return make_error(error);
-            }
-        }
-
-        return result;
+        return open_file_impl(to_utf16(fs::localize(absolutePath)), mode, flags);
     }
 
     result<void> platform::close_file([[maybe_unused]] file file)
     {
-        return rsl::error;
+        return error;
     }
 
     result<size_type> platform::read_file_section(
             [[maybe_unused]] file file,
             [[maybe_unused]] array_view<byte> target,
             [[maybe_unused]] size_type amountOfBytes,
-            [[maybe_unused]] size_type offset)
+            [[maybe_unused]] size_type offset
+            )
     {
-        return rsl::error;
+        return error;
     }
 
     result<void> platform::read_file(
-            [[maybe_unused]] file file, [[maybe_unused]] array_view<byte> target, [[maybe_unused]] size_type offset)
+            [[maybe_unused]] file file,
+            [[maybe_unused]] array_view<byte> target,
+            [[maybe_unused]] size_type offset
+            )
     {
-        return rsl::error;
+        return error;
     }
 
     result<size_type> platform::write_file(
-            [[maybe_unused]] file file, [[maybe_unused]] size_type offset, [[maybe_unused]] array_view<byte const> data)
+            [[maybe_unused]] file file,
+            [[maybe_unused]] size_type offset,
+            [[maybe_unused]] array_view<byte const> data
+            )
     {
-        return rsl::error;
+        return error;
     }
 
     result<void> platform::write_all_to_file(
-            [[maybe_unused]] file file, [[maybe_unused]] size_type offset, [[maybe_unused]] array_view<byte const> data)
+            [[maybe_unused]] file file,
+            [[maybe_unused]] size_type offset,
+            [[maybe_unused]] array_view<byte const> data
+            )
     {
-        return rsl::error;
+        return error;
     }
 
     result<void> platform::truncate_file([[maybe_unused]] file file, [[maybe_unused]] size_type offset)
     {
-        return rsl::error;
+        return error;
     }
 
     result<uint64> platform::get_file_size([[maybe_unused]] string_view absolutePath)
     {
-        return rsl::error;
+        return error;
     }
 
     result<uint64> platform::get_file_size([[maybe_unused]] file file)
     {
-        return rsl::error;
+        return error;
     }
 
     result<void> platform::flush_file_write_buffer([[maybe_unused]] file file)
     {
-        return rsl::error;
+        return error;
     }
 
     result<void> platform::rename_file([[maybe_unused]] string_view oldAbsolutePath, [[maybe_unused]] string_view newAbsolutePath)
     {
-        return rsl::error;
+        return error;
     }
 
     result<void> platform::delete_file([[maybe_unused]] string_view absolutePath, [[maybe_unused]] file_delete_flags flags)
     {
-        return rsl::error;
+        return error;
     }
 
 
@@ -671,7 +708,7 @@ namespace rsl
     {
         dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
 
-        const HANDLE fileHandle = ::CreateFileW(
+        const HANDLE fileHandle = CreateFileW(
                 widePath.data(),
                 0u,
                 FILE_SHARE_READ,
@@ -700,15 +737,14 @@ namespace rsl
                     .size = combine_dwords(information.nFileSizeLow, information.nFileSizeHigh),
                     .isWritable = (information.dwFileAttributes & FILE_ATTRIBUTE_READONLY) == 0u,
                     .isDirectory = (information.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0u,
-                    .isFile = (information.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_ARCHIVE |
-                        FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_REPARSE_POINT)) == 0u,
+                    .isFile = is_regular_file_attributes(information.dwFileAttributes),
                 };
     }
 
     result<file_info> platform::get_file_info(const file file) noexcept
     {
         BY_HANDLE_FILE_INFORMATION information;
-        if (GetFileInformationByHandle(file.m_handle, &information) == FALSE)
+        if (GetFileInformationByHandle(get_native_handle(file), &information) == FALSE)
         {
             return make_error(translate_platform_error(GetLastError()));
         }
@@ -718,8 +754,7 @@ namespace rsl
                     .size = combine_dwords(information.nFileSizeLow, information.nFileSizeHigh),
                     .isWritable = (information.dwFileAttributes & FILE_ATTRIBUTE_READONLY) == 0u,
                     .isDirectory = (information.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0u,
-                    .isFile = (information.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_ARCHIVE |
-                        FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_REPARSE_POINT)) == 0u,
+                    .isFile = is_regular_file_attributes(information.dwFileAttributes),
                 };
     }
 
@@ -731,30 +766,37 @@ namespace rsl
     directory_iterator::directory_iterator(directory_iterator&& other) noexcept
         : m_handle(other.m_handle)
     {
-        other.m_handle = nullptr;
+        other.m_handle = native_directory_iterator::invalid;
     }
 
     constexpr directory_iterator::directory_iterator(const directory_iterator& other) noexcept
-        : m_handle(other.m_handle ? new native_win_directory_iterator_handle(*other.m_handle) : nullptr) {}
+    {
+        if(other.m_handle != native_directory_iterator::invalid)
+        {
+            set_native_handle(*this, new native_win_directory_iterator_handle(*get_native_handle(other)));
+        }
+    }
 
     directory_iterator& directory_iterator::operator=(directory_iterator&& other) noexcept
     {
         m_handle = other.m_handle;
-        other.m_handle = nullptr;
+        other.m_handle = native_directory_iterator::invalid;
         return *this;
     }
 
     constexpr directory_iterator& directory_iterator::operator=(const directory_iterator& other) noexcept
     {
-        if (m_handle)
+        native_win_directory_iterator_handle* nativeHandle = get_native_handle(*this);
+
+        if (nativeHandle)
         {
-            delete m_handle;
-            m_handle = nullptr;
+            delete nativeHandle;
+            m_handle = native_directory_iterator::invalid;
         }
 
-        if (other.m_handle)
+        if (other.m_handle != native_directory_iterator::invalid)
         {
-            m_handle = new native_win_directory_iterator_handle(*other.m_handle);
+            set_native_handle(*this, new native_win_directory_iterator_handle(*get_native_handle(other)));
         }
 
         return *this;
@@ -762,23 +804,37 @@ namespace rsl
 
     directory_iterator::~directory_iterator()
     {
-        if (m_handle)
+        native_win_directory_iterator_handle* nativeHandle = get_native_handle(*this);
+        if (nativeHandle)
         {
-            delete m_handle;
-            m_handle = nullptr;
+            delete nativeHandle;
+            m_handle = native_directory_iterator::invalid;
         }
     }
 
-    result<dynamic_string> directory_iterator::get_path() const
+    dynamic_string directory_iterator::get_path() const
     {
-        bool hasEncodingError;
-        dynamic_string result = fs::standardize(to_utf8(m_handle->findData.cFileName, &hasEncodingError));
-        if (hasEncodingError)
-        {
-            return make_error(platform_error::encoding_error);
-        }
+        return fs::standardize(to_utf8(get_native_handle(*this)->findData.cFileName));
+    }
 
-        return result;
+    bool directory_iterator::is_regular_file() const
+    {
+        return is_regular_file_attributes(get_native_handle(*this)->findData.dwFileAttributes);
+    }
+
+    bool directory_iterator::is_directory() const
+    {
+        return (get_native_handle(*this)->findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0u;
+    }
+
+    bool directory_iterator::is_writable() const
+    {
+        return (get_native_handle(*this)->findData.dwFileAttributes & FILE_ATTRIBUTE_READONLY) == 0u;
+    }
+
+    result<file> directory_iterator::open_file(const file_access_mode mode, const file_access_flags flags) const
+    {
+        return open_file_impl(get_native_handle(*this)->findData.cFileName, mode, flags);
     }
 
     bool directory_iterator::operator==(const directory_iterator& other) const
