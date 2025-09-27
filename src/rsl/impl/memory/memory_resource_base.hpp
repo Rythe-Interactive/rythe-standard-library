@@ -558,7 +558,7 @@ namespace rsl
         allocator_type Alloc = default_allocator,
         untyped_factory_type Factory = type_erased_factory,
         typename UtilType = void>
-    class untyped_hybrid_memory_resource : hybrid_memory_resource_base<BufferSize, Alloc, Factory, UtilType, true>
+    class untyped_hybrid_memory_resource : public hybrid_memory_resource_base<BufferSize, Alloc, Factory, UtilType, true>
     {
         using base_type = hybrid_memory_resource_base<BufferSize, Alloc, Factory, UtilType, true>;
 
@@ -573,7 +573,7 @@ namespace rsl
     };
 
     template <typename T, size_type BufferCount, allocator_type Alloc = default_allocator, factory_type Factory = default_factory<T>>
-    class typed_hybrid_memory_resource : hybrid_memory_resource_base<BufferCount * sizeof(T), Alloc, Factory, T, false>
+    class typed_hybrid_memory_resource : public hybrid_memory_resource_base<BufferCount * sizeof(T), Alloc, Factory, T, false>
     {
         using base_type = hybrid_memory_resource_base<BufferCount * sizeof(T), Alloc, Factory, T, false>;
 

@@ -45,6 +45,7 @@ namespace rsl
             : public internal::select_memory_resource<T, Alloc, Factory, ContiguousContainerInfo::static_capacity,
                                                       ContiguousContainerInfo::can_allocate>::type
     {
+        static_assert(is_complete_v<T>);
     public:
         using mem_rsc = typename internal::select_memory_resource<
             T, Alloc, Factory, ContiguousContainerInfo::static_capacity, ContiguousContainerInfo::can_allocate>::type;

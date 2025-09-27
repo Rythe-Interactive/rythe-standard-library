@@ -651,7 +651,7 @@ namespace rsl
                 m_ptr = m_alloc.allocate(newCount);
                 if (m_ptr) [[likely]]
                 {
-                    m_alloc.move(m_ptr, m_buffer.data, oldCount);
+                    m_alloc.move(get_ptr(), m_buffer.data, oldCount);
                 }
             }
         }
@@ -872,7 +872,7 @@ namespace rsl
     template <size_type BufferSize, allocator_type Alloc, factory_type Factory, typename UtilType, bool Untyped>
     constexpr UtilType* hybrid_memory_resource_base<BufferSize, Alloc, Factory, UtilType, Untyped>::get_static_ptr() noexcept
     {
-        return bit_cast<UtilType*>(m_buffer.data);
+        return bit_cast<UtilType*>(static_cast<decltype(m_buffer)::value_type*>(m_buffer.data));
     }
 
     template <size_type BufferSize, allocator_type Alloc, factory_type Factory, typename UtilType, bool Untyped>

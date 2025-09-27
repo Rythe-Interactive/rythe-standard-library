@@ -60,10 +60,22 @@ namespace rsl
     constexpr size_type alignment_of_v = alignof(T);
 
     template <typename T>
-    inline constexpr bool is_empty_v = ::std::is_empty_v<T>; // Compiler magic behind the scenes.
+    inline constexpr bool is_empty_v = __is_empty(T); // Compiler magic.
 
     template <typename T>
     struct is_empty : bool_constant<is_empty_v<T>> {};
+
+    template <typename T>
+    struct is_complete {
+        template <typename U>
+        static auto test(U*)  -> bool_constant<sizeof(U) == sizeof(U)>; // NOLINT
+        static auto test(...) -> false_type; // NOLINT
+
+        static constexpr bool value = decltype(test(static_cast<T*>(nullptr)))::value;
+    };
+
+    template <typename T>
+    inline constexpr bool is_complete_v = is_complete<T>::value;
 
     template <typename>
     inline constexpr bool is_pointer_v = false;

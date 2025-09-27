@@ -2,6 +2,7 @@
 
 #include "filesystem_error.hpp"
 #include "path_util.hpp"
+#include "view.hpp"
 
 namespace rsl::filesystem
 {
@@ -86,8 +87,7 @@ namespace rsl::filesystem
 
     result<byte_view> drive_file_solution::read() const
     {
-
-        result<void> result = open_file_for_read(this);
+        result<void> result = static_cast<drive_filesystem_provider*>(m_provider)->open_file_for_read(this);
 
         if (!exists()) [[unlikely]]
         {

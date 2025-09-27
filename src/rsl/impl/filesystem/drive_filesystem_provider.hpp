@@ -51,6 +51,7 @@ namespace rsl::filesystem
         void release_solution(file_solution* solution) override;
 
     protected:
+        friend class drive_file_solution;
         [[nodiscard]] result<void> open_file_for_read(const file_solution* solution) const override;
         [[nodiscard]] result<void> open_file_for_write(file_solution* solution) override;
         [[nodiscard]] result<void> close_file(const file_solution* solution) const override;

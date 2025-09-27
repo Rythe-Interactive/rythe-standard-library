@@ -1709,7 +1709,7 @@ namespace rsl
         const size_type lastIndex = m_size - 1ull;
         if (pos != lastIndex) [[likely]]
         {
-            mem_rsc::construct(1, pos, move(*get_ptr_at(lastIndex)));
+            mem_rsc::construct(1, pos, rsl::move(*get_ptr_at(lastIndex)));
             mem_rsc::destroy(1, lastIndex);
         }
     }
