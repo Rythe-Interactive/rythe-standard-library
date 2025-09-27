@@ -171,7 +171,7 @@ namespace rsl::filesystem
     template <string_like StringType>
     constexpr void replace_domain(in_place_signal_type, StringType& path, const string_view replacement) noexcept
     {
-        const size_type idx = linear_search_sequence(path, "://"_sv, 0ull, 64ull);
+        const size_type idx = linear_search_sequence(view(path), "://"_sv, 0ull, 64ull);
         if (idx == npos)
         {
             return;

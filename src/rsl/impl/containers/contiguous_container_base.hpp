@@ -478,6 +478,9 @@ namespace rsl
                 )
             noexcept(move_construct_noexcept);
 
+        template <typename Type, typename... Types>
+        void container_construct_items(const size_type offset, Type&& arg, Types&&... args) noexcept(noexcept_construct_from_all<Type, Types...>);
+
         template <typename... Args>
         [[rythe_always_inline]] constexpr void emplace_unsafe_impl(
                 size_type offset,

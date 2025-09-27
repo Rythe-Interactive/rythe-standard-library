@@ -769,7 +769,7 @@ namespace rsl
         other.m_handle = native_directory_iterator::invalid;
     }
 
-    constexpr directory_iterator::directory_iterator(const directory_iterator& other) noexcept
+    directory_iterator::directory_iterator(const directory_iterator& other) noexcept
     {
         if(other.m_handle != native_directory_iterator::invalid)
         {
@@ -784,7 +784,7 @@ namespace rsl
         return *this;
     }
 
-    constexpr directory_iterator& directory_iterator::operator=(const directory_iterator& other) noexcept
+    directory_iterator& directory_iterator::operator=(const directory_iterator& other) noexcept
     {
         native_win_directory_iterator_handle* nativeHandle = get_native_handle(*this);
 

@@ -329,7 +329,7 @@ namespace rsl
     {
         size_type count = 0ull;
         size_type index;
-        while ((index = linear_search(arr, key, offset, endSearch)) != npos)
+        while ((index = linear_search(view(arr), key, offset, endSearch)) != npos)
         {
             arr[index] = replacement;
             offset = index + 1ull;

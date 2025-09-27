@@ -170,7 +170,7 @@ namespace rsl
 
         result.copy_construct_from_unsafe_impl(0ull, result.m_size, ptr);
 
-        if constexpr (char_type < value_type >)
+        if constexpr (char_type<value_type>)
         {
             if (result.m_size > 0)
             {
@@ -222,6 +222,15 @@ namespace rsl
         return from_buffer(src.data(), src.size());
     }
 
+    template <typename T, allocator_type Alloc, factory_type Factory, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
+              ContiguousContainerInfo>
+    constexpr contiguous_container_base<T, Alloc, Factory, Iter, ConstIter, ContiguousContainerInfo> contiguous_container_base<T, Alloc
+        , Factory, Iter, ConstIter, ContiguousContainerInfo>::from_string_length(const T* str, T terminator) noexcept
+        requires char_type<T>
+    {
+        return from_buffer(str, string_length(str, terminator));
+    }
+
     namespace internal
     {
         template <typename T, variadic_item_type<T> ItemType>
@@ -234,41 +243,6 @@ namespace rsl
             else
             {
                 return 1ull;
-            }
-        }
-
-        // TODO(Glyn): construct is protected member, this util function also needs to be a member function
-        template <typename Container, typename Type, typename... Types>
-        void container_construct_items(Container& container, const size_type offset, Type&& arg, Types&&... args)
-        {
-            if constexpr (container_like<Type> || is_array_v<Type>)
-            {
-                size_type i = 0;
-                for (auto& item : arg)
-                {
-                    if constexpr (is_rvalue_reference_v<Type>)
-                    {
-                        container.construct(1ull, offset + i, rsl::move(item));
-                    }
-                    else
-                    {
-                        container.construct(1ull, offset + i, item);
-                    }
-                    ++i;
-                }
-            }
-            else
-            {
-                container.construct(1ull, offset, rsl::forward<Type>(arg));
-            }
-
-            if constexpr (sizeof...(Types) != 0)
-            {
-                container_construct_items(
-                        container,
-                        offset + variadic_item_size<typename Container::value_type>(arg),
-                        rsl::forward<Types>(args)...
-                        );
             }
         }
 
@@ -305,18 +279,9 @@ namespace rsl
             result.m_size = internal::calc_total_variadic_item_size<T>(rsl::forward<ItemTypes>(items)...);
         }
 
-        internal::container_construct_items(result, 0ull, rsl::forward<ItemTypes>(items)...);
+        result.container_construct_items(0ull, rsl::forward<ItemTypes>(items)...);
         result.construct_postfix();
         return result;
-    }
-
-    template <typename T, allocator_type Alloc, factory_type Factory, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo>
-    constexpr contiguous_container_base<T, Alloc, Factory, Iter, ConstIter, ContiguousContainerInfo> contiguous_container_base<T, Alloc
-        , Factory, Iter, ConstIter, ContiguousContainerInfo>::from_string_length(const T* str, T terminator) noexcept
-        requires char_type < T >
-    {
-        return from_buffer(str, string_length(str, terminator));
     }
 
     template <typename T, allocator_type Alloc, factory_type Factory, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
@@ -1214,7 +1179,7 @@ namespace rsl
     constexpr typename contiguous_container_base<T, Alloc, Factory, Iter, ConstIter, ContiguousContainerInfo>::view_type
         contiguous_container_base<T, Alloc, Factory, Iter, ConstIter, ContiguousContainerInfo>::view() noexcept
     {
-        return view_type(mem_rsc::get_ptr(), m_size);
+        return view_type::from_buffer(mem_rsc::get_ptr(), m_size);
     }
 
     template <typename T, allocator_type Alloc, factory_type Factory, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
@@ -1655,7 +1620,7 @@ namespace rsl
             m_size = srcSize;
         }
 
-        if constexpr (char_type < value_type >)
+        if constexpr (char_type<value_type>)
         {
             if (m_size > 0)
             {
@@ -1827,6 +1792,45 @@ namespace rsl
             {
                 mem_rsc::construct(1, i, move(*srcIter));
             }
+        }
+    }
+
+    template <typename T, allocator_type Alloc, factory_type Factory, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
+              ContiguousContainerInfo>
+    template <typename Type, typename... Types>
+    void contiguous_container_base<T, Alloc, Factory, Iter, ConstIter, ContiguousContainerInfo>::container_construct_items(
+            const size_type offset,
+            Type&& arg,
+            Types&&... args
+            ) noexcept(noexcept_construct_from_all<Type, Types...>)
+    {
+        if constexpr (container_like<Type> || is_array_v<Type>)
+        {
+            size_type i = 0;
+            for (auto& item : arg)
+            {
+                if constexpr (is_rvalue_reference_v<Type>)
+                {
+                    mem_rsc::construct(1ull, offset + i, rsl::move(item));
+                }
+                else
+                {
+                    mem_rsc::construct(1ull, offset + i, item);
+                }
+                ++i;
+            }
+        }
+        else
+        {
+            mem_rsc::construct(1ull, offset, rsl::forward<Type>(arg));
+        }
+
+        if constexpr (sizeof...(Types) != 0)
+        {
+            container_construct_items(
+                    offset + internal::variadic_item_size<value_type>(arg),
+                    rsl::forward<Types>(args)...
+                    );
         }
     }
 
