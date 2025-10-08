@@ -35,6 +35,8 @@ namespace rsl::filesystem
         const unique_object<filesystem_provider>* m_provider = nullptr;
     };
 
+    // TODO: either name it a archive_registry, or filesystem.
+    // TODO: potentially have both and split responsibilities of owning archives and using archives
     class filesystem_registry
     {
     public:

@@ -12,6 +12,7 @@ namespace rsl::filesystem
 
     using domain_string = hybrid_string<16>;
 
+    // TODO: archive would be a more fitting name.
     class filesystem_provider
     {
         friend class file_solution;

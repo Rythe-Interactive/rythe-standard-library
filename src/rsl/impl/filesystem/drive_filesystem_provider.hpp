@@ -7,6 +7,7 @@
 
 namespace rsl::filesystem
 {
+    // TODO: drive doesn't say much, local_disk_archive would be a better name.
     class drive_file_solution : public file_solution
     {
     public:
