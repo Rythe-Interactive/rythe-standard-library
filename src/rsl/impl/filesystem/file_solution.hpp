@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include "../util/error_handling.hpp"
 
+#include "archive.hpp"
 #include "filesystem_error.hpp"
-#include "filesystem_provider.hpp"
 #include "traits.hpp"
 
 namespace rsl::filesystem
@@ -11,13 +11,13 @@ namespace rsl::filesystem
 
     class file_solution
     {
-        friend class filesystem_provider;
+        friend class archive;
 
     public:
         VIRTUAL_RULE_OF_5(file_solution)
 
-        [[nodiscard]] [[rythe_always_inline]] const filesystem_provider* get_provider() const noexcept;
-        [[nodiscard]] [[rythe_always_inline]] filesystem_provider* get_provider() noexcept;
+        [[nodiscard]] [[rythe_always_inline]] const archive* get_provider() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] archive* get_provider() noexcept;
         [[rythe_always_inline]] void release();
 
         [[nodiscard]] file_traits file_info() const;
@@ -44,7 +44,7 @@ namespace rsl::filesystem
         [[nodiscard]] result<void> close_file() const;
         [[nodiscard]] result<void> flush_file() const;
 
-        filesystem_provider* m_provider;
+        archive* m_provider;
     };
 }
 

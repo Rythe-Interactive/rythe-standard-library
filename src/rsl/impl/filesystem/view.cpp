@@ -1,7 +1,7 @@
 ﻿#include "view.hpp"
 
 #include "file_solution.hpp"
-#include "filesystem_registry.hpp"
+#include "archive_registry.hpp"
 
 namespace rsl::filesystem
 {

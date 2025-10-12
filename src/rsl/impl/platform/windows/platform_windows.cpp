@@ -23,6 +23,7 @@
 #include "../platform.hpp"
 
 #include "../../containers/string.hpp"
+#include "../../filesystem/filesystem_error.hpp"
 #include "../../filesystem/path_util.hpp"
 #include "../../threading/current_thread.inl"
 #include "../../threading/thread.hpp"
@@ -555,6 +556,17 @@ namespace rsl
 
     result<iterator_view<directory_iterator>> platform::iterate_directory(const string_view absolutePath)
     {
+        platform_error errc;
+        iterator_view<directory_iterator> result = iterate_directory(absolutePath, errc);
+        if (errc != platform_error::no_error)
+        {
+            return make_error(errc);
+        }
+        return result;
+    }
+
+    iterator_view<directory_iterator> platform::iterate_directory(const string_view absolutePath, platform_error& errc)
+    {
         dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
 
         WIN32_FIND_DATAW findData;
@@ -564,8 +576,11 @@ namespace rsl
         if (error != platform_error::no_error)
         {
             FindClose(directory);
-            return make_error(error);
+            errc = error;
+            return {};
         }
+
+        errc = platform_error::no_error;
 
         directory_iterator startIterator;
         set_native_handle(

@@ -114,6 +114,7 @@ namespace rsl
     using string_view = rsl::array_view<const utf8>;
     using wstring_view = rsl::array_view<const utf16>;
     using byte_view = rsl::array_view<const byte>;
+    using mutable_byte_view = rsl::array_view<byte>;
 
     [[nodiscard]] [[rythe_always_inline]] consteval string_view operator""_sv(const cstring str, const size_type size) noexcept
     {

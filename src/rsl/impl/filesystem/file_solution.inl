@@ -2,12 +2,12 @@
 
 namespace rsl::filesystem
 {
-    inline const filesystem_provider* file_solution::get_provider() const noexcept
+    inline const archive* file_solution::get_provider() const noexcept
     {
         return m_provider;
     }
 
-    inline filesystem_provider* file_solution::get_provider() noexcept
+    inline archive* file_solution::get_provider() noexcept
     {
         return m_provider;
     }

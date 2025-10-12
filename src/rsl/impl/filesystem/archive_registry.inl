@@ -2,7 +2,7 @@
 
 namespace rsl::filesystem
 {
-    constexpr domain_iterator::domain_iterator(const unique_object<filesystem_provider>* provider) noexcept : m_provider(provider) {}
+    constexpr domain_iterator::domain_iterator(const unique_object<archive>* provider) noexcept : m_provider(provider) {}
 
     constexpr bool domain_iterator::operator==(const domain_iterator& other) const noexcept
     {
@@ -69,8 +69,8 @@ namespace rsl::filesystem
         return &operator*();
     }
 
-    template <derived_from<filesystem_provider> ProviderType, typename... Args>
-    void filesystem_registry::register_provider(Args&&... args)
+    template <derived_from<archive> ProviderType, typename... Args>
+    void archive_registry::register_provider(Args&&... args)
     {
         register_provider(temporary_object<ProviderType>::create_in_place(rsl::forward<Args>(args)...));
     }

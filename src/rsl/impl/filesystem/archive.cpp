@@ -1,21 +1,21 @@
-﻿#include "filesystem_provider.hpp"
+﻿#include "archive.hpp"
 
 #include "file_solution.hpp"
 
 namespace rsl::filesystem
 {
-    filesystem_provider& filesystem_provider::register_domain(const string_view domain) noexcept
+    archive& archive::register_domain(const string_view domain) noexcept
     {
         m_domains.push_back(domain_string::from_view(domain));
         return *this;
     }
 
-    array_view<const domain_string> filesystem_provider::get_domains() const noexcept
+    array_view<const domain_string> archive::get_domains() const noexcept
     {
         return m_domains;
     }
 
-    filesystem_traits filesystem_provider::filesystem_info() const
+    filesystem_traits archive::filesystem_info() const
     {
         return filesystem_traits{
             .isReadonly = is_readonly(),
@@ -23,12 +23,12 @@ namespace rsl::filesystem
         };
     }
 
-    void filesystem_provider::set_solution_provider(file_solution* solution, filesystem_provider* provider)
+    void archive::set_solution_provider(file_solution* solution, archive* provider)
     {
         solution->m_provider = provider;
     }
 
-    pair<index_type, bool> filesystem_provider::create_solution_reference(const string_view path)
+    pair<index_type, bool> archive::create_solution_reference(const string_view path)
     {
         auto [index, newValue] = m_solutionMap.try_emplace(dynamic_string::from_view(path));
         if (newValue)
@@ -45,7 +45,7 @@ namespace rsl::filesystem
         return { index, newValue };
     }
 
-    void filesystem_provider::destroy_solution_reference(const string_view path)
+    void archive::destroy_solution_reference(const string_view path)
     {
         const index_type index = m_solutionMap.at(path);
         m_solutionReferences[index].release();
@@ -57,7 +57,7 @@ namespace rsl::filesystem
         }
     }
 
-    index_type filesystem_provider::find_existing_solution(const string_view path)
+    index_type archive::find_existing_solution(const string_view path)
     {
         if (const index_type* result = m_solutionMap.find(path))
         {
@@ -67,7 +67,7 @@ namespace rsl::filesystem
         return npos;
     }
 
-    const manual_reference_counter& filesystem_provider::get_reference_count_status(const index_type index) const
+    const manual_reference_counter& archive::get_reference_count_status(const index_type index) const
     {
         return m_solutionReferences[index];
     }

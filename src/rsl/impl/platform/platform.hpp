@@ -4,6 +4,7 @@
 
 #include "../threading/thread_id.hpp"
 #include "../util/error_handling.hpp"
+#include "../util/range.hpp"
 
 #include "directory_iterator.hpp"
 #include "dynamic_library.hpp"
@@ -62,10 +63,10 @@ namespace rsl
 
         static result<file> open_file(string_view absolutePath, file_access_mode mode, file_access_flags flags = file_access_flags::no_preference);
         static result<void> close_file(file file);
-        static result<size_type> read_file_section(file file, array_view<byte> target, size_type amountOfBytes, size_type offset = 0ull);
-        static result<void> read_file(file file, array_view<byte> target, size_type offset = 0ull);
-        static result<size_type> write_file(file file, size_type offset, array_view<const byte> data);
-        static result<void> write_all_to_file(file file, size_type offset, array_view<const byte> data);
+        static result<size_type> read_file_section(file file, mutable_byte_view target, byte_range range); // Read until end of range, or EOF.
+        static result<void> read_file(file file, mutable_byte_view target, size_type offset = 0ull); // Read until EOF.
+        static result<size_type> write_file_section(file file, size_type offset, size_type size, byte_view data);
+        static result<void> write_file(file file, size_type offset, byte_view data);
         static result<void> truncate_file(file file, size_type offset = 0ull);
         static result<uint64> get_file_size(string_view absolutePath);
         static result<uint64> get_file_size(file file);
