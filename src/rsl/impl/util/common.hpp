@@ -1,8 +1,8 @@
 #pragma once
 #include "../defines.hpp"
 
+// TODO: use own ratio structure and get rid of this. or get rid of our reliance on std::ratio (there are probably better ways to design without std::ratio)
 RYTHE_MSVC_SUPPRESS_WARNING_WITH_PUSH(5046)
-#include <bit>
 #include <ratio>
 RYTHE_MSVC_SUPPRESS_WARNING_POP
 
@@ -12,7 +12,7 @@ namespace rsl
 {
     [[nodiscard]] constexpr bool is_constant_evaluated() noexcept
     {
-        return std::is_constant_evaluated();
+        return __builtin_is_constant_evaluated();
     }
 
     template <typename T>
@@ -105,7 +105,7 @@ namespace rsl
     struct is_same : bool_constant<is_same_v<LHS, RHS>> {};
 
     template <typename T>
-    constexpr bool is_enum_v = ::std::is_enum_v<T>; // Compiler magic behind the scenes.
+    constexpr bool is_enum_v = __is_enum(T); // Compiler magic.
 
     template <typename T>
     struct is_enum : bool_constant<is_enum_v<T>> {};
@@ -662,29 +662,25 @@ namespace rsl
     struct is_nothrow_move_assignable : bool_constant<is_nothrow_move_assignable_v<T>> {};
 
     template <typename T, typename... Args>
-    inline constexpr bool is_trivially_constructible_v =
-            ::std::is_trivially_constructible_v<T, Args...>; // Uses compiler magic behind the scenes.
+    inline constexpr bool is_trivially_constructible_v = __is_trivially_constructible(T, Args...); // Compiler magic.
 
     template <typename T>
     struct is_trivially_constructible : bool_constant<is_trivially_constructible_v<T>> {};
 
     template <typename T>
-    inline constexpr bool is_trivially_default_constructible_v =
-            ::std::is_trivially_default_constructible_v<T>; // Uses compiler magic behind the scenes.
+    inline constexpr bool is_trivially_default_constructible_v = is_trivially_constructible_v<T>;
 
     template <typename T>
     struct is_trivially_default_constructible : bool_constant<is_trivially_default_constructible_v<T>> {};
 
     template <typename T>
-    inline constexpr bool is_trivially_destructible_v =
-            ::std::is_trivially_destructible_v<T>; // Uses compiler magic behind the scenes.
+    inline constexpr bool is_trivially_destructible_v = __is_trivially_destructible(T); // Compiler magic.
 
     template <typename T>
     struct is_trivially_destructible : bool_constant<is_trivially_destructible_v<T>> {};
 
     template <typename T>
-    inline constexpr bool is_trivially_copy_constructible_v =
-            ::std::is_trivially_copy_constructible_v<T>; // Uses compiler magic behind the scenes.
+    inline constexpr bool is_trivially_copy_constructible_v = is_trivially_constructible_v<T, add_lval_ref_t<const T>>; // Compiler magic.
 
     template <typename T>
     struct is_trivially_copy_constructible : bool_constant<is_trivially_copy_constructible_v<T>> {};
@@ -703,6 +699,13 @@ namespace rsl
 
     namespace internal
     {
+        template <typename To, typename From>
+            requires (sizeof(To) == sizeof(From)) && is_trivially_copyable_v<To> && is_trivially_copyable_v<From>
+        [[nodiscard]] constexpr To compiler_native_bit_cast(const From& value) noexcept
+        {
+            return __builtin_bit_cast(To, value);
+        }
+
         // Requires that the size of To is equal or larger to the size of From
         // Might still break on some compilers if From is byte and To is unsigned long long
         template <typename To, typename From>
@@ -726,7 +729,7 @@ namespace rsl
                     conv.from[j] = src[i * stepSize + j];
                 }
 
-                dst[i] = ::std::bit_cast<To>(conv);
+                dst[i] = compiler_native_bit_cast<To>(conv);
             }
         }
 
@@ -752,7 +755,7 @@ namespace rsl
 
             for (size_type i = 0; i < srcCount; ++i)
             {
-                srcData[i] = ::std::bit_cast<src_converter>(src[i]);
+                srcData[i] = compiler_native_bit_cast<src_converter>(src[i]);
             }
 
             size_type dstCount = count / sizeof(From);
@@ -782,7 +785,7 @@ namespace rsl
             {
                 // This line is the one that causes troubles.
                 // on MSVC bit_cast from struct{From[]} is fine, but from struct{byte[]} is not...
-                dst[i] = ::std::bit_cast<To>(dstData[i]);
+                dst[i] = compiler_native_bit_cast<To>(dstData[i]);
             }
 
             delete[] srcData;
@@ -810,7 +813,7 @@ namespace rsl
                     conv.from[j] = val;
                 }
 
-                dst[i] = ::std::bit_cast<T>(conv);
+                dst[i] = compiler_native_bit_cast<T>(conv);
             }
         }
     } // namespace internal
@@ -841,7 +844,7 @@ namespace rsl
         }
         else
         {
-            return __builtin_bit_cast(To, value);
+            return compiler_native_bit_cast<To>(value);
         }
     }
 
@@ -1053,10 +1056,10 @@ namespace rsl
     }
 
     template <typename T>
-    using is_union = ::std::is_union<T>; // Compiler magic behind the scenes.
+    inline constexpr bool is_union_v = __is_union(T); // Compiler magic.
 
     template <typename T>
-    inline constexpr bool is_union_v = is_union<T>::value;
+    struct is_union : bool_constant<is_union_v<T>> {};
 
     // Implementation details of is_class<...>
     namespace internal
@@ -1067,7 +1070,7 @@ namespace rsl
 
         template <typename>
         false_type test_is_class(...); // NOLINT
-    }                                  // namespace internal
+    } // namespace internal
 
     template <typename T>
     struct is_class : decltype(internal::test_is_class<T>(nullptr)) {};
@@ -1644,7 +1647,7 @@ namespace rsl
 
         template <typename Callable, typename T1, typename... Types2>
         using decltype_invoke_nonzero =
-        decltype(::std::invoke(declval<Callable>(), declval<T1>(), declval<Types2>()...));
+        decltype(::std::invoke(declval<Callable>(), declval<T1>(), declval<Types2>()...)); // TODO: figure out the mess that is std::invoke, or whether it's even necessary.
 
         template <typename Callable, typename T1, typename... Types2>
         struct invoke_traits_nonzero<
@@ -1775,7 +1778,7 @@ namespace rsl
     constexpr bool is_ratio_v = false; // test for ratio type
 
     template <int_max Numerator, int_max Denominator>
-    constexpr bool is_ratio_v<::std::ratio<Numerator, Denominator>> = true;
+    constexpr bool is_ratio_v<::std::ratio<Numerator, Denominator>> = true; // TODO: make our own ratio, or get rid of this and remove our reliance on ratio if that ends up better.
 
     template <typename Type>
     struct is_ratio : bool_constant<is_ratio_v<Type>> {};
