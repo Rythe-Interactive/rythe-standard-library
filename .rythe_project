@@ -5,7 +5,7 @@ local project = {
     additional_types = { "test" },
     dependencies = {
         "public third_party/argh:header-only",
-        "public third_party/spdlog:header-only"
+        "public third_party/fmt:header-only"
     },
     defines = { "RYTHE_INTERNAL" },
     pch_file_name = "./impl/pch"
