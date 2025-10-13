@@ -138,13 +138,18 @@ namespace rsl
             return (static_cast<uint64>(upper) << 32ull) | static_cast<uint64>(lower);
         }
 
+        pair<DWORD, DWORD> split_dwords(const uint64 value) noexcept
+        {
+            return { static_cast<DWORD>(value & 0xFFFFFFFFu), static_cast<DWORD>((value >> 32ull) & 0xFFFFFFFFu) };
+        }
+
         time::date translate_timestamp(const FILETIME fileTime) noexcept
         {
             const uint64 windowsTime = combine_dwords(fileTime.dwLowDateTime, fileTime.dwHighDateTime);
             return { .epochTime = static_cast<int64>(windowsTime / 10000000ull - 11644473600ull) };
         }
 
-        result<file> open_file_impl(wstring_view absolutePath, const file_access_mode mode, const file_access_flags flags)
+        result<file> open_file_impl(const wstring_view absolutePath, const file_access_mode mode, const file_access_flags flags)
         {
             DWORD accessMode;
             DWORD creationDisposition;
@@ -246,6 +251,25 @@ namespace rsl
             set_file_access_flags(result, flags);
 
             return result;
+        }
+
+        result<size_type> write_file_impl(const HANDLE fileHandle, const byte_view data, const size_type offset)
+        {
+            auto [low, high] = split_dwords(offset);
+            OVERLAPPED overlapped;
+            overlapped.Offset = low;
+            overlapped.OffsetHigh = high;
+
+            DWORD bytesWritten = 0;
+            if (!WriteFile(fileHandle, data.data(), static_cast<uint32>(data.size()), &bytesWritten, &overlapped))
+            {
+                const platform_error error = translate_platform_error(GetLastError());
+                if (error != platform_error::no_error)
+                {
+                    return make_error(error);
+                }
+            }
+            return static_cast<size_type>(bytesWritten);
         }
     }
 
@@ -646,46 +670,44 @@ namespace rsl
         return open_file_impl(to_utf16(fs::localize(absolutePath)), mode, flags);
     }
 
-    result<void> platform::close_file([[maybe_unused]] file file)
+    void platform::close_file(file& file)
+    {
+        file.close();
+    }
+
+    result<size_type> platform::read_file_section([[maybe_unused]] file file, [[maybe_unused]] mutable_byte_view target, [[maybe_unused]] byte_range range)
     {
         return error;
     }
 
-    result<size_type> platform::read_file_section(
-            [[maybe_unused]] file file,
-            [[maybe_unused]] array_view<byte> target,
-            [[maybe_unused]] size_type amountOfBytes,
-            [[maybe_unused]] size_type offset
-            )
+    result<void> platform::read_file([[maybe_unused]] file file, [[maybe_unused]] mutable_byte_view target, [[maybe_unused]] size_type offset)
     {
         return error;
     }
 
-    result<void> platform::read_file(
-            [[maybe_unused]] file file,
-            [[maybe_unused]] array_view<byte> target,
-            [[maybe_unused]] size_type offset
-            )
+    result<size_type> platform::write_file_section([[maybe_unused]] file file, [[maybe_unused]] byte_view data, [[maybe_unused]] byte_range range)
     {
         return error;
     }
 
-    result<size_type> platform::write_file(
-            [[maybe_unused]] file file,
-            [[maybe_unused]] size_type offset,
-            [[maybe_unused]] array_view<byte const> data
-            )
+    result<void> platform::write_file(const file file, const byte_view data, const size_type offset)
     {
-        return error;
-    }
+        size_type bytesWritten = 0ull;
+        size_type writeOffset = offset;
+        while (bytesWritten < data.size())
+        {
+            result<size_type> result = write_file_impl(get_native_handle(file), data, writeOffset);
 
-    result<void> platform::write_all_to_file(
-            [[maybe_unused]] file file,
-            [[maybe_unused]] size_type offset,
-            [[maybe_unused]] array_view<byte const> data
-            )
-    {
-        return error;
+            if (result.has_errors())
+            {
+                return result.propagate();
+            }
+
+            bytesWritten += result.value();
+            writeOffset += result.value();
+        }
+
+        return okay;
     }
 
     result<void> platform::truncate_file([[maybe_unused]] file file, [[maybe_unused]] size_type offset)
@@ -703,11 +725,6 @@ namespace rsl
         return error;
     }
 
-    result<void> platform::flush_file_write_buffer([[maybe_unused]] file file)
-    {
-        return error;
-    }
-
     result<void> platform::rename_file([[maybe_unused]] string_view oldAbsolutePath, [[maybe_unused]] string_view newAbsolutePath)
     {
         return error;
@@ -717,7 +734,6 @@ namespace rsl
     {
         return error;
     }
-
 
     result<file_info> platform::get_file_info(const string_view absolutePath) noexcept
     {
@@ -776,6 +792,12 @@ namespace rsl
     bool file::operator==(const file& other) const
     {
         return m_handle == other.m_handle;
+    }
+
+    void file::close()
+    {
+        CloseHandle(get_native_handle(*this));
+        m_handle = native_file::invalid;
     }
 
     directory_iterator::directory_iterator(directory_iterator&& other) noexcept

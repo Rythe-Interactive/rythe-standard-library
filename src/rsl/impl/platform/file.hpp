@@ -53,6 +53,7 @@ namespace rsl
 
         [[nodiscard]] [[rythe_always_inline]] file_access_mode get_mode() const noexcept { return m_accessMode; }
         [[nodiscard]] [[rythe_always_inline]] file_access_flags get_flags() const noexcept { return m_accessFlags; }
+        void close();
 
         [[nodiscard]] [[rythe_always_inline]] operator bool() const { return m_handle != native_file::invalid; }
 

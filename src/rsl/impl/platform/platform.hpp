@@ -62,15 +62,14 @@ namespace rsl
         static result<dynamic_array<dynamic_string>> enumerate_directory(string_view absolutePath);
 
         static result<file> open_file(string_view absolutePath, file_access_mode mode, file_access_flags flags = file_access_flags::no_preference);
-        static result<void> close_file(file file);
+        static void close_file(file& file);
         static result<size_type> read_file_section(file file, mutable_byte_view target, byte_range range); // Read until end of range, or EOF.
         static result<void> read_file(file file, mutable_byte_view target, size_type offset = 0ull); // Read until EOF.
-        static result<size_type> write_file_section(file file, size_type offset, size_type size, byte_view data);
-        static result<void> write_file(file file, size_type offset, byte_view data);
-        static result<void> truncate_file(file file, size_type offset = 0ull);
+        static result<size_type> write_file_section(file file, byte_view data, byte_range range); // Replaces range in file with the values of data.
+        static result<void> write_file(file file, byte_view data, size_type offset = 0ull);
+        static result<void> truncate_file(file file, size_type offset);
         static result<uint64> get_file_size(string_view absolutePath);
         static result<uint64> get_file_size(file file);
-        static result<void> flush_file_write_buffer(file file);
         static result<void> rename_file(string_view oldAbsolutePath, string_view newAbsolutePath);
         static result<void> delete_file(string_view absolutePath, file_delete_flags flags = file_delete_flags::none);
 

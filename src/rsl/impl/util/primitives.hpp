@@ -4,8 +4,6 @@
 RYTHE_MSVC_SUPPRESS_WARNING_WITH_PUSH(5046)
 #include <cstddef>
 #include <cstdint>
-#include <string>
-#include <vector>
 RYTHE_MSVC_SUPPRESS_WARNING_POP
 
 namespace rsl
@@ -32,6 +30,27 @@ namespace rsl
 #endif
 
 	using size_type = std::size_t;
+
+    constexpr size_type operator ""_kb(const size_type value) noexcept
+    {
+        return value << 10u;
+    }
+
+    constexpr size_type operator ""_mb(const size_type value) noexcept
+    {
+        return value << 20u;
+    }
+
+    constexpr size_type operator ""_gb(const size_type value) noexcept
+    {
+        return value << 30u;
+    }
+
+    constexpr size_type operator ""_tb(const size_type value) noexcept
+    {
+        return value << 40u;
+    }
+
 	using index_type = std::size_t;
 	using diff_type = std::ptrdiff_t;
 	using ptr_type = std::uintptr_t;
@@ -68,7 +87,6 @@ namespace rsl
 	using uint = uint32;
 
 	using byte = uint8;
-	using byte_vec = std::vector<byte>;
 
 	using bitfield8 = byte;
 	using bitfield16 = uint16;
@@ -117,5 +135,4 @@ namespace rsl
 	};
 
 	constexpr npos_type npos = static_cast<npos_type>(-1);
-	static_assert(npos == std::string::npos);
 } // namespace rsl
