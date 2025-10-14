@@ -42,12 +42,12 @@ namespace rsl
     NATIVE_API_TYPE_ACCESSORS(dynamic_library, HMODULE)
     NATIVE_API_TYPE_ACCESSORS(thread, HANDLE)
 
-    [[maybe_unused]] [[rythe_always_inline]] static void set_file_access_mode(file& val, const file_access_mode mode) noexcept
+   [[rythe_always_inline]] static void set_file_access_mode(file& val, const file_access_mode mode) noexcept
     {
         val.m_accessMode = mode;
     }
 
-    [[maybe_unused]] [[rythe_always_inline]] static void set_file_access_flags(file& val, const file_access_flags flags) noexcept
+    [[rythe_always_inline]] static void set_file_access_flags(file& val, const file_access_flags flags) noexcept
     {
         val.m_accessFlags = flags;
     }
@@ -677,16 +677,22 @@ namespace rsl
 
     result<size_type> platform::read_file_section([[maybe_unused]] file file, [[maybe_unused]] mutable_byte_view target, [[maybe_unused]] byte_range range)
     {
+        // TODO: implement
+        rsl_assert_unimplemented();
         return error;
     }
 
     result<void> platform::read_file([[maybe_unused]] file file, [[maybe_unused]] mutable_byte_view target, [[maybe_unused]] size_type offset)
     {
+        // TODO: implement
+        rsl_assert_unimplemented();
         return error;
     }
 
     result<size_type> platform::write_file_section([[maybe_unused]] file file, [[maybe_unused]] byte_view data, [[maybe_unused]] byte_range range)
     {
+        // TODO: implement
+        rsl_assert_unimplemented();
         return error;
     }
 
@@ -712,26 +718,36 @@ namespace rsl
 
     result<void> platform::truncate_file([[maybe_unused]] file file, [[maybe_unused]] size_type offset)
     {
+        // TODO: implement
+        rsl_assert_unimplemented();
         return error;
     }
 
     result<uint64> platform::get_file_size([[maybe_unused]] string_view absolutePath)
     {
+        // TODO: implement
+        rsl_assert_unimplemented();
         return error;
     }
 
     result<uint64> platform::get_file_size([[maybe_unused]] file file)
     {
+        // TODO: implement
+        rsl_assert_unimplemented();
         return error;
     }
 
     result<void> platform::rename_file([[maybe_unused]] string_view oldAbsolutePath, [[maybe_unused]] string_view newAbsolutePath)
     {
+        // TODO: implement
+        rsl_assert_unimplemented();
         return error;
     }
 
     result<void> platform::delete_file([[maybe_unused]] string_view absolutePath, [[maybe_unused]] file_delete_flags flags)
     {
+        // TODO: implement
+        rsl_assert_unimplemented();
         return error;
     }
 
