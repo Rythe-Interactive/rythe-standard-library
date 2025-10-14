@@ -42,7 +42,7 @@ namespace rsl
     NATIVE_API_TYPE_ACCESSORS(dynamic_library, HMODULE)
     NATIVE_API_TYPE_ACCESSORS(thread, HANDLE)
 
-   [[rythe_always_inline]] static void set_file_access_mode(file& val, const file_access_mode mode) noexcept
+    [[rythe_always_inline]] static void set_file_access_mode(file& val, const file_access_mode mode) noexcept
     {
         val.m_accessMode = mode;
     }
@@ -138,11 +138,6 @@ namespace rsl
             return (static_cast<uint64>(upper) << 32ull) | static_cast<uint64>(lower);
         }
 
-        pair<DWORD, DWORD> split_dwords(const uint64 value) noexcept
-        {
-            return { static_cast<DWORD>(value & 0xFFFFFFFFu), static_cast<DWORD>((value >> 32ull) & 0xFFFFFFFFu) };
-        }
-
         time::date translate_timestamp(const FILETIME fileTime) noexcept
         {
             const uint64 windowsTime = combine_dwords(fileTime.dwLowDateTime, fileTime.dwHighDateTime);
@@ -235,9 +230,8 @@ namespace rsl
             if (mode == file_access_mode::append ||
                 mode == file_access_mode::read_write_append)
             {
-                LARGE_INTEGER largePosition;
-                largePosition.QuadPart = 0u;
-                if (!SetFilePointerEx(fileHandle, largePosition, nullptr, FILE_END))
+                constexpr LARGE_INTEGER largeOffset{ .QuadPart = static_cast<LONGLONG>(0) };
+                if (!SetFilePointerEx(fileHandle, largeOffset, nullptr, FILE_END))
                 {
                     const platform_error error = translate_platform_error(GetLastError());
                     CloseHandle(fileHandle);
@@ -255,13 +249,15 @@ namespace rsl
 
         result<size_type> write_file_impl(const HANDLE fileHandle, const byte_view data, const size_type offset)
         {
-            auto [low, high] = split_dwords(offset);
-            OVERLAPPED overlapped;
-            overlapped.Offset = low;
-            overlapped.OffsetHigh = high;
+            const LARGE_INTEGER largeOffset{ .QuadPart = static_cast<LONGLONG>(offset) };
+            if (!SetFilePointerEx(fileHandle, largeOffset, nullptr, FILE_CURRENT))
+            {
+                const platform_error error = translate_platform_error(GetLastError());
+                return make_error(error);
+            }
 
             DWORD bytesWritten = 0;
-            if (!WriteFile(fileHandle, data.data(), static_cast<uint32>(data.size()), &bytesWritten, &overlapped))
+            if (!WriteFile(fileHandle, data.data(), static_cast<uint32>(data.size()), &bytesWritten, nullptr))
             {
                 const platform_error error = translate_platform_error(GetLastError());
                 if (error != platform_error::no_error)
@@ -675,21 +671,22 @@ namespace rsl
         file.close();
     }
 
-    result<size_type> platform::read_file_section([[maybe_unused]] file file, [[maybe_unused]] mutable_byte_view target, [[maybe_unused]] byte_range range)
+    result<size_type> platform::read_file_section(
+            [[maybe_unused]] file file,
+            [[maybe_unused]] mutable_byte_view target,
+            [[maybe_unused]] byte_range range
+            )
     {
         // TODO: implement
         rsl_assert_unimplemented();
         return error;
     }
 
-    result<void> platform::read_file([[maybe_unused]] file file, [[maybe_unused]] mutable_byte_view target, [[maybe_unused]] size_type offset)
-    {
-        // TODO: implement
-        rsl_assert_unimplemented();
-        return error;
-    }
-
-    result<size_type> platform::write_file_section([[maybe_unused]] file file, [[maybe_unused]] byte_view data, [[maybe_unused]] byte_range range)
+    result<void> platform::read_file(
+            [[maybe_unused]] file file,
+            [[maybe_unused]] mutable_byte_view target,
+            [[maybe_unused]] size_type offset
+            )
     {
         // TODO: implement
         rsl_assert_unimplemented();
@@ -716,11 +713,26 @@ namespace rsl
         return okay;
     }
 
-    result<void> platform::truncate_file([[maybe_unused]] file file, [[maybe_unused]] size_type offset)
+    result<void> platform::truncate_file(const file file, const size_type offset)
     {
-        // TODO: implement
-        rsl_assert_unimplemented();
-        return error;
+        const HANDLE fileHandle = get_native_handle(file);
+        const LARGE_INTEGER largeOffset{ .QuadPart = static_cast<LONGLONG>(offset) };
+        if (!SetFilePointerEx(fileHandle, largeOffset, nullptr, FILE_CURRENT))
+        {
+            const platform_error error = translate_platform_error(GetLastError());
+            return make_error(error);
+        }
+
+        if (!SetEndOfFile(fileHandle))
+        {
+            const platform_error error = translate_platform_error(GetLastError());
+            if (error != platform_error::no_error)
+            {
+                return make_error(error);
+            }
+        }
+
+        return okay;
     }
 
     result<uint64> platform::get_file_size([[maybe_unused]] string_view absolutePath)
@@ -824,7 +836,7 @@ namespace rsl
 
     directory_iterator::directory_iterator(const directory_iterator& other) noexcept
     {
-        if(other.m_handle != native_directory_iterator::invalid)
+        if (other.m_handle != native_directory_iterator::invalid)
         {
             set_native_handle(*this, new native_win_directory_iterator_handle(*get_native_handle(other)));
         }

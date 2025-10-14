@@ -65,7 +65,6 @@ namespace rsl
         static void close_file(file& file);
         static result<size_type> read_file_section(file file, mutable_byte_view target, byte_range range); // Read until end of range, or EOF.
         static result<void> read_file(file file, mutable_byte_view target, size_type offset = 0ull); // Read until EOF.
-        static result<size_type> write_file_section(file file, byte_view data, byte_range range); // Replaces range in file with the values of data.
         static result<void> write_file(file file, byte_view data, size_type offset = 0ull);
         static result<void> truncate_file(file file, size_type offset);
         static result<uint64> get_file_size(string_view absolutePath);

@@ -264,13 +264,6 @@ namespace rsl
         return error;
     }
 
-    result<size_type> platform::write_file_section([[maybe_unused]] file file, [[maybe_unused]] byte_view data, [[maybe_unused]] byte_range range)
-    {
-        // TODO: implement
-        rsl_assert_unimplemented();
-        return error;
-    }
-
     result<void> platform::write_file(const file file, const byte_view data, const size_type offset)
     {
         // TODO: implement
