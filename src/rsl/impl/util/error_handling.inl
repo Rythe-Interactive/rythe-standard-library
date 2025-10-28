@@ -19,7 +19,20 @@ namespace rsl
         return code == other.code;
     }
 
-    inline result_base::result_base(error_signal) noexcept : m_errid(get_error_context().currentError) {}
+    inline result_base::result_base(error_signal) noexcept
+        : m_errid(get_error_context().currentError)
+    {
+        error_view errors = get_errors();
+        for (const auto& error : errors)
+        {
+            if (error.severity == error_severity::fatal)
+            {
+                return;
+            }
+        }
+
+        errors.back().severity = error_severity::fatal;
+    }
 
     inline bool result_base::is_okay() const noexcept
     {
@@ -115,16 +128,13 @@ namespace rsl
     template <typename T>
     result<T>::result(error_signal) noexcept
         : result_base(error_signal{}),
+          m_cariesValue(false),
           m_dummy(0) {}
 
     template <typename T>
     result<T>::~result()
     {
-        if (carries_value())
-        {
-            m_value.~T();
-        }
-
+        discard_value();
         result_base::~result_base();
     }
 
@@ -133,19 +143,33 @@ namespace rsl
         requires (rsl::constructible_from<T, Args...>)
     constexpr result<T>::result(Args&&... args) noexcept(rsl::is_nothrow_constructible_v<T, Args...>)
         : result_base(),
+          m_cariesValue(true),
           m_value(rsl::forward<Args>(args)...) {}
 
     template <typename T>
     bool result<T>::carries_value() const noexcept
     {
-        for (const auto& error : get_errors())
+        return m_cariesValue;
+    }
+
+    template <typename T>
+    template <typename... Args>
+        requires(rsl::constructible_from<T, Args...>)
+    void result<T>::set_value(Args&&... args) noexcept(rsl::is_nothrow_constructible_v<T, Args...>)
+    {
+        discard_value();
+        new(&m_value) T(rsl::forward<Args>(args)...);
+        m_cariesValue = true;
+    }
+
+    template <typename T>
+    void result<T>::discard_value() noexcept
+    {
+        if (carries_value())
         {
-            if (error.severity != error_severity::warning)
-            {
-                return false;
-            }
+            m_value.~T();
+            m_cariesValue = false;
         }
-        return true;
     }
 
     template <typename T>
@@ -301,9 +325,17 @@ namespace rsl
         return result<T>(rsl::forward<Args>(args)...);
     }
 
+    template <typename T, typename... Args>
+    constexpr result<T> make_partial_result(error_signal, Args&&... args) noexcept(rsl::is_nothrow_constructible_v<result<T>, Args...>)
+    {
+        result<T> result(error_signal{});
+        result.set_value(rsl::forward<Args>(args)...);
+        return result;
+    }
+
     template <typename T>
     unspecified_error::operator result<T>()
     {
-        return make_error(unspecified_error_code::unspecified, "Unspecified error"_sv);
+        return make_fatal(unspecified_error_code::unspecified, "Unspecified error"_sv);
     }
 }

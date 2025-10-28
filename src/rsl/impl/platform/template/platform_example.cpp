@@ -100,20 +100,10 @@ namespace rsl
         rsl_assert_unimplemented();
 	}
 
-    void platform::set_thread_name(const thread thread, const string_view name)
-    {
-        set_thread_name(thread.get_id(), name);
-    }
-
     void platform::set_thread_name(const thread_id threadId, const string_view name)
     {
         // TODO: Implement
         rsl_assert_unimplemented();
-    }
-
-    string_view platform::get_thread_name(const thread thread)
-    {
-        return get_thread_name(thread.get_id());
     }
 
     string_view platform::get_thread_name(const thread_id threadId)
@@ -131,27 +121,6 @@ namespace rsl
     }
 
     bool platform::is_path_valid(const string_view absolutePath)
-    {
-        // TODO: Implement
-        rsl_assert_unimplemented();
-        return false;
-    }
-
-    bool platform::is_regular_file(const string_view absolutePath)
-    {
-        // TODO: Implement
-        rsl_assert_unimplemented();
-        return false;
-    }
-
-    bool platform::is_directory(const string_view absolutePath)
-    {
-        // TODO: Implement
-        rsl_assert_unimplemented();
-        return false;
-    }
-
-    bool platform::is_path_writable(const string_view absolutePath)
     {
         // TODO: Implement
         rsl_assert_unimplemented();
@@ -186,13 +155,6 @@ namespace rsl
         return false;
     }
 
-    result<iterator_view<directory_iterator>> platform::iterate_directory(const string_view absolutePath)
-    {
-        // TODO: Implement
-        rsl_assert_unimplemented();
-        return error;
-    }
-
     iterator_view<directory_iterator> platform::iterate_directory(const string_view absolutePath, platform_error& errc)
     {
         // TODO: Implement
@@ -221,11 +183,6 @@ namespace rsl
         return error;
     }
 
-    void platform::close_file(file& file)
-    {
-        file.close();
-    }
-
     result<size_type> platform::read_file_section([[maybe_unused]] file file, [[maybe_unused]] mutable_byte_view target, [[maybe_unused]] byte_range range)
     {
         // TODO: implement
@@ -233,7 +190,7 @@ namespace rsl
         return error;
     }
 
-    result<void> platform::read_file([[maybe_unused]] file file, [[maybe_unused]] mutable_byte_view target, [[maybe_unused]] size_type offset)
+    result<size_type> platform::read_file([[maybe_unused]] file file, [[maybe_unused]] mutable_byte_view target, [[maybe_unused]] size_type offset)
     {
         // TODO: implement
         rsl_assert_unimplemented();
@@ -248,6 +205,34 @@ namespace rsl
     }
 
     result<void> platform::truncate_file([[maybe_unused]] file file, [[maybe_unused]] size_type offset)
+    {
+        // TODO: implement
+        rsl_assert_unimplemented();
+        return error;
+    }
+
+    result<void> platform::set_file_pointer([[maybe_unused]] file file, [[maybe_unused]] diff_type offset)
+    {
+        // TODO: implement
+        rsl_assert_unimplemented();
+        return error;
+    }
+
+    result<size_type> platform::get_file_pointer([[maybe_unused]] file file)
+    {
+        // TODO: implement
+        rsl_assert_unimplemented();
+        return error;
+    }
+
+    result<void> platform::skip_bytes([[maybe_unused]] file file, [[maybe_unused]] size_type offset)
+    {
+        // TODO: implement
+        rsl_assert_unimplemented();
+        return error;
+    }
+
+    result<void> platform::delete_file([[maybe_unused]] file file, [[maybe_unused]] file_delete_flags flags)
     {
         // TODO: implement
         rsl_assert_unimplemented();

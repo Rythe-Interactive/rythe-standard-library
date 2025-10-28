@@ -2,6 +2,7 @@
 
 #include "../util/primitives.hpp"
 
+#include "../threading/thread.hpp"
 #include "../threading/thread_id.hpp"
 #include "../util/error_handling.hpp"
 #include "../util/range.hpp"
@@ -64,9 +65,14 @@ namespace rsl
         static result<file> open_file(string_view absolutePath, file_access_mode mode, file_access_flags flags = file_access_flags::no_preference);
         static void close_file(file& file);
         static result<size_type> read_file_section(file file, mutable_byte_view target, byte_range range); // Read until end of range, or EOF.
-        static result<void> read_file(file file, mutable_byte_view target, size_type offset = 0ull); // Read until EOF.
-        static result<void> write_file(file file, byte_view data, size_type offset = 0ull);
-        static result<void> truncate_file(file file, size_type offset);
+        static result<size_type> read_file(file file, mutable_byte_view target, size_type offset = npos); // Read until EOF.
+        static result<void> write_file(file file, byte_view data, size_type offset = npos);
+        static result<void> append_file(file file, byte_view data);
+        static result<void> truncate_file(file file, size_type offset = npos);
+        static result<void> set_file_pointer(file file, diff_type offset); // negative is offset from file end.
+        static result<size_type> get_file_pointer(file file);
+        static result<void> skip_bytes(file file, size_type offset);
+        static result<void> delete_file(file file, file_delete_flags flags = file_delete_flags::none);
         static result<uint64> get_file_size(string_view absolutePath);
         static result<uint64> get_file_size(file file);
         static result<void> rename_file(string_view oldAbsolutePath, string_view newAbsolutePath);

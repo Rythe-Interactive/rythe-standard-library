@@ -39,6 +39,10 @@ namespace rsl
     };
     RYTHE_BIT_FLAG_OPERATORS(file_delete_flags)
 
+    [[nodiscard]] [[rythe_always_inline]] constexpr bool mode_available_for_write(file_access_mode mode) noexcept;
+    [[nodiscard]] [[rythe_always_inline]] constexpr bool mode_available_for_append(file_access_mode mode) noexcept;
+    [[nodiscard]] [[rythe_always_inline]] constexpr bool mode_available_for_read(file_access_mode mode) noexcept;
+
     DECLARE_NATIVE_API_TYPE(file)
     [[maybe_unused]] [[rythe_always_inline]] static void set_file_access_mode(file&, file_access_mode) noexcept;
     [[maybe_unused]] [[rythe_always_inline]] static void set_file_access_flags(file&, file_access_flags) noexcept;
@@ -49,13 +53,13 @@ namespace rsl
         RULE_OF_5_CONSTEXPR_NOEXCEPT(file);
 
         bool operator==(const file& other) const;
-        bool operator!=(const file& other) const { return !(*this == other); }
+        bool operator!=(const file& other) const;
 
-        [[nodiscard]] [[rythe_always_inline]] file_access_mode get_mode() const noexcept { return m_accessMode; }
-        [[nodiscard]] [[rythe_always_inline]] file_access_flags get_flags() const noexcept { return m_accessFlags; }
+        [[nodiscard]] [[rythe_always_inline]] file_access_mode get_mode() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] file_access_flags get_flags() const noexcept;
         void close();
 
-        [[nodiscard]] [[rythe_always_inline]] operator bool() const { return m_handle != native_file::invalid; }
+        [[nodiscard]] [[rythe_always_inline]] operator bool() const noexcept;
 
     private:
         NATIVE_API_TYPE_PRIVATE_MEMBERS(file)
@@ -66,3 +70,5 @@ namespace rsl
         file_access_flags m_accessFlags;
     };
 }
+
+#include "file.inl"

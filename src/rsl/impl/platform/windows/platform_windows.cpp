@@ -249,11 +249,14 @@ namespace rsl
 
         result<size_type> write_file_impl(const HANDLE fileHandle, const byte_view data, const size_type offset)
         {
-            const LARGE_INTEGER largeOffset{ .QuadPart = static_cast<LONGLONG>(offset) };
-            if (!SetFilePointerEx(fileHandle, largeOffset, nullptr, FILE_CURRENT))
+            if (offset != npos)
             {
-                const platform_error error = translate_platform_error(GetLastError());
-                return make_error(error);
+                const LARGE_INTEGER largeOffset{ .QuadPart = static_cast<LONGLONG>(offset) };
+                if (!SetFilePointerEx(fileHandle, largeOffset, nullptr, FILE_BEGIN))
+                {
+                    const platform_error error = translate_platform_error(GetLastError());
+                    return make_error(error);
+                }
             }
 
             DWORD bytesWritten = 0;
@@ -388,11 +391,6 @@ namespace rsl
         Sleep(milliseconds);
     }
 
-    void platform::set_thread_name(const thread thread, const string_view name)
-    {
-        set_thread_name(thread.get_id(), name);
-    }
-
     void platform::set_thread_name(const thread_id threadId, const string_view name)
     {
         dynamic_wstring& wideName = thread_names.emplace_or_replace(
@@ -400,11 +398,6 @@ namespace rsl
                 native_thread_name{ .wideName = to_utf16(name), .name = dynamic_string::from_view(name) }
                 ).wideName;
         [[maybe_unused]] HRESULT _ = SetThreadDescription(GetCurrentThread(), wideName.data());
-    }
-
-    string_view platform::get_thread_name(const thread thread)
-    {
-        return get_thread_name(thread.get_id());
     }
 
     string_view platform::get_thread_name(const thread_id threadId)
@@ -473,39 +466,6 @@ namespace rsl
         return true;
     }
 
-    bool platform::is_regular_file(const string_view absolutePath)
-    {
-        result<file_info> result = get_file_info(absolutePath);
-        if (!result.reduce_and_discard())
-        {
-            return false;
-        }
-
-        return result->isFile;
-    }
-
-    bool platform::is_directory(const string_view absolutePath)
-    {
-        result<file_info> result = get_file_info(absolutePath);
-        if (!result.reduce_and_discard())
-        {
-            return false;
-        }
-
-        return result->isDirectory;
-    }
-
-    bool platform::is_path_writable(const string_view absolutePath)
-    {
-        result<file_info> result = get_file_info(absolutePath);
-        if (!result.reduce_and_discard())
-        {
-            return false;
-        }
-
-        return result->isWritable;
-    }
-
     bool platform::is_path_readable(const string_view absolutePath)
     {
         return get_file_info(absolutePath).reduce_and_discard();
@@ -572,17 +532,6 @@ namespace rsl
     {
         dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
         return GetFileAttributesW(widePath.data()) != INVALID_FILE_ATTRIBUTES;
-    }
-
-    result<iterator_view<directory_iterator>> platform::iterate_directory(const string_view absolutePath)
-    {
-        platform_error errc;
-        iterator_view<directory_iterator> result = iterate_directory(absolutePath, errc);
-        if (errc != platform_error::no_error)
-        {
-            return make_error(errc);
-        }
-        return result;
     }
 
     iterator_view<directory_iterator> platform::iterate_directory(const string_view absolutePath, platform_error& errc)
@@ -666,11 +615,6 @@ namespace rsl
         return open_file_impl(to_utf16(fs::localize(absolutePath)), mode, flags);
     }
 
-    void platform::close_file(file& file)
-    {
-        file.close();
-    }
-
     result<size_type> platform::read_file_section(
             [[maybe_unused]] file file,
             [[maybe_unused]] mutable_byte_view target,
@@ -682,19 +626,70 @@ namespace rsl
         return error;
     }
 
-    result<void> platform::read_file(
-            [[maybe_unused]] file file,
-            [[maybe_unused]] mutable_byte_view target,
-            [[maybe_unused]] size_type offset
+    result<size_type> platform::read_file(
+            const file file,
+            const mutable_byte_view target,
+            const size_type offset
             )
     {
-        // TODO: implement
-        rsl_assert_unimplemented();
-        return error;
+        rsl_assert_always(mode_available_for_read(file.get_mode()));
+
+        HANDLE nativeFileHandle = get_native_handle(file);
+
+        if (offset != npos)
+        {
+            const LARGE_INTEGER largeOffset{ .QuadPart = static_cast<LONGLONG>(offset) };
+            if (!SetFilePointerEx(nativeFileHandle, largeOffset, nullptr, FILE_BEGIN))
+            {
+                const platform_error error = translate_platform_error(GetLastError());
+                return make_error(error);
+            }
+        }
+
+        byte* readPointer = target.data();
+        size_type bytesToRead = target.size();
+        size_type totalBytesRead = 0ull;
+
+        constexpr static size_type readBatchSize = 1_gb;
+
+        while (bytesToRead > readBatchSize)
+        {
+            DWORD bytesRead = 0u;
+            if (!ReadFile(nativeFileHandle, readPointer, readBatchSize, &bytesRead, nullptr))
+            {
+                return make_partial_result<size_type>(make_error(translate_platform_error(GetLastError())), totalBytesRead + bytesRead);
+            }
+
+            totalBytesRead += bytesRead;
+
+            if (bytesRead != readBatchSize)
+            {
+                return totalBytesRead;
+            }
+
+            bytesToRead -= readBatchSize;
+            readPointer += readBatchSize;;
+        }
+
+        if (totalBytesRead > 0ull)
+        {
+            DWORD bytesRead = 0u;
+            if (!ReadFile(nativeFileHandle, readPointer, bytesToRead, &bytesRead, nullptr))
+            {
+                return make_partial_result<size_type>(make_error(translate_platform_error(GetLastError())), totalBytesRead + bytesRead);
+            }
+
+            totalBytesRead += bytesRead;
+        }
+
+        return totalBytesRead;
     }
 
+    // TODO: this can largely be the same for all platforms, only the internals of write_file_impl is platform specific
     result<void> platform::write_file(const file file, const byte_view data, const size_type offset)
     {
+        rsl_assert_always(mode_available_for_write(file.get_mode()) || (mode_available_for_append(file.get_mode()) && offset == npos));
+
         size_type bytesWritten = 0ull;
         size_type writeOffset = offset;
         while (bytesWritten < data.size())
@@ -707,7 +702,10 @@ namespace rsl
             }
 
             bytesWritten += result.value();
-            writeOffset += result.value();
+            if (offset != npos)
+            {
+                writeOffset += result.value();
+            }
         }
 
         return okay;
@@ -716,11 +714,15 @@ namespace rsl
     result<void> platform::truncate_file(const file file, const size_type offset)
     {
         const HANDLE fileHandle = get_native_handle(file);
-        const LARGE_INTEGER largeOffset{ .QuadPart = static_cast<LONGLONG>(offset) };
-        if (!SetFilePointerEx(fileHandle, largeOffset, nullptr, FILE_CURRENT))
+
+        if (offset != npos)
         {
-            const platform_error error = translate_platform_error(GetLastError());
-            return make_error(error);
+            const LARGE_INTEGER largeOffset{ .QuadPart = static_cast<LONGLONG>(offset) };
+            if (!SetFilePointerEx(fileHandle, largeOffset, nullptr, FILE_BEGIN))
+            {
+                const platform_error error = translate_platform_error(GetLastError());
+                return make_error(error);
+            }
         }
 
         if (!SetEndOfFile(fileHandle))
@@ -733,6 +735,51 @@ namespace rsl
         }
 
         return okay;
+    }
+
+    result<void> platform::set_file_pointer(const file file, const diff_type offset)
+    {
+        DWORD moveMethod = offset >= 0? FILE_BEGIN : FILE_END;
+        LARGE_INTEGER largeOffset{ .QuadPart = static_cast<LONGLONG>(moveMethod == FILE_BEGIN ? offset : -offset) };
+        if (!SetFilePointerEx(get_native_handle(file), largeOffset, nullptr, moveMethod))
+        {
+            const platform_error error = translate_platform_error(GetLastError());
+            return make_error(error);
+        }
+
+        return okay;
+    }
+
+    result<size_type> platform::get_file_pointer(const file file)
+    {
+        constexpr static LARGE_INTEGER largeOffset{ .QuadPart = static_cast<LONGLONG>(0) };
+        LARGE_INTEGER filePointer;
+        if (!SetFilePointerEx(get_native_handle(file), largeOffset, &filePointer, FILE_CURRENT))
+        {
+            const platform_error error = translate_platform_error(GetLastError());
+            return make_error(error);
+        }
+
+        return static_cast<size_type>(filePointer.QuadPart);
+    }
+
+    result<void> platform::skip_bytes(const file file, const size_type offset)
+    {
+        LARGE_INTEGER largeOffset{ .QuadPart = static_cast<LONGLONG>(offset) };
+        if (!SetFilePointerEx(get_native_handle(file), largeOffset, nullptr, FILE_CURRENT))
+        {
+            const platform_error error = translate_platform_error(GetLastError());
+            return make_error(error);
+        }
+
+        return okay;
+    }
+
+    result<void> platform::delete_file([[maybe_unused]] file file, [[maybe_unused]] file_delete_flags flags)
+    {
+        // TODO: implement
+        rsl_assert_unimplemented();
+        return error;
     }
 
     result<uint64> platform::get_file_size([[maybe_unused]] string_view absolutePath)

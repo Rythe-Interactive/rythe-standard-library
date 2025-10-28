@@ -173,11 +173,17 @@ namespace rsl
 
         [[nodiscard]] [[rythe_always_inline]] bool carries_value() const noexcept;
 
+        template <typename... Args>
+            requires(rsl::constructible_from<T, Args...>)
+        [[rythe_always_inline]] void set_value(Args&&... args) noexcept(rsl::is_nothrow_constructible_v<T, Args...>);
+        [[rythe_always_inline]] void discard_value() noexcept;
+
         [[nodiscard]] [[rythe_always_inline]] result_type& value() noexcept;
         [[nodiscard]] [[rythe_always_inline]] result_type* operator->() noexcept;
         [[nodiscard]] [[rythe_always_inline]] result_type& operator*() noexcept;
 
     private:
+        bool m_cariesValue;
         union
         {
             T m_value;
@@ -243,6 +249,13 @@ namespace rsl
 
     template <typename T, typename... Args>
     [[nodiscard]] [[rythe_always_inline]] constexpr result<T> make_result(
+            Args&&... args
+            )
+        noexcept(rsl::is_nothrow_constructible_v<result<T>, Args...>);
+
+    template <typename T, typename... Args>
+    [[nodiscard]] [[rythe_always_inline]] constexpr result<T> make_partial_result(
+            error_signal,
             Args&&... args
             )
         noexcept(rsl::is_nothrow_constructible_v<result<T>, Args...>);
