@@ -61,9 +61,35 @@ namespace rsl
         file.close();
     }
 
+    inline result<size_type> platform::read_file_section(
+            const file file,
+            const mutable_byte_view target,
+            const byte_range range
+            )
+    {
+        rsl_assert_invalid_operation(range.size <= target.size());
+
+        return read_file(file, target.subview(0ull, range.size), range.offset);
+    }
+
     inline result<void> platform::append_file(const file file, const byte_view data)
     {
         return write_file(file, data, npos);
+    }
+
+    inline result<size_type> platform::get_file_size(const string_view absolutePath)
+    {
+        result<file> result = open_file(absolutePath, file_access_mode::read);
+        if (!result.carries_value())
+        {
+            return result.propagate();
+        }
+
+        const result<size_type> sizeResult = get_file_size(*result);
+
+        close_file(*result);
+
+        return sizeResult;
     }
 
     inline dynamic_string directory_entry::get_path() const

@@ -393,7 +393,7 @@ namespace rsl
 
     void platform::set_thread_name(const thread_id threadId, const string_view name)
     {
-        dynamic_wstring& wideName = thread_names.emplace_or_replace(
+        const dynamic_wstring& wideName = thread_names.emplace_or_replace(
                 threadId,
                 native_thread_name{ .wideName = to_utf16(name), .name = dynamic_string::from_view(name) }
                 ).wideName;
@@ -530,13 +530,13 @@ namespace rsl
 
     bool platform::does_path_entry_exist(const string_view absolutePath)
     {
-        dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
+        const dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
         return GetFileAttributesW(widePath.data()) != INVALID_FILE_ATTRIBUTES;
     }
 
     iterator_view<directory_iterator> platform::iterate_directory(const string_view absolutePath, platform_error& errc)
     {
-        dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
+        const dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
 
         WIN32_FIND_DATAW findData;
         const HANDLE directory = FindFirstFileW(widePath.data(), &findData);
@@ -586,7 +586,7 @@ namespace rsl
 
     result<dynamic_array<dynamic_string>> platform::enumerate_directory(const string_view absolutePath)
     {
-        dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
+        const dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
 
         dynamic_array<dynamic_string> result;
 
@@ -615,24 +615,13 @@ namespace rsl
         return open_file_impl(to_utf16(fs::localize(absolutePath)), mode, flags);
     }
 
-    result<size_type> platform::read_file_section(
-            [[maybe_unused]] file file,
-            [[maybe_unused]] mutable_byte_view target,
-            [[maybe_unused]] byte_range range
-            )
-    {
-        // TODO: implement
-        rsl_assert_unimplemented();
-        return error;
-    }
-
     result<size_type> platform::read_file(
             const file file,
             const mutable_byte_view target,
             const size_type offset
             )
     {
-        rsl_assert_always(mode_available_for_read(file.get_mode()));
+        rsl_assert_invalid_operation(mode_available_for_read(file.get_mode()));
 
         HANDLE nativeFileHandle = get_native_handle(file);
 
@@ -657,7 +646,10 @@ namespace rsl
             DWORD bytesRead = 0u;
             if (!ReadFile(nativeFileHandle, readPointer, readBatchSize, &bytesRead, nullptr))
             {
-                return make_partial_result<size_type>(make_error(translate_platform_error(GetLastError())), totalBytesRead + bytesRead);
+                return make_partial_result<size_type>(
+                        make_error(translate_platform_error(GetLastError())),
+                        totalBytesRead + bytesRead
+                        );
             }
 
             totalBytesRead += bytesRead;
@@ -676,7 +668,10 @@ namespace rsl
             DWORD bytesRead = 0u;
             if (!ReadFile(nativeFileHandle, readPointer, bytesToRead, &bytesRead, nullptr))
             {
-                return make_partial_result<size_type>(make_error(translate_platform_error(GetLastError())), totalBytesRead + bytesRead);
+                return make_partial_result<size_type>(
+                        make_error(translate_platform_error(GetLastError())),
+                        totalBytesRead + bytesRead
+                        );
             }
 
             totalBytesRead += bytesRead;
@@ -685,10 +680,11 @@ namespace rsl
         return totalBytesRead;
     }
 
-    // TODO: this can largely be the same for all platforms, only the internals of write_file_impl is platform specific
     result<void> platform::write_file(const file file, const byte_view data, const size_type offset)
     {
-        rsl_assert_always(mode_available_for_write(file.get_mode()) || (mode_available_for_append(file.get_mode()) && offset == npos));
+        rsl_assert_invalid_operation(
+                mode_available_for_write(file.get_mode()) || (mode_available_for_append(file.get_mode()) && offset == npos)
+                );
 
         size_type bytesWritten = 0ull;
         size_type writeOffset = offset;
@@ -739,7 +735,7 @@ namespace rsl
 
     result<void> platform::set_file_pointer(const file file, const diff_type offset)
     {
-        DWORD moveMethod = offset >= 0? FILE_BEGIN : FILE_END;
+        DWORD moveMethod = offset >= 0 ? FILE_BEGIN : FILE_END;
         LARGE_INTEGER largeOffset{ .QuadPart = static_cast<LONGLONG>(moveMethod == FILE_BEGIN ? offset : -offset) };
         if (!SetFilePointerEx(get_native_handle(file), largeOffset, nullptr, moveMethod))
         {
@@ -775,44 +771,62 @@ namespace rsl
         return okay;
     }
 
-    result<void> platform::delete_file([[maybe_unused]] file file, [[maybe_unused]] file_delete_flags flags)
+    result<size_type> platform::get_file_size(const file file)
     {
-        // TODO: implement
-        rsl_assert_unimplemented();
-        return error;
+        LARGE_INTEGER fileSize;
+        if (!GetFileSizeEx(get_native_handle(file), &fileSize))
+        {
+            return make_error(translate_platform_error(GetLastError()));
+        }
+        return static_cast<size_type>(fileSize.QuadPart);
     }
 
-    result<uint64> platform::get_file_size([[maybe_unused]] string_view absolutePath)
+    result<void> platform::rename_file(const string_view oldAbsolutePath, const string_view newAbsolutePath)
     {
-        // TODO: implement
-        rsl_assert_unimplemented();
-        return error;
+        const dynamic_wstring oldWidePath = to_utf16(fs::localize(oldAbsolutePath));
+        const dynamic_wstring newWidePath = to_utf16(fs::localize(newAbsolutePath));
+
+        if (!MoveFileExW(oldWidePath.data(), newWidePath.data(), MOVEFILE_WRITE_THROUGH | MOVEFILE_REPLACE_EXISTING))
+        {
+            return make_error(translate_platform_error(GetLastError()));
+        }
+        return okay;
     }
 
-    result<uint64> platform::get_file_size([[maybe_unused]] file file)
+    result<void> platform::delete_file(const string_view absolutePath, const file_delete_flags flags)
     {
-        // TODO: implement
-        rsl_assert_unimplemented();
-        return error;
-    }
+        const dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
 
-    result<void> platform::rename_file([[maybe_unused]] string_view oldAbsolutePath, [[maybe_unused]] string_view newAbsolutePath)
-    {
-        // TODO: implement
-        rsl_assert_unimplemented();
-        return error;
-    }
+        if (DeleteFileW(widePath.data()))
+        {
+            return okay;
+        }
 
-    result<void> platform::delete_file([[maybe_unused]] string_view absolutePath, [[maybe_unused]] file_delete_flags flags)
-    {
-        // TODO: implement
-        rsl_assert_unimplemented();
-        return error;
+        const DWORD error = GetLastError();
+        if (error == ERROR_FILE_NOT_FOUND || error == ERROR_PATH_NOT_FOUND)
+        {
+            return okay;
+        }
+
+        if (error == ERROR_ACCESS_DENIED && enum_flags::has_flag(flags, file_delete_flags::force))
+        {
+            DWORD attributes = GetFileAttributesW(widePath.data());
+            if (attributes != INVALID_FILE_ATTRIBUTES)
+            {
+                attributes &= ~FILE_ATTRIBUTE_READONLY;
+                if (SetFileAttributesW(widePath.data(), attributes) && DeleteFileW(widePath.data()))
+                {
+                    return okay;
+                }
+            }
+        }
+
+        return make_error(translate_platform_error(error));
     }
 
     result<file_info> platform::get_file_info(const string_view absolutePath) noexcept
     {
-        dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
+        const dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
 
         const HANDLE fileHandle = CreateFileW(
                 widePath.data(),

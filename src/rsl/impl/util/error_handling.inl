@@ -85,6 +85,7 @@ namespace rsl
 
     inline error_signal result_base::propagate() noexcept
     {
+        m_errid = invalid_err_id;
         return error_signal{};
     }
 
@@ -99,8 +100,13 @@ namespace rsl
         return false;
     }
 
-    inline errc result_base::report_errors() noexcept
+    inline errc result_base::report_errors() const noexcept
     {
+        if (m_errid != invalid_err_id)
+        {
+            return no_error_code;
+        }
+
         error_handler* errorHandler = get_error_handler();
 
         for (auto& error : get_errors())
@@ -108,13 +114,16 @@ namespace rsl
             errorHandler->handle_error(error, assert_on_error_enabled());
         }
 
-        errc errorCode = no_error_code;
-        if (m_errid != invalid_err_id)
+        return get_error().code;
+    }
+
+    inline errc result_base::report_errors_and_resolve() noexcept
+    {
+        errc errorCode = report_errors();
+        if (errorCode != no_error_code)
         {
-            errorCode = get_error().code;
             resolve();
         }
-
         return errorCode;
     }
 
@@ -180,13 +189,32 @@ namespace rsl
     }
 
     template <typename T>
+    const typename result<T>::result_type& result<T>::value() const noexcept
+    {
+        rsl_assert_msg_hard(report_errors() == no_error_code, "Tried to get value of result with unresolved error.");
+        return m_value;
+    }
+
+    template <typename T>
     typename result<T>::result_type* result<T>::operator->() noexcept
     {
         return &value();
     }
 
     template <typename T>
+    const typename result<T>::result_type* result<T>::operator->() const noexcept
+    {
+        return &value();
+    }
+
+    template <typename T>
     typename result<T>::result_type& result<T>::operator*() noexcept
+    {
+        return value();
+    }
+
+    template <typename T>
+    const typename result<T>::result_type& result<T>::operator*() const noexcept
     {
         return value();
     }

@@ -70,13 +70,13 @@ namespace rsl::filesystem
 
     const file_solution* view::find_solution() const
     {
-        prefetch_solution().report_errors();
+        prefetch_solution().report_errors_and_resolve();
         return m_solution;
     }
 
     file_solution* view::find_solution()
     {
-        prefetch_solution().report_errors();
+        prefetch_solution().report_errors_and_resolve();
         return m_solution;
     }
 }

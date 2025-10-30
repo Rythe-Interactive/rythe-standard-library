@@ -72,9 +72,8 @@ namespace rsl
         static result<void> set_file_pointer(file file, diff_type offset); // negative is offset from file end.
         static result<size_type> get_file_pointer(file file);
         static result<void> skip_bytes(file file, size_type offset);
-        static result<void> delete_file(file file, file_delete_flags flags = file_delete_flags::none);
-        static result<uint64> get_file_size(string_view absolutePath);
-        static result<uint64> get_file_size(file file);
+        static result<size_type> get_file_size(file file);
+        static result<size_type> get_file_size(string_view absolutePath);
         static result<void> rename_file(string_view oldAbsolutePath, string_view newAbsolutePath);
         static result<void> delete_file(string_view absolutePath, file_delete_flags flags = file_delete_flags::none);
 

@@ -147,10 +147,11 @@ namespace rsl
         [[nodiscard]] [[rythe_always_inline]] errid id() const noexcept;
 
         [[rythe_always_inline]] void resolve() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] static error_signal propagate() noexcept;
+        [[nodiscard]] [[rythe_always_inline]] error_signal propagate() noexcept;
         [[nodiscard]] [[rythe_always_inline]] bool reduce_and_discard() noexcept;
 
-        [[rythe_always_inline]] errc report_errors() noexcept;
+        [[rythe_always_inline]] errc report_errors() const noexcept;
+        [[rythe_always_inline]] errc report_errors_and_resolve() noexcept;
 
         virtual ~result_base();
     };
@@ -179,8 +180,11 @@ namespace rsl
         [[rythe_always_inline]] void discard_value() noexcept;
 
         [[nodiscard]] [[rythe_always_inline]] result_type& value() noexcept;
+        [[nodiscard]] [[rythe_always_inline]] const result_type& value() const noexcept;
         [[nodiscard]] [[rythe_always_inline]] result_type* operator->() noexcept;
+        [[nodiscard]] [[rythe_always_inline]] const result_type* operator->() const noexcept;
         [[nodiscard]] [[rythe_always_inline]] result_type& operator*() noexcept;
+        [[nodiscard]] [[rythe_always_inline]] const result_type& operator*() const noexcept;
 
     private:
         bool m_cariesValue;

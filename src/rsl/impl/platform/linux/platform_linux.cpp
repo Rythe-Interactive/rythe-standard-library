@@ -256,21 +256,7 @@ namespace rsl
         return error;
     }
 
-    result<void> platform::delete_file([[maybe_unused]] file file, [[maybe_unused]] file_delete_flags flags)
-    {
-        // TODO: implement
-        rsl_assert_unimplemented();
-        return error;
-    }
-
-    result<uint64> platform::get_file_size([[maybe_unused]] string_view absolutePath)
-    {
-        // TODO: implement
-        rsl_assert_unimplemented();
-        return error;
-    }
-
-    result<uint64> platform::get_file_size([[maybe_unused]] file file)
+    result<size_type> platform::get_file_size([[maybe_unused]] file file)
     {
         // TODO: implement
         rsl_assert_unimplemented();
