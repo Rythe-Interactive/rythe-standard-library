@@ -3,7 +3,7 @@
 #include "file_solution.hpp"
 #include "archive_registry.hpp"
 
-namespace rsl::filesystem
+namespace rsl::fs
 {
     result<void> view::prefetch_solution(const bool ignoreMultipleSolutions) const
     {

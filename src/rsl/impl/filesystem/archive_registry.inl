@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace rsl::filesystem
+namespace rsl::fs
 {
     constexpr domain_iterator::domain_iterator(const unique_object<archive>* provider) noexcept : m_provider(provider) {}
 

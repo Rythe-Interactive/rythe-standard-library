@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace rsl::filesystem
+namespace rsl::fs
 {
     inline const archive* file_solution::get_provider() const noexcept
     {

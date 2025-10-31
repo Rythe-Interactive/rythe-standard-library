@@ -7,7 +7,7 @@
 #include "path_util.hpp"
 #include "traits.hpp"
 
-namespace rsl::filesystem
+namespace rsl::fs
 {
     class file_solution;
 
@@ -58,8 +58,6 @@ namespace rsl::filesystem
 
 namespace rsl
 {
-    namespace fs = filesystem;
-
     constexpr fs::view operator""_fsview(const cstring str, const size_type len) noexcept
     {
         return fs::view(string_view::from_buffer(str, len));

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace rsl::filesystem
+namespace rsl::fs
 {
     constexpr char separator() noexcept
     {

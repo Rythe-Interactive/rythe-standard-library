@@ -2,7 +2,7 @@
 
 #include "file_solution.hpp"
 
-namespace rsl::filesystem
+namespace rsl::fs
 {
     archive& archive::register_domain(const string_view domain) noexcept
     {

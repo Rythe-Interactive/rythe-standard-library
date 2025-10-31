@@ -5,7 +5,7 @@
 
 #include "archive.hpp"
 
-namespace rsl::filesystem
+namespace rsl::fs
 {
     class file_solution;
 

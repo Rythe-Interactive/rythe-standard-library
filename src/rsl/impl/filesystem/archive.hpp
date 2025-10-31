@@ -6,7 +6,7 @@
 
 #include "traits.hpp"
 
-namespace rsl::filesystem
+namespace rsl::fs
 {
     class view;
 

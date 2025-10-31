@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace rsl::filesystem
+namespace rsl::fs
 {
     template <string_like Domain, string_like ... Domains>
     archive::archive(Domain&& domain, Domains&&... domains)

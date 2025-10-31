@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace rsl::filesystem
+namespace rsl::fs
 {
     template <string_like Domain, string_like ... Domains>
     local_disk_archive::local_disk_archive(const string_view rootPath, Domain&& domain, Domains&&... domains)

@@ -5,7 +5,7 @@
 #include "file_solution.hpp"
 #include "path_util.hpp"
 
-namespace rsl::filesystem
+namespace rsl::fs
 {
     class local_disk_file_solution : public file_solution
     {

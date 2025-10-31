@@ -2,17 +2,12 @@
 
 #include "../platform/platform.hpp"
 
-#include "local_disk_archive.hpp"
 #include "file_solution.hpp"
 #include "filesystem_error.hpp"
+#include "local_disk_archive.hpp"
 #include "path_util.hpp"
 
-namespace rsl
-{
-    namespace fs = filesystem;
-}
-
-namespace rsl::filesystem
+namespace rsl::fs
 {
     namespace internal
     {

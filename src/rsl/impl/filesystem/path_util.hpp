@@ -3,7 +3,7 @@
 
 #include "../util/string_util.hpp"
 
-namespace rsl::filesystem
+namespace rsl::fs
 {
     [[nodiscard]] [[rythe_always_inline]] constexpr char separator() noexcept;
     [[nodiscard]] [[rythe_always_inline]] constexpr char anti_separator() noexcept;
@@ -47,11 +47,6 @@ namespace rsl::filesystem
     [[nodiscard]] [[rythe_always_inline]] constexpr dynamic_string replace_domain(string_view path, string_view replacement) noexcept;
     template<string_like StringType>
     [[rythe_always_inline]] constexpr void replace_domain(in_place_signal_type, StringType& path, string_view replacement) noexcept;
-}
-
-namespace rsl
-{
-    namespace fs = filesystem;
 }
 
 #include "path_util.inl"

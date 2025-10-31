@@ -4,7 +4,7 @@
 #include "path_util.hpp"
 #include "view.hpp"
 
-namespace rsl::filesystem
+namespace rsl::fs
 {
     bool local_disk_archive::is_file() const
     {
