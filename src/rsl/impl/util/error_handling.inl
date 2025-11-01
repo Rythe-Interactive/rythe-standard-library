@@ -141,6 +141,12 @@ namespace rsl
           m_dummy(0) {}
 
     template <typename T>
+    result<T>::result(nullptr_type) noexcept
+        : result_base(),
+          m_cariesValue(false),
+          m_dummy(0) {}
+
+    template <typename T>
     result<T>::~result()
     {
         discard_value();

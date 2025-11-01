@@ -166,6 +166,7 @@ namespace rsl
         using result_type = remove_cvr_t<T>;
 
         [[rythe_always_inline]] result(error_signal) noexcept;
+        [[rythe_always_inline]] result(nullptr_type) noexcept;
         [[rythe_always_inline]] ~result() override;
 
         template <typename... Args>

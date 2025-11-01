@@ -4,35 +4,10 @@
 
 #include "file_solution.hpp"
 #include "filesystem_error.hpp"
-#include "local_disk_archive.hpp"
 #include "path_util.hpp"
 
 namespace rsl::fs
 {
-    namespace internal
-    {
-        archive_registry construct_default_registry() noexcept
-        {
-            archive_registry registry;
-
-            for (auto driveName : platform::enumerate_drives())
-            {
-                hybrid_string<64> domain = hybrid_string<64>::from_view(driveName);
-                domain.append('/');
-                standardize( in_place_signal, domain);
-                registry.register_provider<local_disk_archive>(driveName + '\\', domain);
-            }
-
-            return registry;
-        }
-
-        archive_registry& get_default_archive_registry() noexcept
-        {
-            static archive_registry registry = construct_default_registry();
-            return registry;
-        }
-    } // namespace internal
-
     void archive_registry::register_provider(temporary_object<archive>&& provider)
     {
         archive* entry = m_providers.emplace_back(rsl::move(provider)).get();
@@ -63,33 +38,33 @@ namespace rsl::fs
                 }
                 result.resolve();
             }
+
+            return make_error(filesystem_error::no_solution_found);
         }
-        else
+
+        file_solution* solution = nullptr;
+        for (auto* provider : *providers)
         {
-            file_solution* solution = nullptr;
-            for (auto* provider : *providers)
+            if (auto result = provider->create_solution(path); result.is_okay())
             {
-                if (auto result = provider->create_solution(path); result.is_okay())
+                if (solution) [[unlikely]]
                 {
-                    if (solution) [[unlikely]]
-                    {
-                        solution->release();
-                        result.value()->release();
-                        return make_error(filesystem_error::multiple_solutions_found);
-                    }
+                    solution->release();
+                    result.value()->release();
+                    return make_error(filesystem_error::multiple_solutions_found);
+                }
 
-                    solution = result.value();
-                }
-                else
-                {
-                    result.resolve();
-                }
+                solution = result.value();
             }
-
-            if (solution)
+            else
             {
-                return solution;
+                result.resolve();
             }
+        }
+
+        if (solution)
+        {
+            return solution;
         }
 
         return make_error(filesystem_error::no_solution_found);
@@ -109,6 +84,4 @@ namespace rsl::fs
     {
         return iterator_view(domain_iterator(m_providers.begin()), domain_iterator(m_providers.end()));
     }
-
-    get_archive_registry_func get_archive_registry = &internal::get_default_archive_registry;
 }

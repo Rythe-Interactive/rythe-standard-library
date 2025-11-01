@@ -55,8 +55,6 @@ namespace rsl::fs
         dynamic_map<string_view, dynamic_array<archive*>> m_domainMap;
         dynamic_array<unique_object<archive>> m_providers;
     };
-
-    DECLARE_SINGLETON(archive_registry)
 }
 
 #include "archive_registry.inl"
