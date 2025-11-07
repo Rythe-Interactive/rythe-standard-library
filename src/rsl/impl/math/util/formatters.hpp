@@ -1,5 +1,6 @@
 #pragma once
-#include "../../logging/spdlog_include.hpp"
+#include "../../containers/string.hpp"
+#include "../../logging/fmt_include.hpp"
 
 #include "../../util/assert.hpp"
 

@@ -1,4 +1,5 @@
 #pragma once
+
 namespace rsl
 {
     constexpr void* heap_allocator::allocate(const size_type size) noexcept
@@ -50,7 +51,7 @@ namespace rsl
 				mem = ::operator new(newSize, std::nothrow);
 				if (mem) [[likely]]
 				{
-					memcpy(mem, ptr, std::min(oldSize, newSize));
+					constexpr_memcpy(mem, ptr, min(oldSize, newSize));
 				}
 			}
 
@@ -86,7 +87,7 @@ namespace rsl
 				mem = ::operator new(newSize, std::align_val_t{alignment}, std::nothrow);
 				if (mem) [[likely]]
 				{
-					memcpy(mem, ptr, std::min(oldSize, newSize));
+					memcpy(mem, ptr, min(oldSize, newSize));
 				}
 			}
 

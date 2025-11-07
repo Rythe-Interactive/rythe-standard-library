@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "../sink.hpp"
 
-#include "../../filesystem/view.hpp"
+#include "../../platform/platform.hpp"
 
 namespace rsl::log
 {
@@ -12,6 +12,6 @@ namespace rsl::log
         void flush() override;
 
     private:
-        fs::view m_stdout = "stdout://"_fsview;
+        file m_stdout = platform::open_file("stdout", file_access_mode::append).value();
     };
 }

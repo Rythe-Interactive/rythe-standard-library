@@ -1,5 +1,6 @@
 #pragma once
 #include "../defines.hpp"
+#include "../util/common.hpp"
 
 #include "../containers/string.hpp"
 #include "../util/error_handling.hpp"
@@ -10,6 +11,7 @@
 namespace rsl::fs
 {
     class file_solution;
+    struct view_list;
 
     class view
     {
@@ -37,7 +39,7 @@ namespace rsl::fs
         [[nodiscard]] [[rythe_always_inline]] view subdir(string_view identifier) const;
         [[nodiscard]] [[rythe_always_inline]] view operator/(string_view identifier) const;
 
-        [[nodiscard]] result<dynamic_array<view>> ls() const;
+        [[nodiscard]] result<view_list> ls() const;
 
         [[nodiscard]] result<byte_view> read() const;
         [[nodiscard]] result<void> write(byte_view data);
@@ -50,11 +52,23 @@ namespace rsl::fs
         [[nodiscard]] file_solution* find_solution();
 
     private:
-
         dynamic_string m_path;
         mutable file_solution* m_solution = nullptr;
     };
-}
+
+    constexpr fs::view test()
+    {
+        return fs::view();
+    }
+
+    struct view_list : public dynamic_array<fs::view>
+    {
+        RULE_OF_5_CONSTEXPR_NOEXCEPT(view_list)
+        using dynamic_array<fs::view>::dynamic_array;
+        [[rythe_always_inline]] constexpr view_list(const dynamic_array<fs::view>&) noexcept;
+        [[rythe_always_inline]] constexpr view_list(dynamic_array<fs::view>&&) noexcept;
+    };
+} // namespace rsl::fs
 
 namespace rsl
 {

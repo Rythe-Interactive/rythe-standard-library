@@ -209,18 +209,6 @@ namespace rsl
         return reverse_iterator<T*>(arr);
     }
 
-    template <typename T>
-    [[nodiscard]] constexpr reverse_iterator<const T*> rbegin(::std::initializer_list<T> initList) noexcept
-    {
-        return reverse_iterator<const T*>(initList.end());
-    }
-
-    template <typename T>
-    [[nodiscard]] constexpr reverse_iterator<const T*> rend(::std::initializer_list<T> initList) noexcept
-    {
-        return reverse_iterator<const T*>(initList.begin());
-    }
-
     namespace internal
     {
         template <typename T>
@@ -298,12 +286,6 @@ namespace rsl
         return false;
     }
 
-    template <typename T>
-    [[nodiscard]] constexpr bool empty(::std::initializer_list<T> initList) noexcept
-    {
-        return initList.size() == 0;
-    }
-
     template <has_data<any_type()> Container>
     [[nodiscard]] constexpr auto data(Container& container) noexcept(noexcept(container.data())) -> decltype(container.data())
     {
@@ -321,11 +303,5 @@ namespace rsl
     [[nodiscard]] constexpr T* data(T (& arr)[Size]) noexcept
     {
         return arr;
-    }
-
-    template <typename T>
-    [[nodiscard]] constexpr const T* data(::std::initializer_list<T> initList) noexcept
-    {
-        return initList.begin();
     }
 } // namespace rsl

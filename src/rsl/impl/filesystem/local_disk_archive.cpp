@@ -6,49 +6,44 @@
 
 namespace rsl::fs
 {
-    bool local_disk_archive::is_file() const
+    bool local_disk_file_solution::is_file() const
     {
-        return m_provider && m_provider->is_valid() &&
-                platform::is_regular_file(m_absolutePath);
+        return m_provider && m_provider->is_valid() && platform::is_regular_file(m_absolutePath);
     }
 
-    bool local_disk_archive::is_directory() const
+    bool local_disk_file_solution::is_directory() const
     {
-        return m_provider && m_provider->is_valid() &&
-                platform::is_directory(m_absolutePath);
+        return m_provider && m_provider->is_valid() && platform::is_directory(m_absolutePath);
     }
 
-    bool local_disk_archive::is_valid_path() const
+    bool local_disk_file_solution::is_valid_path() const
     {
         return platform::is_path_valid(m_absolutePath);
     }
 
-    bool local_disk_archive::can_be_written() const
+    bool local_disk_file_solution::can_be_written() const
     {
         return (is_file() && platform::is_file_writable(m_absolutePath)) ||
                 (is_directory() && platform::is_path_writable(m_absolutePath));
     }
 
-    bool local_disk_archive::can_be_read() const
+    bool local_disk_file_solution::can_be_read() const
     {
         return (is_file() && platform::is_file_readable(m_absolutePath)) ||
                 (is_directory() && platform::is_path_readable(m_absolutePath));
     }
 
-    bool local_disk_archive::can_be_created() const
+    bool local_disk_file_solution::can_be_created() const
     {
-        return m_provider && m_provider->is_valid() &&
-                is_valid_path() &&
-                !platform::does_path_entry_exist(m_absolutePath);
+        return m_provider && m_provider->is_valid() && is_valid_path() && !platform::does_path_entry_exist(m_absolutePath);
     }
 
-    bool local_disk_archive::exists() const
+    bool local_disk_file_solution::exists() const
     {
-        return m_provider && m_provider->is_valid() &&
-                platform::does_path_entry_exist(m_absolutePath);
+        return m_provider && m_provider->is_valid() && platform::does_path_entry_exist(m_absolutePath);
     }
 
-    result<dynamic_array<view>> local_disk_archive::ls() const
+    result<dynamic_array<view>> local_disk_file_solution::ls() const
     {
         if constexpr (rythe_validate_low_impact)
         {
@@ -85,7 +80,7 @@ namespace rsl::fs
         return result;
     }
 
-    result<byte_view> local_disk_archive::read() const
+    result<byte_view> local_disk_file_solution::read() const
     {
         result<void> result = static_cast<local_disk_archive*>(m_provider)->open_file_for_read(this);
 
@@ -98,14 +93,13 @@ namespace rsl::fs
         {
             return make_error(filesystem_error::invalid_operation, "File can not be read.");
         }
-
     }
 
-    result<void> local_disk_archive::write(byte_view data) {}
+    result<void> local_disk_file_solution::write(byte_view data) {}
 
-    result<void> local_disk_archive::append(byte_view data) {}
+    result<void> local_disk_file_solution::append(byte_view data) {}
 
-    result<void> local_disk_archive::flush() const {}
+    result<void> local_disk_file_solution::flush() const {}
 
     result<dynamic_array<view>> local_disk_archive::ls() const
     {
@@ -198,10 +192,7 @@ namespace rsl::fs
         }
     }
 
-    result<void> local_disk_archive::open_file_for_read(const file_solution* solution) const
-    {
-
-    }
+    result<void> local_disk_archive::open_file_for_read(const file_solution* solution) const {}
 
     result<void> local_disk_archive::open_file_for_write(file_solution* solution) {}
     result<void> local_disk_archive::close_file(const file_solution* solution) const {}

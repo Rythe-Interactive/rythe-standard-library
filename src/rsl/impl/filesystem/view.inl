@@ -66,4 +66,7 @@ namespace rsl::fs
     {
         return subdir(identifier);
     }
+
+    constexpr view_list::view_list(const dynamic_array<fs::view>& src) noexcept : dynamic_array<fs::view>(src) {}
+    constexpr view_list::view_list(dynamic_array<fs::view>&& src) noexcept : dynamic_array<fs::view>(rsl::move(src)) {}
 }

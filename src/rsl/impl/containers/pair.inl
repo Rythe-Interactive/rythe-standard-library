@@ -70,10 +70,7 @@ namespace rsl
 	{
 		return !(x < y);
 	}
-} // namespace rsl
 
-namespace rsl
-{
 	template <size_type I, typename Tuple>
 	struct tuple_element;
 
@@ -118,7 +115,7 @@ namespace rsl
 	struct tuple_size;
 
 	template <typename T1, typename T2>
-	struct tuple_size<pair<T1, T2>> : public std::tuple_size<std::pair<T1, T2>>
+	struct tuple_size<pair<T1, T2>> : public integral_constant<size_type, 2>
 	{
 	};
 } // namespace std

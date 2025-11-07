@@ -8,7 +8,13 @@ namespace rsl
         size_type size;
     };
 
-    struct byte_range : range {};
+    struct byte_range
+    {
+        size_type offset;
+        size_type size;
+
+        [[nodiscard]] [[rythe_always_inline]] operator range() const noexcept { return { .offset = offset, .size = size }; }
+    };
 
     struct unaligned_stride_range
     {

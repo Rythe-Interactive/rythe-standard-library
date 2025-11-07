@@ -139,6 +139,7 @@ namespace rsl
         result_base(error_signal) noexcept;
         friend errid& internal::get_errid(result_base&) noexcept;
 
+        void set_error(errid errId) noexcept;
     public:
         [[nodiscard]] [[rythe_always_inline]] bool is_okay() const noexcept;
         [[nodiscard]] [[rythe_always_inline]] bool has_errors() const noexcept;
@@ -168,6 +169,8 @@ namespace rsl
         [[rythe_always_inline]] result(error_signal) noexcept;
         [[rythe_always_inline]] result(nullptr_type) noexcept;
         [[rythe_always_inline]] ~result() override;
+
+        [[rythe_always_inline]] constexpr result(result&& src) noexcept(rsl::is_nothrow_move_constructible_v<T>);
 
         template <typename... Args>
             requires(rsl::constructible_from<T, Args...>)

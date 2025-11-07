@@ -1,5 +1,5 @@
 #pragma once
-#include "../../logging/spdlog_include.hpp"
+#include "../../logging/fmt_include.hpp"
 
 #include "../buffered_string.hpp"
 #include "../constexpr_string.hpp"

@@ -559,11 +559,9 @@ namespace rsl
     template <typename T>
     struct is_object : bool_constant<is_object_v<T>> {};
 
+    // Using requires statement breaks on some compilers, so we use the built-in function.
     template <typename T, typename... Args>
-    inline constexpr bool is_constructible_v = requires(Args... args)
-        {
-            { T(args...) };
-        };
+    inline constexpr bool is_constructible_v = __is_constructible(T, Args...);
 
     template <typename T, typename... Args>
     struct is_constructible : bool_constant<is_constructible_v<T, Args...>> {};
@@ -844,7 +842,7 @@ namespace rsl
         }
         else
         {
-            return compiler_native_bit_cast<To>(value);
+            return internal::compiler_native_bit_cast<To>(value);
         }
     }
 
@@ -1488,7 +1486,6 @@ namespace rsl
     template <typename... Types>
     struct type_sequence
     {
-        using tuple_type = ::std::tuple<Types...>; // TODO: Make our own tuple type.
         constexpr static size_type size = sizeof...(Types);
 
         template <typename T>
@@ -1765,7 +1762,7 @@ namespace rsl
     constexpr bool is_constructible_any_v = is_constructible_any<T, MaxParams>::value;
 
     template <typename T>
-    inline constexpr bool is_abstract_v = !is_void_v<T> && !is_constructible_any_v<T>;
+    inline constexpr bool is_abstract_v = __is_abstract(T);
 
     template <typename T>
     struct is_abstract
@@ -1908,5 +1905,17 @@ namespace rsl
         {
             return static_cast<T*>(internal::get_global_empty_type_placeholder_ptr());
         }
+    }
+
+    template <typename T>
+    [[nodiscard]] [[rythe_always_inline]] constexpr const T& min(const T& lhs, const T& rhs) noexcept(noexcept(rhs < lhs))
+    {
+        return rhs < lhs ? rhs : lhs;
+    }
+
+    template <typename T>
+    [[nodiscard]] [[rythe_always_inline]] constexpr const T& max(const T& lhs, const T& rhs) noexcept(noexcept(lhs < rhs))
+    {
+        return lhs < rhs ? rhs : lhs;
     }
 } // namespace rsl

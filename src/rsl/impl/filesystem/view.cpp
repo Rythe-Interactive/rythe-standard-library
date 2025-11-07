@@ -1,7 +1,7 @@
 ﻿#include "view.hpp"
 
 #include "file_solution.hpp"
-#include "archive_registry.hpp"
+#include "filesystem.hpp"
 
 namespace rsl::fs
 {
@@ -9,7 +9,7 @@ namespace rsl::fs
     {
         if (m_solution == nullptr)
         {
-            auto result = get_filesystem_registry().find_solution(m_path, ignoreMultipleSolutions);
+            auto result = get_filesystem().find_solution(m_path, ignoreMultipleSolutions);
             if (result.is_okay())
             {
                 m_solution = result.value();
@@ -33,9 +33,15 @@ namespace rsl::fs
         return find_solution()->filesystem_info();
     }
 
-    result<dynamic_array<view>> view::ls() const
+    result<view_list> view::ls() const
     {
-        return find_solution()->ls();
+        result<dynamic_array<view>> solutionResult = find_solution()->ls();
+        if (solutionResult.carries_value())
+        {
+            return make_partial_result<view_list>(solutionResult.propagate(), solutionResult.value());
+        }
+
+        return solutionResult.propagate();
     }
 
     result<byte_view> view::read() const

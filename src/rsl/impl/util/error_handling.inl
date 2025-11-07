@@ -20,8 +20,13 @@ namespace rsl
     }
 
     inline result_base::result_base(error_signal) noexcept
-        : m_errid(get_error_context().currentError)
     {
+        set_error(get_error_context().currentError);
+    }
+
+    inline void result_base::set_error(const errid errId) noexcept
+    {
+        m_errid = errId;
         error_view errors = get_errors();
         for (const auto& error : errors)
         {
@@ -151,6 +156,25 @@ namespace rsl
     {
         discard_value();
         result_base::~result_base();
+    }
+
+    template <typename T>
+    inline constexpr result<T>::result(result&& src) noexcept(rsl::is_nothrow_move_constructible_v<T>)
+        : result_base(),
+          m_cariesValue(false),
+          m_dummy(0)
+    {
+        if (src.has_errors())
+        {
+            set_error(src.m_errid);
+            src.m_errid = invalid_err_id;
+        }
+
+        if (src.carries_value())
+        {
+            set_value(rsl::move(src.value()));
+            src.discard_value();
+        }
     }
 
     template <typename T>

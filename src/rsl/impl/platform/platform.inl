@@ -79,15 +79,15 @@ namespace rsl
 
     inline result<size_type> platform::get_file_size(const string_view absolutePath)
     {
-        result<file> result = open_file(absolutePath, file_access_mode::read);
-        if (!result.carries_value())
+        result<file> openResult = open_file(absolutePath, file_access_mode::read);
+        if (!openResult.carries_value())
         {
-            return result.propagate();
+            return openResult.propagate();
         }
 
-        const result<size_type> sizeResult = get_file_size(*result);
+        const result<size_type> sizeResult = get_file_size(*openResult);
 
-        close_file(*result);
+        close_file(*openResult);
 
         return sizeResult;
     }
