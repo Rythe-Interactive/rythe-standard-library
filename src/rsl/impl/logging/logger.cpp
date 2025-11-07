@@ -13,7 +13,7 @@
 
 namespace rsl::log
 {
-	void logger::log(const log::severity s, const format_string format, const fmt::format_args args) noexcept
+	void logger::log_args(const log::severity s, const format_string format, const fmt::format_args args) noexcept
 	{
 		const log::message logMessage
 		{

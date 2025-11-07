@@ -42,7 +42,7 @@ namespace rsl
 
                 context.logger = &logger;
 
-                undecoratedLogger.log(log::severity::info, "== Initializing Logging ==");
+                undecoratedLogger.log(log::severity::info, "== Initializing Logging =="_sv);
                 return context;
             }
         }

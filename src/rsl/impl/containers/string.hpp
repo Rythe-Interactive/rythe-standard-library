@@ -143,4 +143,8 @@ namespace rsl
     }
 } // namespace rsl
 
+#include "../logging/fmt_include.hpp"
+
 #include "string.inl"
+
+#include "../logging/fmt.inl"

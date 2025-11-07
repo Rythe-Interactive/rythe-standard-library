@@ -85,11 +85,11 @@ namespace rsl
             return openResult.propagate();
         }
 
-        const result<size_type> sizeResult = get_file_size(*openResult);
+        result<size_type> sizeResult = get_file_size(*openResult);
 
         close_file(*openResult);
 
-        return sizeResult;
+        return rsl::move(sizeResult);
     }
 
     inline dynamic_string directory_entry::get_path() const

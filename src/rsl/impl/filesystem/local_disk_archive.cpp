@@ -71,10 +71,16 @@ namespace rsl::fs
             }
         }
 
-        dynamic_array<view> result;
-        for (auto path : platform::enumerate_directory(m_absolutePath))
+        result<iterator_view<directory_iterator>> iteratorViewResult = platform::iterate_directory(m_absolutePath);
+        if (!iteratorViewResult.carries_value()) [[unlikely]]
         {
-            result.emplace_back(rsl::move(path));
+            return iteratorViewResult.propagate();
+        }
+
+        dynamic_array<view> result;
+        for (auto path : iteratorViewResult.value())
+        {
+            result.emplace_back(path.get_path());
         }
 
         return result;
@@ -93,13 +99,15 @@ namespace rsl::fs
         {
             return make_error(filesystem_error::invalid_operation, "File can not be read.");
         }
+
+        return m_dataCache;
     }
 
-    result<void> local_disk_file_solution::write(byte_view data) {}
+    result<void> local_disk_file_solution::write([[maybe_unused]] byte_view data) { return error; }
 
-    result<void> local_disk_file_solution::append(byte_view data) {}
+    result<void> local_disk_file_solution::append([[maybe_unused]] byte_view data) { return error; }
 
-    result<void> local_disk_file_solution::flush() const {}
+    result<void> local_disk_file_solution::flush() const { return error; }
 
     result<dynamic_array<view>> local_disk_archive::ls() const
     {
@@ -111,10 +119,16 @@ namespace rsl::fs
             }
         }
 
-        dynamic_array<view> result;
-        for (auto path : platform::enumerate_directory(m_rootPath))
+        result<iterator_view<directory_iterator>> iteratorViewResult = platform::iterate_directory(m_rootPath);
+        if (!iteratorViewResult.carries_value()) [[unlikely]]
         {
-            result.emplace_back(rsl::move(path));
+            return iteratorViewResult.propagate();
+        }
+
+        dynamic_array<view> result;
+        for (auto entry : iteratorViewResult.value())
+        {
+            result.emplace_back(entry.get_path());
         }
 
         return result;
@@ -171,7 +185,7 @@ namespace rsl::fs
 
     void local_disk_archive::release_solution(file_solution* solution)
     {
-        local_disk_archive* driveSolution = dynamic_cast<local_disk_archive*>(solution);
+        local_disk_file_solution* driveSolution = dynamic_cast<local_disk_file_solution*>(solution);
         if (!driveSolution)
         {
             return;
@@ -192,9 +206,9 @@ namespace rsl::fs
         }
     }
 
-    result<void> local_disk_archive::open_file_for_read(const file_solution* solution) const {}
+    result<void> local_disk_archive::open_file_for_read([[maybe_unused]] const file_solution* solution) const { return error; }
 
-    result<void> local_disk_archive::open_file_for_write(file_solution* solution) {}
-    result<void> local_disk_archive::close_file(const file_solution* solution) const {}
-    result<void> local_disk_archive::flush_file(const file_solution* solution) const {}
+    result<void> local_disk_archive::open_file_for_write([[maybe_unused]] file_solution* solution) { return error; }
+    result<void> local_disk_archive::close_file([[maybe_unused]] const file_solution* solution) const { return error; }
+    result<void> local_disk_archive::flush_file([[maybe_unused]] const file_solution* solution) const { return error; }
 }

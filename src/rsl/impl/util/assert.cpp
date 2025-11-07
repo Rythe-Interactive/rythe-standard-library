@@ -1,7 +1,5 @@
 #include "assert.hpp"
 
-#include <cstdlib>
-
 #include "../../logging"
 
 namespace rsl::asserts
@@ -19,7 +17,7 @@ namespace rsl::asserts
 
 			log::undecoratedln(
 				soft ? log::severity::warn : log::severity::fatal,
-				"Assertion failed:\t{}\nExpected:\t\t{}\nSource:\t\t\t{}, line {}", message, expression, file, line
+				"Assertion failed:\t{}\nExpected:\t\t{}\nSource:\t\t\t{}, line {}"_sv, message, expression, file, line
 			);
 
 			rythe_debugbreak_instruction();

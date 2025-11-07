@@ -47,7 +47,7 @@ namespace rsl::log
         }
     }
 
-    void pattern_formatter::compile_pattern(const array_view<temporary_object<flag_formatter>> flagFormatters)
+    void pattern_formatter::compile_pattern(array_view<temporary_object<flag_formatter>> flagFormatters)
     {
         m_formatters.clear();
 
@@ -130,6 +130,9 @@ namespace rsl::log
             case 'S': append_string(dest, to_upper(severity_short_name(msg.severity)));
                 break;
             default:
+
+
+
         }
         rsl_assert_unreachable();
     }
@@ -147,7 +150,11 @@ namespace rsl::log
 
     void genesis_flag_formatter::format([[maybe_unused]] const message& msg, const time::point32 time, fmt::memory_buffer& dest)
     {
-        fmt::format_to(fmt::appender(dest), fmt::string_view(m_options.data(), m_options.size()), (time - time::genesis).seconds());
+        fmt::format_to(
+                fmt::appender(dest),
+                fmt::runtime(fmt::string_view(m_options.data(), m_options.size())),
+                (time - time::genesis).seconds()
+            );
     }
 
     void genesis_flag_formatter::set_flag_options(const string_view options)

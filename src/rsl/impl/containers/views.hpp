@@ -83,15 +83,15 @@ namespace rsl
         [[nodiscard]] [[rythe_always_inline]] constexpr const_reverse_iterator_type crend() const noexcept;
 
         [[nodiscard]] [[rythe_always_inline]] constexpr reference front();
-        [[nodiscard]] [[rythe_always_inline]] constexpr reference front() const;
+        [[nodiscard]] [[rythe_always_inline]] constexpr const_reference front() const;
         [[nodiscard]] [[rythe_always_inline]] constexpr reference back();
-        [[nodiscard]] [[rythe_always_inline]] constexpr reference back() const;
+        [[nodiscard]] [[rythe_always_inline]] constexpr const_reference back() const;
         [[nodiscard]] [[rythe_always_inline]] constexpr reference at(size_type);
-        [[nodiscard]] [[rythe_always_inline]] constexpr reference at(size_type) const;
+        [[nodiscard]] [[rythe_always_inline]] constexpr const_reference at(size_type) const;
         [[nodiscard]] [[rythe_always_inline]] constexpr reference operator[](size_type);
-        [[nodiscard]] [[rythe_always_inline]] constexpr reference operator[](size_type) const;
+        [[nodiscard]] [[rythe_always_inline]] constexpr const_reference operator[](size_type) const;
         [[nodiscard]] [[rythe_always_inline]] constexpr pointer data() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr pointer data() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr const_pointer data() const noexcept;
 
         [[nodiscard]] [[rythe_always_inline]] constexpr size_type size() const noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr size_type size_bytes() const noexcept;

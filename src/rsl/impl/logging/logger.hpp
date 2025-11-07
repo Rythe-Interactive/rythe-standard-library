@@ -26,7 +26,7 @@ namespace rsl::log
 	class logger
 	{
 	public:
-        COPY_FUNCS_CONSTEXPR_NOEXCEPT(logger)
+        MOVE_FUNCS_CONSTEXPR_NOEXCEPT(logger)
 
 		explicit logger(string_view name, log::severity severity = log::severity::default_severity,
 		                      log::severity flushSeverity = log::severity::default_flush_severity);
@@ -36,7 +36,7 @@ namespace rsl::log
 		template <typename... Args>
 		[[rythe_always_inline]] constexpr void log(log::severity s, format_string format, Args&&... args) noexcept;
 
-		void log(log::severity s, format_string format, fmt::format_args args) noexcept;
+		void log_args(log::severity s, format_string format, fmt::format_args args) noexcept;
 
 	    void flush();
 

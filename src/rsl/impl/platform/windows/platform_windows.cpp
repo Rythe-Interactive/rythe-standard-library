@@ -54,7 +54,6 @@ namespace rsl
 
     namespace
     {
-
         bool is_regular_file_attributes(const DWORD attributes)
         {
             constexpr static DWORD excludingAttributes =
@@ -617,7 +616,7 @@ namespace rsl
 
     result<size_type> platform::read_file(
             const file file,
-            const mutable_byte_view target,
+            mutable_byte_view target,
             const size_type offset
             )
     {

@@ -1,9 +1,10 @@
 #pragma once
-#include "type_map.hpp"
+
 #include "../memory/allocator.hpp"
 #include "../util/assert.hpp"
 #include "../util/common.hpp"
 #include "../util/type_traits.hpp"
+
 #include "map/dynamic_map.hpp"
 
 namespace rsl
@@ -73,7 +74,7 @@ namespace rsl
 		}
 
 		template <typename T, typename... Args>
-		[[rythe_always_inline]] constexpr std::pair<T&, bool> try_emplace(Args&&... args) noexcept
+		[[rythe_always_inline]] constexpr pair<T&, bool> try_emplace(Args&&... args) noexcept
 		{
 			constexpr id_type typeHash = type_id<T>();
 			auto result = m_storage.try_emplace(typeHash);

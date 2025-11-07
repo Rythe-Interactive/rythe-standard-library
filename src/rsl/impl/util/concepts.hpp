@@ -64,7 +64,7 @@ namespace rsl
     concept convertible_to = is_convertible_v<From, To> && requires { static_cast<To>(declval<From>()); };
 
     template <typename From, typename To>
-    concept explicitly_convertible_to = requires(From val) { To(val); };
+    concept explicitly_convertible_to = requires(From&& val) { To(rsl::move(val)); };
 
     template <typename T1, typename T2>
     concept common_reference_with =

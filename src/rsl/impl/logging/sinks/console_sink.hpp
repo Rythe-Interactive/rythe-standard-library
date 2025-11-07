@@ -12,6 +12,7 @@ namespace rsl::log
         void flush() override;
 
     private:
+        fmt::memory_buffer m_messageBuffer;
         file m_stdout = platform::open_file("stdout", file_access_mode::append).value();
     };
 }

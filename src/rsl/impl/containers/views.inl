@@ -202,7 +202,7 @@ namespace rsl
     }
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
-    constexpr typename array_view<T, Iter, ConstIter>::reference array_view<T, Iter, ConstIter>::front() const
+    constexpr typename array_view<T, Iter, ConstIter>::const_reference array_view<T, Iter, ConstIter>::front() const
     {
         return at(0);
     }
@@ -214,7 +214,7 @@ namespace rsl
     }
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
-    constexpr typename array_view<T, Iter, ConstIter>::reference array_view<T, Iter, ConstIter>::back() const
+    constexpr typename array_view<T, Iter, ConstIter>::const_reference array_view<T, Iter, ConstIter>::back() const
     {
         return at(m_count - 1);
     }
@@ -226,7 +226,7 @@ namespace rsl
     }
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
-    constexpr typename array_view<T, Iter, ConstIter>::reference array_view<T, Iter, ConstIter>::at(size_type pos) const
+    constexpr typename array_view<T, Iter, ConstIter>::const_reference array_view<T, Iter, ConstIter>::at(size_type pos) const
     {
         return *(cbegin() + pos);
     }
@@ -238,7 +238,9 @@ namespace rsl
     }
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
-    constexpr typename array_view<T, Iter, ConstIter>::reference array_view<T, Iter, ConstIter>::operator[](const size_type n) const
+    constexpr typename array_view<T, Iter, ConstIter>::const_reference array_view<T, Iter, ConstIter>::operator[](
+            const size_type n
+            ) const
     {
         return at(n);
     }
@@ -250,7 +252,7 @@ namespace rsl
     }
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
-    constexpr typename array_view<T, Iter, ConstIter>::pointer array_view<T, Iter, ConstIter>::data() const noexcept
+    constexpr typename array_view<T, Iter, ConstIter>::const_pointer array_view<T, Iter, ConstIter>::data() const noexcept
     {
         return m_src;
     }

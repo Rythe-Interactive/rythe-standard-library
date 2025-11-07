@@ -27,7 +27,7 @@ namespace rsl
 				}
 				else
 				{
-					log::warn("{}: {}", error.code, error.message);
+					log::warn("{}: {}"_sv, error.code, error.message);
 				}
 				break;
 			}
@@ -39,7 +39,7 @@ namespace rsl
 				}
 				else
 				{
-					log::error("{}: {}", error.code, error.message);
+					log::error("{}: {}"_sv, error.code, error.message);
 				}
 				break;
 			}
@@ -51,7 +51,7 @@ namespace rsl
 				}
 				else
 				{
-					log::fatal("{}: {}", error.code, error.message);
+					log::fatal("{}: {}"_sv, error.code, error.message);
 				}
 				break;
 			}

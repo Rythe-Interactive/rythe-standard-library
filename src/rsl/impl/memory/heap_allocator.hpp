@@ -1,4 +1,5 @@
 #pragma once
+#include <new>
 
 #include "../util/common.hpp"
 #include "../util/primitives.hpp"

@@ -34,6 +34,7 @@ namespace rsl::fs
         dynamic_string m_absolutePath;
         mutable bool m_openForWrite;
         mutable file m_openFile;
+        mutable dynamic_array<byte> m_dataCache;
     };
 
     class local_disk_archive : public archive

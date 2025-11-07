@@ -13,7 +13,7 @@ namespace rsl::fs
         archive* entry = m_providers.emplace_back(rsl::move(provider)).get();
         for (const auto& domain : entry->get_domains())
         {
-            m_domainMap.emplace(domain, entry);
+            m_domainMap.emplace(domain).push_back(entry);
         }
     }
 

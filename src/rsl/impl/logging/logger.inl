@@ -32,7 +32,7 @@ namespace rsl::log
     template <typename... Args>
     constexpr void logger::log(const log::severity s, const format_string format, Args&&... args) noexcept
     {
-        log(s, format, fmt::make_format_args(rsl::forward<Args>(args)...));
+        log_args(s, format, fmt::make_format_args(rsl::forward<Args>(args)...));
     }
 
     inline void logger::filter(const severity s) noexcept

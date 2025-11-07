@@ -5,11 +5,10 @@
 #include "../util/error_handling.hpp"
 
 #include "traits.hpp"
+#include "view.hpp"
 
 namespace rsl::fs
 {
-    class view;
-
     using domain_string = hybrid_string<16>;
 
     class archive

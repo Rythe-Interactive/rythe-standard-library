@@ -1,5 +1,4 @@
 #pragma once
-#include "../logging/fmt_include.hpp"
 
 namespace rsl
 {
