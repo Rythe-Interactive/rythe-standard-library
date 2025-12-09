@@ -28,9 +28,9 @@ namespace rsl
     {
         m_errid = errId;
         error_view errors = get_errors();
-        for (const auto& error : errors)
+        for (const auto& err : errors)
         {
-            if (error.severity == error_severity::fatal)
+            if (err.severity == error_severity::fatal)
             {
                 return;
             }
@@ -82,8 +82,8 @@ namespace rsl
                 "Errors not resolved in order. Earlier result remains unresolved."
                 );
 
-        const auto& error = context.errors[context.currentError];
-        context.errors.reduce((context.currentError - error.errorBlockStart) + 1);
+        const auto& err = context.errors[context.currentError];
+        context.errors.reduce((context.currentError - err.errorBlockStart) + 1);
         context.currentError = static_cast<errid>(context.errors.size() - 1);
         m_errid = invalid_err_id;
     }
@@ -114,9 +114,9 @@ namespace rsl
 
         error_handler* errorHandler = get_error_handler();
 
-        for (auto& error : get_errors())
+        for (auto& err : get_errors())
         {
-            errorHandler->handle_error(error, assert_on_error_enabled());
+            errorHandler->handle_error(err, assert_on_error_enabled());
         }
 
         return get_error().code;

@@ -5,6 +5,8 @@
 
 #include "message.hpp"
 
+#include <fmt/chrono.h>
+
 namespace rsl::log
 {
     namespace
@@ -70,7 +72,7 @@ namespace rsl::log
                 if (character != end)
                 {
                     // TODO(Glyn): handle indexed patterns: "{1} {0}: my message"
-                    unique_object<flag_formatter>& formatter = m_formatters.emplace_back(rsl::move(flagFormatters[++formatterIndex]));
+                    unique_object<flag_formatter>& formatter = m_formatters.emplace_back(rsl::move(flagFormatters[formatterIndex++]));
                     ++character;
 
                     if (*character != '}')
@@ -108,7 +110,6 @@ namespace rsl::log
                     );
             forwardingSection.reset();
         }
-
     }
 
     void message_flag_formatter::format(const message& msg, [[maybe_unused]] const time::point32 time, fmt::memory_buffer& dest)
@@ -121,18 +122,20 @@ namespace rsl::log
         // TODO(Glyn): severity colors
         switch (m_mode)
         {
-            case 'l': append_string(dest, severity_name(msg.severity));
-                break;
-            case 'L': append_string(dest, to_upper(severity_name(msg.severity)));
-                break;
-            case 's': append_string(dest, severity_short_name(msg.severity));
-                break;
-            case 'S': append_string(dest, to_upper(severity_short_name(msg.severity)));
-                break;
+            case 'l':
+                append_string(dest, severity_name(msg.severity));
+                return;
+            case 'L':
+                append_string(dest, to_upper(severity_name(msg.severity)));
+                return;
+            case 's':
+                append_string(dest, severity_short_name(msg.severity));
+                return;
+            case 'S':
+                append_string(dest, to_upper(severity_short_name(msg.severity)));
+                return;
             default:
-
-
-
+                break;
         }
         rsl_assert_unreachable();
     }
@@ -150,10 +153,17 @@ namespace rsl::log
 
     void genesis_flag_formatter::format([[maybe_unused]] const message& msg, const time::point32 time, fmt::memory_buffer& dest)
     {
+        size_type seconds = static_cast<size_type>((time - time::genesis).seconds()); // TODO(Glyn): Underlying time should really not be floating point!
+
+        tm t{};
+        t.tm_sec = static_cast<int>(seconds % 60ull);
+        t.tm_min = static_cast<int>((seconds / 60ull) % 60ull);
+        t.tm_hour = static_cast<int>(seconds / 3600ull);
+
         fmt::format_to(
                 fmt::appender(dest),
                 fmt::runtime(fmt::string_view(m_options.data(), m_options.size())),
-                (time - time::genesis).seconds()
+                t
             );
     }
 

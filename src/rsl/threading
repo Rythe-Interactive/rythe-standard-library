@@ -1,0 +1,6 @@
+#pragma once
+
+#include "impl/threading/thread_id.hpp"
+
+#include "impl/threading/current_thread.hpp"
+#include "impl/threading/thread.hpp"

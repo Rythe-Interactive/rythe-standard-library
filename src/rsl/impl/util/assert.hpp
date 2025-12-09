@@ -37,13 +37,19 @@ namespace rsl
     {
         namespace internal
         {
-            void default_assert_handler(
+            [[rythe_never_inline]] void default_assert_handler(
                     string_view expression,
                     string_view file,
                     size_type line,
                     string_view message,
                     bool soft,
                     const bool* ignore
+                    );
+            [[rythe_never_inline]] void raw_assert_handler(
+                    string_view expression,
+                    string_view file,
+                    size_type line,
+                    string_view message
                     );
         }
 
@@ -80,8 +86,36 @@ namespace rsl
                 }
             }
         }
+
+        template<typename ExprType, typename FileType, typename MsgType>
+        constexpr void __rsl_assert_raw_impl(ExprType&& expr, FileType&& file, const size_type line, MsgType&& msg)
+        {
+            if(!is_constant_evaluated())
+            {
+                const string_view exprView = view_from_stringish(expr);
+                const string_view fileView = view_from_stringish(file);
+                const string_view msgView = view_from_stringish(msg);
+                asserts::internal::raw_assert_handler(exprView, fileView, line, msgView);
+            }
+        }
     }
 }
+
+#define rsl_assert_raw(expr)                                                                                           \
+	{                                                                                                                  \
+		if (!!!(expr)) [[unlikely]]                                                                                    \
+		{                                                                                                              \
+			::rsl::internal::__rsl_assert_raw_impl(RYTHE_STRINGIFY(expr), __FILE__, __LINE__, "");                     \
+		}                                                                                                              \
+	}
+
+#define rsl_assert_msg_raw(expr, msg)                                                                                  \
+	{                                                                                                                  \
+		if (!!!(expr)) [[unlikely]]                                                                                    \
+		{                                                                                                              \
+			::rsl::internal::__rsl_assert_raw_impl(RYTHE_STRINGIFY(expr), __FILE__, __LINE__, msg);                    \
+		}                                                                                                              \
+	}
 
 #define rsl_assert_always(expr)                                                                                        \
 	{                                                                                                                  \

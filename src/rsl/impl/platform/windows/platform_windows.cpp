@@ -96,9 +96,9 @@ namespace rsl
             return result;
         }
 
-        platform_error translate_platform_error(const uint32 error) noexcept
+        platform_error translate_platform_error(const uint32 errorCode) noexcept
         {
-            switch (error)
+            switch (errorCode)
             {
                 case ERROR_SUCCESS: return platform_error::no_error;
                 case ERROR_FILE_NOT_FOUND: return platform_error::file_not_found;
@@ -232,9 +232,9 @@ namespace rsl
                 constexpr LARGE_INTEGER largeOffset{ .QuadPart = static_cast<LONGLONG>(0) };
                 if (!SetFilePointerEx(fileHandle, largeOffset, nullptr, FILE_END))
                 {
-                    const platform_error error = translate_platform_error(GetLastError());
+                    const platform_error err = translate_platform_error(GetLastError());
                     CloseHandle(fileHandle);
-                    return make_error(error);
+                    return make_error(err);
                 }
             }
 
@@ -253,18 +253,18 @@ namespace rsl
                 const LARGE_INTEGER largeOffset{ .QuadPart = static_cast<LONGLONG>(offset) };
                 if (!SetFilePointerEx(fileHandle, largeOffset, nullptr, FILE_BEGIN))
                 {
-                    const platform_error error = translate_platform_error(GetLastError());
-                    return make_error(error);
+                    const platform_error err = translate_platform_error(GetLastError());
+                    return make_error(err);
                 }
             }
 
             DWORD bytesWritten = 0;
             if (!WriteFile(fileHandle, data.data(), static_cast<uint32>(data.size()), &bytesWritten, nullptr))
             {
-                const platform_error error = translate_platform_error(GetLastError());
-                if (error != platform_error::no_error)
+                const platform_error err = translate_platform_error(GetLastError());
+                if (err != platform_error::no_error)
                 {
-                    return make_error(error);
+                    return make_error(err);
                 }
             }
             return static_cast<size_type>(bytesWritten);
@@ -540,11 +540,11 @@ namespace rsl
         WIN32_FIND_DATAW findData;
         const HANDLE directory = FindFirstFileW(widePath.data(), &findData);
 
-        const platform_error error = translate_platform_error(GetLastError());
-        if (error != platform_error::no_error)
+        const platform_error err = translate_platform_error(GetLastError());
+        if (err != platform_error::no_error)
         {
             FindClose(directory);
-            errc = error;
+            errc = err;
             return {};
         }
 
@@ -597,13 +597,13 @@ namespace rsl
             result.push_back(fs::standardize(to_utf8(findData.cFileName)));
         }
 
-        const platform_error error = translate_platform_error(GetLastError());
+        const platform_error err = translate_platform_error(GetLastError());
 
         FindClose(directory);
 
-        if (error != platform_error::no_error)
+        if (err != platform_error::no_error)
         {
-            return make_error(error);
+            return make_error(err);
         }
 
         return result;
@@ -629,13 +629,13 @@ namespace rsl
             const LARGE_INTEGER largeOffset{ .QuadPart = static_cast<LONGLONG>(offset) };
             if (!SetFilePointerEx(nativeFileHandle, largeOffset, nullptr, FILE_BEGIN))
             {
-                const platform_error error = translate_platform_error(GetLastError());
-                return make_error(error);
+                const platform_error err = translate_platform_error(GetLastError());
+                return make_error(err);
             }
         }
 
         byte* readPointer = target.data();
-        size_type bytesToRead = target.size();
+        DWORD bytesToRead = static_cast<DWORD>(target.size());
         size_type totalBytesRead = 0ull;
 
         constexpr static size_type readBatchSize = 1_gb;
@@ -715,17 +715,17 @@ namespace rsl
             const LARGE_INTEGER largeOffset{ .QuadPart = static_cast<LONGLONG>(offset) };
             if (!SetFilePointerEx(fileHandle, largeOffset, nullptr, FILE_BEGIN))
             {
-                const platform_error error = translate_platform_error(GetLastError());
-                return make_error(error);
+                const platform_error err = translate_platform_error(GetLastError());
+                return make_error(err);
             }
         }
 
         if (!SetEndOfFile(fileHandle))
         {
-            const platform_error error = translate_platform_error(GetLastError());
-            if (error != platform_error::no_error)
+            const platform_error err = translate_platform_error(GetLastError());
+            if (err != platform_error::no_error)
             {
-                return make_error(error);
+                return make_error(err);
             }
         }
 
@@ -738,8 +738,8 @@ namespace rsl
         LARGE_INTEGER largeOffset{ .QuadPart = static_cast<LONGLONG>(moveMethod == FILE_BEGIN ? offset : -offset) };
         if (!SetFilePointerEx(get_native_handle(file), largeOffset, nullptr, moveMethod))
         {
-            const platform_error error = translate_platform_error(GetLastError());
-            return make_error(error);
+            const platform_error err = translate_platform_error(GetLastError());
+            return make_error(err);
         }
 
         return okay;
@@ -751,8 +751,8 @@ namespace rsl
         LARGE_INTEGER filePointer;
         if (!SetFilePointerEx(get_native_handle(file), largeOffset, &filePointer, FILE_CURRENT))
         {
-            const platform_error error = translate_platform_error(GetLastError());
-            return make_error(error);
+            const platform_error err = translate_platform_error(GetLastError());
+            return make_error(err);
         }
 
         return static_cast<size_type>(filePointer.QuadPart);
@@ -763,8 +763,8 @@ namespace rsl
         LARGE_INTEGER largeOffset{ .QuadPart = static_cast<LONGLONG>(offset) };
         if (!SetFilePointerEx(get_native_handle(file), largeOffset, nullptr, FILE_CURRENT))
         {
-            const platform_error error = translate_platform_error(GetLastError());
-            return make_error(error);
+            const platform_error err = translate_platform_error(GetLastError());
+            return make_error(err);
         }
 
         return okay;
@@ -801,13 +801,13 @@ namespace rsl
             return okay;
         }
 
-        const DWORD error = GetLastError();
-        if (error == ERROR_FILE_NOT_FOUND || error == ERROR_PATH_NOT_FOUND)
+        const DWORD errorCode = GetLastError();
+        if (errorCode == ERROR_FILE_NOT_FOUND || errorCode == ERROR_PATH_NOT_FOUND)
         {
             return okay;
         }
 
-        if (error == ERROR_ACCESS_DENIED && enum_flags::has_flag(flags, file_delete_flags::force))
+        if (errorCode == ERROR_ACCESS_DENIED && enum_flags::has_flag(flags, file_delete_flags::force))
         {
             DWORD attributes = GetFileAttributesW(widePath.data());
             if (attributes != INVALID_FILE_ATTRIBUTES)
@@ -820,7 +820,7 @@ namespace rsl
             }
         }
 
-        return make_error(translate_platform_error(error));
+        return make_error(translate_platform_error(errorCode));
     }
 
     result<file_info> platform::get_file_info(const string_view absolutePath) noexcept
@@ -844,10 +844,10 @@ namespace rsl
         BY_HANDLE_FILE_INFORMATION information;
         if (GetFileInformationByHandle(fileHandle, &information) == FALSE)
         {
-            const platform_error error = translate_platform_error(GetLastError());
+            const platform_error err = translate_platform_error(GetLastError());
             CloseHandle(fileHandle);
 
-            return make_error(error);
+            return make_error(err);
         }
         CloseHandle(fileHandle);
 

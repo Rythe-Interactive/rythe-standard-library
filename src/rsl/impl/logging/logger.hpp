@@ -12,12 +12,27 @@ namespace rsl::log
 	class sink;
 	struct message;
 
+    struct runtime_format_string_signal_t{};
+    constexpr runtime_format_string_signal_t runtime_format{};
+
 	struct format_string
 	{
-		[[rythe_always_inline]] constexpr format_string(
+	    template<size_type N>
+	    [[rythe_always_inline]] consteval format_string(
+	        const char(& s)[N],
+            const source_location loc = source_location::current())
+            noexcept : str(s), srcLoc(loc) {}
+
+		[[rythe_always_inline]] consteval format_string(
 			const string_view s,
 			const source_location loc = source_location::current())
 			noexcept : str(s), srcLoc(loc) {}
+
+	    [[rythe_always_inline]] constexpr format_string(
+	        const runtime_format_string_signal_t,
+            const string_view s,
+            const source_location loc = source_location::current())
+            noexcept : str(s), srcLoc(loc) {}
 
 		string_view str;
 		source_location srcLoc;
@@ -34,9 +49,11 @@ namespace rsl::log
 		virtual ~logger() = default;
 
 		template <typename... Args>
-		[[rythe_always_inline]] constexpr void log(log::severity s, format_string format, Args&&... args) noexcept;
+	    [[rythe_always_inline]] constexpr void log(log::severity s, format_string format, Args&&... args) noexcept;
+	    template <typename... Args>
+        [[rythe_always_inline]] constexpr void logln(log::severity s, format_string format, Args&&... args) noexcept;
 
-		void log_args(log::severity s, format_string format, fmt::format_args args) noexcept;
+		void log_args(log::severity s, format_string format, bool appendNewLine, fmt::format_args args) noexcept;
 
 	    void flush();
 

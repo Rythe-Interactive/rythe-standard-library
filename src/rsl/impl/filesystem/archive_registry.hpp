@@ -23,12 +23,12 @@ namespace rsl::fs
         [[nodiscard]] [[rythe_always_inline]] constexpr bool operator==(const domain_iterator& other) const noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr bool operator!=(const domain_iterator& other) const noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr operator bool() const noexcept;
-        [[rythe_always_inline]] constexpr domain_iterator& operator++() noexcept;
-        [[rythe_always_inline]] constexpr domain_iterator operator++(int) noexcept;
-        [[rythe_always_inline]] constexpr domain_iterator& operator--() noexcept;
-        [[rythe_always_inline]] constexpr domain_iterator operator--(int) noexcept;
-        constexpr const domain_string& operator*() const noexcept;
-        constexpr const domain_string* operator->() const noexcept;
+        [[rythe_always_inline]] domain_iterator& operator++() noexcept;
+        [[rythe_always_inline]] domain_iterator operator++(int) noexcept;
+        [[rythe_always_inline]] domain_iterator& operator--() noexcept;
+        [[rythe_always_inline]] domain_iterator operator--(int) noexcept;
+        [[rythe_always_inline]] const domain_string& operator*() const noexcept;
+        [[rythe_always_inline]] const domain_string* operator->() const noexcept;
 
     private:
         size_type m_index = 0ull;

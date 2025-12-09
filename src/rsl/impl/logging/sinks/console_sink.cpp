@@ -1,11 +1,17 @@
 ﻿#include "console_sink.hpp"
 
+#include "../message.hpp"
+
 namespace rsl
 {
 
     void log::console_sink::log(formatter& formatter, const message& msg)
     {
         formatter.format(msg, m_messageBuffer);
+        if (msg.appendNewLine)
+        {
+            m_messageBuffer.push_back('\n');
+        }
     }
 
     void log::console_sink::flush()

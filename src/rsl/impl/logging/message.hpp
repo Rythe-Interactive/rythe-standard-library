@@ -18,5 +18,6 @@ namespace rsl::log
 		log::severity severity;
 		string_view msg;
 		fmt::format_args formatArgs;
+	    bool appendNewLine;
 	};
 }

@@ -3,5 +3,5 @@
 
 namespace rsl::time
 {
-	const point32 genesis = main_clock.start_point();
+	const point32 genesis = main_clock.current_point();
 }

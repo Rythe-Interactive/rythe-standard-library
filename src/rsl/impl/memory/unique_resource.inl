@@ -28,7 +28,15 @@ namespace rsl
 		noexcept(is_nothrow_constructible_v<mem_rsc, const allocator_storage_type&>)
 		: mem_rsc(allocStorage), m_value(factoryStorage) {}
 
-	template <typename T, allocator_type Alloc, typed_factory_type Factory>
+    template <typename T, allocator_type Alloc, typed_factory_type Factory>
+    template <typename OtherT, allocator_type OtherAlloc, typed_factory_type OtherFactory>
+    constexpr unique_resource<T, Alloc, Factory>::unique_resource(
+            internal::alloc_and_factory_only_signal_type,
+            const unique_resource<OtherT, OtherAlloc, OtherFactory>& other
+            ) noexcept(is_nothrow_constructible_v<mem_rsc, const allocator_storage_type&, const factory_storage_type&>)
+		: mem_rsc(internal::alloc_and_factory_only_signal, other), m_value(other.get_factory_storage()) {}
+
+    template <typename T, allocator_type Alloc, typed_factory_type Factory>
 	template <internal::unique_deleter_type<T> Deleter, typename... Args>
 	constexpr unique_resource<T, Alloc, Factory>::unique_resource(const allocator_storage_type& allocStorage, Deleter deleter,
 	                                                    Args&&... args)
@@ -118,6 +126,7 @@ namespace rsl
 		m_value.emplace(rsl::forward<Args>(args)...);
 
 		mem_rsc::set_factory(type_erased_factory(construct_type_signal<internal::unique_payload<T, Deleter>>));
+	    static_assert(sizeof(internal::unique_payload<T, Deleter>) == 16);
 		mem_rsc::allocate_and_construct(1);
 		bit_cast<internal::unique_payload<T, Deleter>*>(mem_rsc::get_ptr())->deleter = deleter;
 	}

@@ -13,7 +13,7 @@
 
 namespace rsl::log
 {
-	void logger::log_args(const log::severity s, const format_string format, const fmt::format_args args) noexcept
+	void logger::log_args(const log::severity s, const format_string format, const bool appendNewLine, const fmt::format_args args) noexcept
 	{
 		const log::message logMessage
 		{
@@ -24,6 +24,7 @@ namespace rsl::log
 			.severity = s,
 			.msg = format.str,
 			.formatArgs = args,
+		    .appendNewLine = appendNewLine,
 		};
 
 		log(logMessage);
@@ -45,13 +46,15 @@ namespace rsl::log
 			return;
 		}
 
-		fmt::memory_buffer buf;
-		fmt::vformat_to(fmt::appender(buf), fmt::string_view(message.msg.data(), message.msg.size()),
-						message.formatArgs);
+	    if(!m_formatter.is_armed())
+	    {
+	        set_formatter<undecorated_formatter>();
+	    }
 
+	    formatter& formatter = *m_formatter;
 		for (auto* sink : m_sinks)
 		{
-			sink->log(*m_formatter, message);
+			sink->log(formatter, message);
 		}
 
 		if (message.severity >= m_flushSeverity)

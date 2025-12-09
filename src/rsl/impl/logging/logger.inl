@@ -22,7 +22,7 @@ namespace rsl::log
         m_sinks = dynamic_array<sink*>::from_variadic_items(sinks...);
     }
 
-    inline void logger::set_sinks(array_view<sink*> sinks)
+    inline void logger::set_sinks(const array_view<sink*> sinks)
     {
         m_sinks = dynamic_array<sink*>::from_view(sinks);
     }
@@ -32,7 +32,15 @@ namespace rsl::log
     template <typename... Args>
     constexpr void logger::log(const log::severity s, const format_string format, Args&&... args) noexcept
     {
-        log_args(s, format, fmt::make_format_args(rsl::forward<Args>(args)...));
+        // Specifically no forward to force temp object lifetime to this body, and to force an address for all values.
+        log_args(s, format, false, fmt::make_format_args(args...));
+    }
+
+    template <typename ... Args>
+    constexpr void logger::logln(const log::severity s, const format_string format, Args&&... args) noexcept
+    {
+        // Specifically no forward to force temp object lifetime to this body, and to force an address for all values.
+        log_args(s, format, true, fmt::make_format_args(args...));
     }
 
     inline void logger::filter(const severity s) noexcept

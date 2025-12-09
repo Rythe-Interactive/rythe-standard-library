@@ -1402,11 +1402,11 @@ namespace rsl
             {
                 if (m_memorySize == 0) [[unlikely]]
                 {
-                    return resize_capacity_unsafe(1);
+                    return resize_capacity_unsafe(calc_memory_size(1));
                 }
             }
 
-            if (m_size == m_memorySize) [[unlikely]]
+            if (m_size == calc_max_size()) [[unlikely]]
             {
                 return resize_capacity_unsafe(m_memorySize * 2);
             }

@@ -19,7 +19,7 @@ namespace rsl::fs
         return m_provider != nullptr;
     }
 
-    constexpr domain_iterator& domain_iterator::operator++() noexcept
+    inline domain_iterator& domain_iterator::operator++() noexcept
     {
         ++m_index;
         const auto domains = m_provider->get()->get_domains();
@@ -31,14 +31,14 @@ namespace rsl::fs
         return *this;
     }
 
-    constexpr domain_iterator domain_iterator::operator++(int) noexcept
+    inline domain_iterator domain_iterator::operator++(int) noexcept
     {
         const domain_iterator tmp = *this;
         ++(*this);
         return tmp;
     }
 
-    constexpr domain_iterator& domain_iterator::operator--() noexcept
+    inline domain_iterator& domain_iterator::operator--() noexcept
     {
         if (m_index == 0ull)
         {
@@ -52,19 +52,19 @@ namespace rsl::fs
         return *this;
     }
 
-    constexpr domain_iterator domain_iterator::operator--(int) noexcept
+    inline domain_iterator domain_iterator::operator--(int) noexcept
     {
         const domain_iterator tmp = *this;
         --(*this);
         return tmp;
     }
 
-    constexpr const domain_string& domain_iterator::operator*() const noexcept
+    inline const domain_string& domain_iterator::operator*() const noexcept
     {
         return m_provider->get()->get_domains()[m_index];
     }
 
-    constexpr const domain_string* domain_iterator::operator->() const noexcept
+    inline const domain_string* domain_iterator::operator->() const noexcept
     {
         return &operator*();
     }

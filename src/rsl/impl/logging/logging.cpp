@@ -27,12 +27,14 @@ namespace rsl
 
                 thread_local log::default_logger undecoratedLogger("default undecorated logger");
                 undecoratedLogger.set_sinks(&defaultConsoleSink, &defaultFileSink);
+                undecoratedLogger.set_formatter<log::undecorated_formatter>();
+
                 context.undecoratedLogger = &undecoratedLogger;
 
                 thread_local log::default_logger logger("default logger");
                 logger.set_sinks(&defaultConsoleSink, &defaultFileSink);
                 logger.set_formatter<log::pattern_formatter>(
-                        "[{}] [{}] [{}] [{}] : {}",
+                        "[{:%H:%M:%S}] [{}] [{}] [{}] : {}",
                         log::genesis_flag_formatter{},
                         log::thread_name_flag_formatter{},
                         log::logger_name_flag_formatter{},
@@ -42,7 +44,7 @@ namespace rsl
 
                 context.logger = &logger;
 
-                undecoratedLogger.log(log::severity::info, "== Initializing Logging =="_sv);
+                undecoratedLogger.log(log::severity::info, "== Initializing Logging ==\n"_sv);
                 return context;
             }
         }

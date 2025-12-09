@@ -7,7 +7,7 @@ namespace rsl::current_thread
 	template <time::duration_rep Precision>
 	void sleep_for(time::span<Precision> duration)
 	{
-		platform::sleep_current_thread(duration.template milliseconds<uint64>());
+		platform::sleep_current_thread(duration.template milliseconds<uint32>());
 	}
 
 	template <time::duration_rep Precision, time::clock_type ClockType>

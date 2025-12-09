@@ -77,7 +77,7 @@ namespace rsl::log
         void set_flag_options(string_view options) override;
 
     private:
-        string_view m_options;
+        string_view m_options = "{}";
     };
 
     class logger_name_flag_formatter final : public flag_formatter

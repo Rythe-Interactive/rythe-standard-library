@@ -82,10 +82,7 @@ namespace rsl
     constexpr unique_object<T, Alloc, Factory>::unique_object(
             unique_object<OtherType, Alloc, OtherFactory>&& other
             ) noexcept
-        : unique_rsc(
-                  other.template unique_object<OtherType, Alloc, OtherFactory>::unique_rsc::get_allocator_storage(),
-                  other.template unique_object<OtherType, Alloc, OtherFactory>::unique_rsc::get_factory_storage()
-                  ),
+        : unique_rsc(internal::alloc_and_factory_only_signal, other),
           m_factory(other.get_factory_storage())
     {
         if (other.template unique_object<OtherType, Alloc, OtherFactory>::unique_rsc::m_value.holds_value())

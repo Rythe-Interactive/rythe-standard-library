@@ -54,6 +54,11 @@ namespace rsl
 		)
 			noexcept(is_nothrow_constructible_v<mem_rsc, const allocator_storage_type&>);
 
+	    template <typename OtherT, allocator_type OtherAlloc, typed_factory_type OtherFactory>
+		[[rythe_always_inline]] constexpr unique_resource(internal::alloc_and_factory_only_signal_type, const unique_resource<OtherT, OtherAlloc, OtherFactory>& other
+		)
+			noexcept(is_nothrow_constructible_v<mem_rsc, const allocator_storage_type&, const factory_storage_type&>);
+
 		template <internal::unique_deleter_type<T> Deleter, typename... Args>
 		[[rythe_always_inline]] constexpr explicit unique_resource(Deleter deleter, Args&&... args)
 			noexcept(is_nothrow_constructible_v<mem_rsc> && is_nothrow_constructible_v<T, Args...>);

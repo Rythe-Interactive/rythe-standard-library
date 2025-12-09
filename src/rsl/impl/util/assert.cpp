@@ -27,6 +27,12 @@ namespace rsl::asserts
 				std::abort();
 			}
 		}
+
+	    void raw_assert_handler([[maybe_unused]] string_view expression, [[maybe_unused]] string_view file, [[maybe_unused]] size_type line, [[maybe_unused]] string_view message)
+		{
+			rythe_debugbreak_instruction();
+		    std::abort();
+		}
 	} // namespace internal
 
 	assert_handler_function assert_handler = nullptr;

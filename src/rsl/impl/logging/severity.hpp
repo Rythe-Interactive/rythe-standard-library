@@ -5,9 +5,7 @@
 
 namespace rsl::log
 {
-    #if defined(RSL_DEFAULT_LOG_SEVERITY_OVERRIDE)
-    #define RSL_DEFAULT_LOG_SEVERITY RSL_DEFAULT_LOG_SEVERITY_OVERRIDE
-    #else
+    #if !defined(RSL_DEFAULT_LOG_SEVERITY)
     #if defined(RYTHE_DEBUG)
     #define RSL_DEFAULT_LOG_SEVERITY debug
     #else
@@ -15,9 +13,7 @@ namespace rsl::log
     #endif
     #endif
 
-    #if defined(RSL_DEFAULT_LOG_FLUSH_SEVERITY_OVERRIDE)
-    #define RSL_DEFAULT_LOG_FLUSH_SEVERITY RSL_DEFAULT_LOG_FLUSH_SEVERITY_OVERRIDE
-    #else
+    #if !defined(RSL_DEFAULT_LOG_FLUSH_SEVERITY)
     #if defined(RYTHE_DEBUG)
     #define RSL_DEFAULT_LOG_FLUSH_SEVERITY debug
     #else

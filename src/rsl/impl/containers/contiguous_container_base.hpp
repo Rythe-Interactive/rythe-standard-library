@@ -29,13 +29,14 @@ namespace rsl
             {
                 return 0ull;
             }
-
-            if constexpr (UsePostFix)
+            else if constexpr (UsePostFix)
             {
                 return StaticCapacity == 0ull ? 0ull : StaticCapacity - 1ull;
             }
-
-            return StaticCapacity;
+            else
+            {
+                return StaticCapacity;
+            }
         }
     }
 

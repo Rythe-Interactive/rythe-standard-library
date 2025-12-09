@@ -29,7 +29,7 @@ namespace rsl::math
 	using bit_rep = typename internal::bit_rep_impl<T>::type;
 
 	template <signed_type T>
-	constexpr bit_rep<T> sign_bit = static_cast<bit_rep<T>>(1) << (sizeof(T) * 8 - 1);
+	constexpr bit_rep<T> sign_bit = static_cast<bit_rep<T>>(static_cast<bit_rep<T>>(1) << (sizeof(T) * 8 - 1));
 
 	namespace internal
 	{
@@ -88,7 +88,7 @@ namespace rsl::math
 	{
 		constexpr static size_type bit_count = sizeof(T) * 8;
 		constexpr static T min = 0ull;
-		constexpr static T max = ~static_cast<T>(0ull);
+		constexpr static T max = static_cast<T>(~0ull);
 	};
 
 	template <arithmetic_type T>
@@ -97,6 +97,16 @@ namespace rsl::math
 	{
 		constexpr static size_type bit_count = sizeof(T) * 8;
 		constexpr static T min = sign_bit<T>;
-		constexpr static T max = ~static_cast<T>(0) & ~sign_bit<T>;
+		constexpr static T max = static_cast<T>(~0) & ~sign_bit<T>;
 	};
+
+    static_assert(limits<uint8>::max == 0xFF);
+    static_assert(limits<uint16>::max == 0xFFFF);
+    static_assert(limits<uint32>::max == 0xFFFFFFFF);
+    static_assert(limits<uint64>::max == 0xFFFFFFFFFFFFFFFF);
+
+    static_assert(limits<int8>::max == 0x7F);
+    static_assert(limits<int16>::max == 0x7FFF);
+    static_assert(limits<int32>::max == 0x7FFFFFFF);
+    static_assert(limits<int64>::max == 0x7FFFFFFFFFFFFFFF);
 } // namespace rsl::math

@@ -2,6 +2,7 @@
 
 #include "../util/primitives.hpp"
 
+#include "../memory/allocator_context.hpp"
 #include "../threading/thread.hpp"
 #include "../threading/thread_id.hpp"
 #include "../util/error_handling.hpp"

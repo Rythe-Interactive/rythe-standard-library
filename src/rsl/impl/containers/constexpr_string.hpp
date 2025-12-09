@@ -107,11 +107,11 @@ namespace rsl
 		size_type j = 0;
 		for (size_type i = 0; i < N; ++i)
 		{
-			if (f(i))
-			{
-				ret[j] = buffer[i];
-				++j;
-			}
+		    if (f(i))
+		    {
+		        ret[j] = buffer[i];
+		        ++j;
+		    }
 		}
 
 		for (; j < N; ++j)

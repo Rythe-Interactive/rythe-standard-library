@@ -4,13 +4,13 @@ namespace rsl::log
     template <typename... Args>
     void println(const severity s, const format_string format, Args&&... args) noexcept
     {
-        get_logging_context().logger->log(s, format, rsl::forward<Args>(args)...);
+        get_logging_context().logger->logln(s, format, rsl::forward<Args>(args)...);
     }
 
     template <typename... Args>
     void undecoratedln(const severity s, const format_string format, Args&&... args) noexcept
     {
-        get_logging_context().undecoratedLogger->log(s, format, rsl::forward<Args>(args)...);
+        get_logging_context().undecoratedLogger->logln(s, format, rsl::forward<Args>(args)...);
     }
 
     inline void filter(const severity level)
