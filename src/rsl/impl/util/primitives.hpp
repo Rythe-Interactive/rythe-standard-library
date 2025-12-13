@@ -75,6 +75,7 @@ namespace rsl
 	using f64 = float64;
 	using flt_max = float_max;
 
+    // TODO(Glyn): floating point time is a horrible idea...
 	using time32 = float32;
 	using time64 = float64;
 	using time_large = int_max;

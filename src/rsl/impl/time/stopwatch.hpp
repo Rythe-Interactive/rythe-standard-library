@@ -9,6 +9,7 @@
 
 namespace rsl::time
 {
+    // TODO(Glyn): stop relying on chrono and actually implement a clock.
 	template <duration_rep Precision = time32, clock_type ClockType = std::chrono::high_resolution_clock>
 	struct stopwatch
 	{

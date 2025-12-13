@@ -21,7 +21,7 @@ namespace rsl::log
     }
 
     template <typename... Args>
-    void trace([[maybe_unused]] const format_string format, [[maybe_unused]] Args&&... args)
+    void trace(const format_string format, Args&&... args)
     {
         #if !defined(RSL_STRIP_TRACE_LOG)
         println(severity::trace, format, rsl::forward<Args>(args)...);
@@ -29,7 +29,7 @@ namespace rsl::log
     }
 
     template <typename... Args>
-    void debug([[maybe_unused]] const format_string format, [[maybe_unused]] Args&&... args)
+    void debug(const format_string format, Args&&... args)
     {
         #if !defined(RSL_STRIP_DEBUG_LOG)
         println(severity::debug, format, rsl::forward<Args>(args)...);
@@ -37,7 +37,7 @@ namespace rsl::log
     }
 
     template <typename... Args>
-    void info([[maybe_unused]] const format_string format, [[maybe_unused]] Args&&... args)
+    void info(const format_string format, Args&&... args)
     {
         #if !defined(RSL_STRIP_INFO_LOG)
         println(severity::info, format, rsl::forward<Args>(args)...);
@@ -75,7 +75,7 @@ namespace rsl::log
     }
 
     template <typename... Args>
-    void undecorated_trace([[maybe_unused]] const format_string format, [[maybe_unused]] Args&&... args)
+    void undecorated_trace(const format_string format, Args&&... args)
     {
         #if !defined(RSL_STRIP_TRACE_LOG)
         undecoratedln(severity::trace, format, rsl::forward<Args>(args)...);
@@ -83,7 +83,7 @@ namespace rsl::log
     }
 
     template <typename... Args>
-    void undecorated_debug([[maybe_unused]] const format_string format, [[maybe_unused]] Args&&... args)
+    void undecorated_debug(const format_string format, Args&&... args)
     {
         #if !defined(RSL_STRIP_DEBUG_LOG)
         undecoratedln(severity::debug, format, rsl::forward<Args>(args)...);
@@ -91,7 +91,7 @@ namespace rsl::log
     }
 
     template <typename... Args>
-    void undecorated_info([[maybe_unused]] const format_string format, [[maybe_unused]] Args&&... args)
+    void undecorated_info(const format_string format, Args&&... args)
     {
         #if !defined(RSL_STRIP_INFO_LOG)
         undecoratedln(severity::info, format, rsl::forward<Args>(args)...);

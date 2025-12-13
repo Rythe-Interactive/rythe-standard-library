@@ -13,7 +13,7 @@ namespace rsl::log
 	struct message;
 
     struct runtime_format_string_signal_t{};
-    constexpr runtime_format_string_signal_t runtime_format{};
+    constexpr runtime_format_string_signal_t runtime_format_signal{};
 
 	struct format_string
 	{
@@ -27,6 +27,12 @@ namespace rsl::log
 			const string_view s,
 			const source_location loc = source_location::current())
 			noexcept : str(s), srcLoc(loc) {}
+        
+	    template<size_type N>
+	    [[rythe_always_inline]] consteval format_string(
+	        const constexpr_string<N>& s,
+            const source_location loc = source_location::current())
+            noexcept : str(s), srcLoc(loc) {}
 
 	    [[rythe_always_inline]] constexpr format_string(
 	        const runtime_format_string_signal_t,
@@ -37,6 +43,11 @@ namespace rsl::log
 		string_view str;
 		source_location srcLoc;
 	};
+
+    constexpr format_string runtime_format(const string_view s, const source_location loc = source_location::current()) noexcept
+    {
+        return format_string(runtime_format_signal, s, loc);
+    }
 
 	class logger
 	{
