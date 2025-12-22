@@ -4,6 +4,8 @@
 
 #include "heap_allocator.hpp"
 
+//TODO(Glyn): Having these be template parameters to containers is not worth the saving of the pointer sometimes.
+
 namespace rsl
 {
 	template <typename T>

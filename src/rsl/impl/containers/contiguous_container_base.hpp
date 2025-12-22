@@ -40,6 +40,7 @@ namespace rsl
         }
     }
 
+    // TODO(Glyn): the allocators and factory template parameters are more trouble than they are worth.
     template <typename T, allocator_type Alloc, factory_type Factory, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
               ContiguousContainerInfo>
     class contiguous_container_base

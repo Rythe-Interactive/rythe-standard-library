@@ -4,13 +4,17 @@
 #include "../array.hpp"
 #include "../optional.hpp"
 #include "../pair.hpp"
-#include "../reference_wrapper.hpp"
 #include "../views.hpp"
 #include "../../memory/memory_pool.hpp"
 #include "../util/comparers.hpp"
 
 #include "map_iterator.hpp"
 #include "map_node.hpp"
+
+// ReSharper disable once CppUnusedIncludeDirective
+#include "../reference_wrapper.hpp" // used in .inl
+// ReSharper disable once CppUnusedIncludeDirective
+#include "../../math/util/limits.hpp" // used in .inl
 
 namespace rsl
 {

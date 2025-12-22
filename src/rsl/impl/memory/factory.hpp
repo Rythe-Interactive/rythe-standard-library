@@ -4,6 +4,9 @@
 #include "../util/assert.hpp"
 #include "../util/concepts.hpp"
 
+// TODO(Glyn): The idea is fun, but it's such an unnecessary complexity.
+// TODO(Glyn): Potentially making them not template parameters for the container might resolve the issue, otherwise delete.
+
 namespace rsl
 {
 	template <typename T>

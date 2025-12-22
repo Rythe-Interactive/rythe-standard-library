@@ -6,7 +6,7 @@
 
 #include "time_span.hpp"
 
-namespace rsl::time
+namespace rsl::tm
 {
 	template <typename Clock>
 	concept clock_type = requires {
@@ -14,6 +14,8 @@ namespace rsl::time
 		requires specialization_of<typename Clock::duration, std::chrono::duration>;
 	};
 
+    // TODO(Glyn): floating point representation of time sucks,
+    // TODO(Glyn): honestly all of the time library here kindah sucks except for maybe the api...
 	template <duration_rep Precision = time32, clock_type ClockType = std::chrono::high_resolution_clock>
 	struct point
 	{ // represents a point in time
@@ -79,7 +81,7 @@ namespace rsl::time
 
 	public:
 		using time_type = Precision;
-		using span_type = time::span<time_type>;
+		using span_type = tm::span<time_type>;
 		using duration_type = typename ClockType::duration;
 		using clock_type = ClockType;
 
@@ -222,20 +224,20 @@ namespace rsl::time
 	using point64 = point<time64>;
 
 	extern const point32 genesis;
-} // namespace rsl::time
+} // namespace rsl::tm
 
-template <rsl::time::duration_rep precision, rsl::time::clock_type clock_t, rsl::time::duration_rep precision2>
+template <rsl::tm::duration_rep precision, rsl::tm::clock_type clock_t, rsl::tm::duration_rep precision2>
 [[nodiscard]] [[rythe_always_inline]] constexpr auto
-operator<=>(const rsl::time::point<precision, clock_t>& lhs, const rsl::time::point<precision2, clock_t>& rhs)
+operator<=>(const rsl::tm::point<precision, clock_t>& lhs, const rsl::tm::point<precision2, clock_t>& rhs)
 	noexcept(rsl::is_arithmetic_v<typename clock_t::rep>) /* strengthened */
 {
 	return lhs.duration <=> rhs.duration;
 }
 
-template <rsl::time::duration_rep precision, rsl::time::clock_type clock_t, rsl::time::duration_rep precision2>
-[[nodiscard]] [[rythe_always_inline]] constexpr rsl::time::common_span<precision, precision2>
-operator-(const rsl::time::point<precision, clock_t>& lhs, const rsl::time::point<precision2, clock_t>& rhs)
+template <rsl::tm::duration_rep precision, rsl::tm::clock_type clock_t, rsl::tm::duration_rep precision2>
+[[nodiscard]] [[rythe_always_inline]] constexpr rsl::tm::common_span<precision, precision2>
+operator-(const rsl::tm::point<precision, clock_t>& lhs, const rsl::tm::point<precision2, clock_t>& rhs)
 	noexcept(rsl::is_arithmetic_v<typename clock_t::rep>) /* strengthened */
 {
-	return rsl::time::common_span<precision, precision2>{lhs.duration - rhs.duration};
+	return rsl::tm::common_span<precision, precision2>{lhs.duration - rhs.duration};
 }

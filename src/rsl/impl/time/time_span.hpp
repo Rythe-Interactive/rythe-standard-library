@@ -6,7 +6,7 @@
 
 namespace rsl
 {
-    namespace time
+    namespace tm
     {
         template <typename Rep>
         concept duration_rep = !is_specialization_v<Rep, std::chrono::duration>;
@@ -217,77 +217,77 @@ namespace rsl
         };
 
         template <duration_rep PrecisionLHS, duration_rep PrecisionRHS>
-        using common_span = time::span<std::common_type_t<PrecisionLHS, PrecisionRHS>>;
+        using common_span = tm::span<std::common_type_t<PrecisionLHS, PrecisionRHS>>;
 
         using span32 = span<time32>;
         using span64 = span<time64>;
-    } // namespace time
+    } // namespace tm
 
-    [[nodiscard]] [[rythe_always_inline]] consteval time::span32 operator""_ns(const size_type count) noexcept
+    [[nodiscard]] [[rythe_always_inline]] consteval tm::span32 operator""_ns(const size_type count) noexcept
     {
-        return time::span32(time::nano_seconds_duration<size_type>(count));
+        return tm::span32(tm::nano_seconds_duration<size_type>(count));
     }
 
-    [[nodiscard]] [[rythe_always_inline]] consteval time::span32 operator""_us(const size_type count) noexcept
+    [[nodiscard]] [[rythe_always_inline]] consteval tm::span32 operator""_us(const size_type count) noexcept
     {
-        return time::span32(time::micro_seconds_duration<size_type>(count));
+        return tm::span32(tm::micro_seconds_duration<size_type>(count));
     }
 
-    [[nodiscard]] [[rythe_always_inline]] consteval time::span32 operator""_ms(const size_type count) noexcept
+    [[nodiscard]] [[rythe_always_inline]] consteval tm::span32 operator""_ms(const size_type count) noexcept
     {
-        return time::span32(time::milli_seconds_duration<size_type>(count));
+        return tm::span32(tm::milli_seconds_duration<size_type>(count));
     }
 
-    [[nodiscard]] [[rythe_always_inline]] consteval time::span32 operator""_s(const size_type count) noexcept
+    [[nodiscard]] [[rythe_always_inline]] consteval tm::span32 operator""_s(const size_type count) noexcept
     {
-        return time::span32(time::seconds_duration<size_type>(count));
+        return tm::span32(tm::seconds_duration<size_type>(count));
     }
 
 } // namespace rsl
 
-template <rsl::time::duration_rep PrecisionLHS, rsl::time::duration_rep PrecisionRHS>
+template <rsl::tm::duration_rep PrecisionLHS, rsl::tm::duration_rep PrecisionRHS>
 [[nodiscard]] [[rythe_always_inline]] constexpr auto
-operator+(const rsl::time::span<PrecisionLHS>& lhs, const rsl::time::span<PrecisionRHS>& rhs)
+operator+(const rsl::tm::span<PrecisionLHS>& lhs, const rsl::tm::span<PrecisionRHS>& rhs)
 	noexcept(rsl::is_arithmetic_v<PrecisionLHS> && rsl::is_arithmetic_v<PrecisionRHS>) /* strengthened */
 {
-	return rsl::time::common_span<PrecisionLHS, PrecisionRHS>(lhs.duration + rhs.duration);
+	return rsl::tm::common_span<PrecisionLHS, PrecisionRHS>(lhs.duration + rhs.duration);
 }
 
-template <rsl::time::duration_rep PrecisionLHS, rsl::time::duration_rep PrecisionRHS>
+template <rsl::tm::duration_rep PrecisionLHS, rsl::tm::duration_rep PrecisionRHS>
 [[nodiscard]] [[rythe_always_inline]] constexpr auto
-operator-(const rsl::time::span<PrecisionLHS>& lhs, const rsl::time::span<PrecisionRHS>& rhs)
+operator-(const rsl::tm::span<PrecisionLHS>& lhs, const rsl::tm::span<PrecisionRHS>& rhs)
 	noexcept(rsl::is_arithmetic_v<PrecisionLHS> && rsl::is_arithmetic_v<PrecisionRHS>) /* strengthened */
 {
-	return rsl::time::common_span<PrecisionLHS, PrecisionRHS>(lhs.duration - rhs.duration);
+	return rsl::tm::common_span<PrecisionLHS, PrecisionRHS>(lhs.duration - rhs.duration);
 }
 
-template <rsl::time::duration_rep PrecisionLHS, rsl::time::duration_rep PrecisionRHS>
+template <rsl::tm::duration_rep PrecisionLHS, rsl::tm::duration_rep PrecisionRHS>
 [[nodiscard]] [[rythe_always_inline]] constexpr auto
-operator*(const rsl::time::span<PrecisionLHS>& lhs, const rsl::time::span<PrecisionRHS>& rhs)
+operator*(const rsl::tm::span<PrecisionLHS>& lhs, const rsl::tm::span<PrecisionRHS>& rhs)
 	noexcept(rsl::is_arithmetic_v<PrecisionLHS> && rsl::is_arithmetic_v<PrecisionRHS>) /* strengthened */
 {
-	return rsl::time::common_span<PrecisionLHS, PrecisionRHS>(lhs.duration * rhs.duration);
+	return rsl::tm::common_span<PrecisionLHS, PrecisionRHS>(lhs.duration * rhs.duration);
 }
 
-template <rsl::time::duration_rep PrecisionLHS, rsl::time::duration_rep PrecisionRHS>
+template <rsl::tm::duration_rep PrecisionLHS, rsl::tm::duration_rep PrecisionRHS>
 [[nodiscard]] [[rythe_always_inline]] constexpr auto
-operator/(const rsl::time::span<PrecisionLHS>& lhs, const rsl::time::span<PrecisionRHS>& rhs)
+operator/(const rsl::tm::span<PrecisionLHS>& lhs, const rsl::tm::span<PrecisionRHS>& rhs)
 	noexcept(rsl::is_arithmetic_v<PrecisionLHS> && rsl::is_arithmetic_v<PrecisionRHS>) /* strengthened */
 {
-	return rsl::time::common_span<PrecisionLHS, PrecisionRHS>(lhs.duration / rhs.duration);
+	return rsl::tm::common_span<PrecisionLHS, PrecisionRHS>(lhs.duration / rhs.duration);
 }
 
-template <rsl::time::duration_rep PrecisionLHS, rsl::time::duration_rep PrecisionRHS>
+template <rsl::tm::duration_rep PrecisionLHS, rsl::tm::duration_rep PrecisionRHS>
 [[nodiscard]] [[rythe_always_inline]] constexpr auto
-operator%(const rsl::time::span<PrecisionLHS>& lhs, const rsl::time::span<PrecisionRHS>& rhs)
+operator%(const rsl::tm::span<PrecisionLHS>& lhs, const rsl::tm::span<PrecisionRHS>& rhs)
 	noexcept(rsl::is_arithmetic_v<PrecisionLHS> && rsl::is_arithmetic_v<PrecisionRHS>) /* strengthened */
 {
-	return rsl::time::common_span<PrecisionLHS, PrecisionRHS>(lhs.duration % rhs.duration);
+	return rsl::tm::common_span<PrecisionLHS, PrecisionRHS>(lhs.duration % rhs.duration);
 }
 
-template <rsl::time::duration_rep PrecisionLHS, rsl::time::duration_rep PrecisionRHS>
+template <rsl::tm::duration_rep PrecisionLHS, rsl::tm::duration_rep PrecisionRHS>
 [[nodiscard]] [[rythe_always_inline]] constexpr auto
-operator<=>(const rsl::time::span<PrecisionLHS>& lhs, const rsl::time::span<PrecisionRHS>& rhs)
+operator<=>(const rsl::tm::span<PrecisionLHS>& lhs, const rsl::tm::span<PrecisionRHS>& rhs)
 	noexcept(rsl::is_arithmetic_v<PrecisionLHS> && rsl::is_arithmetic_v<PrecisionRHS>) /* strengthened */
 {
 	return lhs.duration.count() <=> rhs.duration.count();

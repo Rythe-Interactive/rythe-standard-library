@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace rsl::time
+namespace rsl::tm
 {
     // TODO(Glyn): make this an actual useful thing...
     struct date

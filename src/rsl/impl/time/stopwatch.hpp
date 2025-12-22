@@ -7,7 +7,7 @@
 #include "time_point.hpp"
 
 
-namespace rsl::time
+namespace rsl::tm
 {
     // TODO(Glyn): stop relying on chrono and actually implement a clock.
 	template <duration_rep Precision = time32, clock_type ClockType = std::chrono::high_resolution_clock>
@@ -15,8 +15,8 @@ namespace rsl::time
 	{
 	public:
 		using time_type = Precision;
-		using span_type = time::span<time_type>;
-		using time_point_type = time::point<Precision, ClockType>;
+		using span_type = tm::span<time_type>;
+		using time_point_type = tm::point<Precision, ClockType>;
 		using clock_type = ClockType;
 
 	private:
