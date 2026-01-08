@@ -137,7 +137,7 @@ namespace rsl
             return (static_cast<uint64>(upper) << 32ull) | static_cast<uint64>(lower);
         }
 
-        time::date translate_timestamp(const FILETIME fileTime) noexcept
+        tm::date translate_timestamp(const FILETIME fileTime) noexcept
         {
             const uint64 windowsTime = combine_dwords(fileTime.dwLowDateTime, fileTime.dwHighDateTime);
             return { .epochTime = static_cast<int64>(windowsTime / 10000000ull - 11644473600ull) };

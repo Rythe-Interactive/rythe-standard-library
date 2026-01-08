@@ -30,7 +30,7 @@ namespace rsl::log
     public:
         NO_DTOR_RULE5_CONSTEXPR_NOEXCEPT(flag_formatter)
         virtual ~flag_formatter() = default;
-        virtual void format(const message& msg, time::point32 time, fmt::memory_buffer& dest) = 0;
+        virtual void format(const message& msg, tm::point32 time, fmt::memory_buffer& dest) = 0;
         virtual void set_flag_options(string_view) {}
     };
 
@@ -57,13 +57,13 @@ namespace rsl::log
     class message_flag_formatter final : public flag_formatter
     {
     public:
-        void format(const message& msg, time::point32 time, fmt::memory_buffer& dest) override;
+        void format(const message& msg, tm::point32 time, fmt::memory_buffer& dest) override;
     };
 
     class severity_flag_formatter final : public flag_formatter
     {
     public:
-        void format(const message& msg, time::point32 time, fmt::memory_buffer& dest) override;
+        void format(const message& msg, tm::point32 time, fmt::memory_buffer& dest) override;
         void set_flag_options(string_view options) override;
 
     private:
@@ -73,7 +73,7 @@ namespace rsl::log
     class genesis_flag_formatter final : public flag_formatter
     {
     public:
-        void format(const message& msg, time::point32 time, fmt::memory_buffer& dest) override;
+        void format(const message& msg, tm::point32 time, fmt::memory_buffer& dest) override;
         void set_flag_options(string_view options) override;
 
     private:
@@ -83,13 +83,13 @@ namespace rsl::log
     class logger_name_flag_formatter final : public flag_formatter
     {
     public:
-        void format(const message& msg, time::point32 time, fmt::memory_buffer& dest) override;
+        void format(const message& msg, tm::point32 time, fmt::memory_buffer& dest) override;
     };
 
     class thread_name_flag_formatter final : public flag_formatter
     {
     public:
-        void format(const message& msg, time::point32 time, fmt::memory_buffer& dest) override;
+        void format(const message& msg, tm::point32 time, fmt::memory_buffer& dest) override;
     };
 } // namespace rsl
 

@@ -19,7 +19,7 @@ namespace rsl::log
 		{
 			.loggerName = m_name,
 			.threadId = current_thread::get_id(),
-			.timestamp = time::main_clock.current_point(),
+			.timestamp = tm::main_clock.current_point(),
 			.sourceLocation = format.srcLoc,
 			.severity = s,
 			.msg = format.str,

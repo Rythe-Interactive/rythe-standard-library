@@ -13,7 +13,7 @@ namespace rsl::log
 		string_view loggerName;
 		thread_id threadId;
 
-		time::point32 timestamp;
+		tm::point32 timestamp;
 		source_location sourceLocation;
 		log::severity severity;
 		string_view msg;

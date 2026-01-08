@@ -5,7 +5,7 @@ namespace rsl
 {
     struct file_info
     {
-        time::date lastWriteTimestamp;
+        tm::date lastWriteTimestamp;
         size_type size;
         bool isWritable;
         bool isDirectory;
