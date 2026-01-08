@@ -82,9 +82,12 @@ namespace rsl
 
     using hashed_string_view = basic_hashed_string_view<const char>;
 
-    consteval hashed_string_view operator""_hsv(const cstring str, const size_type size) noexcept
+    inline namespace literals
     {
-        return hashed_string_view::from_buffer(str, size);
+        consteval hashed_string_view operator""_hsv(const cstring str, const size_type size) noexcept
+        {
+            return hashed_string_view::from_buffer(str, size);
+        }
     }
 
     template <char_type CharType = char, allocator_type Alloc = default_allocator, size_type StaticCapacity = 0ull>
@@ -197,9 +200,12 @@ namespace rsl
 
     using hashed_string = basic_hashed_string<>;
 
-    constexpr hashed_string operator""_hs(const cstring str, const size_type size) noexcept
+    inline namespace literals
     {
-        return hashed_string::from_buffer(str, size);
+        constexpr hashed_string operator""_hs(const cstring str, const size_type size) noexcept
+        {
+            return hashed_string::from_buffer(str, size);
+        }
     }
 } // namespace rsl
 

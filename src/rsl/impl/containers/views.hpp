@@ -116,9 +116,12 @@ namespace rsl
     using byte_view = rsl::array_view<const byte>;
     using mutable_byte_view = rsl::array_view<byte>;
 
-    [[nodiscard]] [[rythe_always_inline]] consteval string_view operator""_sv(const cstring str, const size_type size) noexcept
+    inline namespace literals
     {
-        return string_view::from_buffer(str, size);
+        [[nodiscard]] [[rythe_always_inline]] consteval string_view operator""_sv(const cstring str, const size_type size) noexcept
+        {
+            return string_view::from_buffer(str, size);
+        }
     }
 
     template<typename StrType>

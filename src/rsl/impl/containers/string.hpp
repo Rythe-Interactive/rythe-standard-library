@@ -137,9 +137,12 @@ namespace rsl
     template <typename T>
     [[nodiscard]] [[rythe_always_inline]] dynamic_string to_string(const T& value);
 
-    [[nodiscard]] [[rythe_always_inline]] constexpr dynamic_string operator""_ds(const cstring str, const size_type size) noexcept
+    inline namespace literals
     {
-        return dynamic_string::from_buffer(str, size);
+        [[nodiscard]] [[rythe_always_inline]] constexpr dynamic_string operator""_ds(const cstring str, const size_type size) noexcept
+        {
+            return dynamic_string::from_buffer(str, size);
+        }
     }
 } // namespace rsl
 

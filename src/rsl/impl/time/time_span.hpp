@@ -223,26 +223,28 @@ namespace rsl
         using span64 = span<time64>;
     } // namespace tm
 
-    [[nodiscard]] [[rythe_always_inline]] consteval tm::span32 operator""_ns(const size_type count) noexcept
+    inline namespace literals
     {
-        return tm::span32(tm::nano_seconds_duration<size_type>(count));
-    }
+        [[nodiscard]] [[rythe_always_inline]] consteval tm::span32 operator""_ns(const size_type count) noexcept
+        {
+            return tm::span32(tm::nano_seconds_duration<size_type>(count));
+        }
 
-    [[nodiscard]] [[rythe_always_inline]] consteval tm::span32 operator""_us(const size_type count) noexcept
-    {
-        return tm::span32(tm::micro_seconds_duration<size_type>(count));
-    }
+        [[nodiscard]] [[rythe_always_inline]] consteval tm::span32 operator""_us(const size_type count) noexcept
+        {
+            return tm::span32(tm::micro_seconds_duration<size_type>(count));
+        }
 
-    [[nodiscard]] [[rythe_always_inline]] consteval tm::span32 operator""_ms(const size_type count) noexcept
-    {
-        return tm::span32(tm::milli_seconds_duration<size_type>(count));
-    }
+        [[nodiscard]] [[rythe_always_inline]] consteval tm::span32 operator""_ms(const size_type count) noexcept
+        {
+            return tm::span32(tm::milli_seconds_duration<size_type>(count));
+        }
 
-    [[nodiscard]] [[rythe_always_inline]] consteval tm::span32 operator""_s(const size_type count) noexcept
-    {
-        return tm::span32(tm::seconds_duration<size_type>(count));
+        [[nodiscard]] [[rythe_always_inline]] consteval tm::span32 operator""_s(const size_type count) noexcept
+        {
+            return tm::span32(tm::seconds_duration<size_type>(count));
+        }
     }
-
 } // namespace rsl
 
 template <rsl::tm::duration_rep PrecisionLHS, rsl::tm::duration_rep PrecisionRHS>
