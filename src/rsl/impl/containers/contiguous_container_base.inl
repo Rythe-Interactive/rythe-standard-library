@@ -1415,7 +1415,7 @@ namespace rsl
         }
         else
         {
-            return false;
+            return m_size != calc_max_size();
         }
     }
 

@@ -54,14 +54,10 @@ namespace rsl
 		virtual void deallocate(void* ptr, size_type size, size_type alignment) noexcept = 0;
 
 		template<not_same_as<void> T>
-		[[nodiscard]] [[rythe_allocating]] T* allocate() noexcept { return static_cast<T*>(allocate(sizeof(T))); }
-		template<not_same_as<void> T>
-		[[nodiscard]] [[rythe_allocating]] T* allocate(const size_type alignment) noexcept { return static_cast<T*>(allocate(sizeof(T), alignment)); }
+		[[nodiscard]] [[rythe_allocating]] T* allocate() noexcept { return static_cast<T*>(allocate(sizeof(T), alignof(T))); }
 
 		template<not_same_as<void> T>
-		void deallocate(T* ptr) noexcept { deallocate(static_cast<void*>(ptr), sizeof(T)); }
-		template<not_same_as<void> T>
-		void deallocate(T* ptr, const size_type alignment) noexcept { deallocate(ptr, sizeof(T), alignment); }
+		void deallocate(T* ptr) noexcept { deallocate(static_cast<void*>(ptr), sizeof(T), alignof(T)); }
 	};
 
 	using pmu_allocator = polymorphic_allocator;
