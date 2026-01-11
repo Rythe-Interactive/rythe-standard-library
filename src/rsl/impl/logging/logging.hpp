@@ -166,7 +166,7 @@ namespace rsl
 
 		namespace internal
 		{
-			void setup()
+			inline void setup()
 			{
 				auto& inst = logging_context::get();
 

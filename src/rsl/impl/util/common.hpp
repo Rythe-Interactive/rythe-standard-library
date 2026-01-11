@@ -832,7 +832,7 @@ namespace rsl
         }
         else
         {
-            return compiler_native_bit_cast<To>(value);
+            return internal::compiler_native_bit_cast<To>(value);
         }
     }
 

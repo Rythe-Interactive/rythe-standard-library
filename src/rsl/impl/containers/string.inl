@@ -96,17 +96,17 @@ namespace rsl
         return result;
     }
 
-    constexpr char to_upper(const char ch)
+    inline char to_upper(const char ch)
     {
         return static_cast<char>(toupper(static_cast<unsigned char>(ch)));
     }
 
-    constexpr char to_lower(const char ch)
+    inline char to_lower(const char ch)
     {
         return static_cast<char>(tolower(static_cast<unsigned char>(ch)));
     }
 
-    constexpr dynamic_string to_upper(const dynamic_string::const_view_type str)
+    inline dynamic_string to_upper(const dynamic_string::const_view_type str)
     {
         dynamic_string result;
         result.resize(str.size());
@@ -119,7 +119,7 @@ namespace rsl
         return result;
     }
 
-    constexpr dynamic_string to_lower(const dynamic_string::const_view_type str)
+    inline dynamic_string to_lower(const dynamic_string::const_view_type str)
     {
         dynamic_string result;
         result.resize(str.size());

@@ -17,7 +17,7 @@ namespace rsl
 
 	template <typename ReturnType, typename... ParamTypes, allocator_type Alloc, untyped_factory_type Factory>
     constexpr delegate_base<ReturnType(ParamTypes...), Alloc, Factory>::invocation_element::invocation_element(
-		const invocation_element& other
+		const delegate_base<ReturnType(ParamTypes...), Alloc, Factory>::invocation_element& other
 	) noexcept(is_nothrow_copy_constructible_v<managed_resource<void*, Alloc, Factory>>)
 		: object(other.object),
 		  ownsData(other.ownsData),

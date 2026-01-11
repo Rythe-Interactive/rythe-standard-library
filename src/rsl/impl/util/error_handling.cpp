@@ -15,19 +15,19 @@ namespace rsl
         asserts::internal::default_assert_handler(expression, file, line, message, soft, ignore);
     }
 
-	void error_handler::handle_error(const error_type& error, const bool assertError)
+	void error_handler::handle_error(const error_type& err, const bool assertError)
 	{
-		switch (error.severity)
+		switch (err.severity)
 		{
 			case error_severity::warning:
 			{
 				if (assertError)
 				{
-					rsl_assert_msg_soft_consistent(false, error.message);
+					rsl_assert_msg_soft_consistent(false, err.message);
 				}
 				else
 				{
-					log::warn("{}: {}", error.code, error.message);
+					log::warn("{}: {}", err.code, err.message);
 				}
 				break;
 			}
@@ -35,11 +35,11 @@ namespace rsl
 			{
 				if (assertError)
 				{
-					rsl_assert_msg_hard(false, error.message);
+					rsl_assert_msg_hard(false, err.message);
 				}
 				else
 				{
-					log::error("{}: {}", error.code, error.message);
+					log::error("{}: {}", err.code, err.message);
 				}
 				break;
 			}
@@ -47,11 +47,11 @@ namespace rsl
 			{
 				if (assertError)
 				{
-					rsl_assert_msg_hard(false, error.message);
+					rsl_assert_msg_hard(false, err.message);
 				}
 				else
 				{
-					log::fatal("{}: {}", error.code, error.message);
+					log::fatal("{}: {}", err.code, err.message);
 				}
 				break;
 			}
