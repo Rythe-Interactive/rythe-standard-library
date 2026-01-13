@@ -107,7 +107,7 @@ namespace rsl
 
     inline errc result_base::report_errors() const noexcept
     {
-        if (m_errid != invalid_err_id)
+        if (m_errid == invalid_err_id)
         {
             return no_error_code;
         }

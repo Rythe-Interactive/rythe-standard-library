@@ -27,8 +27,8 @@ namespace rsl::fs
         [[rythe_always_inline]] domain_iterator operator++(int) noexcept;
         [[rythe_always_inline]] domain_iterator& operator--() noexcept;
         [[rythe_always_inline]] domain_iterator operator--(int) noexcept;
-        [[rythe_always_inline]] const domain_string& operator*() const noexcept;
-        [[rythe_always_inline]] const domain_string* operator->() const noexcept;
+        [[rythe_always_inline]] ref_type operator*() const noexcept;
+        [[rythe_always_inline]] ptr_type operator->() const noexcept;
 
     private:
         size_type m_index = 0ull;
