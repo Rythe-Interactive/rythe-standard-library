@@ -138,4 +138,28 @@ namespace rsl
     {
         hybrid_sort<default_insertion_sort_ceiling>(start, end - start, less<T>{});
     }
+
+    template <size_type InsertionSortCeiling, contiguous_container_like Container>
+    constexpr void hybrid_sort(Container& container) noexcept
+    {
+        hybrid_sort<InsertionSortCeiling>(data(container), size(container), less<container_value_type<Container>>{});
+    }
+
+    template <size_type InsertionSortCeiling, contiguous_container_like Container, typename Comparer>
+    constexpr void hybrid_sort(Container& container, const Comparer& comparer) noexcept
+    {
+        hybrid_sort<InsertionSortCeiling>(data(container), size(container), comparer);
+    }
+
+    template <contiguous_container_like Container>
+    constexpr void hybrid_sort(Container& container) noexcept
+    {
+        hybrid_sort<default_insertion_sort_ceiling>(data(container), size(container), less<container_value_type<Container>>{});
+    }
+
+    template <contiguous_container_like Container, typename Comparer>
+    constexpr void hybrid_sort(Container& container, const Comparer& comparer) noexcept
+    {
+        hybrid_sort<default_insertion_sort_ceiling>(data(container), size(container), comparer);
+    }
 }

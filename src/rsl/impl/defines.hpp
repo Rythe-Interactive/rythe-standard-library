@@ -369,6 +369,13 @@ namespace rsl
     };                                                                                                                                \
     [[maybe_unused]] constexpr name invalid_##name = name::invalid;
 
+#define DECLARE_OPAQUE_HANDLE_UNDERLYING_TYPE_INVALID_VALUE(name, underlyingType, invalidValue)                                       \
+    enum struct [[rythe_open_enum]] name : underlyingType                                                                             \
+    {                                                                                                                                 \
+        invalid = invalidValue                                                                                                        \
+    };                                                                                                                                \
+    [[maybe_unused]] constexpr name invalid_##name = name::invalid;
+
 #define DECLARE_NATIVE_API_TYPE(type)                                                                                                 \
     DECLARE_OPAQUE_HANDLE(native_##type);                                                                                             \
     class type;                                                                                                                       \

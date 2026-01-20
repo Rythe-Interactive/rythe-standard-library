@@ -2,6 +2,7 @@
 
 // ReSharper disable once CppUnusedIncludeDirective
 #include "comparers.hpp" // used in .inl
+#include "../../util/container_util.hpp"
 
 namespace rsl
 {
@@ -46,6 +47,16 @@ namespace rsl
     [[rythe_always_inline]] constexpr void hybrid_sort(T* start, size_type count) noexcept;
     template <typename T>
     [[rythe_always_inline]] constexpr void hybrid_sort(T* start, T* end) noexcept;
+
+    template <size_type InsertionSortCeiling, contiguous_container_like Container>
+    [[rythe_always_inline]] constexpr void hybrid_sort(Container& container) noexcept;
+    template <size_type InsertionSortCeiling, contiguous_container_like Container, typename Comparer>
+    [[rythe_always_inline]] constexpr void hybrid_sort(Container& container, const Comparer& comparer) noexcept;
+
+    template <contiguous_container_like Container>
+    [[rythe_always_inline]] constexpr void hybrid_sort(Container& container) noexcept;
+    template <contiguous_container_like Container, typename Comparer>
+    [[rythe_always_inline]] constexpr void hybrid_sort(Container& container, const Comparer& comparer) noexcept;
 }
 
 #include "sort.inl"
