@@ -7,13 +7,30 @@
 
 namespace rsl
 {
-    enum struct dependency_type : uint8
+    enum struct [[rythe_closed_enum]] graph_error : errc
+    {
+        no_error = no_error_code,
+        no_root,
+    };
+
+    template <>
+    constexpr string_view default_error_message<graph_error>(const graph_error err)
+    {
+        switch (err)
+        {
+            case graph_error::no_error: return "No error."_sv;
+            case graph_error::no_root: return "No root found."_sv;
+            default: return "Unknown graph_error.";
+        }
+    }
+
+    enum struct [[rythe_closed_enum]] dependency_type : uint8
     {
         shared,
         exclusive
     };
 
-    struct dependency
+    struct builder_dependency
     {
         id_type id;
         dependency_type type;
@@ -24,22 +41,26 @@ namespace rsl
     {
         id_type id;
         PayloadType payload;
-        dynamic_array<dependency> dependencies;
+        dynamic_array<builder_dependency> dependencies;
     };
 
-    //DECLARE_OPAQUE_HANDLE_UNDERLYING_TYPE_INVALID_VALUE(dependency_id, size_type, math::limits<size_type>::max);
-    enum struct [[rythe_open_enum]] dependency_id : size_type
+    template <typename PayloadType>
+    struct dependency_graph_node;
+
+    template <typename PayloadType>
+    struct dependency
     {
-        invalid = rsl::math::limits<size_type>::max
+        dependency_graph_node<PayloadType>* node;
+        dependency_type type;
     };
-    [[maybe_unused]] constexpr dependency_id invalid_dependency_id = dependency_id::invalid;
 
     template <typename PayloadType>
     struct dependency_graph_node
     {
+        id_type id;
         PayloadType payload;
-        array_view<const dependency> dependencies;
-        array_view<const dependency> dependents;
+        array_view<const dependency<PayloadType>> dependencies;
+        array_view<const dependency<PayloadType>> dependents;
     };
 
     template <typename PayloadType>
@@ -52,34 +73,34 @@ namespace rsl
         using builder_node = dependency_graph_builder_node<PayloadType>;
         using graph = dependency_graph<PayloadType>;
 
-        void add_node(builder_node&& node) noexcept(nothrow_move_constructible<PayloadType>);
-        void add_node(const builder_node& node) noexcept(nothrow_copy_constructible<PayloadType>);
+        bool add_node(builder_node&& node) noexcept(nothrow_move_constructible<PayloadType>);
+        bool add_node(const builder_node& node) noexcept(nothrow_copy_constructible<PayloadType>);
 
-        void add_dependency(dependency_id nodeId, dependency_id dependency);
+        bool add_dependency(id_type nodeId, builder_dependency dep);
 
         result<graph> build();
 
     private:
-        dynamic_map<dependency_id, builder_node> m_nodes;
+        dynamic_map<id_type, builder_node> m_nodes;
     };
 
     template <typename PayloadType>
     class dependency_graph
     {
-        friend class dependency_graph_builder;
+        friend class dependency_graph_builder<PayloadType>;
     public:
         using graph_node = dependency_graph_node<PayloadType>;
 
         array_view<const graph_node> root_nodes();
 
-        const graph_node& get_node(dependency_id id) const;
+        const graph_node* find_node(id_type id) const;
 
         template<typename Visitor>
-        void visit_depth_first(Visitor&& visitor);
+        void visit_children_first(Visitor&& visitor);
 
     private:
         dynamic_array<graph_node> m_nodes;
-        dynamic_array<dependency> m_relationships;
+        dynamic_array<dependency<PayloadType>> m_relationships;
     };
 }
 
