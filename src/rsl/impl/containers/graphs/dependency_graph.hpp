@@ -1,29 +1,11 @@
 #pragma once
+#include "graph_error.hpp"
 #include "../array.hpp"
-#include "../../math/util/limits.hpp"
-#include "../../util/error_handling.hpp"
 // ReSharper disable once CppUnusedIncludeDirective
 #include "../util/sort.hpp" // used in .inl
 
 namespace rsl
 {
-    enum struct [[rythe_closed_enum]] graph_error : errc
-    {
-        no_error = no_error_code,
-        no_root,
-    };
-
-    template <>
-    constexpr string_view default_error_message<graph_error>(const graph_error err)
-    {
-        switch (err)
-        {
-            case graph_error::no_error: return "No error."_sv;
-            case graph_error::no_root: return "No root found."_sv;
-            default: return "Unknown graph_error.";
-        }
-    }
-
     enum struct [[rythe_closed_enum]] dependency_type : uint8
     {
         shared,
