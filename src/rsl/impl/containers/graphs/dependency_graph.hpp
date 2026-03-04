@@ -18,60 +18,34 @@ namespace rsl
         dependency_type type;
     };
 
-    template <typename PayloadType>
     struct dependency_graph_builder_node
     {
         id_type id;
-        PayloadType payload;
         dynamic_array<builder_dependency> dependencies;
     };
 
-    template <typename PayloadType>
     struct dependency_graph_node;
 
-    template <typename PayloadType>
     struct dependency
     {
-        dependency_graph_node<PayloadType>* node;
+        dependency_graph_node* node;
         dependency_type type;
     };
 
-    template <typename PayloadType>
     struct dependency_graph_node
     {
         id_type id;
-        PayloadType payload;
-        array_view<const dependency<PayloadType>> dependencies;
-        array_view<const dependency<PayloadType>> dependents;
+        array_view<const dependency> dependencies;
+        array_view<const dependency> dependents;
     };
 
-    template <typename PayloadType>
-    class dependency_graph;
+    class dependency_graph_builder;
 
-    template <typename PayloadType>
-    class dependency_graph_builder
-    {
-    public:
-        using builder_node = dependency_graph_builder_node<PayloadType>;
-        using graph = dependency_graph<PayloadType>;
-
-        bool add_node(builder_node&& node) noexcept(nothrow_move_constructible<PayloadType>);
-        bool add_node(const builder_node& node) noexcept(nothrow_copy_constructible<PayloadType>);
-
-        bool add_dependency(id_type nodeId, builder_dependency dep);
-
-        result<graph> build();
-
-    private:
-        dynamic_map<id_type, builder_node> m_nodes;
-    };
-
-    template <typename PayloadType>
     class dependency_graph
     {
-        friend class dependency_graph_builder<PayloadType>;
+        friend class dependency_graph_builder;
     public:
-        using graph_node = dependency_graph_node<PayloadType>;
+        using graph_node = dependency_graph_node;
 
         array_view<const graph_node> root_nodes();
 
@@ -82,7 +56,24 @@ namespace rsl
 
     private:
         dynamic_array<graph_node> m_nodes;
-        dynamic_array<dependency<PayloadType>> m_relationships;
+        dynamic_array<dependency> m_relationships;
+    };
+
+    class dependency_graph_builder final
+    {
+    public:
+        using builder_node = dependency_graph_builder_node;
+        using graph = dependency_graph;
+
+        bool add_node(builder_node&& node) noexcept;
+        bool add_node(const builder_node& node) noexcept;
+
+        bool add_dependency(id_type nodeId, builder_dependency dep);
+
+        result<dependency_graph> build();
+
+    private:
+        dynamic_map<id_type, builder_node> m_nodes;
     };
 }
 
