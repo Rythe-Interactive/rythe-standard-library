@@ -14,9 +14,8 @@ namespace rsl
     class task_queue
     {
     public:
-        id_type peek_task() noexcept;
-        id_type start_task() noexcept;
-        void finish_task(id_type id) noexcept;
+        id_type acquire_task() noexcept;
+        void release_task(id_type id, bool markFinished = true) noexcept;
 
         size_type remaining() noexcept;
         size_type size() noexcept;

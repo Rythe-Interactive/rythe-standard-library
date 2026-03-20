@@ -6,7 +6,7 @@
 
 #define RYTHE_CONCAT(A, B) _RYTHE_CONCAT_IMPL_(A, B)
 
-#define RYTHE_ANONYMOUS_NAME(x) CONCAT(x, __LINE__)
+#define RYTHE_ANONYMOUS_NAME(x) RYTHE_CONCAT(x, __LINE__)
 
 #define RYTHE_ANON_VAR(Type, Category) inline static Type RYTHE_EXPAND(RYTHE_ANONYMOUS_NAME(Category))
 

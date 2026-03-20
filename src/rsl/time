@@ -3,3 +3,8 @@
 #include "impl/time/stopwatch.hpp"
 #include "impl/time/time_point.hpp"
 #include "impl/time/time_span.hpp"
+
+namespace rsl
+{
+    namespace time = tm;
+}
