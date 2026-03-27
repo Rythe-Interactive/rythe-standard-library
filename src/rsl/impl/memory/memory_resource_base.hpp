@@ -1,6 +1,5 @@
 #pragma once
 
-#include "allocator_storage.hpp"
 #include "factory_storage.hpp"
 #include "mock_allocator.hpp"
 #include "typed_allocator.hpp"
@@ -40,15 +39,13 @@ namespace rsl
         constexpr alloc_and_factory_only_signal_type alloc_and_factory_only_signal{};
     }
 
-    template <allocator_type Alloc, factory_type Factory, typename UtilType, bool Untyped>
+    template <factory_type Factory, typename UtilType, bool Untyped>
     class dynamic_memory_resource_base
     {
     public:
-        using allocator_storage_type = allocator_storage<Alloc>;
-        using allocator_t = Alloc;
         using factory_storage_type = factory_storage<Factory>;
         using factory_t = Factory;
-        using typed_alloc_type = internal::select_typed_allocator<UtilType, Alloc, Factory>::type;
+        using typed_alloc_type = internal::select_typed_allocator<UtilType, Factory>::type;
 
         [[rythe_always_inline]] constexpr dynamic_memory_resource_base()
             noexcept(is_nothrow_constructible_v<typed_alloc_type>) = default;
@@ -71,10 +68,7 @@ namespace rsl
 
         virtual ~dynamic_memory_resource_base() = default;
 
-        [[rythe_always_inline]] constexpr explicit dynamic_memory_resource_base(
-                const allocator_storage_type& allocStorage
-                )
-            noexcept(is_nothrow_constructible_v<typed_alloc_type, const allocator_storage_type&>);
+        [[rythe_always_inline]] constexpr explicit dynamic_memory_resource_base(pointer<memory_allocator> allocator) noexcept;
 
         [[rythe_always_inline]] constexpr explicit dynamic_memory_resource_base(
                 const factory_storage_type& factoryStorage
@@ -82,18 +76,18 @@ namespace rsl
             noexcept(is_nothrow_constructible_v<typed_alloc_type, const factory_storage_type&>);
 
         [[rythe_always_inline]] constexpr dynamic_memory_resource_base(
-                const allocator_storage_type& allocStorage,
+                pointer<memory_allocator> allocator,
                 const factory_storage_type& factoryStorage
                 )
-            noexcept(is_nothrow_constructible_v<typed_alloc_type, const allocator_storage_type&, const factory_storage_type&>);
+                noexcept(is_nothrow_constructible_v<typed_alloc_type, pointer<memory_allocator>, const factory_storage_type&>);
 
         [[rythe_always_inline]] constexpr void set_allocator(
-                const allocator_storage_type& allocStorage
+                pointer<memory_allocator> allocator
                 )
-            noexcept(is_nothrow_copy_assignable_v<allocator_storage_type>);
+            noexcept;
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr allocator_t& get_allocator() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr const allocator_t& get_allocator() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr memory_allocator& get_allocator() noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr const memory_allocator& get_allocator() const noexcept;
 
         [[rythe_always_inline]] constexpr void set_factory(
                 const factory_storage_type& factoryStorage
@@ -103,8 +97,8 @@ namespace rsl
         [[nodiscard]] [[rythe_always_inline]] constexpr factory_t& get_factory() noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr const factory_t& get_factory() const noexcept;
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr allocator_storage_type& get_allocator_storage() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr const allocator_storage_type& get_allocator_storage() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr pointer<memory_allocator> get_allocator_storage() noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr pointer<const memory_allocator> get_allocator_storage() const noexcept;
 
         [[nodiscard]] [[rythe_always_inline]] constexpr factory_storage_type& get_factory_storage() noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr const factory_storage_type& get_factory_storage() const noexcept;
@@ -187,29 +181,25 @@ namespace rsl
         void* m_ptr = nullptr;
     };
 
-    template <allocator_type Alloc = default_allocator, untyped_factory_type Factory = type_erased_factory, typename UtilType = void>
-    class untyped_dynamic_memory_resource : public dynamic_memory_resource_base<Alloc, Factory, UtilType, true>
+    template <untyped_factory_type Factory = type_erased_factory, typename UtilType = void>
+    class untyped_dynamic_memory_resource : public dynamic_memory_resource_base<Factory, UtilType, true>
     {
-        using base_type = dynamic_memory_resource_base<Alloc, Factory, UtilType, true>;
+        using base_type = dynamic_memory_resource_base<Factory, UtilType, true>;
 
     public:
-        using allocator_storage_type = typename base_type::allocator_storage_type;
-        using allocator_t = typename base_type::allocator_t;
         using factory_storage_type = typename base_type::factory_storage_type;
         using factory_t = typename base_type::factory_t;
         using typed_alloc_type = typename base_type::typed_alloc_type;
 
-        using dynamic_memory_resource_base<Alloc, Factory, UtilType, true>::dynamic_memory_resource_base;
+        using dynamic_memory_resource_base<Factory, UtilType, true>::dynamic_memory_resource_base;
     };
 
-    template <typename T, allocator_type Alloc = default_allocator, factory_type Factory = default_factory<T>>
-    class typed_dynamic_memory_resource : public dynamic_memory_resource_base<Alloc, Factory, T, false>
+    template <typename T, factory_type Factory = default_factory<T>>
+    class typed_dynamic_memory_resource : public dynamic_memory_resource_base<Factory, T, false>
     {
-        using base_type = dynamic_memory_resource_base<Alloc, Factory, T, false>;
+        using base_type = dynamic_memory_resource_base<Factory, T, false>;
 
     public:
-        using allocator_storage_type = typename base_type::allocator_storage_type;
-        using allocator_t = typename base_type::allocator_t;
         using factory_storage_type = typename base_type::factory_storage_type;
         using factory_t = typename base_type::factory_t;
         using typed_alloc_type = typename base_type::typed_alloc_type;
@@ -220,7 +210,7 @@ namespace rsl
         using ptr_type = add_pointer_t<T>;
         using const_ptr_type = decorate_type_t<T, const_signal, pointer_signal>;
 
-        using dynamic_memory_resource_base<Alloc, Factory, T, false>::dynamic_memory_resource_base;
+        using dynamic_memory_resource_base<Factory, T, false>::dynamic_memory_resource_base;
 
     protected:
         template <typename... Args>
@@ -268,8 +258,6 @@ namespace rsl
     class static_memory_resource_base
     {
     public:
-        using allocator_storage_type = allocator_storage<mock_allocator>;
-        using allocator_t = mock_allocator;
         using factory_storage_type = factory_storage<Factory>;
         using factory_t = Factory;
         constexpr static size_type buffer_size = BufferSize;
@@ -355,8 +343,6 @@ namespace rsl
         using base_type = static_memory_resource_base<BufferSize, Factory, UtilType, true>;
 
     public:
-        using allocator_storage_type = typename base_type::allocator_storage_type;
-        using allocator_t = typename base_type::allocator_t;
         using factory_storage_type = typename base_type::factory_storage_type;
         using factory_t = typename base_type::factory_t;
 
@@ -374,8 +360,6 @@ namespace rsl
         using const_ref_type = decorate_type_t<T, const_signal, lval_ref_signal>;
         using ptr_type = add_pointer_t<T>;
         using const_ptr_type = decorate_type_t<T, const_signal, pointer_signal>;
-        using allocator_storage_type = typename base_type::allocator_storage_type;
-        using allocator_t = typename base_type::allocator_t;
         using factory_storage_type = typename base_type::factory_storage_type;
         using factory_t = typename base_type::factory_t;
         constexpr static size_type buffer_count = BufferCount;
@@ -393,15 +377,13 @@ namespace rsl
     };
 
 
-    template <size_type BufferSize, allocator_type Alloc, factory_type Factory, typename UtilType, bool Untyped>
+    template <size_type BufferSize, factory_type Factory, typename UtilType, bool Untyped>
     class hybrid_memory_resource_base
     {
     public:
-        using allocator_storage_type = allocator_storage<Alloc>;
-        using allocator_t = Alloc;
         using factory_storage_type = factory_storage<Factory>;
         using factory_t = Factory;
-        using typed_alloc_type = internal::select_typed_allocator<UtilType, Alloc, Factory>::type;
+        using typed_alloc_type = internal::select_typed_allocator<UtilType, Factory>::type;
         constexpr static size_type buffer_size = BufferSize;
 
         [[rythe_always_inline]] constexpr hybrid_memory_resource_base()
@@ -424,10 +406,7 @@ namespace rsl
 
         virtual ~hybrid_memory_resource_base() = default;
 
-        [[rythe_always_inline]] constexpr explicit hybrid_memory_resource_base(
-                const allocator_storage_type& allocStorage
-                )
-            noexcept(is_nothrow_constructible_v<typed_alloc_type, const allocator_storage_type&>);
+        [[rythe_always_inline]] constexpr explicit hybrid_memory_resource_base(pointer<memory_allocator> allocator) noexcept;
 
         [[rythe_always_inline]] constexpr explicit hybrid_memory_resource_base(
                 const factory_storage_type& factoryStorage
@@ -435,18 +414,15 @@ namespace rsl
             noexcept(is_nothrow_constructible_v<typed_alloc_type, const factory_storage_type&>);
 
         [[rythe_always_inline]] constexpr hybrid_memory_resource_base(
-                const allocator_storage_type& allocStorage,
+                pointer<memory_allocator> allocator,
                 const factory_storage_type& factoryStorage
                 )
-            noexcept(is_nothrow_constructible_v<typed_alloc_type, const allocator_storage_type&, const factory_storage_type&>);
+                noexcept(is_nothrow_constructible_v<typed_alloc_type, pointer<memory_allocator>, const factory_storage_type&>);
 
-        [[rythe_always_inline]] constexpr void set_allocator(
-                const allocator_storage_type& allocStorage
-                )
-            noexcept(is_nothrow_copy_assignable_v<allocator_storage_type>);
+        [[rythe_always_inline]] constexpr void set_allocator(pointer<memory_allocator> allocator) noexcept;
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr allocator_t& get_allocator() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr const allocator_t& get_allocator() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr memory_allocator& get_allocator() noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr const memory_allocator& get_allocator() const noexcept;
 
         [[rythe_always_inline]] constexpr void set_factory(
                 const factory_storage_type& factoryStorage
@@ -456,8 +432,8 @@ namespace rsl
         [[nodiscard]] [[rythe_always_inline]] constexpr factory_t& get_factory() noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr const factory_t& get_factory() const noexcept;
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr allocator_storage_type& get_allocator_storage() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr const allocator_storage_type& get_allocator_storage() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr pointer<memory_allocator> get_allocator_storage() noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr pointer<const memory_allocator> get_allocator_storage() const noexcept;
 
         [[nodiscard]] [[rythe_always_inline]] constexpr factory_storage_type& get_factory_storage() noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr const factory_storage_type& get_factory_storage() const noexcept;
@@ -555,31 +531,26 @@ namespace rsl
 
     template <
         size_type BufferSize,
-        allocator_type Alloc = default_allocator,
         untyped_factory_type Factory = type_erased_factory,
         typename UtilType = void>
-    class untyped_hybrid_memory_resource : public hybrid_memory_resource_base<BufferSize, Alloc, Factory, UtilType, true>
+    class untyped_hybrid_memory_resource : public hybrid_memory_resource_base<BufferSize, Factory, UtilType, true>
     {
-        using base_type = hybrid_memory_resource_base<BufferSize, Alloc, Factory, UtilType, true>;
+        using base_type = hybrid_memory_resource_base<BufferSize, Factory, UtilType, true>;
 
     public:
-        using allocator_storage_type = typename base_type::allocator_storage_type;
-        using allocator_t = typename base_type::allocator_t;
         using factory_storage_type = typename base_type::factory_storage_type;
         using factory_t = typename base_type::factory_t;
         using typed_alloc_type = typename base_type::typed_alloc_type;
 
-        using hybrid_memory_resource_base<BufferSize, Alloc, Factory, UtilType, true>::hybrid_memory_resource_base;
+        using hybrid_memory_resource_base<BufferSize, Factory, UtilType, true>::hybrid_memory_resource_base;
     };
 
-    template <typename T, size_type BufferCount, allocator_type Alloc = default_allocator, factory_type Factory = default_factory<T>>
-    class typed_hybrid_memory_resource : public hybrid_memory_resource_base<BufferCount * sizeof(T), Alloc, Factory, T, false>
+    template <typename T, size_type BufferCount, factory_type Factory = default_factory<T>>
+    class typed_hybrid_memory_resource : public hybrid_memory_resource_base<BufferCount * sizeof(T), Factory, T, false>
     {
-        using base_type = hybrid_memory_resource_base<BufferCount * sizeof(T), Alloc, Factory, T, false>;
+        using base_type = hybrid_memory_resource_base<BufferCount * sizeof(T), Factory, T, false>;
 
     public:
-        using allocator_storage_type = typename base_type::allocator_storage_type;
-        using allocator_t = typename base_type::allocator_t;
         using factory_storage_type = typename base_type::factory_storage_type;
         using factory_t = typename base_type::factory_t;
         using typed_alloc_type = typename base_type::typed_alloc_type;
@@ -592,7 +563,7 @@ namespace rsl
 
         constexpr static size_type buffer_count = BufferCount;
 
-        using hybrid_memory_resource_base<BufferCount * sizeof(T), Alloc, Factory, T, false>::hybrid_memory_resource_base;
+        using hybrid_memory_resource_base<BufferCount * sizeof(T), Factory, T, false>::hybrid_memory_resource_base;
 
     protected:
         template <typename... Args>
@@ -640,81 +611,65 @@ namespace rsl
     {
         template <
             typename T,
-            allocator_type Alloc,
             factory_type Factory,
             size_type StaticStorageCount = 0ull,
-            bool CanAllocate = !is_same_v<Alloc, mock_allocator>,
+            bool CanAllocate = true,
             bool Untyped = untyped_factory_type<Factory>>
         struct select_memory_resource;
 
-        template <typename T, allocator_type Alloc, factory_type Factory>
-        struct select_memory_resource<T, Alloc, Factory, 0ull, true, false>
+        template <typename T, factory_type Factory>
+        struct select_memory_resource<T, Factory, 0ull, true, false>
         {
-            static_assert(!is_same_v<Alloc, mock_allocator>);
-            using type = typed_dynamic_memory_resource<T, Alloc, Factory>;
+            using type = typed_dynamic_memory_resource<T, Factory>;
             constexpr static bool is_untyped = false;
         };
 
-        template <typename T, allocator_type Alloc, factory_type Factory>
-        struct select_memory_resource<T, Alloc, Factory, 0ull, true, true>
+        template <typename T, factory_type Factory>
+        struct select_memory_resource<T, Factory, 0ull, true, true>
         {
-            static_assert(!is_same_v<Alloc, mock_allocator>);
-            using type = untyped_dynamic_memory_resource<Alloc, Factory, T>;
+            using type = untyped_dynamic_memory_resource<Factory, T>;
             constexpr static bool is_untyped = true;
         };
 
-        template <typename T, allocator_type Alloc, factory_type Factory, size_type StaticStorageCount>
-        struct select_memory_resource<T, Alloc, Factory, StaticStorageCount, true, false>
+        template <typename T, factory_type Factory, size_type StaticStorageCount>
+        struct select_memory_resource<T, Factory, StaticStorageCount, true, false>
         {
-            static_assert(!is_same_v<Alloc, mock_allocator>);
-            using type = typed_hybrid_memory_resource<T, StaticStorageCount, Alloc, Factory>;
+            using type = typed_hybrid_memory_resource<T, StaticStorageCount, Factory>;
             constexpr static bool is_untyped = false;
         };
 
-        template <typename T, allocator_type Alloc, factory_type Factory, size_type StaticStorageCount>
-        struct select_memory_resource<T, Alloc, Factory, StaticStorageCount, true, true>
+        template <typename T, factory_type Factory, size_type StaticStorageCount>
+        struct select_memory_resource<T, Factory, StaticStorageCount, true, true>
         {
-            static_assert(!is_same_v<Alloc, mock_allocator>);
-            using type = untyped_hybrid_memory_resource<StaticStorageCount * sizeof(T), Alloc, Factory, T>;
+            using type = untyped_hybrid_memory_resource<StaticStorageCount * sizeof(T), Factory, T>;
             constexpr static bool is_untyped = true;
         };
 
-        template <typename T, factory_type Factory, size_type StaticStorageCount, bool CanAllocate>
-        struct select_memory_resource<T, mock_allocator, Factory, StaticStorageCount, CanAllocate, false>
+        template <typename T, factory_type Factory, size_type StaticStorageCount>
+        struct select_memory_resource<T, Factory, StaticStorageCount, false, false>
         {
-            static_assert(CanAllocate == false, "Allocating using a mock_allocator is not possible.");
             using type = typed_static_memory_resource<T, StaticStorageCount, Factory>;
             constexpr static bool is_untyped = false;
         };
 
-        template <typename T, factory_type Factory, size_type StaticStorageCount, bool CanAllocate>
-        struct select_memory_resource<T, mock_allocator, Factory, StaticStorageCount, CanAllocate, true>
+        template <typename T, factory_type Factory, size_type StaticStorageCount>
+        struct select_memory_resource<T, Factory, StaticStorageCount, false, true>
         {
-            static_assert(CanAllocate == false, "Allocating using a mock_allocator is not possible.");
             using type = untyped_static_memory_resource<StaticStorageCount * sizeof(T), Factory, T>;
             constexpr static bool is_untyped = true;
         };
-
-        template <typename T, not_same_as<mock_allocator> Alloc, factory_type Factory, size_type StaticStorageCount>
-        struct select_memory_resource<T, Alloc, Factory, StaticStorageCount, false, false>
-                : public select_memory_resource<T, mock_allocator, Factory, StaticStorageCount, false, false> {};
-
-        template <typename T, not_same_as<mock_allocator> Alloc, factory_type Factory, size_type StaticStorageCount>
-        struct select_memory_resource<T, Alloc, Factory, StaticStorageCount, false, true>
-                : public select_memory_resource<T, mock_allocator, Factory, StaticStorageCount, false, true> {};
 
         template <typename>
         struct is_hybrid_resource : false_type {};
 
         template <
             size_type BufferSize,
-            allocator_type Alloc,
             untyped_factory_type Factory,
             typename UtilType>
-        struct is_hybrid_resource<untyped_hybrid_memory_resource<BufferSize, Alloc, Factory, UtilType>> : true_type {};
+        struct is_hybrid_resource<untyped_hybrid_memory_resource<BufferSize, Factory, UtilType>> : true_type {};
 
-        template <typename T, size_type BufferCount, allocator_type Alloc, factory_type Factory>
-        struct is_hybrid_resource<typed_hybrid_memory_resource<T, BufferCount, Alloc, Factory>> : true_type {};
+        template <typename T, size_type BufferCount, factory_type Factory>
+        struct is_hybrid_resource<typed_hybrid_memory_resource<T, BufferCount, Factory>> : true_type {};
 
         template <typename T>
         constexpr bool is_hybrid_resource_v = is_hybrid_resource<T>::value;
@@ -738,13 +693,12 @@ namespace rsl
         struct is_dynamic_resource : false_type {};
 
         template <
-            allocator_type Alloc,
             untyped_factory_type Factory,
             typename UtilType>
-        struct is_dynamic_resource<untyped_dynamic_memory_resource<Alloc, Factory, UtilType>> : true_type {};
+        struct is_dynamic_resource<untyped_dynamic_memory_resource<Factory, UtilType>> : true_type {};
 
-        template <typename T, allocator_type Alloc, factory_type Factory>
-        struct is_dynamic_resource<typed_dynamic_memory_resource<T, Alloc, Factory>> : true_type {};
+        template <typename T, factory_type Factory>
+        struct is_dynamic_resource<typed_dynamic_memory_resource<T, Factory>> : true_type {};
 
         template <typename T>
         constexpr bool is_dynamic_resource_v = is_dynamic_resource<T>::value;
