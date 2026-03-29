@@ -1,25 +1,22 @@
 #pragma once
 
-#include "allocator_storage.hpp"
-
 namespace rsl
 {
-    template <typename T, allocator_type Alloc = default_allocator, size_type MinBlockSize = 4, size_type MaxBlockSize = 16384>
+    template <typename T, size_type MinBlockSize = 4, size_type MaxBlockSize = 16384>
         requires(MinBlockSize >= 1 && MaxBlockSize >= MinBlockSize)
     class memory_pool
     {
     public:
-        using allocator_storage_type = allocator_storage<Alloc>;
-        using allocator_t = Alloc;
-
         memory_pool() noexcept = default;
 
         memory_pool(const memory_pool&) noexcept
-            : m_head(nullptr),
+            : m_alloc(nullptr),
+              m_head(nullptr),
               m_freeList(nullptr) {}
 
         memory_pool(memory_pool&& other) noexcept
-            : m_head(other.m_head),
+            : m_alloc(other.m_alloc),
+              m_head(other.m_head),
               m_freeList(other.m_freeList)
         {
             other.m_freeList = nullptr;
@@ -205,7 +202,7 @@ namespace rsl
             return m_head;
         }
 
-        allocator_storage_type m_alloc;
+        pointer<memory_allocator> m_alloc;
         element_node* m_head = nullptr;
         memory_block* m_freeList = nullptr;
     };

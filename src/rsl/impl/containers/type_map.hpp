@@ -3,33 +3,29 @@
 #include "../memory/allocator.hpp"
 #include "../util/assert.hpp"
 #include "../util/common.hpp"
-#include "../util/type_traits.hpp"
 
 #include "map/dynamic_map.hpp"
 
 namespace rsl
 {
-	template <
-		allocator_type Alloc = default_allocator, factory_type Factory = default_factory<void>>
+	template <factory_type Factory = default_factory<void>>
 	class basic_type_map
 	{
 	private:
 		struct entry_item;
 
 	public:
-		using allocator_storage_type = allocator_storage<Alloc>;
-		using allocator_t = Alloc;
 		using factory_storage_type = factory_storage<Factory>;
 		using factory_t = Factory;
 		template <typename T>
-		using alloc_type = typed_allocator<T, Alloc, typename Factory::template retarget<T>>;
+		using alloc_type = typed_allocator<T, typename Factory::template retarget<T>>;
 
 		constexpr basic_type_map() = default;
 
-		explicit constexpr basic_type_map(const allocator_storage_type& allocStorage)
-			noexcept(is_nothrow_copy_constructible_v<allocator_storage_type>)
-			: m_allocator(allocStorage),
-			  m_storage(allocStorage) {}
+		explicit constexpr basic_type_map(pointer<memory_allocator> allocator)
+			noexcept
+			: m_allocator(allocator),
+			  m_storage(allocator) {}
 
 		[[nodiscard]] [[rythe_always_inline]] constexpr size_type size() const noexcept { return m_storage.size(); }
 		[[nodiscard]] [[rythe_always_inline]] constexpr bool empty() const noexcept { return m_storage.empty(); }
@@ -119,9 +115,9 @@ namespace rsl
 
 		[[rythe_always_inline]] constexpr void clear() noexcept { m_storage.clear(); }
 
-		[[rythe_always_inline]] constexpr allocator_t& get_allocator() noexcept { return m_allocator.get_allocator(); }
+		[[rythe_always_inline]] constexpr memory_allocator& get_allocator() noexcept { return m_allocator.get_allocator(); }
 
-		[[rythe_always_inline]] constexpr const allocator_t& get_allocator() const noexcept
+		[[rythe_always_inline]] constexpr const memory_allocator& get_allocator() const noexcept
 		{
 			return m_allocator.get_allocator();
 		}
@@ -191,10 +187,8 @@ namespace rsl
 		};
 
 		alloc_type<pair<id_type, entry_item>> m_allocator;
-		dynamic_map<id_type, entry_item, hash_map_flags::default_flags, allocator_t> m_storage;
+		dynamic_map<id_type, entry_item, hash_map_flags::default_flags> m_storage;
 	};
 
 	using type_map = basic_type_map<>;
-
-	using pmu_alloc_type_map = basic_type_map<polymorphic_allocator>;
 } // namespace rsl

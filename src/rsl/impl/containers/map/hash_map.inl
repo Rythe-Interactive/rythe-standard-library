@@ -66,19 +66,19 @@ namespace rsl
 
     template <typename MapInfo>
     constexpr hash_map_base<MapInfo>::hash_map_base(
-            const allocator_storage_type& allocStorage
+            pointer<memory_allocator> allocator
             )
         noexcept(nothrow_constructible_alloc)
-        : m_values(allocStorage),
-          m_buckets(allocStorage),
+        : m_values(allocator),
+          m_buckets(allocator),
           m_lastValueBucketIndex(0),
           m_minPsl(0),
           m_maxPsl(0),
           m_hasher(),
           m_keyComparer(),
-          m_alloc(allocStorage),
+          m_alloc(allocator),
           m_factory(),
-          m_memoryPool(allocStorage) {}
+          m_memoryPool(allocator) {}
 
     template <typename MapInfo>
     constexpr hash_map_base<MapInfo>::hash_map_base(
@@ -98,19 +98,19 @@ namespace rsl
 
     template <typename MapInfo>
     constexpr hash_map_base<MapInfo>::hash_map_base(
-            const allocator_storage_type& allocStorage,
+            pointer<memory_allocator> allocator,
             const factory_storage_type& factoryStorage
             ) noexcept(nothrow_constructible_alloc_fact)
-        : m_values(allocStorage, factoryStorage),
-          m_buckets(allocStorage, factoryStorage),
+        : m_values(allocator, factoryStorage),
+          m_buckets(allocator, factoryStorage),
           m_lastValueBucketIndex(0),
           m_minPsl(0),
           m_maxPsl(0),
           m_hasher(),
           m_keyComparer(),
-          m_alloc(allocStorage),
+          m_alloc(allocator),
           m_factory(factoryStorage),
-          m_memoryPool(allocStorage) {}
+          m_memoryPool(allocator) {}
 
     template <typename MapInfo>
     template <typename Iter, typename ConstIter>
@@ -183,6 +183,197 @@ namespace rsl
     }
 
     template <typename MapInfo>
+    void hash_map_base<MapInfo>::reserve(
+            size_type newCapacity
+            )
+        noexcept(noexcept(declval<bucket_container>().reserve(0)) && noexcept(declval<value_container>().reserve(0)))
+    {
+        m_values.reserve(newCapacity);
+
+        if constexpr (!is_flat)
+        {
+            m_memoryPool->reserve(newCapacity);
+        }
+
+        if (newCapacity > m_buckets.size())
+        {
+            bucket_container oldBuckets = move(m_buckets);
+            m_buckets = bucket_container::create_in_place(newCapacity);
+
+            rehash(oldBuckets);
+        }
+    }
+
+    template <typename MapInfo>
+    void hash_map_base<MapInfo>::clear() noexcept
+    {
+        for (node_type& node : m_values)
+        {
+            destroy_node(node);
+        }
+
+        m_values.clear();
+        m_buckets.clear();
+
+        if constexpr (!is_flat)
+        {
+            m_memoryPool->clear();
+        }
+    }
+
+    template <typename MapInfo>
+    bool hash_map_base<MapInfo>::contains(const key_type& key) const noexcept
+    {
+        if (empty())
+        {
+            return false;
+        }
+
+        const hash_result hash = get_hash_result(key);
+
+        bucket_search_result searchResult = find_next_available(hash.homeIndex, m_minPsl, hash.fingerprint, key, true);
+
+        return searchResult.type == search_result_type::existing_item;
+    }
+
+    template <typename MapInfo>
+    bool hash_map_base<MapInfo>::contains(key_view_alternative key) const noexcept
+        requires (has_key_view_alternative)
+    {
+        if (empty())
+        {
+            return false;
+        }
+
+        const hash_result hash = get_hash_result(key);
+
+        bucket_search_result searchResult = find_next_available(hash.homeIndex, m_minPsl, hash.fingerprint, key, true);
+
+        return searchResult.type == search_result_type::existing_item;
+    }
+
+    template <typename MapInfo>
+    const typename hash_map_base<MapInfo>::mapped_type* hash_map_base<MapInfo>::find(const key_type& key) const noexcept
+        requires (MapInfo::is_map)
+    {
+        return find_impl(key);
+    }
+
+    template <typename MapInfo>
+    typename hash_map_base<MapInfo>::mapped_type* hash_map_base<MapInfo>::find(const key_type& key) noexcept
+        requires (MapInfo::is_map)
+    {
+        return const_cast<mapped_type*>(rsl::as_const(*this).find(key));
+    }
+
+    template <typename MapInfo>
+    const typename hash_map_base<MapInfo>::mapped_type* hash_map_base<MapInfo>::find(key_view_alternative key) const noexcept
+        requires (MapInfo::is_map && has_key_view_alternative)
+    {
+        return find_impl(key);
+    }
+
+    template <typename MapInfo>
+    typename hash_map_base<MapInfo>::mapped_type* hash_map_base<MapInfo>::find(key_view_alternative key) noexcept
+        requires (MapInfo::is_map && has_key_view_alternative)
+    {
+        return const_cast<mapped_type*>(rsl::as_const(*this).find(key));
+    }
+
+    template <typename MapInfo>
+    const typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::at(const key_type& key) const
+        requires (MapInfo::is_map)
+    {
+        const mapped_type* result = find(key);
+        rsl_assert_invalid_access(result != nullptr);
+        return *result;
+    }
+
+    template <typename MapInfo>
+    typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::at(const key_type& key)
+        requires (MapInfo::is_map)
+    {
+        mapped_type* result = find(key);
+        rsl_assert_invalid_access(result != nullptr);
+        return *result;
+    }
+
+    template <typename MapInfo>
+    const typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::at(key_view_alternative key) const
+        requires (MapInfo::is_map && has_key_view_alternative)
+    {
+        const mapped_type* result = find(key);
+        rsl_assert_invalid_access(result != nullptr);
+        return *result;
+    }
+
+    template <typename MapInfo>
+    typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::at(key_view_alternative key)
+        requires (MapInfo::is_map && has_key_view_alternative)
+    {
+        mapped_type* result = find(key);
+        rsl_assert_invalid_access(result != nullptr);
+        return *result;
+    }
+
+    template <typename MapInfo>
+    template <typename... Args>
+    typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::emplace(const key_type& key, Args&&... args)
+    {
+        return try_emplace(key, rsl::forward<Args>(args)...).first;
+    }
+
+    template <typename MapInfo>
+    template <typename... Args>
+    typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::emplace_or_replace(
+            const key_type& key,
+            Args&&... args
+            )
+    {
+        insert_result insertResult = insert_key_internal(key, m_values.size());
+
+        if (insertResult.type == insert_result_type::new_insertion)
+        {
+            return m_values.emplace_back(create_node(key, forward<Args>(args)...)).value();
+        }
+
+        mapped_type& value = m_values[m_buckets[insertResult.index].index].value();
+        value = move(mapped_type(forward<Args>(args)...));
+        return value;
+    }
+
+    template <typename MapInfo>
+    template <typename... Args>
+    pair<typename hash_map_base<MapInfo>::mapped_type&, bool> hash_map_base<MapInfo>::try_emplace(
+            const key_type& key,
+            Args&&... args
+            )
+    {
+        insert_result insertResult = insert_key_internal(key, m_values.size());
+
+        if (insertResult.type == insert_result_type::new_insertion)
+        {
+            return { rsl::ref(m_values.emplace_back(create_node(key, rsl::forward<Args>(args)...)).value()), true };
+        }
+
+        return { rsl::ref(m_values[m_buckets[insertResult.index].index].value()), false };
+    }
+
+    template <typename MapInfo>
+    template <typename... Args>
+    pair<typename hash_map_base<MapInfo>::mapped_type&, bool> hash_map_base<MapInfo>::try_emplace(key_type&& key, Args&&... args)
+    {
+        insert_result insertResult = insert_key_internal(key, m_values.size());
+
+        if (insertResult.type == insert_result_type::new_insertion)
+        {
+            return { rsl::ref(m_values.emplace_back(create_node(rsl::move(key), rsl::forward<Args>(args)...)).value()), true };
+        }
+
+        return { rsl::ref(m_values[m_buckets[insertResult.index].index].value()), false };
+    }
+
+    template <typename MapInfo>
     constexpr void hash_map_base<MapInfo>::erase(const key_type& key) noexcept
     {
         erase_impl(key);
@@ -212,13 +403,13 @@ namespace rsl
     }
 
     template <typename MapInfo>
-    constexpr typename hash_map_base<MapInfo>::allocator_t& hash_map_base<MapInfo>::get_allocator() noexcept
+    constexpr memory_allocator& hash_map_base<MapInfo>::get_allocator() noexcept
     {
         return *m_alloc;
     }
 
     template <typename MapInfo>
-    constexpr const typename hash_map_base<MapInfo>::allocator_t& hash_map_base<MapInfo>::get_allocator() const noexcept
+    constexpr const memory_allocator& hash_map_base<MapInfo>::get_allocator() const noexcept
     {
         return *m_alloc;
     }
@@ -747,196 +938,5 @@ namespace rsl
         }
 
         m_buckets[index].pslAndFingerprint = 0;
-    }
-
-    template <typename MapInfo>
-    void hash_map_base<MapInfo>::reserve(
-            size_type newCapacity
-            )
-        noexcept(noexcept(declval<bucket_container>().reserve(0)) && noexcept(declval<value_container>().reserve(0)))
-    {
-        m_values.reserve(newCapacity);
-
-        if constexpr (!is_flat)
-        {
-            m_memoryPool->reserve(newCapacity);
-        }
-
-        if (newCapacity > m_buckets.size())
-        {
-            bucket_container oldBuckets = move(m_buckets);
-            m_buckets = bucket_container::create_in_place(newCapacity);
-
-            rehash(oldBuckets);
-        }
-    }
-
-    template <typename MapInfo>
-    void hash_map_base<MapInfo>::clear() noexcept
-    {
-        for (node_type& node : m_values)
-        {
-            destroy_node(node);
-        }
-
-        m_values.clear();
-        m_buckets.clear();
-
-        if constexpr (!is_flat)
-        {
-            m_memoryPool->clear();
-        }
-    }
-
-    template <typename MapInfo>
-    template <typename... Args>
-    typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::emplace(const key_type& key, Args&&... args)
-    {
-        return try_emplace(key, rsl::forward<Args>(args)...).first;
-    }
-
-    template <typename MapInfo>
-    template <typename... Args>
-    typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::emplace_or_replace(
-            const key_type& key,
-            Args&&... args
-            )
-    {
-        insert_result insertResult = insert_key_internal(key, m_values.size());
-
-        if (insertResult.type == insert_result_type::new_insertion)
-        {
-            return m_values.emplace_back(create_node(key, forward<Args>(args)...)).value();
-        }
-
-        mapped_type& value = m_values[m_buckets[insertResult.index].index].value();
-        value = move(mapped_type(forward<Args>(args)...));
-        return value;
-    }
-
-    template <typename MapInfo>
-    template <typename... Args>
-    pair<typename hash_map_base<MapInfo>::mapped_type&, bool> hash_map_base<MapInfo>::try_emplace(
-            const key_type& key,
-            Args&&... args
-            )
-    {
-        insert_result insertResult = insert_key_internal(key, m_values.size());
-
-        if (insertResult.type == insert_result_type::new_insertion)
-        {
-            return { rsl::ref(m_values.emplace_back(create_node(key, rsl::forward<Args>(args)...)).value()), true };
-        }
-
-        return { rsl::ref(m_values[m_buckets[insertResult.index].index].value()), false };
-    }
-
-    template <typename MapInfo>
-    template <typename... Args>
-    pair<typename hash_map_base<MapInfo>::mapped_type&, bool> hash_map_base<MapInfo>::try_emplace(key_type&& key, Args&&... args)
-    {
-        insert_result insertResult = insert_key_internal(key, m_values.size());
-
-        if (insertResult.type == insert_result_type::new_insertion)
-        {
-            return { rsl::ref(m_values.emplace_back(create_node(rsl::move(key), rsl::forward<Args>(args)...)).value()), true };
-        }
-
-        return { rsl::ref(m_values[m_buckets[insertResult.index].index].value()), false };
-    }
-
-    template <typename MapInfo>
-    bool hash_map_base<MapInfo>::contains(const key_type& key) const noexcept
-    {
-        if (empty())
-        {
-            return false;
-        }
-
-        const hash_result hash = get_hash_result(key);
-
-        bucket_search_result searchResult = find_next_available(hash.homeIndex, m_minPsl, hash.fingerprint, key, true);
-
-        return searchResult.type == search_result_type::existing_item;
-    }
-
-    template <typename MapInfo>
-    bool hash_map_base<MapInfo>::contains(key_view_alternative key) const noexcept
-        requires (has_key_view_alternative)
-    {
-        if (empty())
-        {
-            return false;
-        }
-
-        const hash_result hash = get_hash_result(key);
-
-        bucket_search_result searchResult = find_next_available(hash.homeIndex, m_minPsl, hash.fingerprint, key, true);
-
-        return searchResult.type == search_result_type::existing_item;
-    }
-
-    template <typename MapInfo>
-    const typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::at(const key_type& key) const
-        requires (MapInfo::is_map)
-    {
-        const mapped_type* result = find(key);
-        rsl_assert_invalid_access(result != nullptr);
-        return *result;
-    }
-
-    template <typename MapInfo>
-    typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::at(const key_type& key)
-        requires (MapInfo::is_map)
-    {
-        mapped_type* result = find(key);
-        rsl_assert_invalid_access(result != nullptr);
-        return *result;
-    }
-
-    template <typename MapInfo>
-    const typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::at(key_view_alternative key) const
-        requires (MapInfo::is_map && has_key_view_alternative)
-    {
-        const mapped_type* result = find(key);
-        rsl_assert_invalid_access(result != nullptr);
-        return *result;
-    }
-
-    template <typename MapInfo>
-    typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::at(key_view_alternative key)
-        requires (MapInfo::is_map && has_key_view_alternative)
-    {
-        mapped_type* result = find(key);
-        rsl_assert_invalid_access(result != nullptr);
-        return *result;
-    }
-
-    template <typename MapInfo>
-    const typename hash_map_base<MapInfo>::mapped_type* hash_map_base<MapInfo>::find(const key_type& key) const noexcept
-        requires (MapInfo::is_map)
-    {
-        return find_impl(key);
-    }
-
-    template <typename MapInfo>
-    typename hash_map_base<MapInfo>::mapped_type* hash_map_base<MapInfo>::find(const key_type& key) noexcept
-        requires (MapInfo::is_map)
-    {
-        return const_cast<mapped_type*>(rsl::as_const(*this).find(key));
-    }
-
-    template <typename MapInfo>
-    const typename hash_map_base<MapInfo>::mapped_type* hash_map_base<MapInfo>::find(key_view_alternative key) const noexcept
-        requires (MapInfo::is_map && has_key_view_alternative)
-    {
-        return find_impl(key);
-    }
-
-    template <typename MapInfo>
-    typename hash_map_base<MapInfo>::mapped_type* hash_map_base<MapInfo>::find(key_view_alternative key) noexcept
-        requires (MapInfo::is_map && has_key_view_alternative)
-    {
-        return const_cast<mapped_type*>(rsl::as_const(*this).find(key));
     }
 }

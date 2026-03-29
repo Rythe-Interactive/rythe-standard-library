@@ -4,16 +4,16 @@
 namespace rsl
 {
     // TODO(Rowan): constexpr strings are still useful if the string never leaks from constant evaluation time to runtime. constexpr_string is needed if you want to be able to read the results of a string at runtime.
-    template <char_type CharType = char, allocator_type Alloc = default_allocator, size_type StaticCapacity = 0ull>
+    template <char_type CharType = char, size_type StaticCapacity = 0ull, bool CanAllocate = true>
     class basic_dynamic_string final
-            : public contiguous_container_base<CharType, Alloc, default_factory<CharType>, CharType*, const CharType*,
+            : public contiguous_container_base<CharType, default_factory<CharType>, CharType*, const CharType*,
                                                contiguous_container_info<
-                                                   true, StaticCapacity, !is_same_v<Alloc, mock_allocator>, true>>
+                                                   true, StaticCapacity, true, CanAllocate>>
     {
     public:
         using container_base = contiguous_container_base<
-            CharType, Alloc, default_factory<CharType>, CharType*, const CharType*, contiguous_container_info<
-                true, StaticCapacity, !is_same_v<Alloc, mock_allocator>, true>>;
+            CharType, default_factory<CharType>, CharType*, const CharType*, contiguous_container_info<
+                true, StaticCapacity, true, CanAllocate>>;
         using mem_rsc = typename container_base::mem_rsc;
         using value_type = CharType;
         using iterator_type = typename container_base::iterator_type;
@@ -22,14 +22,12 @@ namespace rsl
         using const_reverse_iterator_type = typename container_base::const_reverse_iterator_type;
         using view_type = typename container_base::view_type;
         using const_view_type = typename container_base::const_view_type;
-        using allocator_storage_type = allocator_storage<Alloc>;
-        using allocator_t = Alloc;
         using factory_storage_type = factory_storage<default_factory<CharType>>;
         using factory_t = default_factory<CharType>;
 
         using contiguous_container_base<
-            CharType, Alloc, default_factory<CharType>, CharType*, const CharType*, contiguous_container_info<
-                true, StaticCapacity, !is_same_v<Alloc, mock_allocator>, true>>::contiguous_container_base;
+            CharType, default_factory<CharType>, CharType*, const CharType*, contiguous_container_info<
+                true, StaticCapacity, true, CanAllocate>>::contiguous_container_base;
 
         [[rythe_always_inline]] constexpr basic_dynamic_string(
                 const container_base& src
@@ -49,47 +47,47 @@ namespace rsl
         [[rythe_always_inline]] constexpr basic_dynamic_string& operator+=(CharType rhs);
     };
 
-    template <char_type CharType, allocator_type Alloc, size_type StaticCapacity>
-    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, Alloc, StaticCapacity> operator+(
-            const basic_dynamic_string<CharType, Alloc, StaticCapacity>& lhs,
-            const basic_dynamic_string<CharType, Alloc, StaticCapacity>& rhs
+    template <char_type CharType, size_type StaticCapacity>
+    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, StaticCapacity> operator+(
+            const basic_dynamic_string<CharType, StaticCapacity>& lhs,
+            const basic_dynamic_string<CharType, StaticCapacity>& rhs
             );
-    template <char_type CharType, allocator_type Alloc, size_type StaticCapacity>
-    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, Alloc, StaticCapacity> operator+(
-            const basic_dynamic_string<CharType, Alloc, StaticCapacity>& lhs,
-            typename basic_dynamic_string<CharType, Alloc, StaticCapacity>::const_view_type rhs
+    template <char_type CharType, size_type StaticCapacity>
+    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, StaticCapacity> operator+(
+            const basic_dynamic_string<CharType, StaticCapacity>& lhs,
+            typename basic_dynamic_string<CharType, StaticCapacity>::const_view_type rhs
             );
-    template <char_type CharType, allocator_type Alloc, size_type StaticCapacity>
-    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, Alloc, StaticCapacity> operator+(
-            const basic_dynamic_string<CharType, Alloc, StaticCapacity>& lhs,
+    template <char_type CharType, size_type StaticCapacity>
+    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, StaticCapacity> operator+(
+            const basic_dynamic_string<CharType, StaticCapacity>& lhs,
             CharType rhs
             );
-    template <char_type CharType, allocator_type Alloc, size_type StaticCapacity>
-    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, Alloc, StaticCapacity> operator+(
-            typename basic_dynamic_string<CharType, Alloc, StaticCapacity>::const_view_type lhs,
-            const basic_dynamic_string<CharType, Alloc, StaticCapacity>& rhs
+    template <char_type CharType, size_type StaticCapacity>
+    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, StaticCapacity> operator+(
+            typename basic_dynamic_string<CharType, StaticCapacity>::const_view_type lhs,
+            const basic_dynamic_string<CharType, StaticCapacity>& rhs
             );
-    template <char_type CharType, allocator_type Alloc, size_type StaticCapacity>
-    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, Alloc, StaticCapacity> operator+(
+    template <char_type CharType, size_type StaticCapacity>
+    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, StaticCapacity> operator+(
             CharType lhs,
-            const basic_dynamic_string<CharType, Alloc, StaticCapacity>& rhs
+            const basic_dynamic_string<CharType, StaticCapacity>& rhs
             );
 
     using dynamic_string = basic_dynamic_string<>;
 
-    template <size_type StaticCapacity, allocator_type Alloc = default_allocator>
-    using hybrid_string = basic_dynamic_string<char, Alloc, StaticCapacity>;
+    template <size_type StaticCapacity>
+    using hybrid_string = basic_dynamic_string<char, StaticCapacity>;
 
     template <size_type StaticCapacity>
-    using static_string = basic_dynamic_string<char, mock_allocator, StaticCapacity>;
+    using static_string = basic_dynamic_string<char, StaticCapacity, false>;
 
     using dynamic_wstring = basic_dynamic_string<utf16>;
 
-    template <size_type StaticCapacity, allocator_type Alloc = default_allocator>
-    using hybrid_wstring = basic_dynamic_string<utf16, Alloc, StaticCapacity>;
+    template <size_type StaticCapacity>
+    using hybrid_wstring = basic_dynamic_string<utf16, StaticCapacity>;
 
     template <size_type StaticCapacity>
-    using static_wstring = basic_dynamic_string<utf16, mock_allocator, StaticCapacity>;
+    using static_wstring = basic_dynamic_string<utf16, StaticCapacity, false>;
 
     [[nodiscard]] dynamic_wstring to_utf16(dynamic_string::const_view_type str);
 

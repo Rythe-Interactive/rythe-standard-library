@@ -2,18 +2,18 @@
 
 namespace rsl
 {
-    template <char_type CharType, allocator_type Alloc, size_type StaticCapacity>
-    constexpr basic_dynamic_string<CharType, Alloc, StaticCapacity>::basic_dynamic_string(
+    template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
+    constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate>::basic_dynamic_string(
             const container_base& src
             ) noexcept(container_base::copy_construct_container_noexcept) : container_base(src) {}
 
-    template <char_type CharType, allocator_type Alloc, size_type StaticCapacity>
-    constexpr basic_dynamic_string<CharType, Alloc, StaticCapacity>::basic_dynamic_string(
+    template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
+    constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate>::basic_dynamic_string(
             container_base&& src
             ) noexcept(container_base::move_construct_container_noexcept) : container_base(rsl::move(src)) {}
 
-    template <char_type CharType, allocator_type Alloc, size_type StaticCapacity>
-    constexpr basic_dynamic_string<CharType, Alloc, StaticCapacity>& basic_dynamic_string<CharType, Alloc, StaticCapacity>::operator+=(
+    template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
+    constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& basic_dynamic_string<CharType, StaticCapacity, CanAllocate>::operator+=(
             const_view_type rhs
             )
     {
@@ -21,8 +21,8 @@ namespace rsl
         return *this;
     }
 
-    template <char_type CharType, allocator_type Alloc, size_type StaticCapacity>
-    constexpr basic_dynamic_string<CharType, Alloc, StaticCapacity>& basic_dynamic_string<CharType, Alloc, StaticCapacity>::operator+=(
+    template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
+    constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& basic_dynamic_string<CharType, StaticCapacity, CanAllocate>::operator+=(
             const CharType rhs
             )
     {
@@ -30,65 +30,65 @@ namespace rsl
         return *this;
     }
 
-    template <char_type CharType, allocator_type Alloc, size_type StaticCapacity>
-    constexpr basic_dynamic_string<CharType, Alloc, StaticCapacity> operator+(
-            const basic_dynamic_string<CharType, Alloc, StaticCapacity>& lhs,
-            const basic_dynamic_string<CharType, Alloc, StaticCapacity>& rhs
+    template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
+    constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate> operator+(
+            const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& lhs,
+            const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& rhs
             )
     {
-        basic_dynamic_string<CharType, Alloc, StaticCapacity> result;
+        basic_dynamic_string<CharType, StaticCapacity, CanAllocate> result;
         result.reserve(lhs.size() + rhs.size());
         result.append(lhs);
         result.append(rhs);
         return result;
     }
 
-    template <char_type CharType, allocator_type Alloc, size_type StaticCapacity>
-    constexpr basic_dynamic_string<CharType, Alloc, StaticCapacity> operator+(
-            const basic_dynamic_string<CharType, Alloc, StaticCapacity>& lhs,
-            typename basic_dynamic_string<CharType, Alloc, StaticCapacity>::const_view_type rhs
+    template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
+    constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate> operator+(
+            const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& lhs,
+            typename basic_dynamic_string<CharType, StaticCapacity, CanAllocate>::const_view_type rhs
             )
     {
-        basic_dynamic_string<CharType, Alloc, StaticCapacity> result;
+        basic_dynamic_string<CharType, StaticCapacity, CanAllocate> result;
         result.reserve(lhs.size() + rhs.size());
         result.append(lhs);
         result.append(rhs);
         return result;
     }
 
-    template <char_type CharType, allocator_type Alloc, size_type StaticCapacity>
-    constexpr basic_dynamic_string<CharType, Alloc, StaticCapacity> operator+(
-            const basic_dynamic_string<CharType, Alloc, StaticCapacity>& lhs,
+    template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
+    constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate> operator+(
+            const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& lhs,
             CharType rhs
             )
     {
-        basic_dynamic_string<CharType, Alloc, StaticCapacity> result;
+        basic_dynamic_string<CharType, StaticCapacity, CanAllocate> result;
         result.reserve(lhs.size() + 1ull);
         result.append(lhs);
         result.append(rhs);
         return result;
     }
 
-    template <char_type CharType, allocator_type Alloc, size_type StaticCapacity>
-    constexpr basic_dynamic_string<CharType, Alloc, StaticCapacity> operator+(
-            typename basic_dynamic_string<CharType, Alloc, StaticCapacity>::const_view_type lhs,
-            const basic_dynamic_string<CharType, Alloc, StaticCapacity>& rhs
+    template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
+    constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate> operator+(
+            typename basic_dynamic_string<CharType, StaticCapacity, CanAllocate>::const_view_type lhs,
+            const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& rhs
             )
     {
-        basic_dynamic_string<CharType, Alloc, StaticCapacity> result;
+        basic_dynamic_string<CharType, StaticCapacity, CanAllocate> result;
         result.reserve(lhs.size() + rhs.size());
         result.append(lhs);
         result.append(rhs);
         return result;
     }
 
-    template <char_type CharType, allocator_type Alloc, size_type StaticCapacity>
-    constexpr basic_dynamic_string<CharType, Alloc, StaticCapacity> operator+(
+    template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
+    constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate> operator+(
             CharType lhs,
-            const basic_dynamic_string<CharType, Alloc, StaticCapacity>& rhs
+            const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& rhs
             )
     {
-        basic_dynamic_string<CharType, Alloc, StaticCapacity> result;
+        basic_dynamic_string<CharType, StaticCapacity, CanAllocate> result;
         result.reserve(rhs.size() + 1ull);
         result.append(lhs);
         result.append(rhs);

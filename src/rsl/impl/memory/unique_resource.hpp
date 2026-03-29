@@ -26,49 +26,50 @@ namespace rsl
 		};
 	}
 
-	template <typename T, allocator_type Alloc = default_allocator, typed_factory_type Factory = default_factory<T>>
+	template <typename T, typed_factory_type Factory = default_factory<T>>
 	class unique_resource : public internal::select_memory_resource<
-			internal::unique_payload_base, Alloc, type_erased_factory, 0ull, true>::type
+			internal::unique_payload_base, type_erased_factory>::type
 	{
 	public:
 		constexpr static bool untyped_memory_resource =
-			internal::select_memory_resource<internal::unique_payload_base, Alloc, type_erased_factory, 0ull, true>::is_untyped;
+			internal::select_memory_resource<internal::unique_payload_base, type_erased_factory>::is_untyped;
 		using mem_rsc = typename internal::select_memory_resource<
-			internal::unique_payload_base, Alloc, type_erased_factory, 0ull, true>::type;
-		using allocator_storage_type = typename mem_rsc::allocator_storage_type;
-		using allocator_t = typename mem_rsc::allocator_t;
+			internal::unique_payload_base, type_erased_factory>::type;
 		using factory_storage_type = factory_storage<Factory>;
 		using factory_t = Factory;
 
-		[[rythe_always_inline]] constexpr unique_resource(nullptr_type)
-			noexcept(is_nothrow_constructible_v<mem_rsc>);
+        [[rythe_always_inline]] constexpr unique_resource(nullptr_type)
+            noexcept(is_nothrow_constructible_v<mem_rsc>);
 
-		[[rythe_always_inline]] constexpr explicit unique_resource(const allocator_storage_type& allocStorage)
-			noexcept(is_nothrow_constructible_v<mem_rsc, const allocator_storage_type&>);
+        [[rythe_always_inline]] constexpr explicit unique_resource(pointer<memory_allocator> allocator)
+            noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>>);
 
-		[[rythe_always_inline]] constexpr explicit unique_resource(const factory_storage_type& factoryStorage)
-			noexcept(is_nothrow_constructible_v<mem_rsc>);
+        [[rythe_always_inline]] constexpr explicit unique_resource(const factory_storage_type& factoryStorage)
+            noexcept(is_nothrow_constructible_v<mem_rsc>);
 
-		[[rythe_always_inline]] constexpr unique_resource(
-			const allocator_storage_type& allocStorage, const factory_storage_type& factoryStorage
-		)
-			noexcept(is_nothrow_constructible_v<mem_rsc, const allocator_storage_type&>);
+        [[rythe_always_inline]] constexpr unique_resource(
+                pointer<memory_allocator> allocator,
+                const factory_storage_type& factoryStorage
+            ) noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>>);
 
-	    template <typename OtherT, allocator_type OtherAlloc, typed_factory_type OtherFactory>
-		[[rythe_always_inline]] constexpr unique_resource(internal::alloc_and_factory_only_signal_type, const unique_resource<OtherT, OtherAlloc, OtherFactory>& other
-		)
-			noexcept(is_nothrow_constructible_v<mem_rsc, const allocator_storage_type&, const factory_storage_type&>);
+        template <typename OtherT, typed_factory_type OtherFactory>
+        [[rythe_always_inline]] constexpr unique_resource(
+                internal::alloc_and_factory_only_signal_type,
+                const unique_resource<OtherT, OtherFactory>& other
+            ) noexcept(is_nothrow_constructible_v<mem_rsc, internal::alloc_and_factory_only_signal_type, const mem_rsc&>);
 
-		template <internal::unique_deleter_type<T> Deleter, typename... Args>
-		[[rythe_always_inline]] constexpr explicit unique_resource(Deleter deleter, Args&&... args)
-			noexcept(is_nothrow_constructible_v<mem_rsc> && is_nothrow_constructible_v<T, Args...>);
+        template <internal::unique_deleter_type<T> Deleter, typename... Args>
+        [[rythe_always_inline]] constexpr explicit unique_resource(
+                Deleter deleter,
+                Args&&... args
+            ) noexcept(is_nothrow_constructible_v<mem_rsc> && is_nothrow_constructible_v<T, Args...>);
 
-		template <internal::unique_deleter_type<T> Deleter, typename... Args>
-		[[rythe_always_inline]] constexpr unique_resource(
-			const allocator_storage_type& allocStorage, Deleter deleter, Args&&... args
-		)
-			noexcept(is_nothrow_constructible_v<mem_rsc, const allocator_storage_type&> &&
-			         is_nothrow_constructible_v<T, Args...>);
+        template <internal::unique_deleter_type<T> Deleter, typename... Args>
+        [[rythe_always_inline]] constexpr unique_resource(
+                pointer<memory_allocator> allocator,
+                Deleter deleter,
+                Args&&... args
+            ) noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>> && is_nothrow_constructible_v<T, Args...>);
 
 		[[rythe_always_inline]] constexpr unique_resource() noexcept = default;
 		unique_resource(const unique_resource&) = delete;

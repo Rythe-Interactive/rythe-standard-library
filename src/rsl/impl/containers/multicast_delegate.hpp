@@ -1,39 +1,39 @@
 #pragma once
 
-#include "delegate.hpp"
 #include "array.hpp"
+#include "delegate.hpp"
 
 namespace rsl
 {
 	namespace internal
 	{
-		template <typename T, allocator_type Alloc>
+		template <typename T>
 		struct multicast_delegate_invocation_result
 		{
-			using type = dynamic_array<T, Alloc>;
+			using type = dynamic_array<T>;
 		};
 
-		template <allocator_type Alloc>
-		struct multicast_delegate_invocation_result<void, Alloc>
+	    template <>
+		struct multicast_delegate_invocation_result<void>
 		{
 			using type = void;
 		};
 	}
 
-	template <typename ReturnType, typename... ParamTypes, allocator_type Alloc, untyped_factory_type Factory>
-	class multicast_delegate<ReturnType(ParamTypes...), Alloc, Factory> final :
-		private delegate_base<ReturnType(ParamTypes...), Alloc, Factory>
+	template <typename ReturnType, typename... ParamTypes, untyped_factory_type Factory>
+	class multicast_delegate<ReturnType(ParamTypes...), Factory> final :
+		private delegate_base<ReturnType(ParamTypes...), Factory>
 	{
-		using base = delegate_base<ReturnType(ParamTypes...), Alloc, Factory>;
+		using base = delegate_base<ReturnType(ParamTypes...), Factory>;
 
 	public:
 		using return_type = ReturnType;
 		using param_types = type_sequence<ParamTypes...>;
 		using invocation_element = typename base::invocation_element;
 
-		using value_type = delegate<ReturnType(ParamTypes...), Alloc, Factory>;
+		using value_type = delegate<ReturnType(ParamTypes...), Factory>;
 
-		using invocation_container = dynamic_array<value_type, Alloc>;
+		using invocation_container = dynamic_array<value_type>;
 
 		using iterator_type = typename invocation_container::iterator_type;
 		using const_iterator_type = typename invocation_container::const_iterator_type;
@@ -41,23 +41,21 @@ namespace rsl
 		using const_reverse_iterator_type = typename invocation_container::const_reverse_iterator_type;
 		using view_type = typename invocation_container::view_type;
 		using const_view_type = typename invocation_container::const_view_type;
-		using allocator_storage_type = typename invocation_container::allocator_storage_type;
-		using allocator_t = typename invocation_container::allocator_t;
 		using factory_storage_type = typename invocation_container::factory_storage_type;
 		using factory_t = typename invocation_container::factory_t;
 
 		[[rythe_always_inline]] constexpr multicast_delegate() noexcept = default;
 
 		[[rythe_always_inline]] constexpr multicast_delegate(const value_type& val) noexcept;
-		[[rythe_always_inline]] explicit constexpr multicast_delegate(const allocator_storage_type& allocStorage)
-			noexcept(is_nothrow_constructible_v<invocation_container, const allocator_storage_type&>);
+		[[rythe_always_inline]] explicit constexpr multicast_delegate(pointer<memory_allocator> allocator)
+			noexcept(is_nothrow_constructible_v<invocation_container, pointer<memory_allocator>>);
 		[[rythe_always_inline]] explicit constexpr multicast_delegate(const factory_storage_type& factoryStorage)
 			noexcept(is_nothrow_constructible_v<invocation_container, const factory_storage_type&>);
 		[[rythe_always_inline]] constexpr multicast_delegate(
-			const allocator_storage_type& allocStorage, const factory_storage_type& factoryStorage
+			pointer<memory_allocator> allocator, const factory_storage_type& factoryStorage
 		)
 			noexcept(is_nothrow_constructible_v<
-					 invocation_container, const allocator_storage_type&, const factory_storage_type&>);
+					 invocation_container, pointer<memory_allocator>, const factory_storage_type&>);
 
 		[[nodiscard]] [[rythe_always_inline]] constexpr bool empty() const noexcept;
 		[[rythe_always_inline]] constexpr void clear() noexcept;
@@ -65,8 +63,8 @@ namespace rsl
 		[[rythe_always_inline]] constexpr void reserve(size_type newCap) noexcept;
 		[[nodiscard]] [[rythe_always_inline]] constexpr size_type capacity() const noexcept;
 
-		[[nodiscard]] [[rythe_always_inline]] constexpr allocator_t& get_allocator() noexcept;
-		[[nodiscard]] [[rythe_always_inline]] constexpr const allocator_t& get_allocator() const noexcept;
+		[[nodiscard]] [[rythe_always_inline]] constexpr memory_allocator& get_allocator() noexcept;
+		[[nodiscard]] [[rythe_always_inline]] constexpr const memory_allocator& get_allocator() const noexcept;
 
 		[[rythe_always_inline]] constexpr void set_factory(const factory_storage_type& factoryStorage)
 			noexcept(is_nothrow_copy_assignable_v<factory_storage_type>);
@@ -74,8 +72,8 @@ namespace rsl
 		[[nodiscard]] [[rythe_always_inline]] constexpr factory_t& get_factory() noexcept;
 		[[nodiscard]] [[rythe_always_inline]] constexpr const factory_t& get_factory() const noexcept;
 
-		[[nodiscard]] [[rythe_always_inline]] constexpr allocator_storage_type& get_allocator_storage() noexcept;
-		[[nodiscard]] [[rythe_always_inline]] constexpr const allocator_storage_type&
+		[[nodiscard]] [[rythe_always_inline]] constexpr pointer<memory_allocator> get_allocator_storage() noexcept;
+		[[nodiscard]] [[rythe_always_inline]] constexpr pointer<const memory_allocator>
 		get_allocator_storage() const noexcept;
 
 		[[nodiscard]] [[rythe_always_inline]] constexpr factory_storage_type& get_factory_storage() noexcept;
@@ -231,7 +229,7 @@ namespace rsl
 
 	private:
 		template <typename T>
-		using invocation_result_t = typename internal::multicast_delegate_invocation_result<T, allocator_t>::type;
+		using invocation_result_t = typename internal::multicast_delegate_invocation_result<T>::type;
 
 	public:
 		[[rythe_always_inline]] constexpr auto operator()(ParamTypes... args) const;
@@ -250,9 +248,9 @@ namespace rsl
 		invocation_container m_invocationList;
 	};
 
-	template <typename ReturnType, typename... ParamTypes, allocator_type Alloc, untyped_factory_type Factory>
-	multicast_delegate(const delegate<ReturnType(ParamTypes...), Alloc, Factory>&)
-		-> multicast_delegate<ReturnType(ParamTypes...), Alloc, Factory>;
+	template <typename ReturnType, typename... ParamTypes, untyped_factory_type Factory>
+	multicast_delegate(const delegate<ReturnType(ParamTypes...), Factory>&)
+		-> multicast_delegate<ReturnType(ParamTypes...), Factory>;
 } // namespace rsl
 
 #include "multicast_delegate.inl"

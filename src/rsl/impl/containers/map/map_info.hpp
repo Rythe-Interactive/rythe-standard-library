@@ -76,7 +76,7 @@ namespace rsl
     }
 
     template <
-        typename Key, typename Value, hash_map_flags Flags = hash_map_flags::default_flags, allocator_type Alloc = default_allocator,
+        typename Key, typename Value, hash_map_flags Flags = hash_map_flags::default_flags,
         typed_factory_type FactoryType = default_factory<internal::map_value_type<Key, Value, hash_map_flags_is_flat(Flags)>>,
         typename Hash = ::rsl::hash<Key>, typename KeyEqual = equal<Key>,
         ratio_type MaxLoadFactor = ::std::ratio<80, 100>,
@@ -111,8 +111,6 @@ namespace rsl
                 has_is_transparent<hasher_type>::value && has_is_transparent<key_comparer_type>::value;
 
         using value_type = internal::map_value_type<Key, Value, is_flat>;
-
-        using allocator_t = Alloc;
 
         template <typename T>
         using factory_t = typename FactoryType::template retarget<T>;

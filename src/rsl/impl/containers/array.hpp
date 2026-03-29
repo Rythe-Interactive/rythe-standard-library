@@ -6,16 +6,16 @@
 
 namespace rsl
 {
-    template <typename T, allocator_type Alloc = default_allocator, typed_factory_type Factory = default_factory<T>, size_type
-              StaticCapacity = 0ull, bool CanResize = true>
+    template <typename T, typed_factory_type Factory = default_factory<T>, size_type
+              StaticCapacity = 0ull, bool CanResize = true, bool CanAllocate = true>
     class basic_dynamic_array
-            : public contiguous_container_base<T, Alloc, Factory, T*, const T*, contiguous_container_info<
-                                                   false, StaticCapacity, !is_same_v<Alloc, mock_allocator>, CanResize>>
+            : public contiguous_container_base<T, Factory, T*, const T*,
+                        contiguous_container_info<false, StaticCapacity, CanResize, CanAllocate>>
     {
     public:
         using container_base = contiguous_container_base<
-            T, Alloc, Factory, T*, const T*, contiguous_container_info<
-                false, StaticCapacity, !is_same_v<Alloc, mock_allocator>, CanResize>>;
+            T, Factory, T*, const T*, contiguous_container_info<
+                false, StaticCapacity, CanResize, CanAllocate>>;
         using mem_rsc = typename container_base::mem_rsc;
         using value_type = T;
         using iterator_type = typename container_base::iterator_type;
@@ -24,14 +24,12 @@ namespace rsl
         using const_reverse_iterator_type = typename container_base::const_reverse_iterator_type;
         using view_type = typename container_base::view_type;
         using const_view_type = typename container_base::const_view_type;
-        using allocator_storage_type = allocator_storage<Alloc>;
-        using allocator_t = Alloc;
         using factory_storage_type = factory_storage<Factory>;
         using factory_t = Factory;
 
         using contiguous_container_base<
-            T, Alloc, Factory, T*, const T*, contiguous_container_info<
-                false, StaticCapacity, !is_same_v<Alloc, mock_allocator>, CanResize>>::contiguous_container_base;
+            T, Factory, T*, const T*, contiguous_container_info<
+                false, StaticCapacity, CanResize, CanAllocate>>::contiguous_container_base;
 
         [[rythe_always_inline]] constexpr basic_dynamic_array(
                 const container_base& src
@@ -48,18 +46,17 @@ namespace rsl
         using container_base::operator=;
     };
 
-    template <typename T, allocator_type Alloc = default_allocator, typed_factory_type Factory = default_factory<T>>
-    using dynamic_array = basic_dynamic_array<T, Alloc, Factory>;
-
-    template <typename T, size_type StaticCapacity, allocator_type Alloc = default_allocator, typed_factory_type Factory =
-              default_factory<T>>
-    using hybrid_array = basic_dynamic_array<T, Alloc, Factory, StaticCapacity>;
+    template <typename T, typed_factory_type Factory = default_factory<T>>
+    using dynamic_array = basic_dynamic_array<T, Factory>;
 
     template <typename T, size_type StaticCapacity, typed_factory_type Factory = default_factory<T>>
-    using static_array = basic_dynamic_array<T, mock_allocator, Factory, StaticCapacity>;
+    using hybrid_array = basic_dynamic_array<T, Factory, StaticCapacity>;
 
     template <typename T, size_type StaticCapacity, typed_factory_type Factory = default_factory<T>>
-    using array = basic_dynamic_array<T, mock_allocator, Factory, StaticCapacity, false>;
+    using static_array = basic_dynamic_array<T, Factory, StaticCapacity, true, false>;
+
+    template <typename T, size_type StaticCapacity, typed_factory_type Factory = default_factory<T>>
+    using array = basic_dynamic_array<T, Factory, StaticCapacity, false, false>;
 } // namespace rsl
 
 #include "array.inl"

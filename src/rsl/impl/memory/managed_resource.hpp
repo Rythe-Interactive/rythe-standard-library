@@ -5,7 +5,7 @@
 
 namespace rsl
 {
-	template <typename T, allocator_type Alloc, untyped_factory_type Factory>
+	template <typename T, untyped_factory_type Factory>
 	class managed_resource;
 
 	namespace internal
@@ -28,23 +28,21 @@ namespace rsl
 		};
 	} // namespace internal
 
-	template <typename T, allocator_type Alloc = default_allocator, untyped_factory_type Factory = type_erased_factory>
-	class managed_resource : public basic_reference_counter<internal::managed_payload_base, Alloc, Factory>
+	template <typename T, untyped_factory_type Factory = type_erased_factory>
+	class managed_resource : public basic_reference_counter<internal::managed_payload_base, Factory>
 	{
 	public:
-		using ref_counter = basic_reference_counter<internal::managed_payload_base, Alloc, Factory>;
+		using ref_counter = basic_reference_counter<internal::managed_payload_base, Factory>;
 		using mem_rsc = typename ref_counter::mem_rsc;
 
-		using allocator_storage_type = typename ref_counter::allocator_storage_type;
-		using allocator_t = typename ref_counter::allocator_t;
 		using factory_storage_type = typename ref_counter::factory_storage_type;
 		using factory_t = typename ref_counter::factory_t;
 
 		[[rythe_always_inline]] constexpr managed_resource(nullptr_type)
 			noexcept(is_nothrow_constructible_v<ref_counter>);
 
-		[[rythe_always_inline]] explicit managed_resource(const allocator_storage_type& allocStorage)
-			noexcept(is_nothrow_constructible_v<ref_counter, const allocator_storage_type&>);
+		[[rythe_always_inline]] explicit managed_resource(pointer<memory_allocator> allocator)
+			noexcept(is_nothrow_constructible_v<ref_counter, pointer<memory_allocator>>);
 
 		template <internal::managed_deleter_type<T> Deleter, typename... Args>
 		[[rythe_always_inline]] constexpr explicit managed_resource(Deleter deleter, Args&&... args)
@@ -52,8 +50,8 @@ namespace rsl
 
 		template <internal::managed_deleter_type<T> Deleter, typename... Args>
 		[[rythe_always_inline]] managed_resource(
-			const allocator_storage_type& allocStorage, Deleter deleter, Args&&... args
-		) noexcept(is_nothrow_constructible_v<ref_counter, const allocator_storage_type&> && is_nothrow_constructible_v<T, Args...>);
+			pointer<memory_allocator> allocator, Deleter deleter, Args&&... args
+		) noexcept(is_nothrow_constructible_v<ref_counter, pointer<memory_allocator>> && is_nothrow_constructible_v<T, Args...>);
 
 		[[rythe_always_inline]] constexpr managed_resource() noexcept = default;
 
