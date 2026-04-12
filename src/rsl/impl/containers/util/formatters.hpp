@@ -20,15 +20,15 @@ namespace fmt
         }
     };
 
-    template <rsl::char_type CharType, rsl::allocator_type Alloc, rsl::size_type StaticCapacity>
-    struct formatter<rsl::basic_dynamic_string<CharType, Alloc, StaticCapacity>>
+    template <rsl::char_type CharType, rsl::size_type StaticCapacity, bool CanAllocate>
+    struct formatter<rsl::basic_dynamic_string<CharType, StaticCapacity, CanAllocate>>
     {
         formatter<rsl::string_view> stringViewFormatter;
 
         constexpr const char* parse(format_parse_context& ctx) { return stringViewFormatter.parse(ctx); }
 
         template <typename FormatContext>
-        auto format(const rsl::basic_dynamic_string<CharType, Alloc, StaticCapacity>& str, FormatContext& ctx) const
+        auto format(const rsl::basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& str, FormatContext& ctx) const
         {
             return stringViewFormatter.format(str.view(), ctx);
         }

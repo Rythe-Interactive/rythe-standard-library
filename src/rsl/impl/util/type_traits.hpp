@@ -161,7 +161,7 @@ namespace rsl
     template <typename T>
     consteval id_type type_id() noexcept
     {
-        return hash_string(string_view(type_name<T>()));
+        return 0ull;// hash_string(string_view(type_name<T>())); TODO(Glyn): generation later using Dans work
     }
 
     namespace internal

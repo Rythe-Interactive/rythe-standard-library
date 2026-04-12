@@ -59,7 +59,7 @@ namespace rsl
                 const native_thread_start startFunction,
                 void* userData,
                 const string_view name,
-                pmu_allocator& allocator
+                pointer<memory_allocator> allocator
                 )
     {
         // TODO: Implement

@@ -9,6 +9,7 @@
 
 namespace rsl
 {
+    // TODO(Glyn): Remove, this is just a static string
 	template <size_type MaxSize, typename CharType = char>
 	class buffered_string
 	{

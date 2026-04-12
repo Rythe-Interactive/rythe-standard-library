@@ -47,30 +47,30 @@ namespace rsl
         [[rythe_always_inline]] constexpr basic_dynamic_string& operator+=(CharType rhs);
     };
 
-    template <char_type CharType, size_type StaticCapacity>
-    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, StaticCapacity> operator+(
-            const basic_dynamic_string<CharType, StaticCapacity>& lhs,
-            const basic_dynamic_string<CharType, StaticCapacity>& rhs
+    template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
+    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate> operator+(
+            const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& lhs,
+            const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& rhs
             );
-    template <char_type CharType, size_type StaticCapacity>
-    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, StaticCapacity> operator+(
-            const basic_dynamic_string<CharType, StaticCapacity>& lhs,
-            typename basic_dynamic_string<CharType, StaticCapacity>::const_view_type rhs
+    template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
+    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate> operator+(
+            const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& lhs,
+            typename basic_dynamic_string<CharType, StaticCapacity, CanAllocate>::const_view_type rhs
             );
-    template <char_type CharType, size_type StaticCapacity>
-    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, StaticCapacity> operator+(
-            const basic_dynamic_string<CharType, StaticCapacity>& lhs,
+    template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
+    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate>
+            operator+(const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& lhs,
             CharType rhs
             );
-    template <char_type CharType, size_type StaticCapacity>
-    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, StaticCapacity> operator+(
-            typename basic_dynamic_string<CharType, StaticCapacity>::const_view_type lhs,
-            const basic_dynamic_string<CharType, StaticCapacity>& rhs
+    template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
+    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate> operator+(
+            typename basic_dynamic_string<CharType, StaticCapacity, CanAllocate>::const_view_type lhs,
+            const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& rhs
             );
-    template <char_type CharType, size_type StaticCapacity>
-    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, StaticCapacity> operator+(
-            CharType lhs,
-            const basic_dynamic_string<CharType, StaticCapacity>& rhs
+    template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
+    [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate>
+            operator+(
+            CharType lhs, const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& rhs
             );
 
     using dynamic_string = basic_dynamic_string<>;

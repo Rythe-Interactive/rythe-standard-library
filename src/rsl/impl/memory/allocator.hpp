@@ -34,7 +34,7 @@ namespace rsl
         }
     };
 
-    class heap_allocator final : public memory_allocator
+    class heap_allocator : public memory_allocator
     {
     public:
         using value_type = void;

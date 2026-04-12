@@ -90,11 +90,11 @@ namespace rsl
         }
     }
 
-    template <char_type CharType = char, allocator_type Alloc = default_allocator, size_type StaticCapacity = 0ull>
+    template <char_type CharType = char, size_type StaticCapacity = 0ull, bool CanAllocate = true>
     class basic_hashed_string
     {
     public:
-        using string_type = basic_dynamic_string<CharType, Alloc, StaticCapacity>;
+        using string_type = basic_dynamic_string<CharType, StaticCapacity, CanAllocate>;
         using value_type = typename string_type::value_type;
         using iterator_type = typename string_type::iterator_type;
         using const_iterator_type = typename string_type::const_iterator_type;
@@ -104,8 +104,6 @@ namespace rsl
         using hashed_view_type = basic_hashed_string_view<CharType>;
         using const_view_type = typename string_type::const_view_type;
         using const_hashed_view_type = basic_hashed_string_view<const CharType>;
-        using allocator_storage_type = typename string_type::allocator_storage_type;
-        using allocator_t = typename string_type::allocator_t;
         using factory_storage_type = typename string_type::factory_storage_type;
         using factory_t = typename string_type::factory_t;
 

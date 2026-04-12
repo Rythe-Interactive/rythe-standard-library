@@ -1,10 +1,10 @@
 #define RYTHE_VALIDATE
 
-#include <rsl/heap_allocator>
+#include <rsl/allocator>
 
 namespace
 {
-	class test_heap_allocator : private rsl::heap_allocator
+	class test_heap_allocator : public rsl::heap_allocator
 	{
 	public:
 		using value_type = void;
@@ -87,17 +87,17 @@ TEST_CASE("dynamic_array", "[containers]")
 	{
 		{
 			rsl::dynamic_array<int> list{};
-			CHECK(list.get_allocator().id == 1012234_id);
+            CHECK(static_cast<test_heap_allocator&>(list.get_allocator()).id == 1012234_id);
 		}
 		{
 			test_heap_allocator alloc{1234_id};
-			rsl::dynamic_array<int, test_heap_allocator> list{alloc};
-			CHECK(list.get_allocator().id == 1234_id);
+            rsl::dynamic_array<int> list{ { &alloc } };
+            CHECK(static_cast<test_heap_allocator&>(list.get_allocator()).id == 1234_id);
 		}
 		{
-			default_pmu_allocator alloc;
-			allocator_storage<polymorphic_allocator> store(&alloc);
-			rsl::dynamic_array<int, polymorphic_allocator> list{store};
+			default_allocator alloc;
+			pointer<memory_allocator> store(&alloc);
+			rsl::dynamic_array<int> list{store};
 			CHECK((&(list.get_allocator())) == &alloc);
 		}
 	}

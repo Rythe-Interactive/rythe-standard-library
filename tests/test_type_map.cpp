@@ -1,6 +1,6 @@
 #define RYTHE_VALIDATE
 
-#include <rsl/heap_allocator>
+#include <rsl/allocator>
 
 namespace
 {

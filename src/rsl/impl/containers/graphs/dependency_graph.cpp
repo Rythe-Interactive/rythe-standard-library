@@ -105,7 +105,7 @@ namespace rsl
         {
             infoMap.try_emplace(node->id).first.index = result.m_nodes.size();
 
-            result.m_nodes.emplace_back(dependency_graph_node{ .id = node->id, });
+            result.m_nodes.emplace_back(dependency_graph_node{ .id = node->id, .dependencies{}, .dependents = {} });
 
             for (const builder_dependency& dep : node->dependencies)
             {

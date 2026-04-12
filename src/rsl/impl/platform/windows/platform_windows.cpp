@@ -75,7 +75,7 @@ namespace rsl
 
         struct native_thread_context
         {
-            pmu_allocator* allocator;
+            pointer<memory_allocator> allocator;
             dynamic_string name;
             platform::native_thread_start function;
             void* userData;
@@ -84,7 +84,7 @@ namespace rsl
         DWORD internal_native_thread_start(void* args)
         {
             native_thread_context& context = *static_cast<native_thread_context*>(args);
-            pmu_allocator* allocator = context.allocator;
+            pointer<memory_allocator> allocator = context.allocator;
 
             current_thread::set_name(context.name);
 
@@ -297,14 +297,18 @@ namespace rsl
             const native_thread_start startFunction,
             void* userData,
             const string_view name,
-            pmu_allocator& allocator
+            pointer<memory_allocator> allocator
             )
     {
         rsl_assert_always(startFunction);
+        if (!allocator)
+        {
+            allocator = allocator_context::globalAllocator;
+        }
 
         thread result;
 
-        native_thread_context* threadContext = allocator.allocate<native_thread_context>();
+        native_thread_context* threadContext = allocator->allocate<native_thread_context>();
         if (!threadContext)
         {
             return result;
@@ -312,7 +316,7 @@ namespace rsl
 
         internal::default_construct<native_thread_context>(threadContext, 1);
 
-        threadContext->allocator = &allocator;
+        threadContext->allocator = allocator;
         threadContext->name = dynamic_string::from_view(name);
         threadContext->function = startFunction;
         threadContext->userData = userData;
@@ -329,7 +333,7 @@ namespace rsl
         if (!threadHandle)
         {
             internal::default_destroy<native_thread_context>(threadContext, 1);
-            allocator.deallocate(threadContext);
+            allocator->deallocate(threadContext);
             return result;
         }
 
