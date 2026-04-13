@@ -19,8 +19,8 @@ namespace rsl
         : ref_counter() {}
 
 	template <typename T, untyped_factory_type Factory>
-    managed_resource<T, Factory>::managed_resource(pointer<memory_allocator> allocator)
-        noexcept(is_nothrow_constructible_v<ref_counter, pointer<memory_allocator>>)
+    managed_resource<T, Factory>::managed_resource(allocator_storage allocator)
+        noexcept(is_nothrow_constructible_v<ref_counter, allocator_storage>)
         : ref_counter(allocator) {}
 
 	template <typename T, untyped_factory_type Factory>
@@ -34,8 +34,8 @@ namespace rsl
 
 	template <typename T, untyped_factory_type Factory>
     template <internal::managed_deleter_type<T> Deleter, typename... Args>
-    managed_resource<T, Factory>::managed_resource(pointer<memory_allocator> allocator, Deleter deleter, Args&&... args)
-        noexcept(is_nothrow_constructible_v<ref_counter, pointer<memory_allocator>> && is_nothrow_constructible_v<
+    managed_resource<T, Factory>::managed_resource(allocator_storage allocator, Deleter deleter, Args&&... args)
+        noexcept(is_nothrow_constructible_v<ref_counter, allocator_storage> && is_nothrow_constructible_v<
             T, Args...>)
         : ref_counter(allocator)
     {

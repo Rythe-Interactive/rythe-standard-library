@@ -47,15 +47,15 @@ namespace rsl
 		[[rythe_always_inline]] constexpr multicast_delegate() noexcept = default;
 
 		[[rythe_always_inline]] constexpr multicast_delegate(const value_type& val) noexcept;
-		[[rythe_always_inline]] explicit constexpr multicast_delegate(pointer<memory_allocator> allocator)
-			noexcept(is_nothrow_constructible_v<invocation_container, pointer<memory_allocator>>);
+		[[rythe_always_inline]] explicit constexpr multicast_delegate(allocator_storage allocator)
+			noexcept(is_nothrow_constructible_v<invocation_container, allocator_storage>);
 		[[rythe_always_inline]] explicit constexpr multicast_delegate(const factory_storage_type& factoryStorage)
 			noexcept(is_nothrow_constructible_v<invocation_container, const factory_storage_type&>);
 		[[rythe_always_inline]] constexpr multicast_delegate(
-			pointer<memory_allocator> allocator, const factory_storage_type& factoryStorage
+			allocator_storage allocator, const factory_storage_type& factoryStorage
 		)
 			noexcept(is_nothrow_constructible_v<
-					 invocation_container, pointer<memory_allocator>, const factory_storage_type&>);
+					 invocation_container, allocator_storage, const factory_storage_type&>);
 
 		[[nodiscard]] [[rythe_always_inline]] constexpr bool empty() const noexcept;
 		[[rythe_always_inline]] constexpr void clear() noexcept;
@@ -72,9 +72,7 @@ namespace rsl
 		[[nodiscard]] [[rythe_always_inline]] constexpr factory_t& get_factory() noexcept;
 		[[nodiscard]] [[rythe_always_inline]] constexpr const factory_t& get_factory() const noexcept;
 
-		[[nodiscard]] [[rythe_always_inline]] constexpr pointer<memory_allocator> get_allocator_storage() noexcept;
-		[[nodiscard]] [[rythe_always_inline]] constexpr pointer<const memory_allocator>
-		get_allocator_storage() const noexcept;
+		[[nodiscard]] [[rythe_always_inline]] constexpr allocator_storage get_allocator_storage() const noexcept;
 
 		[[nodiscard]] [[rythe_always_inline]] constexpr factory_storage_type& get_factory_storage() noexcept;
 		[[nodiscard]] [[rythe_always_inline]] constexpr const factory_storage_type&

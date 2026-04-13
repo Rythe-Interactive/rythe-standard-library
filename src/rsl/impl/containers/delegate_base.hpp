@@ -32,11 +32,11 @@ namespace rsl
 			constexpr invocation_element() noexcept = default;
 
 			constexpr invocation_element(
-				pointer<memory_allocator> allocator, void* object, stub_type stub, id_type id,
+				allocator_storage allocator, void* object, stub_type stub, id_type id,
 				deleter_type deleter = nullptr
 			)
 				noexcept(is_nothrow_constructible_v<
-						 managed_resource<void*, Factory>, pointer<memory_allocator>, deleter_type, void*>);
+						 managed_resource<void*, Factory>, allocator_storage, deleter_type, void*>);
 
 			constexpr invocation_element(const invocation_element& other)
 				noexcept(is_nothrow_copy_constructible_v<managed_resource<void*, Factory>>);
@@ -89,18 +89,18 @@ namespace rsl
 
 		template <typename T, ReturnType (T::*TMethod)(ParamTypes...)>
 		[[rythe_always_inline]] static invocation_element
-		create_element(pointer<memory_allocator> allocator, T& instance);
+		create_element(allocator_storage allocator, T& instance);
 
 		template <typename T, ReturnType (T::*TMethod)(ParamTypes...) const>
 		[[rythe_always_inline]] static invocation_element
-		create_element(pointer<memory_allocator> allocator, const T& instance);
+		create_element(allocator_storage allocator, const T& instance);
 
 		template <ReturnType (*TMethod)(ParamTypes...)>
-		[[rythe_always_inline]] static invocation_element create_element(pointer<memory_allocator> allocator);
+		[[rythe_always_inline]] static invocation_element create_element(allocator_storage allocator);
 
 		template <invocable<ReturnType(ParamTypes...)> Functor>
 		[[rythe_always_inline]] static invocation_element
-		create_element(pointer<memory_allocator> allocator, const Functor& instance);
+		create_element(allocator_storage allocator, const Functor& instance);
 
 		template <typename T, ReturnType (T::*TMethod)(ParamTypes...)>
 		[[rythe_always_inline]] static id_type create_id(T& instance);

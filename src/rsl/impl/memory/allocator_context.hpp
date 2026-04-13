@@ -7,9 +7,9 @@ namespace rsl
 	struct allocator_context
 	{
 		static default_allocator defaultGlobalAllocator;
-		static pointer<memory_allocator> globalAllocator;
+		static allocator_storage globalAllocator;
 		static default_allocator defaultThreadSpecificAllocator;
-		static thread_local pointer<memory_allocator> threadSpecificAllocator;
+		static thread_local allocator_storage threadSpecificAllocator;
 	};
 
 	template <typename T, typename... Args>

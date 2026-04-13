@@ -202,7 +202,7 @@ namespace rsl
             return m_head;
         }
 
-        pointer<memory_allocator> m_alloc;
+        allocator_storage m_alloc;
         element_node* m_head = nullptr;
         memory_block* m_freeList = nullptr;
     };

@@ -10,8 +10,8 @@ namespace rsl
 
     template <typename ReturnType, typename... ParamTypes, untyped_factory_type Factory>
     constexpr multicast_delegate<ReturnType(ParamTypes...), Factory>::multicast_delegate(
-            pointer<memory_allocator> allocator
-            ) noexcept(is_nothrow_constructible_v<invocation_container, pointer<memory_allocator>>)
+            allocator_storage allocator
+            ) noexcept(is_nothrow_constructible_v<invocation_container, allocator_storage>)
         : m_invocationList(allocator) {}
 
     template <typename ReturnType, typename... ParamTypes, untyped_factory_type Factory>
@@ -22,11 +22,11 @@ namespace rsl
 
     template <typename ReturnType, typename... ParamTypes, untyped_factory_type Factory>
     constexpr multicast_delegate<ReturnType(ParamTypes...), Factory>::multicast_delegate(
-            pointer<memory_allocator> allocator,
+            allocator_storage allocator,
             const factory_storage_type& factoryStorage
             )
         noexcept(is_nothrow_constructible_v<
-            invocation_container, pointer<memory_allocator>, const factory_storage_type&>)
+            invocation_container, allocator_storage, const factory_storage_type&>)
         : m_invocationList(allocator, factoryStorage) {}
 
     template <typename ReturnType, typename... ParamTypes, untyped_factory_type Factory>
@@ -98,14 +98,7 @@ namespace rsl
     }
 
     template <typename ReturnType, typename... ParamTypes, untyped_factory_type Factory>
-    constexpr pointer<memory_allocator> multicast_delegate<
-        ReturnType(ParamTypes...), Factory>::get_allocator_storage() noexcept
-    {
-        return m_invocationList.get_allocator_storage();
-    }
-
-    template <typename ReturnType, typename... ParamTypes, untyped_factory_type Factory>
-    constexpr pointer<const memory_allocator> multicast_delegate<
+    constexpr allocator_storage multicast_delegate<
         ReturnType(ParamTypes...), Factory>::get_allocator_storage() const noexcept
     {
         return m_invocationList.get_allocator_storage();

@@ -4,7 +4,7 @@
 
 namespace
 {
-	class test_heap_allocator : private rsl::heap_allocator
+	class test_heap_allocator : public rsl::heap_allocator
 	{
 	public:
 		using value_type = void;
@@ -92,18 +92,18 @@ TEST_CASE("type_map", "[containers]")
 	SECTION("construction")
 	{
 		{
-			rsl::type_map map{};
-			REQUIRE(map.get_allocator().id == 1012234);
+            rsl::type_map map{};
+            CHECK(static_cast<test_heap_allocator&>(map.get_allocator()).id == 1012234_id);
 		}
 		{
 			test_heap_allocator alloc{1234};
-			rsl::basic_type_map<test_heap_allocator> map{alloc};
-			REQUIRE(map.get_allocator().id == 1234);
+            rsl::basic_type_map<> map{ { &alloc } };
+            CHECK(static_cast<test_heap_allocator&>(map.get_allocator()).id == 1234_id);
 		}
 		{
-			default_pmu_allocator alloc;
-			allocator_storage<polymorphic_allocator> store(&alloc);
-			rsl::basic_type_map<polymorphic_allocator> map{store};
+			default_allocator alloc;
+            allocator_storage store(&alloc);
+			rsl::basic_type_map<> map{store};
 			REQUIRE((&(map.get_allocator())) == &alloc);
 		}
 	}

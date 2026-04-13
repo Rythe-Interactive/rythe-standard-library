@@ -41,16 +41,16 @@ namespace rsl
         [[rythe_always_inline]] constexpr unique_resource(nullptr_type)
             noexcept(is_nothrow_constructible_v<mem_rsc>);
 
-        [[rythe_always_inline]] constexpr explicit unique_resource(pointer<memory_allocator> allocator)
-            noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>>);
+        [[rythe_always_inline]] constexpr explicit unique_resource(allocator_storage allocator)
+            noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage>);
 
         [[rythe_always_inline]] constexpr explicit unique_resource(const factory_storage_type& factoryStorage)
             noexcept(is_nothrow_constructible_v<mem_rsc>);
 
         [[rythe_always_inline]] constexpr unique_resource(
-                pointer<memory_allocator> allocator,
+                allocator_storage allocator,
                 const factory_storage_type& factoryStorage
-            ) noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>>);
+            ) noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage>);
 
         template <typename OtherT, typed_factory_type OtherFactory>
         [[rythe_always_inline]] constexpr unique_resource(
@@ -66,10 +66,10 @@ namespace rsl
 
         template <internal::unique_deleter_type<T> Deleter, typename... Args>
         [[rythe_always_inline]] constexpr unique_resource(
-                pointer<memory_allocator> allocator,
+                allocator_storage allocator,
                 Deleter deleter,
                 Args&&... args
-            ) noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>> && is_nothrow_constructible_v<T, Args...>);
+            ) noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage> && is_nothrow_constructible_v<T, Args...>);
 
 		[[rythe_always_inline]] constexpr unique_resource() noexcept = default;
 		unique_resource(const unique_resource&) = delete;

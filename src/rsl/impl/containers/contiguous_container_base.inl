@@ -79,8 +79,8 @@ namespace rsl
     template <typename T, factory_type Factory, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
               ContiguousContainerInfo>
     constexpr contiguous_container_base<T, Factory, Iter, ConstIter, ContiguousContainerInfo>::contiguous_container_base(
-            pointer<memory_allocator> allocator
-            ) noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>>)
+            allocator_storage allocator
+            ) noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage>)
         requires(can_allocate)
         : mem_rsc(allocator)
     {
@@ -106,9 +106,9 @@ namespace rsl
     template <typename T, factory_type Factory, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
               ContiguousContainerInfo>
     constexpr contiguous_container_base<T, Factory, Iter, ConstIter, ContiguousContainerInfo>::contiguous_container_base(
-            pointer<memory_allocator> allocator,
+            allocator_storage allocator,
             const factory_storage_type& factoryStorage
-            ) noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>, const factory_storage_type&>)
+            ) noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage, const factory_storage_type&>)
         requires(can_allocate)
         : mem_rsc(allocator, factoryStorage)
     {

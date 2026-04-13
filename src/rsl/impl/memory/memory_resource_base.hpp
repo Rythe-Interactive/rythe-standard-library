@@ -68,7 +68,7 @@ namespace rsl
 
         virtual ~dynamic_memory_resource_base() = default;
 
-        [[rythe_always_inline]] constexpr explicit dynamic_memory_resource_base(pointer<memory_allocator> allocator) noexcept;
+        [[rythe_always_inline]] constexpr explicit dynamic_memory_resource_base(allocator_storage allocator) noexcept;
 
         [[rythe_always_inline]] constexpr explicit dynamic_memory_resource_base(
                 const factory_storage_type& factoryStorage
@@ -76,13 +76,13 @@ namespace rsl
             noexcept(is_nothrow_constructible_v<typed_alloc_type, const factory_storage_type&>);
 
         [[rythe_always_inline]] constexpr dynamic_memory_resource_base(
-                pointer<memory_allocator> allocator,
+                allocator_storage allocator,
                 const factory_storage_type& factoryStorage
                 )
-                noexcept(is_nothrow_constructible_v<typed_alloc_type, pointer<memory_allocator>, const factory_storage_type&>);
+                noexcept(is_nothrow_constructible_v<typed_alloc_type, allocator_storage, const factory_storage_type&>);
 
         [[rythe_always_inline]] constexpr void set_allocator(
-                pointer<memory_allocator> allocator
+                allocator_storage allocator
                 )
             noexcept;
 
@@ -97,8 +97,7 @@ namespace rsl
         [[nodiscard]] [[rythe_always_inline]] constexpr factory_t& get_factory() noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr const factory_t& get_factory() const noexcept;
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr pointer<memory_allocator> get_allocator_storage() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr pointer<const memory_allocator> get_allocator_storage() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr allocator_storage get_allocator_storage() const noexcept;
 
         [[nodiscard]] [[rythe_always_inline]] constexpr factory_storage_type& get_factory_storage() noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr const factory_storage_type& get_factory_storage() const noexcept;
@@ -406,7 +405,7 @@ namespace rsl
 
         virtual ~hybrid_memory_resource_base() = default;
 
-        [[rythe_always_inline]] constexpr explicit hybrid_memory_resource_base(pointer<memory_allocator> allocator) noexcept;
+        [[rythe_always_inline]] constexpr explicit hybrid_memory_resource_base(allocator_storage allocator) noexcept;
 
         [[rythe_always_inline]] constexpr explicit hybrid_memory_resource_base(
                 const factory_storage_type& factoryStorage
@@ -414,12 +413,12 @@ namespace rsl
             noexcept(is_nothrow_constructible_v<typed_alloc_type, const factory_storage_type&>);
 
         [[rythe_always_inline]] constexpr hybrid_memory_resource_base(
-                pointer<memory_allocator> allocator,
+                allocator_storage allocator,
                 const factory_storage_type& factoryStorage
                 )
-                noexcept(is_nothrow_constructible_v<typed_alloc_type, pointer<memory_allocator>, const factory_storage_type&>);
+                noexcept(is_nothrow_constructible_v<typed_alloc_type, allocator_storage, const factory_storage_type&>);
 
-        [[rythe_always_inline]] constexpr void set_allocator(pointer<memory_allocator> allocator) noexcept;
+        [[rythe_always_inline]] constexpr void set_allocator(allocator_storage allocator) noexcept;
 
         [[nodiscard]] [[rythe_always_inline]] constexpr memory_allocator& get_allocator() noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr const memory_allocator& get_allocator() const noexcept;
@@ -432,8 +431,7 @@ namespace rsl
         [[nodiscard]] [[rythe_always_inline]] constexpr factory_t& get_factory() noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr const factory_t& get_factory() const noexcept;
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr pointer<memory_allocator> get_allocator_storage() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr pointer<const memory_allocator> get_allocator_storage() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr allocator_storage get_allocator_storage() const noexcept;
 
         [[nodiscard]] [[rythe_always_inline]] constexpr factory_storage_type& get_factory_storage() noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr const factory_storage_type& get_factory_storage() const noexcept;

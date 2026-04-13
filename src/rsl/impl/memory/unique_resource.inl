@@ -18,8 +18,8 @@ namespace rsl
         : mem_rsc() {}
 
 	template <typename T, typed_factory_type Factory>
-	constexpr unique_resource<T, Factory>::unique_resource(const pointer<memory_allocator> allocator)
-		noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>>)
+	constexpr unique_resource<T, Factory>::unique_resource(const allocator_storage allocator)
+		noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage>)
 		: mem_rsc(allocator) {}
 
 	template <typename T, typed_factory_type Factory>
@@ -29,10 +29,10 @@ namespace rsl
 
 	template <typename T, typed_factory_type Factory>
 	constexpr unique_resource<T, Factory>::unique_resource(
-	        const pointer<memory_allocator> allocator,
+	        const allocator_storage allocator,
 	        const factory_storage_type& factoryStorage
 	    )
-		noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>>)
+		noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage>)
 		: mem_rsc(allocator), m_value(factoryStorage) {}
 
     template <typename T, typed_factory_type Factory>
@@ -55,11 +55,11 @@ namespace rsl
     template <typename T, typed_factory_type Factory>
 	template <internal::unique_deleter_type<T> Deleter, typename... Args>
 	constexpr unique_resource<T, Factory>::unique_resource(
-	        const pointer<memory_allocator> allocator,
+	        const allocator_storage allocator,
 	        Deleter deleter,
 	        Args&&... args
 	    )
-		noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>> && is_nothrow_constructible_v<T, Args...>)
+		noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage> && is_nothrow_constructible_v<T, Args...>)
 		: mem_rsc(allocator)
 	{
 		arm(deleter, forward<Args>(args)...);

@@ -3,6 +3,8 @@
 
 #include "../util/concepts.hpp"
 
+#include "pointer.hpp"
+
 namespace rsl
 {
     class memory_allocator
@@ -49,6 +51,8 @@ namespace rsl
         void deallocate(void* ptr, size_type size) noexcept override;
         void deallocate(void* ptr, size_type size, size_type alignment) noexcept override;
     };
+
+    using allocator_storage = pointer<memory_allocator>;
 
 #if !defined(RSL_DEFAULT_ALLOCATOR_OVERRIDE)
     using default_allocator = heap_allocator;

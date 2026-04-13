@@ -33,13 +33,13 @@ namespace rsl
 
 		[[rythe_always_inline]] constexpr delegate() = default;
 
-		[[rythe_always_inline]] explicit constexpr delegate(pointer<memory_allocator> allocator);
+		[[rythe_always_inline]] explicit constexpr delegate(allocator_storage allocator);
 
 		template <invocable<ReturnType(ParamTypes...)> Functor>
 		[[rythe_always_inline]] constexpr delegate(const Functor& instance);
 
 		template <invocable<ReturnType(ParamTypes...)> Functor>
-		[[rythe_always_inline]] constexpr delegate(pointer<memory_allocator> allocator, const Functor& instance);
+		[[rythe_always_inline]] constexpr delegate(allocator_storage allocator, const Functor& instance);
 
 		template <functor Functor>
 			requires invocable<Functor, ReturnType(ParamTypes...)>
@@ -47,27 +47,27 @@ namespace rsl
 
 		template <functor Functor>
 			requires invocable<Functor, ReturnType(ParamTypes...)>
-		[[rythe_always_inline]] constexpr delegate(pointer<memory_allocator> allocator, const Functor& instance);
+		[[rythe_always_inline]] constexpr delegate(allocator_storage allocator, const Functor& instance);
 
 		template <typename T, ReturnType (T::*TMethod)(ParamTypes...)>
 		[[nodiscard]] [[rythe_always_inline]] constexpr static delegate create(T& instance);
 
 		template <typename T, ReturnType (T::*TMethod)(ParamTypes...)>
 		[[nodiscard]] [[rythe_always_inline]] constexpr static delegate
-		create(pointer<memory_allocator> allocator, T& instance);
+		create(allocator_storage allocator, T& instance);
 
 		template <typename T, ReturnType (T::*TMethod)(ParamTypes...) const>
 		[[nodiscard]] [[rythe_always_inline]] constexpr static delegate create(const T& instance);
 
 		template <typename T, ReturnType (T::*TMethod)(ParamTypes...) const>
 		[[nodiscard]] [[rythe_always_inline]] constexpr static delegate
-		create(pointer<memory_allocator> allocator, const T& instance);
+		create(allocator_storage allocator, const T& instance);
 
 		template <ReturnType (*TMethod)(ParamTypes...)>
 		[[nodiscard]] [[rythe_always_inline]] constexpr static delegate create();
 
 		template <ReturnType (*TMethod)(ParamTypes...)>
-		[[nodiscard]] [[rythe_always_inline]] constexpr static delegate create(pointer<memory_allocator> allocator);
+		[[nodiscard]] [[rythe_always_inline]] constexpr static delegate create(allocator_storage allocator);
 
 		template <functor Functor>
 			requires invocable<Functor, ReturnType(ParamTypes...)>
@@ -76,10 +76,10 @@ namespace rsl
 		template <functor Functor>
 			requires invocable<Functor, ReturnType(ParamTypes...)>
 		[[nodiscard]] [[rythe_always_inline]] constexpr static delegate
-		create(pointer<memory_allocator> allocator, const Functor& instance);
+		create(allocator_storage allocator, const Functor& instance);
 
-		[[rythe_always_inline]] constexpr void set_allocator(pointer<memory_allocator> allocator)
-			noexcept(is_nothrow_copy_assignable_v<pointer<memory_allocator>>);
+		[[rythe_always_inline]] constexpr void set_allocator(allocator_storage allocator)
+			noexcept(is_nothrow_copy_assignable_v<allocator_storage>);
 
 		[[nodiscard]] [[rythe_always_inline]] constexpr memory_allocator& get_allocator() noexcept;
 		[[nodiscard]] [[rythe_always_inline]] constexpr const memory_allocator& get_allocator() const noexcept;
@@ -115,9 +115,9 @@ namespace rsl
 		[[rythe_always_inline]] constexpr ReturnType invoke(ParamTypes... args) const;
 
 	private:
-		[[rythe_always_inline]] constexpr delegate(pointer<memory_allocator> allocator, invocation_element&& e);
+		[[rythe_always_inline]] constexpr delegate(allocator_storage allocator, invocation_element&& e);
 
-		pointer<memory_allocator> m_alloc;
+		allocator_storage m_alloc;
 		invocation_element m_invocation;
 	};
 } // namespace rsl

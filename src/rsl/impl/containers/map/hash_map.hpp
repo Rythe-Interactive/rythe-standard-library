@@ -57,9 +57,9 @@ namespace rsl
 		using bucket_container = dynamic_array<bucket_type, bucket_factory_t>;
 
 		constexpr static bool nothrow_constructible_alloc =
-			is_nothrow_constructible_v<data_pool, pointer<memory_allocator>> &&
-			is_nothrow_constructible_v<value_container, pointer<memory_allocator>> &&
-			is_nothrow_constructible_v<bucket_container, pointer<memory_allocator>>;
+			is_nothrow_constructible_v<data_pool, allocator_storage> &&
+			is_nothrow_constructible_v<value_container, allocator_storage> &&
+			is_nothrow_constructible_v<bucket_container, allocator_storage>;
 
 		constexpr static bool nothrow_constructible_fact =
 			is_nothrow_constructible_v<value_container, const factory_storage_type&> &&
@@ -91,14 +91,14 @@ namespace rsl
 		[[rythe_always_inline]] explicit constexpr hash_map_base(const key_comparer_type& equal)
 			noexcept(MapInfo::nothrow_comparer_copy_constructible);
 
-		[[rythe_always_inline]] explicit constexpr hash_map_base(pointer<memory_allocator> allocator)
+		[[rythe_always_inline]] explicit constexpr hash_map_base(allocator_storage allocator)
 			noexcept(nothrow_constructible_alloc);
 
 		[[rythe_always_inline]] explicit constexpr hash_map_base(const factory_storage_type& factoryStorage)
 			noexcept(nothrow_constructible_fact);
 
 		[[rythe_always_inline]] constexpr hash_map_base(
-			pointer<memory_allocator> allocator,
+			allocator_storage allocator,
 			const factory_storage_type& factoryStorage
 		) noexcept(nothrow_constructible_alloc_fact);
 
@@ -262,7 +262,7 @@ namespace rsl
 
 		hasher_type m_hasher;
 		key_comparer_type m_keyComparer;
-		pointer<memory_allocator> m_alloc;
+		allocator_storage m_alloc;
 		factory_storage_type m_factory;
 		data_pool m_memoryPool;
 	};

@@ -11,9 +11,9 @@ namespace rsl
 
     template <typename T, statically_optional_typed_factory_type Factory>
     unique_object<T, Factory>::unique_object(
-            pointer<memory_allocator> allocator
+            allocator_storage allocator
             )
-        noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>>)
+        noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage>)
         : unique_rsc(allocator), m_factory() {}
 
     template <typename T, statically_optional_typed_factory_type Factory>
@@ -25,10 +25,10 @@ namespace rsl
 
     template <typename T, statically_optional_typed_factory_type Factory>
     unique_object<T, Factory>::unique_object(
-            pointer<memory_allocator> allocator,
+            allocator_storage allocator,
             const factory_storage_type& factoryStorage
             )
-        noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>>)
+        noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage>)
         : unique_rsc(allocator), m_factory(factoryStorage) {}
 
     template <typename T, statically_optional_typed_factory_type Factory>
@@ -47,10 +47,10 @@ namespace rsl
     template <typename T, statically_optional_typed_factory_type Factory>
     template <typename... Args>
     unique_object<T, Factory> unique_object<T, Factory>::create_in_place_with_allocator(
-            pointer<memory_allocator> allocator,
+            allocator_storage allocator,
             Args&&... args
             )
-        noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>> && is_nothrow_constructible_v<
+        noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage> && is_nothrow_constructible_v<
             T, Args...>)
     {
         unique_object ret(allocator);
@@ -61,11 +61,11 @@ namespace rsl
     template <typename T, statically_optional_typed_factory_type Factory>
     template <typename... Args>
     unique_object<T, Factory> unique_object<T, Factory>::create_in_place_alloc_factory(
-            pointer<memory_allocator> allocator,
+            allocator_storage allocator,
             const factory_storage_type& factoryStorage,
             Args&&... args
             )
-        noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>> && is_nothrow_constructible_v<T, Args...>)
+        noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage> && is_nothrow_constructible_v<T, Args...>)
     {
         unique_object ret(allocator, factoryStorage);
         ret.arm(forward<Args>(args)...);

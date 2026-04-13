@@ -75,7 +75,7 @@ namespace rsl
 
         struct native_thread_context
         {
-            pointer<memory_allocator> allocator;
+            allocator_storage allocator;
             dynamic_string name;
             platform::native_thread_start function;
             void* userData;
@@ -84,7 +84,7 @@ namespace rsl
         DWORD internal_native_thread_start(void* args)
         {
             native_thread_context& context = *static_cast<native_thread_context*>(args);
-            pointer<memory_allocator> allocator = context.allocator;
+            allocator_storage allocator = context.allocator;
 
             current_thread::set_name(context.name);
 
@@ -297,7 +297,7 @@ namespace rsl
             const native_thread_start startFunction,
             void* userData,
             const string_view name,
-            pointer<memory_allocator> allocator
+            allocator_storage allocator
             )
     {
         rsl_assert_always(startFunction);

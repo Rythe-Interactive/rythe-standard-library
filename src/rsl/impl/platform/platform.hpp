@@ -33,7 +33,7 @@ namespace rsl
                 native_thread_start startFunction,
                 void* userData = nullptr,
                 string_view name = "unknown thread"_sv,
-                pointer<memory_allocator> allocator = allocator_context::globalAllocator
+                allocator_storage allocator = allocator_context::globalAllocator
                 );
         static uint32 destroy_thread(thread thread);
 

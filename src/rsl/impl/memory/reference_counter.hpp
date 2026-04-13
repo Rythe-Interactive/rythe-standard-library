@@ -67,15 +67,15 @@ namespace rsl
 		[[rythe_always_inline]] constexpr basic_reference_counter& operator=(basic_reference_counter&& other) noexcept;
 		[[rythe_always_inline]] constexpr ~basic_reference_counter() noexcept;
 
-		[[rythe_always_inline]] explicit basic_reference_counter(pointer<memory_allocator> allocator)
-			noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>>);
+		[[rythe_always_inline]] explicit basic_reference_counter(allocator_storage allocator)
+			noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage>);
 
 		[[rythe_always_inline]] explicit basic_reference_counter(const factory_storage_type& factoryStorage)
 			noexcept(is_nothrow_constructible_v<mem_rsc, const factory_storage_type&>);
 
 		[[rythe_always_inline]] basic_reference_counter(
-			pointer<memory_allocator> allocator, const factory_storage_type& factoryStorage
-		) noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>, const factory_storage_type&>);
+			allocator_storage allocator, const factory_storage_type& factoryStorage
+		) noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage, const factory_storage_type&>);
 
 		[[rythe_always_inline]] constexpr void arm() noexcept;
 		[[rythe_always_inline]] void disarm() noexcept;

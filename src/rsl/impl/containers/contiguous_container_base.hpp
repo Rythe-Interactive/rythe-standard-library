@@ -91,19 +91,19 @@ namespace rsl
         constexpr virtual ~contiguous_container_base();
 
         [[rythe_always_inline]] explicit constexpr contiguous_container_base(
-                pointer<memory_allocator> allocator
+                allocator_storage allocator
                 )
-            noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>>)
+            noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage>)
             requires(can_allocate);
         [[rythe_always_inline]] explicit constexpr contiguous_container_base(
                 const factory_storage_type& factoryStorage
                 )
             noexcept(is_nothrow_constructible_v<mem_rsc, const factory_storage_type&>);
         [[rythe_always_inline]] constexpr contiguous_container_base(
-                pointer<memory_allocator> allocator,
+                allocator_storage allocator,
                 const factory_storage_type& factoryStorage
                 )
-            noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>, const factory_storage_type&>)
+            noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage, const factory_storage_type&>)
             requires(can_allocate);
 
         [[nodiscard]] [[rythe_always_inline]] constexpr static contiguous_container_base from_value(value_type& src) noexcept;

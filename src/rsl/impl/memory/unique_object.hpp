@@ -15,27 +15,27 @@ namespace rsl
         [[rythe_always_inline]] constexpr unique_object(nullptr_type)
             noexcept(is_nothrow_constructible_v<mem_rsc>);
 
-        [[rythe_always_inline]] explicit unique_object(pointer<memory_allocator> allocator)
-            noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>>);
+        [[rythe_always_inline]] explicit unique_object(allocator_storage allocator)
+            noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage>);
 
         [[rythe_always_inline]] explicit unique_object(const factory_storage_type& factoryStorage)
             noexcept(is_nothrow_constructible_v<mem_rsc>);
 
-        [[rythe_always_inline]] explicit unique_object(pointer<memory_allocator> allocator, const factory_storage_type& factoryStorage)
-            noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>>);
+        [[rythe_always_inline]] explicit unique_object(allocator_storage allocator, const factory_storage_type& factoryStorage)
+            noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage>);
 
         template <typename... Args>
         [[rythe_always_inline]] constexpr static unique_object create_in_place(Args&&... args)
             noexcept(is_nothrow_constructible_v<mem_rsc> && is_nothrow_constructible_v<T, Args...>);
 
         template <typename... Args>
-        [[rythe_always_inline]] static unique_object create_in_place_with_allocator(pointer<memory_allocator> allocator, Args&&... args)
-            noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>> &&
+        [[rythe_always_inline]] static unique_object create_in_place_with_allocator(allocator_storage allocator, Args&&... args)
+            noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage> &&
             is_nothrow_constructible_v<T, Args...>);
 
         template <typename... Args>
-        [[rythe_always_inline]] static unique_object create_in_place_alloc_factory(pointer<memory_allocator> allocator, const factory_storage_type& factoryStorage, Args&&... args)
-            noexcept(is_nothrow_constructible_v<mem_rsc, pointer<memory_allocator>> &&
+        [[rythe_always_inline]] static unique_object create_in_place_alloc_factory(allocator_storage allocator, const factory_storage_type& factoryStorage, Args&&... args)
+            noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage> &&
                 is_nothrow_constructible_v<T, Args...>);
 
         [[rythe_always_inline]] constexpr unique_object() noexcept = default;
@@ -97,7 +97,7 @@ namespace rsl
         struct deleter
         {
             factory_storage_type factory;
-            pointer<memory_allocator> allocator;
+            allocator_storage allocator;
             void operator()(T* mem) noexcept;
 
             operator bool() const noexcept { return factory && allocator; }

@@ -5,7 +5,7 @@ namespace rsl
 {
 	template <typename ReturnType, typename... ParamTypes, untyped_factory_type Factory>
     constexpr delegate<ReturnType(ParamTypes...), Factory>::delegate(
-		const pointer<memory_allocator> allocator
+		const allocator_storage allocator
 	)
 		: m_alloc(allocator),
 		  m_invocation()
@@ -23,7 +23,7 @@ namespace rsl
 	template <typename ReturnType, typename... ParamTypes, untyped_factory_type Factory>
 	template <invocable<ReturnType(ParamTypes...)> Functor>
     constexpr delegate<ReturnType(ParamTypes...), Factory>::delegate(
-		const pointer<memory_allocator> allocator, const Functor& instance
+		const allocator_storage allocator, const Functor& instance
 	)
 		: m_alloc(allocator),
 		  m_invocation(base::template create_element<Functor>(m_alloc, instance))
@@ -43,7 +43,7 @@ namespace rsl
 	template <functor Functor>
 		requires invocable<Functor, ReturnType(ParamTypes...)>
     constexpr delegate<ReturnType(ParamTypes...), Factory>::delegate(
-		const pointer<memory_allocator> allocator, const Functor& instance
+		const allocator_storage allocator, const Functor& instance
 	)
 		: m_alloc(allocator),
 		  m_invocation(base::template create_element<Functor>(m_alloc, instance))
@@ -61,7 +61,7 @@ namespace rsl
 	template <typename ReturnType, typename... ParamTypes, untyped_factory_type Factory>
 	template <typename T, ReturnType (T::*TMethod)(ParamTypes...)>
     constexpr delegate<ReturnType(ParamTypes...), Factory>
-	delegate<ReturnType(ParamTypes...), Factory>::create(pointer<memory_allocator> allocator, T& instance)
+	delegate<ReturnType(ParamTypes...), Factory>::create(allocator_storage allocator, T& instance)
 	{
 		return delegate(base::template create_element<T, TMethod>(allocator, instance));
 	}
@@ -77,7 +77,7 @@ namespace rsl
 	template <typename ReturnType, typename... ParamTypes, untyped_factory_type Factory>
 	template <typename T, ReturnType (T::*TMethod)(ParamTypes...) const>
     constexpr delegate<ReturnType(ParamTypes...), Factory>
-	delegate<ReturnType(ParamTypes...), Factory>::create(pointer<memory_allocator> allocator, const T& instance)
+	delegate<ReturnType(ParamTypes...), Factory>::create(allocator_storage allocator, const T& instance)
 	{
 		return delegate(base::template create_element<T, TMethod>(allocator, instance));
 	}
@@ -93,7 +93,7 @@ namespace rsl
 	template <typename ReturnType, typename... ParamTypes, untyped_factory_type Factory>
 	template <ReturnType (*TMethod)(ParamTypes...)>
     constexpr delegate<ReturnType(ParamTypes...), Factory>
-	delegate<ReturnType(ParamTypes...), Factory>::create(pointer<memory_allocator> allocator)
+	delegate<ReturnType(ParamTypes...), Factory>::create(allocator_storage allocator)
 	{
 		return delegate(base::template create_element<TMethod>(allocator));
 	}
@@ -112,7 +112,7 @@ namespace rsl
 		requires invocable<Functor, ReturnType(ParamTypes...)>
     constexpr delegate<ReturnType(ParamTypes...), Factory>
 	delegate<ReturnType(ParamTypes...), Factory>::create(
-		pointer<memory_allocator> allocator, const Functor& instance
+		allocator_storage allocator, const Functor& instance
 	)
 	{
 		return delegate(base::template create_element<Functor>(allocator, instance));
@@ -120,8 +120,8 @@ namespace rsl
 
 	template <typename ReturnType, typename... ParamTypes, untyped_factory_type Factory>
     constexpr void
-	delegate<ReturnType(ParamTypes...), Factory>::set_allocator(const pointer<memory_allocator> allocator)
-		noexcept(is_nothrow_copy_assignable_v<pointer<memory_allocator>>)
+	delegate<ReturnType(ParamTypes...), Factory>::set_allocator(const allocator_storage allocator)
+		noexcept(is_nothrow_copy_assignable_v<allocator_storage>)
 	{
 		m_alloc = allocator;
 	}
@@ -231,7 +231,7 @@ namespace rsl
 
 	template <typename ReturnType, typename... ParamTypes, untyped_factory_type Factory>
     constexpr delegate<ReturnType(ParamTypes...), Factory>::delegate(
-		const pointer<memory_allocator> allocator, invocation_element&& e
+		const allocator_storage allocator, invocation_element&& e
 	)
 		: m_alloc(allocator),
 		  m_invocation(e)

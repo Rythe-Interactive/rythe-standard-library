@@ -22,7 +22,7 @@ namespace rsl
 
 		constexpr basic_type_map() = default;
 
-		explicit constexpr basic_type_map(pointer<memory_allocator> allocator)
+		explicit constexpr basic_type_map(allocator_storage allocator)
 			noexcept
 			: m_allocator(allocator),
 			  m_storage(allocator) {}

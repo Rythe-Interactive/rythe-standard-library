@@ -4,10 +4,10 @@ namespace rsl
 {
 	template <typename ReturnType, typename... ParamTypes, untyped_factory_type Factory>
     constexpr delegate_base<ReturnType(ParamTypes...), Factory>::invocation_element::invocation_element(
-		pointer<memory_allocator> allocator, void* object, const stub_type stub, const id_type id, deleter_type deleter
+		allocator_storage allocator, void* object, const stub_type stub, const id_type id, deleter_type deleter
 	)
 		noexcept(is_nothrow_constructible_v<
-				 managed_resource<void*, Factory>, pointer<memory_allocator>, deleter_type, void*>)
+				 managed_resource<void*, Factory>, allocator_storage, deleter_type, void*>)
 		: object(allocator, deleter ? deleter : default_deleter, object),
 		  ownsData(deleter != nullptr),
 		  stub(stub),
@@ -111,7 +111,7 @@ namespace rsl
 	template <typename T, ReturnType (T::*TMethod)(ParamTypes...)>
     delegate_base<ReturnType(ParamTypes...), Factory>::invocation_element
 	delegate_base<ReturnType(ParamTypes...), Factory>::create_element(
-		pointer<memory_allocator> allocator, T& instance
+		allocator_storage allocator, T& instance
 	)
 	{
 		return invocation_element(allocator, &instance, method_stub<T, TMethod>, method_id<T, TMethod>(instance));
@@ -121,7 +121,7 @@ namespace rsl
 	template <typename T, ReturnType (T::*TMethod)(ParamTypes...) const>
     delegate_base<ReturnType(ParamTypes...), Factory>::invocation_element
 	delegate_base<ReturnType(ParamTypes...), Factory>::create_element(
-		pointer<memory_allocator> allocator, const T& instance
+		allocator_storage allocator, const T& instance
 	)
 	{
 		return invocation_element(
@@ -132,7 +132,7 @@ namespace rsl
 	template <typename ReturnType, typename... ParamTypes, untyped_factory_type Factory>
 	template <ReturnType (*TMethod)(ParamTypes...)>
     delegate_base<ReturnType(ParamTypes...), Factory>::invocation_element
-	delegate_base<ReturnType(ParamTypes...), Factory>::create_element(pointer<memory_allocator> allocator)
+	delegate_base<ReturnType(ParamTypes...), Factory>::create_element(allocator_storage allocator)
 	{
 		return invocation_element(allocator, nullptr, function_stub<TMethod>, function_id<TMethod>());
 	}
@@ -141,7 +141,7 @@ namespace rsl
 	template <invocable<ReturnType(ParamTypes...)> Functor>
     delegate_base<ReturnType(ParamTypes...), Factory>::invocation_element
 	delegate_base<ReturnType(ParamTypes...), Factory>::create_element(
-		pointer<memory_allocator> allocator, const Functor& instance
+		allocator_storage allocator, const Functor& instance
 	)
 	{
 		if constexpr (!is_functor_v<Functor>)

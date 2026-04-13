@@ -325,7 +325,7 @@ namespace rsl
     template <typename T>
     type_erased_allocator<
         Factory>::type_erased_allocator(
-            pointer<memory_allocator> baseAllocator,
+            allocator_storage baseAllocator,
             construct_type_signal_type<T>
             )
         noexcept(is_nothrow_constructible_v<factory_t, construct_type_signal_type<T>> && is_nothrow_constructible_v<factory_storage_type, factory_t&&>)
@@ -342,7 +342,7 @@ namespace rsl
 
     template <untyped_factory_type Factory>
     type_erased_allocator<Factory>::type_erased_allocator(
-            pointer<memory_allocator> baseAllocator,
+            allocator_storage baseAllocator,
             const factory_storage_type& factoryStorage
             ) noexcept(is_nothrow_copy_constructible_v<factory_storage_type>
     )
@@ -351,7 +351,7 @@ namespace rsl
     {}
 
     template <untyped_factory_type Factory>
-    constexpr void type_erased_allocator<Factory>::set_allocator(pointer<memory_allocator> baseAllocator) noexcept
+    constexpr void type_erased_allocator<Factory>::set_allocator(allocator_storage baseAllocator) noexcept
     {
         m_alloc = baseAllocator;
     }
@@ -369,13 +369,7 @@ namespace rsl
     }
 
     template <untyped_factory_type Factory>
-    constexpr pointer<memory_allocator> type_erased_allocator<Factory>::get_allocator_storage() noexcept
-    {
-        return m_alloc;
-    }
-
-    template <untyped_factory_type Factory>
-    constexpr pointer<const memory_allocator> type_erased_allocator<Factory>::get_allocator_storage() const noexcept
+    constexpr allocator_storage type_erased_allocator<Factory>::get_allocator_storage() const noexcept
     {
         return m_alloc;
     }

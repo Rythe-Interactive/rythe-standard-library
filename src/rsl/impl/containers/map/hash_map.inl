@@ -66,7 +66,7 @@ namespace rsl
 
     template <typename MapInfo>
     constexpr hash_map_base<MapInfo>::hash_map_base(
-            pointer<memory_allocator> allocator
+            allocator_storage allocator
             )
         noexcept(nothrow_constructible_alloc)
         : m_values(allocator),
@@ -98,7 +98,7 @@ namespace rsl
 
     template <typename MapInfo>
     constexpr hash_map_base<MapInfo>::hash_map_base(
-            pointer<memory_allocator> allocator,
+            allocator_storage allocator,
             const factory_storage_type& factoryStorage
             ) noexcept(nothrow_constructible_alloc_fact)
         : m_values(allocator, factoryStorage),

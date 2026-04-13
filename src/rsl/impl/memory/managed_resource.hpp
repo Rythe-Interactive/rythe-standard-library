@@ -41,8 +41,8 @@ namespace rsl
 		[[rythe_always_inline]] constexpr managed_resource(nullptr_type)
 			noexcept(is_nothrow_constructible_v<ref_counter>);
 
-		[[rythe_always_inline]] explicit managed_resource(pointer<memory_allocator> allocator)
-			noexcept(is_nothrow_constructible_v<ref_counter, pointer<memory_allocator>>);
+		[[rythe_always_inline]] explicit managed_resource(allocator_storage allocator)
+			noexcept(is_nothrow_constructible_v<ref_counter, allocator_storage>);
 
 		template <internal::managed_deleter_type<T> Deleter, typename... Args>
 		[[rythe_always_inline]] constexpr explicit managed_resource(Deleter deleter, Args&&... args)
@@ -50,8 +50,8 @@ namespace rsl
 
 		template <internal::managed_deleter_type<T> Deleter, typename... Args>
 		[[rythe_always_inline]] managed_resource(
-			pointer<memory_allocator> allocator, Deleter deleter, Args&&... args
-		) noexcept(is_nothrow_constructible_v<ref_counter, pointer<memory_allocator>> && is_nothrow_constructible_v<T, Args...>);
+			allocator_storage allocator, Deleter deleter, Args&&... args
+		) noexcept(is_nothrow_constructible_v<ref_counter, allocator_storage> && is_nothrow_constructible_v<T, Args...>);
 
 		[[rythe_always_inline]] constexpr managed_resource() noexcept = default;
 

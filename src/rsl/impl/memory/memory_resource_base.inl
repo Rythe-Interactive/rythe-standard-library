@@ -17,7 +17,7 @@ namespace rsl
         : m_alloc(rsl::move(other.m_alloc)) {}
 
     template <factory_type Factory, typename UtilType, bool Untyped>
-    constexpr dynamic_memory_resource_base<Factory, UtilType, Untyped>::dynamic_memory_resource_base(pointer<memory_allocator> allocator) noexcept
+    constexpr dynamic_memory_resource_base<Factory, UtilType, Untyped>::dynamic_memory_resource_base(allocator_storage allocator) noexcept
         : m_alloc(allocator, construct_type_signal<UtilType>)
     {}
 
@@ -30,15 +30,15 @@ namespace rsl
 
     template <factory_type Factory, typename UtilType, bool Untyped>
     constexpr dynamic_memory_resource_base<Factory, UtilType, Untyped>::dynamic_memory_resource_base(
-            pointer<memory_allocator> allocator,
+            allocator_storage allocator,
             const factory_storage_type& factoryStorage
             )
-        noexcept(is_nothrow_constructible_v<typed_alloc_type, pointer<memory_allocator>, const factory_storage_type&>)
+        noexcept(is_nothrow_constructible_v<typed_alloc_type, allocator_storage, const factory_storage_type&>)
         : m_alloc(allocator, factoryStorage) {}
 
     template <factory_type Factory, typename UtilType, bool Untyped>
     constexpr void
-            dynamic_memory_resource_base<Factory, UtilType, Untyped>::set_allocator(pointer<memory_allocator> allocator) noexcept
+            dynamic_memory_resource_base<Factory, UtilType, Untyped>::set_allocator(allocator_storage allocator) noexcept
     {
         m_alloc.set_allocator(allocator);
     }
@@ -75,14 +75,7 @@ namespace rsl
     }
 
     template <factory_type Factory, typename UtilType, bool Untyped>
-    constexpr pointer<memory_allocator>
-    dynamic_memory_resource_base<Factory, UtilType, Untyped>::get_allocator_storage() noexcept
-    {
-        return m_alloc.get_allocator_storage();
-    }
-
-    template <factory_type Factory, typename UtilType, bool Untyped>
-    constexpr pointer<const memory_allocator>
+    constexpr allocator_storage
     dynamic_memory_resource_base<Factory, UtilType, Untyped>::get_allocator_storage() const noexcept
     {
         return m_alloc.get_allocator_storage();
@@ -523,7 +516,7 @@ namespace rsl
 
     template <size_type BufferSize, factory_type Factory, typename UtilType, bool Untyped>
     constexpr hybrid_memory_resource_base<BufferSize, Factory, UtilType, Untyped>::hybrid_memory_resource_base(
-            pointer<memory_allocator> allocator
+            allocator_storage allocator
             ) noexcept : m_alloc(allocator) {}
 
     template <size_type BufferSize, factory_type Factory, typename UtilType, bool Untyped>
@@ -533,14 +526,14 @@ namespace rsl
 
     template <size_type BufferSize, factory_type Factory, typename UtilType, bool Untyped>
     constexpr hybrid_memory_resource_base<BufferSize, Factory, UtilType, Untyped>::hybrid_memory_resource_base(
-            pointer<memory_allocator> allocator,
+            allocator_storage allocator,
             const factory_storage_type& factoryStorage
-            ) noexcept(is_nothrow_constructible_v<typed_alloc_type, pointer<memory_allocator>, const factory_storage_type&>)
+            ) noexcept(is_nothrow_constructible_v<typed_alloc_type, allocator_storage, const factory_storage_type&>)
         : m_alloc(allocator, factoryStorage) {}
 
     template <size_type BufferSize, factory_type Factory, typename UtilType, bool Untyped>
     constexpr void hybrid_memory_resource_base<BufferSize, Factory, UtilType, Untyped>::set_allocator(
-            pointer<memory_allocator> allocator
+            allocator_storage allocator
             ) noexcept
     {
         m_alloc.set_allocator(allocator);
@@ -583,14 +576,7 @@ namespace rsl
     }
 
     template <size_type BufferSize, factory_type Factory, typename UtilType, bool Untyped>
-    constexpr pointer<memory_allocator>
-    hybrid_memory_resource_base<BufferSize, Factory, UtilType, Untyped>::get_allocator_storage() noexcept
-    {
-        return m_alloc.get_allocator_storage();
-    }
-
-    template <size_type BufferSize, factory_type Factory, typename UtilType, bool Untyped>
-    constexpr pointer<const memory_allocator>
+    constexpr allocator_storage
     hybrid_memory_resource_base<BufferSize, Factory, UtilType, Untyped>::get_allocator_storage() const noexcept
     {
         return m_alloc.get_allocator_storage();
