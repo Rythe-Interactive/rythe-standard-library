@@ -6,6 +6,9 @@
 
 #define RYTHE_CONCAT(A, B) _RYTHE_CONCAT_IMPL_(A, B)
 
+#define _RYTHE_NARGS_IMPL_(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, N, ...) N
+#define RYTHE_NARGS(...) RYTHE_EXPAND(_RYTHE_NARGS_IMPL_(__VA_ARGS__, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1))
+
 #define RYTHE_ANONYMOUS_NAME(x) RYTHE_CONCAT(x, __LINE__)
 
 #define RYTHE_ANON_VAR(Type, Category) inline static Type RYTHE_EXPAND(RYTHE_ANONYMOUS_NAME(Category))
@@ -295,6 +298,47 @@ namespace rsl
 
 #pragma region /////////////////////////////////////// Attributes ///////////////////////////////////////
 
+#if defined(RSL_REFLECTION_PARSE)
+    #define _RYTHE_SPLIT_ATTR_IMPL_1(x) \
+        clang::annotate(#x)
+    #define _RYTHE_SPLIT_ATTR_IMPL_2(x, x2) \
+        clang::annotate(#x), clang::annotate(#x2)
+    #define _RYTHE_SPLIT_ATTR_IMPL_3(x, x2, x3) \
+        clang::annotate(#x), clang::annotate(#x2), clang::annotate(#x3)
+    #define _RYTHE_SPLIT_ATTR_IMPL_4(x, x2, x3, x4) \
+        clang::annotate(#x), clang::annotate(#x2), clang::annotate(#x3), clang::annotate(#x4)
+    #define _RYTHE_SPLIT_ATTR_IMPL_5(x, x2, x3, x4, x5) \
+        clang::annotate(#x), clang::annotate(#x2), clang::annotate(#x3), clang::annotate(#x4), clang::annotate(#x5)
+    #define _RYTHE_SPLIT_ATTR_IMPL_6(x, x2, x3, x4, x5, x6) \
+        clang::annotate(#x), clang::annotate(#x2), clang::annotate(#x3), clang::annotate(#x4), clang::annotate(#x5), clang::annotate(#x6)
+    #define _RYTHE_SPLIT_ATTR_IMPL_7(x, x2, x3, x4, x5, x6, x7) \
+        clang::annotate(#x), clang::annotate(#x2), clang::annotate(#x3), clang::annotate(#x4), clang::annotate(#x5), clang::annotate(#x6), clang::annotate(#x7)
+    #define _RYTHE_SPLIT_ATTR_IMPL_8(x, x2, x3, x4, x5, x6, x7, x8) \
+        clang::annotate(#x), clang::annotate(#x2), clang::annotate(#x3), clang::annotate(#x4), clang::annotate(#x5), clang::annotate(#x6), clang::annotate(#x7), clang::annotate(#x8)
+    #define _RYTHE_SPLIT_ATTR_IMPL_9(x, x2, x3, x4, x5, x6, x7, x8, x9) \
+        clang::annotate(#x), clang::annotate(#x2), clang::annotate(#x3), clang::annotate(#x4), clang::annotate(#x5), clang::annotate(#x6), clang::annotate(#x7), clang::annotate(#x8), clang::annotate(#x9)
+    #define _RYTHE_SPLIT_ATTR_IMPL_10(x, x2, x3, x4, x5, x6, x7, x8, x9, x10) \
+        clang::annotate(#x), clang::annotate(#x2), clang::annotate(#x3), clang::annotate(#x4), clang::annotate(#x5), clang::annotate(#x6), clang::annotate(#x7), clang::annotate(#x8), clang::annotate(#x9), clang::annotate(#x10)
+    #define _RYTHE_SPLIT_ATTR_IMPL_11(x, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11) \
+        clang::annotate(#x), clang::annotate(#x2), clang::annotate(#x3), clang::annotate(#x4), clang::annotate(#x5), clang::annotate(#x6), clang::annotate(#x7), clang::annotate(#x8), clang::annotate(#x9), clang::annotate(#x10), clang::annotate(#x11)
+    #define _RYTHE_SPLIT_ATTR_IMPL_12(x, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12) \
+        clang::annotate(#x), clang::annotate(#x2), clang::annotate(#x3), clang::annotate(#x4), clang::annotate(#x5), clang::annotate(#x6), clang::annotate(#x7), clang::annotate(#x8), clang::annotate(#x9), clang::annotate(#x10), clang::annotate(#x11), clang::annotate(#x12)
+    #define _RYTHE_SPLIT_ATTR_IMPL_13(x, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13) \
+        clang::annotate(#x), clang::annotate(#x2), clang::annotate(#x3), clang::annotate(#x4), clang::annotate(#x5), clang::annotate(#x6), clang::annotate(#x7), clang::annotate(#x8), clang::annotate(#x9), clang::annotate(#x10), clang::annotate(#x11), clang::annotate(#x12), clang::annotate(#x13)
+    #define _RYTHE_SPLIT_ATTR_IMPL_14(x, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14) \
+        clang::annotate(#x), clang::annotate(#x2), clang::annotate(#x3), clang::annotate(#x4), clang::annotate(#x5), clang::annotate(#x6), clang::annotate(#x7), clang::annotate(#x8), clang::annotate(#x9), clang::annotate(#x10), clang::annotate(#x11), clang::annotate(#x12), clang::annotate(#x13), clang::annotate(#x14)
+    #define _RYTHE_SPLIT_ATTR_IMPL_15(x, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15) \
+        clang::annotate(#x), clang::annotate(#x2), clang::annotate(#x3), clang::annotate(#x4), clang::annotate(#x5), clang::annotate(#x6), clang::annotate(#x7), clang::annotate(#x8), clang::annotate(#x9), clang::annotate(#x10), clang::annotate(#x11), clang::annotate(#x12), clang::annotate(#x13), clang::annotate(#x14), clang::annotate(#x15)
+    #define _RYTHE_SPLIT_ATTR_IMPL_16(x, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16) \
+        clang::annotate(#x), clang::annotate(#x2), clang::annotate(#x3), clang::annotate(#x4), clang::annotate(#x5), clang::annotate(#x6), clang::annotate(#x7), clang::annotate(#x8), clang::annotate(#x9), clang::annotate(#x10), clang::annotate(#x11), clang::annotate(#x12), clang::annotate(#x13), clang::annotate(#x14), clang::annotate(#x15), clang::annotate(#x16)
+
+    #define _RYTHE_SPLIT_ATTR_IMPL(...) RYTHE_EXPAND(RYTHE_CONCAT(_RYTHE_SPLIT_ATTR_IMPL_, RYTHE_NARGS(__VA_ARGS__))(__VA_ARGS__))
+
+    #define rsl_reflect(...) clang::annotate("rsl_reflect_attr"), RYTHE_EXPAND(_RYTHE_SPLIT_ATTR_IMPL(__VA_ARGS__))
+#else
+    #define rsl_reflect(...)
+#endif
+
 #if defined(RYTHE_DISABLE_ALWAYS_INLINE)
     #define rythe_always_inline
 #else
@@ -355,39 +399,39 @@ namespace rsl
 
 #pragma region /////////////////////////////////////// Utilities ////////////////////////////////////////
 
-#define DECLARE_OPAQUE_HANDLE(name)                                                                                                   \
+#define RYTHE_DECLARE_OPAQUE_HANDLE(name)                                                                                             \
     enum struct [[rythe_open_enum]] name : rsl::ptr_type                                                                              \
     {                                                                                                                                 \
         invalid = 0                                                                                                                   \
     };                                                                                                                                \
     [[maybe_unused]] constexpr name invalid_##name = name::invalid;
 
-#define DECLARE_OPAQUE_HANDLE_INVALID_VALUE(name, invalidValue)                                                                       \
+#define RYTHE_DECLARE_OPAQUE_HANDLE_INVALID_VALUE(name, invalidValue)                                                                 \
     enum struct [[rythe_open_enum]] name : rsl::ptr_type                                                                              \
     {                                                                                                                                 \
         invalid = invalidValue                                                                                                        \
     };                                                                                                                                \
     [[maybe_unused]] constexpr name invalid_##name = name::invalid;
 
-#define DECLARE_OPAQUE_HANDLE_UNDERLYING_TYPE_INVALID_VALUE(name, underlyingType, invalidValue)                                       \
+#define RYTHE_DECLARE_OPAQUE_HANDLE_UNDERLYING_TYPE_INVALID_VALUE(name, underlyingType, invalidValue)                                 \
     enum struct [[rythe_open_enum]] name : underlyingType                                                                             \
     {                                                                                                                                 \
         invalid = invalidValue                                                                                                        \
     };                                                                                                                                \
     [[maybe_unused]] constexpr name invalid_##name = name::invalid;
 
-#define DECLARE_NATIVE_API_TYPE(type)                                                                                                 \
+#define RYTHE_DECLARE_NATIVE_API_TYPE(type)                                                                                           \
     DECLARE_OPAQUE_HANDLE(native_##type);                                                                                             \
     class type;                                                                                                                       \
     [[maybe_unused]] [[rythe_always_inline]] static void set_native_handle_impl(type&, native_##type) noexcept;                       \
     [[maybe_unused]] [[rythe_always_inline]] static native_##type get_native_handle_impl(const type&) noexcept;
 
-#define NATIVE_API_TYPE_PRIVATE_MEMBERS(type)                                                                                         \
+#define RYTHE_NATIVE_API_TYPE_PRIVATE_MEMBERS(type)                                                                                   \
     friend void set_native_handle_impl(type&, native_##type) noexcept;                                                                \
     friend native_##type get_native_handle_impl(const type&) noexcept;                                                                \
     native_##type m_handle = native_##type::invalid;
 
-#define NATIVE_API_TYPE_ACCESSORS(type, underlyingType)                                                                               \
+#define RYTHE_NATIVE_API_TYPE_ACCESSORS(type, underlyingType)                                                                         \
     [[maybe_unused]] [[rythe_always_inline]] static void set_native_handle_impl(type& val, native_##type handle) noexcept             \
     {                                                                                                                                 \
         val.m_handle = handle;                                                                                                        \
@@ -405,8 +449,8 @@ namespace rsl
         return bit_cast<underlyingType>(get_native_handle_impl(val));                                                                 \
     }
 
-#define DECLARE_SINGLETON(name)                                                                                                       \
-namespace internal                                                                                                                    \
+#define RYTHE_DECLARE_SINGLETON(name)                                                                                                 \
+    namespace internal                                                                                                                \
 {                                                                                                                                     \
     [[nodiscard]] name& get_default_##name() noexcept;                                                                                \
 }                                                                                                                                     \

@@ -33,6 +33,12 @@ namespace rsl
     template <bool Value>
     concept invert = !Value;
 
+    template<typename T>
+    concept trivial_type = is_trivial_v<remove_cvr_t<T>>;
+
+    template <typename T>
+    concept standard_layout_type = is_standard_layout_v<remove_cvr_t<T>>;
+
     template <typename T>
     concept integral_type = is_integral_v<remove_cvr_t<T>>;
 

@@ -690,6 +690,12 @@ namespace rsl
     struct is_trivial : bool_constant<is_trivial_v<T>> {};
 
     template <typename T>
+    constexpr bool is_standard_layout_v = __is_standard_layout(T); // Compiler magic.
+
+    template <typename T>
+    struct is_standard_layout : bool_constant<is_standard_layout_v<T>> {};
+
+    template <typename T>
     constexpr bool is_trivially_copyable_v = __is_trivially_copyable(T); // Compiler magic.
 
     template <typename T>
