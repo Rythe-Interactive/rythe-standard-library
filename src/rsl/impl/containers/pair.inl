@@ -1,5 +1,4 @@
 #pragma once
-#include "pair.hpp"
 
 namespace rsl
 {
@@ -81,7 +80,7 @@ namespace rsl
 	};
 
 	template <size_type I, typename T1, typename T2>
-	const element_at_t<I, T1, T2>& get(const pair<T1, T2>& val)
+    [[rythe_always_inline]] constexpr const element_at_t<I, T1, T2>& get(const pair<T1, T2>& val) noexcept
 	{
 		if constexpr (I == 0)
 		{
@@ -91,25 +90,51 @@ namespace rsl
 		{
 			return val.second;
 		}
-	}
+    }
+
+    template <size_type I, typename T1, typename T2>
+    [[rythe_always_inline]] constexpr element_at_t<I, T1, T2>& get(pair<T1, T2>& val) noexcept
+    {
+		if constexpr (I == 0)
+		{
+			return val.first;
+		}
+		else
+		{
+			return val.second;
+		}
+    }
+    
+    template <size_type I, typename T1, typename T2>
+    [[rythe_always_inline]] constexpr element_at_t<I, T1, T2>&& get(pair<T1, T2>&& val) noexcept
+    {
+		if constexpr (I == 0)
+		{
+			return rsl::move(val.first);
+		}
+		else
+		{
+			return rsl::move(val.second);
+		}
+    }
 
 	template <typename T, typename T1, typename T2>
-	const T& get(const pair<T1, T2>& val)
+    [[rythe_always_inline]] constexpr const T& get(const pair<T1, T2>& val) noexcept
 	{
 		return get<index_of_element_v<T, T1, T2>>(val);
 	}
 
-	template <size_type I, typename T1, typename T2>
-	element_at_t<I, T1, T2>& get(pair<T1, T2>& val)
-	{
-		return const_cast<element_at_t<I, T1, T2>&>(get<I>(rsl::as_const(val)));
-	}
-
 	template <typename T, typename T1, typename T2>
-	T& get(pair<T1, T2>& val)
+    [[rythe_always_inline]] constexpr T& get(pair<T1, T2>& val) noexcept
 	{
-		return const_cast<element_at_t<index_of_element_v<T, T1, T2>, T1, T2>&>(get<T>(rsl::as_const(val)));
+        return get<index_of_element_v<T, T1, T2>>(val);
 	}
+    
+	template <typename T, typename T1, typename T2>
+    [[rythe_always_inline]] constexpr T&& get(pair<T1, T2>&& val) noexcept
+    {
+        return rsl::move(get<index_of_element_v<T, T1, T2>>(rsl::move(val)));
+    }
 
 	template <typename Tuple>
 	struct tuple_size;
@@ -118,4 +143,4 @@ namespace rsl
 	struct tuple_size<pair<T1, T2>> : public integral_constant<size_type, 2>
 	{
 	};
-} // namespace std
+} // namespace rsl

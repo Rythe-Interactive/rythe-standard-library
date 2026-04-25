@@ -245,4 +245,7 @@ namespace rsl
 
     template <typename T, typename... Args>
     concept constructable_type = is_constructible_v<T, Args...>;
+
+    template<typename T, typename Base>
+    concept inherits_from = is_base_of_v<Base, T>;
 } // namespace rsl

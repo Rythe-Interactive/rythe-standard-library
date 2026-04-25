@@ -566,6 +566,21 @@ namespace rsl
     template <typename T, typename... Args>
     struct is_constructible : bool_constant<is_constructible_v<T, Args...>> {};
 
+    template <typename T, typename = void>
+    struct is_implicitly_default_constructible : false_type
+    {
+    };
+
+    namespace internal
+    {
+        template <typename T>
+        void _implicitly_default_construct_impl(const T&); // NOLINT
+    }
+
+    template <typename T>
+    struct is_implicitly_default_constructible<T, void_t<decltype(internal::_implicitly_default_construct_impl<T>({}))>> : true_type
+    {};
+
     template <typename T>
     struct is_copy_constructible : is_constructible<T, typename add_lval_ref<typename add_const<T>::type>::type> {};
 
