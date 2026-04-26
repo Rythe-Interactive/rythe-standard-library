@@ -1791,16 +1791,6 @@ namespace rsl
         static constexpr bool value = is_abstract_v<T>;
     };
 
-    // TODO: Make our own ratio type.
-    template <typename Type>
-    constexpr bool is_ratio_v = false; // test for ratio type
-
-    template <int_max Numerator, int_max Denominator>
-    constexpr bool is_ratio_v<::std::ratio<Numerator, Denominator>> = true; // TODO: make our own ratio, or get rid of this and remove our reliance on ratio if that ends up better.
-
-    template <typename Type>
-    struct is_ratio : bool_constant<is_ratio_v<Type>> {};
-
     [[rythe_always_inline]] constexpr const void* advance(const void* ptr, const size_type count) noexcept
     {
         return bit_cast<const byte*>(ptr) + count;
