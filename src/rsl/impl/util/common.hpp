@@ -1,11 +1,5 @@
 #pragma once
 #include "../defines.hpp"
-
-// TODO: use own ratio structure and get rid of this. or get rid of our reliance on std::ratio (there are probably better ways to design without std::ratio)
-RYTHE_MSVC_SUPPRESS_WARNING_WITH_PUSH(5046)
-#include <ratio>
-RYTHE_MSVC_SUPPRESS_WARNING_POP
-
 #include "primitives.hpp"
 
 namespace rsl

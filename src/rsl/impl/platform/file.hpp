@@ -1,11 +1,11 @@
 ﻿#pragma once
-#include "../time/date_time.hpp"
+#include "../time/time_span.hpp"
 
 namespace rsl
 {
     struct file_info
     {
-        tm::date lastWriteTimestamp;
+        time_span lastWriteTimestamp;
         size_type size;
         bool isWritable;
         bool isDirectory;
@@ -43,7 +43,7 @@ namespace rsl
     [[nodiscard]] [[rythe_always_inline]] constexpr bool mode_available_for_append(file_access_mode mode) noexcept;
     [[nodiscard]] [[rythe_always_inline]] constexpr bool mode_available_for_read(file_access_mode mode) noexcept;
 
-    DECLARE_NATIVE_API_TYPE(file)
+    RYTHE_DECLARE_NATIVE_API_TYPE(file)
     [[maybe_unused]] [[rythe_always_inline]] static void set_file_access_mode(file&, file_access_mode) noexcept;
     [[maybe_unused]] [[rythe_always_inline]] static void set_file_access_flags(file&, file_access_flags) noexcept;
 
@@ -62,7 +62,7 @@ namespace rsl
         [[nodiscard]] [[rythe_always_inline]] operator bool() const noexcept;
 
     private:
-        NATIVE_API_TYPE_PRIVATE_MEMBERS(file)
+        RYTHE_NATIVE_API_TYPE_PRIVATE_MEMBERS(file)
         friend void set_file_access_mode(file&, file_access_mode) noexcept;
         friend void set_file_access_flags(file&, file_access_flags) noexcept;
 

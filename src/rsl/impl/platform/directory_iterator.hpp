@@ -26,7 +26,7 @@ namespace rsl
         directory_iterator* m_directoryIterator;
     };
 
-    DECLARE_NATIVE_API_TYPE(directory_iterator)
+    RYTHE_DECLARE_NATIVE_API_TYPE(directory_iterator)
 
     class directory_iterator
     {
@@ -57,7 +57,7 @@ namespace rsl
         directory_iterator& operator++();
 
     private:
-        NATIVE_API_TYPE_PRIVATE_MEMBERS(directory_iterator)
+        RYTHE_NATIVE_API_TYPE_PRIVATE_MEMBERS(directory_iterator)
 
         directory_entry m_entry = directory_entry(*this);
     };

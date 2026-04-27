@@ -98,7 +98,7 @@ namespace rsl
         bool assertOnError = true;
     };
 
-    DECLARE_SINGLETON(error_context)
+    RYTHE_DECLARE_SINGLETON(error_context)
 
     void enable_assert_on_error(bool enabled = true) noexcept;
     void disable_assert_on_error() noexcept;

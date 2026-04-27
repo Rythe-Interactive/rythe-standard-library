@@ -3,7 +3,7 @@
 
 namespace rsl
 {
-    DECLARE_NATIVE_API_TYPE(dynamic_library)
+    RYTHE_DECLARE_NATIVE_API_TYPE(dynamic_library)
 
     class dynamic_library
     {
@@ -21,6 +21,6 @@ namespace rsl
         [[rythe_always_inline]] void release();
 
     private:
-        NATIVE_API_TYPE_PRIVATE_MEMBERS(dynamic_library)
+        RYTHE_NATIVE_API_TYPE_PRIVATE_MEMBERS(dynamic_library)
     };
 }

@@ -33,6 +33,21 @@ namespace rsl
 
     inline namespace literals
     {
+        constexpr size_type operator""_k(const size_type value) noexcept
+        {
+            return value * 1000ull;
+        }
+
+        constexpr size_type operator""_m(const size_type value) noexcept
+        {
+            return value * 1000000ull;
+        }
+
+        constexpr size_type operator""_g(const size_type value) noexcept
+        {
+            return value * 1000000000ull;
+        }
+
         constexpr size_type operator ""_kb(const size_type value) noexcept
         {
             return value << 10u;
@@ -46,11 +61,6 @@ namespace rsl
         constexpr size_type operator ""_gb(const size_type value) noexcept
         {
             return value << 30u;
-        }
-
-        constexpr size_type operator ""_tb(const size_type value) noexcept
-        {
-            return value << 40u;
         }
     }
 
@@ -77,11 +87,6 @@ namespace rsl
     using f32 = float32;
     using f64 = float64;
     using flt_max = float_max;
-
-    // TODO(Glyn): floating point time is a horrible idea...
-    using time32 = float32;
-    using time64 = float64;
-    using time_large = int_max;
 
     using cstring = const char*;
 
@@ -120,22 +125,6 @@ namespace rsl
     }
 
     #define invalid_id 0
-
-    using days = int32;
-    using hours = int32;
-    using minutes = int32;
-    using seconds = time32;
-    using milli_seconds = time32;
-    using micro_seconds = time64;
-    using nano_seconds = time_large;
-
-    using days_f = time32;
-    using hours_f = time32;
-    using minutes_f = time32;
-    using seconds_f = time32;
-    using milli_seconds_f = time32;
-    using micro_seconds_f = time64;
-    using nano_seconds_f = float_max;
 
     enum npos_type : size_type {};
 

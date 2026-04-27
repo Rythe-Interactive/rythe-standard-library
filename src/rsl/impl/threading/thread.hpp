@@ -3,7 +3,7 @@
 
 namespace rsl
 {
-    DECLARE_NATIVE_API_TYPE(thread)
+    RYTHE_DECLARE_NATIVE_API_TYPE(thread)
 
 	class thread
 	{
@@ -14,6 +14,6 @@ namespace rsl
 		uint32 join() const;
 
     private:
-        NATIVE_API_TYPE_PRIVATE_MEMBERS(thread)
+        RYTHE_NATIVE_API_TYPE_PRIVATE_MEMBERS(thread)
 	};
 }

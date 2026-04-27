@@ -12,7 +12,7 @@ namespace rsl
 	    log::logger* logger = nullptr;
 		log::logger* undecoratedLogger = nullptr;
 	};
-    DECLARE_SINGLETON(logging_context)
+    RYTHE_DECLARE_SINGLETON(logging_context)
 
 	namespace log
     {

@@ -421,7 +421,7 @@ namespace rsl
     [[maybe_unused]] constexpr name invalid_##name = name::invalid;
 
 #define RYTHE_DECLARE_NATIVE_API_TYPE(type)                                                                                           \
-    DECLARE_OPAQUE_HANDLE(native_##type);                                                                                             \
+    RYTHE_DECLARE_OPAQUE_HANDLE(native_##type);                                                                                       \
     class type;                                                                                                                       \
     [[maybe_unused]] [[rythe_always_inline]] static void set_native_handle_impl(type&, native_##type) noexcept;                       \
     [[maybe_unused]] [[rythe_always_inline]] static native_##type get_native_handle_impl(const type&) noexcept;
@@ -451,9 +451,9 @@ namespace rsl
 
 #define RYTHE_DECLARE_SINGLETON(name)                                                                                                 \
     namespace internal                                                                                                                \
-{                                                                                                                                     \
-    [[nodiscard]] name& get_default_##name() noexcept;                                                                                \
-}                                                                                                                                     \
+    {                                                                                                                                 \
+        [[nodiscard]] name& get_default_##name() noexcept;                                                                            \
+    }                                                                                                                                 \
                                                                                                                                       \
 using get_##name##_func = name& (*)();                                                                                                \
 extern get_##name##_func get_##name;

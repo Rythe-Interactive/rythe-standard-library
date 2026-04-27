@@ -1,13 +1,14 @@
 #pragma once
 #include "../../defines.hpp"
 #include "predefined.hpp"
+#include "vector_additions.hpp"
 
 RYTHE_MSVC_SUPPRESS_WARNING_WITH_PUSH(4201) // anonymous struct
 
 namespace rsl::math
 {
 	template <arithmetic_type Scalar, storage_mode Mode>
-	struct vector<Scalar, 1, Mode>
+    struct vector<Scalar, 1, Mode> : internal::vector_additions<Scalar, 1, Mode>
 	{
 		using scalar = Scalar;
 		static constexpr size_type size = 1;
@@ -29,9 +30,6 @@ namespace rsl::math
 			requires not_same_as<Scalar, typename VecType::scalar> || (VecType::size != 1)
 		[[rythe_always_inline]] constexpr vector(const VecType& other) noexcept;
 
-		static const vector one;
-		static const vector zero;
-
 		[[rythe_always_inline]] constexpr vector& operator=(const vector&) noexcept = default;
 		[[nodiscard]] [[rythe_always_inline]] constexpr operator scalar() const noexcept { return data[0]; }
 
@@ -40,7 +38,7 @@ namespace rsl::math
 	};
 
 	template <storage_mode Mode>
-	struct vector<bool, 1, Mode>
+    struct vector<bool, 1, Mode> : internal::vector_additions<bool, 1, Mode>
 	{
 		using scalar = bool;
 		static constexpr size_type size = 1;
@@ -61,9 +59,6 @@ namespace rsl::math
 		template <typename VecType>
 			requires not_same_as<bool, typename VecType::scalar> || (VecType::size != 1)
 		[[rythe_always_inline]] constexpr vector(const VecType& other) noexcept;
-
-		static const vector one;
-		static const vector zero;
 
 		[[rythe_always_inline]] constexpr void set_mask(bitfield8 mask) noexcept { data[0] = (mask & 1) != 0; }
 		[[nodiscard]] [[rythe_always_inline]] constexpr bitfield8 mask() const noexcept

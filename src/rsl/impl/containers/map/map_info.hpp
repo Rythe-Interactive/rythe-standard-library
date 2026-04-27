@@ -2,6 +2,7 @@
 
 #include "../../util/container_util.hpp"
 #include "../../util/hash.hpp"
+#include "../../util/ratio.hpp"
 #include "../util/comparers.hpp"
 
 #include "hasher_wrapper.hpp"
@@ -79,11 +80,12 @@ namespace rsl
         typename Key, typename Value, hash_map_flags Flags = hash_map_flags::default_flags,
         typed_factory_type FactoryType = default_factory<internal::map_value_type<Key, Value, hash_map_flags_is_flat(Flags)>>,
         typename Hash = ::rsl::hash<Key>, typename KeyEqual = equal<Key>,
-        ratio_type MaxLoadFactor = ::std::ratio<80, 100>,
+        ratio_type MaxLoadFactor = ratio<80, 100>,
         size_type FingerprintSize = internal::recommended_fingerprint_size<hash_map_flags_is_large(Flags)>>
     struct map_info
     {
-        constexpr static float32 max_load_factor = static_cast<float32>(MaxLoadFactor::num) / static_cast<float32>(MaxLoadFactor::den);
+        constexpr static float32 max_load_factor =
+                static_cast<float32>(MaxLoadFactor::numerator) / static_cast<float32>(MaxLoadFactor::denominator);
         static_assert(max_load_factor > 0.1f && max_load_factor <= 0.99f, "MaxLoadFactor needs to be > 0.1 && < 0.99");
 
         using key_type = Key;

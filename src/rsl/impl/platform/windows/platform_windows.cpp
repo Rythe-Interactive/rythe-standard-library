@@ -23,11 +23,13 @@
 #include "../platform.hpp"
 
 #include "../../containers/string.hpp"
+#include "../../containers/map/dynamic_map.hpp"
 #include "../../filesystem/filesystem_error.hpp"
 #include "../../filesystem/path_util.hpp"
-#include "../../threading/current_thread.inl"
+#include "../../threading/current_thread.hpp"
 #include "../../threading/thread.hpp"
 #include "../../util/enum_flags.hpp"
+#include "../../time/system_clock.hpp"
 
 namespace rsl
 {
@@ -37,10 +39,10 @@ namespace rsl
         WIN32_FIND_DATAW findData;
     };
 
-    NATIVE_API_TYPE_ACCESSORS(file, HANDLE)
-    NATIVE_API_TYPE_ACCESSORS(directory_iterator, native_win_directory_iterator_handle*)
-    NATIVE_API_TYPE_ACCESSORS(dynamic_library, HMODULE)
-    NATIVE_API_TYPE_ACCESSORS(thread, HANDLE)
+    RYTHE_NATIVE_API_TYPE_ACCESSORS(file, HANDLE)
+    RYTHE_NATIVE_API_TYPE_ACCESSORS(directory_iterator, native_win_directory_iterator_handle*)
+    RYTHE_NATIVE_API_TYPE_ACCESSORS(dynamic_library, HMODULE)
+    RYTHE_NATIVE_API_TYPE_ACCESSORS(thread, HANDLE)
 
     [[rythe_always_inline]] static void set_file_access_mode(file& val, const file_access_mode mode) noexcept
     {
@@ -137,10 +139,10 @@ namespace rsl
             return (static_cast<uint64>(upper) << 32ull) | static_cast<uint64>(lower);
         }
 
-        tm::date translate_timestamp(const FILETIME fileTime) noexcept
+        time_span translate_timestamp(const FILETIME fileTime) noexcept
         {
             const uint64 windowsTime = combine_dwords(fileTime.dwLowDateTime, fileTime.dwHighDateTime);
-            return { .epochTime = static_cast<int64>(windowsTime / 10000000ull - 11644473600ull) };
+            return { static_cast<int64>(windowsTime / 10000000ull - 11644473600ull) };
         }
 
         result<file> open_file_impl(const wstring_view absolutePath, const file_access_mode mode, const file_access_flags flags)
@@ -998,6 +1000,85 @@ namespace rsl
     {
         return m_handle == other.m_handle;
     }
+
+    namespace
+    {
+        uint64 performanceCounterFrequency;
+        ULONG timerResolution = 0u;
+        
+        using MMRESULT = UINT;
+        using NtSetTimerResolutionFunc = LONG(NTAPI*)(ULONG DesiredResolution, BOOLEAN SetResolution, PULONG CurrentResolution);
+        NtSetTimerResolutionFunc NtSetTimerResolution;
+
+        using TimeEndPeriodFunc = MMRESULT(WINAPI*)(_In_ UINT uPeriod);
+        TimeEndPeriodFunc TimeEndPeriod;
+    }
+
+    time_span system_clock::current_time() noexcept
+    {
+        LARGE_INTEGER perfCounter;
+        QueryPerformanceCounter(&perfCounter);
+
+        const uint64 ticks = static_cast<uint64>(perfCounter.QuadPart);
+
+        const uint64 seconds = ticks / performanceCounterFrequency;
+        const uint64 remainder = ticks - seconds * performanceCounterFrequency;
+
+        return { static_cast<int64>((seconds * 1_g) + (remainder * 1_g) / performanceCounterFrequency) };
+    }
+
+    system_clock::~system_clock()
+    {
+        if (timerResolution > 0u)
+        {
+            ULONG newResolution;
+            NtSetTimerResolution(timerResolution, TRUE, &newResolution);
+        }
+
+        TimeEndPeriod(1u);
+    }
+
+    system_clock initialize_main_clock()
+    {
+        using NtQueryTimerResolutionFunc = LONG(NTAPI*)(PULONG MinimumResolution, PULONG MaximumResolution, PULONG CurrentResolution);
+
+        using TimeBeginPeriodFunc = MMRESULT(WINAPI*)(_In_ UINT uPeriod);
+        using TimeEndPeriodFunc = MMRESULT(WINAPI*)(_In_ UINT uPeriod);
+
+        const HMODULE ntDll = ::GetModuleHandle(TEXT("ntdll.dll"));
+        NtSetTimerResolution = (NtSetTimerResolutionFunc)(void*)GetProcAddress(ntDll, "NtSetTimerResolution");
+        NtQueryTimerResolutionFunc NtQueryTimerResolution =
+                (NtQueryTimerResolutionFunc)(void*)GetProcAddress(ntDll, "NtQueryTimerResolution");
+
+        HMODULE winmmDll = ::LoadLibrary(TEXT("Winmm.dll"));
+        rsl_assert_msg_raw(winmmDll, "could not load winmm.dll");
+
+        TimeBeginPeriodFunc TimeBeginPeriod = (TimeBeginPeriodFunc)(void*)::GetProcAddress(winmmDll, "timeBeginPeriod");
+        TimeEndPeriod = (TimeEndPeriodFunc)(void*)::GetProcAddress(winmmDll, "timeEndPeriod");
+
+        LARGE_INTEGER perfCounterFrequency;
+        QueryPerformanceFrequency(&perfCounterFrequency);
+        performanceCounterFrequency = static_cast<uint64>(perfCounterFrequency.QuadPart);
+
+        TimeBeginPeriod(1u); // this should set the resolution to 1 ms
+
+        ULONG minimumResolution = 0u;
+        ULONG maximumResolution = 0u;
+        ULONG currentResolution = 0u;
+
+        if (NtQueryTimerResolution(&minimumResolution, &maximumResolution, &currentResolution) == 0u)
+        {
+            ULONG newResolution = 0u;
+            NtSetTimerResolution(max<ULONG>(maximumResolution, 5000u), TRUE, &newResolution);
+            timerResolution = currentResolution;
+        }
+
+        system_clock result;
+        result.m_start = system_clock::current_time();
+        return result;
+    }
+
+    system_clock main_clock = initialize_main_clock();    
 } // namespace rsl
 
 #endif

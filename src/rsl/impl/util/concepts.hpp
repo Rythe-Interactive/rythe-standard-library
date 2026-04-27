@@ -22,10 +22,7 @@ namespace rsl
     concept functor = is_functor_v<Func>;
 
     template <typename Func>
-    concept member_function_ptr = std::is_member_function_pointer_v<Func>;
-
-    template <typename Type>
-    concept ratio_type = is_ratio_v<Type>;
+    concept member_function_ptr = __is_member_function_pointer(Func);
 
     template <typename Type, template <typename...> typename Template>
     concept specialization_of = is_specialization_v<Type, Template>;
@@ -118,10 +115,10 @@ namespace rsl
                 };
 
     template <typename T>
-    concept destructible = ::std::destructible<T>; // Compiler magic behind the scenes.
+    concept destructible = __is_nothrow_destructible(T); // Compiler magic behind the scenes.
 
     template <typename T, typename... Args>
-    concept constructible_from = ::std::constructible_from<T, Args...>; // Compiler magic behind the scenes.
+    concept constructible_from = destructible<T> && __is_constructible(T, Args...); // Compiler magic behind the scenes.
 
     template <typename T>
     concept default_initializable = constructible_from<T> && requires
@@ -200,7 +197,7 @@ namespace rsl
             internal::partially_ordered_with<LHS, RHS>;
 
     template <typename T>
-    concept movable = is_object_v<T> && move_constructible<T> && assignable_from<T&, T> && ::std::swappable<T>;
+    concept movable = is_object_v<T> && move_constructible<T> && assignable_from<T&, T> && ::std::swappable<T>; // TODO(Glyn): swap
 
     template <typename T>
     concept copyable = copy_constructible<T> && movable<T> && assignable_from<T&, T&> &&

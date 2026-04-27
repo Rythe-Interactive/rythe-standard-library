@@ -405,6 +405,28 @@ namespace rsl
     {
         return m_handle == other.m_handle;
     }
+
+    time_span system_clock::current_time() noexcept
+    {
+        // TODO: Implement
+        rsl_assert_unimplemented();
+        return time_span();
+    }
+
+    system_clock::~system_clock()
+    {
+        // TODO: Implement
+        rsl_assert_unimplemented();
+    }
+
+    system_clock initialize_main_clock()
+    {
+        // TODO: Implement
+        rsl_assert_unimplemented();
+        return system_clock();
+    }
+
+    system_clock main_clock = initialize_main_clock();
 } // namespace rsl
 
 #endif
