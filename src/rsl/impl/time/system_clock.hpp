@@ -12,8 +12,13 @@ namespace rsl
 	public:
         system_clock(system_clock&&) = default;
 
+        // Current absolute time.
         [[nodiscard]] static time_span current_time() noexcept;
+
+        // Absolute time of the start of the process.
         [[nodiscard]] [[rythe_always_inline]] time_span start_time() const noexcept;
+
+        // Relative time since start of the process.
         [[nodiscard]] [[rythe_always_inline]] time_span elapsed_time() const noexcept;
 
 		[[rythe_always_inline]] time_span restart() noexcept;
