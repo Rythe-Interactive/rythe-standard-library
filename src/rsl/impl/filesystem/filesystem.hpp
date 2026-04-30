@@ -45,7 +45,7 @@ namespace rsl::fs
         dynamic_array<archive_registry*> m_archiveRegistries;
     };
 
-    DECLARE_SINGLETON(filesystem)
+    RYTHE_DECLARE_SINGLETON(filesystem)
 }
 
 #include "filesystem.inl"

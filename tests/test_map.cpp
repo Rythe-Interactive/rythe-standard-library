@@ -58,7 +58,9 @@ namespace
 
 TEST_CASE("dynamic_map", "[containers]")
 {
-	using namespace rsl;
+    using namespace rsl;
+    test_heap_allocator testAllocator;
+    global_allocator_scope allocatorScope({ &testAllocator });
 
 	SECTION("construction")
 	{

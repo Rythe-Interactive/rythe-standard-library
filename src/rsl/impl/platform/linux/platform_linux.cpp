@@ -36,22 +36,22 @@ namespace rsl
         val.m_accessFlags = flags;
     }
 
-	dynamic_library platform::load_library(cstring path)
-	{
-		dynamic_library result;
-		set_native_handle(result, dlopen(path, RTLD_NOW));
-		return result;
-	}
+    dynamic_library platform::load_library(cstring path)
+    {
+        dynamic_library result;
+        set_native_handle(result, dlopen(path, RTLD_NOW));
+        return result;
+    }
 
-	void platform::release_library(const dynamic_library library)
-	{
-		dlclose(get_native_handle(library));
-	}
+    void platform::release_library(const dynamic_library library)
+    {
+        dlclose(get_native_handle(library));
+    }
 
-	void* platform::get_symbol(const dynamic_library library, cstring symbolName)
-	{
-		return dlsym(get_native_handle(library), symbolName);
-	}
+    void* platform::get_symbol(const dynamic_library library, cstring symbolName)
+    {
+        return dlsym(get_native_handle(library), symbolName);
+    }
 
     bool platform::is_debugger_attached()
     {
@@ -86,43 +86,43 @@ namespace rsl
         return false;
     }
 
-	thread_id platform::get_current_thread_id()
-	{
+    thread_id platform::get_current_thread_id()
+    {
         // TODO: Figure this out.
         // return thread_id{ .nativeId = static_cast<id_type>(syscall( SYS_gettid ) );
-		return thread_id{ .nativeId = static_cast<id_type>(gettid()) };
-	}
+        return thread_id{ .nativeId = static_cast<id_type>(gettid()) };
+    }
 
-	void platform::yield_current_thread()
-	{
-		sched_yield();
-	}
+    void platform::yield_current_thread()
+    {
+        sched_yield();
+    }
 
-	void platform::sleep_current_thread(const uint32 milliseconds)
-	{
-		timespec sleepTime;
-		timespec remainingTime;
-		sleepTime.tv_sec = milliseconds / 1000u;
-		sleepTime.tv_nsec = (milliseconds - (sleepTime.tv_sec * 1000u)) * 1000000u;
+    void platform::sleep_current_thread(const uint32 milliseconds)
+    {
+        timespec sleepTime;
+        timespec remainingTime;
+        sleepTime.tv_sec = milliseconds / 1000u;
+        sleepTime.tv_nsec = (milliseconds - (sleepTime.tv_sec * 1000u)) * 1000000u;
 
-		while (true)
-		{
-			int32 result = nanosleep(&sleepTime, &remainingTime);
+        while (true)
+        {
+            int32 result = nanosleep(&sleepTime, &remainingTime);
 
-			int error = 0;
-			if (result == -1)
-			{
-				error = errno;
-			}
+            int error = 0;
+            if (result == -1)
+            {
+                error = errno;
+            }
 
-			if (result == 0 || error != EINTR)
-			{
-				break;
-			}
+            if (result == 0 || error != EINTR)
+            {
+                break;
+            }
 
-			sleepTime = remainingTime;
-		}
-	}
+            sleepTime = remainingTime;
+        }
+    }
 
     void platform::set_thread_name(const thread_id threadId, const string_view name)
     {
@@ -427,6 +427,7 @@ namespace rsl
     }
 
     system_clock main_clock = initialize_main_clock();
+    const time_span genesis = main_clock.start_time();
 } // namespace rsl
 
 #endif

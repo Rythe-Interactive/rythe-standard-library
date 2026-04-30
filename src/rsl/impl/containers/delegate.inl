@@ -4,6 +4,11 @@
 namespace rsl
 {
 	template <typename ReturnType, typename... ParamTypes, untyped_factory_type Factory>
+    constexpr delegate<ReturnType(ParamTypes...), Factory>::delegate()
+        : delegate(allocator_context::globalAllocator)
+    {}
+
+	template <typename ReturnType, typename... ParamTypes, untyped_factory_type Factory>
     constexpr delegate<ReturnType(ParamTypes...), Factory>::delegate(
 		const allocator_storage allocator
 	)
@@ -15,7 +20,7 @@ namespace rsl
 	template <typename ReturnType, typename... ParamTypes, untyped_factory_type Factory>
 	template <invocable<ReturnType(ParamTypes...)> Functor>
     constexpr delegate<ReturnType(ParamTypes...), Factory>::delegate(const Functor& instance)
-		: m_alloc(),
+        : m_alloc(allocator_context::globalAllocator),
 		  m_invocation(base::template create_element<Functor>(m_alloc, instance))
 	{
 	}
@@ -34,7 +39,7 @@ namespace rsl
 	template <functor Functor>
 		requires invocable<Functor, ReturnType(ParamTypes...)>
     constexpr delegate<ReturnType(ParamTypes...), Factory>::delegate(const Functor& instance)
-		: m_alloc(),
+        : m_alloc(allocator_context::globalAllocator),
 		  m_invocation(base::template create_element<Functor>(m_alloc, instance))
 	{
 	}

@@ -1,5 +1,7 @@
 #include "allocator.hpp"
 
+#include <new>
+
 namespace rsl
 {
     void* heap_allocator::allocate(const size_type size) noexcept

@@ -1078,7 +1078,8 @@ namespace rsl
         return result;
     }
 
-    system_clock main_clock = initialize_main_clock();    
+    system_clock main_clock = initialize_main_clock();
+    const time_span genesis = main_clock.start_time();
 } // namespace rsl
 
 #endif

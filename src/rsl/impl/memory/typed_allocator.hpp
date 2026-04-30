@@ -3,8 +3,6 @@
 #include "pointer.hpp"
 #include "factory_storage.hpp"
 
-#include "mock_allocator.hpp"
-
 namespace rsl
 {
     template <typename TypedAllocator, typename T, factory_type Factory>
@@ -124,8 +122,6 @@ namespace rsl
 
         template <typename Other>
         using retarget = typed_allocator<Other, typename Factory::template retarget<Other>>;
-
-        [[rythe_always_inline]] typed_allocator() noexcept(is_nothrow_constructible_v<factory_storage_type>) = default;
 
         [[nodiscard]] [[rythe_always_inline]] bool operator==(const typed_allocator&) const noexcept = default;
         [[nodiscard]] [[rythe_always_inline]] bool operator!=(const typed_allocator&) const noexcept = default;

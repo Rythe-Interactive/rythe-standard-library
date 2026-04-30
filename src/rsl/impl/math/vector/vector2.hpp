@@ -22,9 +22,6 @@ namespace rsl::math
 #include "swizzle/swizzle2.inl"
 		};
 
-		static const vector one;
-		static const vector zero;
-
 		[[rythe_always_inline]] constexpr vector() noexcept;
 		[[rythe_always_inline]] constexpr vector(const vector&) noexcept = default;
 		[[rythe_always_inline]] explicit constexpr vector(scalar s) noexcept;
@@ -54,9 +51,6 @@ namespace rsl::math
 
 #include "swizzle/swizzle2.inl"
 		};
-
-		static const vector one;
-		static const vector zero;
 
 		[[rythe_always_inline]] constexpr vector() noexcept;
 		[[rythe_always_inline]] constexpr vector(const vector&) noexcept = default;

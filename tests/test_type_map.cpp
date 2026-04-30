@@ -23,8 +23,6 @@ namespace
 	};
 } // namespace
 
-#define RSL_DEFAULT_ALLOCATOR_OVERRIDE test_heap_allocator
-
 #include <rsl/type_map>
 
 #include <catch2/catch_test_macros.hpp>
@@ -82,6 +80,9 @@ namespace
 TEST_CASE("type_map", "[containers]")
 {
 	using namespace rsl;
+    test_heap_allocator testAllocator;
+    global_allocator_scope allocatorScope({ &testAllocator });
+
 	{
 		constexpr auto name = type_name<test1>();
 		REQUIRE(name == "test1");

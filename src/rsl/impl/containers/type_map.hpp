@@ -20,7 +20,9 @@ namespace rsl
 		template <typename T>
 		using alloc_type = typed_allocator<T, typename Factory::template retarget<T>>;
 
-		constexpr basic_type_map() = default;
+		constexpr basic_type_map() noexcept
+            : basic_type_map(allocator_context::globalAllocator)
+        {}
 
 		explicit constexpr basic_type_map(allocator_storage allocator)
 			noexcept

@@ -31,7 +31,7 @@ namespace rsl
 		using factory_storage_type = typename base::factory_storage_type;
 		using factory_t = typename base::factory_t;
 
-		[[rythe_always_inline]] constexpr delegate() = default;
+		[[rythe_always_inline]] constexpr delegate();
 
 		[[rythe_always_inline]] explicit constexpr delegate(allocator_storage allocator);
 

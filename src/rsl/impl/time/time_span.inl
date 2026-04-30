@@ -74,6 +74,42 @@ namespace rsl
         return static_cast<T>(value);
     }
 
+    template <arithmetic_type T>
+    inline constexpr time_span time_span::from_nanoseconds(const T count) noexcept
+    {
+        return { static_cast<int64>(count) };
+    }
+
+    template <arithmetic_type T>
+    inline constexpr time_span time_span::from_microseconds(const T count) noexcept
+    {
+        return { static_cast<int64>(count * 1_k) };
+    }
+
+    template <arithmetic_type T>
+    inline constexpr time_span time_span::from_milliseconds(const T count) noexcept
+    {
+        return { static_cast<int64>(count * 1_m) };
+    }
+
+    template <arithmetic_type T>
+    inline constexpr time_span time_span::from_seconds(const T count) noexcept
+    {
+        return { static_cast<int64>(count * 1_g) };
+    }
+
+    template <arithmetic_type T>
+    inline constexpr time_span time_span::from_minutes(const T count) noexcept
+    {
+        return { static_cast<int64>(count * 60_g) };
+    }
+
+    template <arithmetic_type T>
+    inline constexpr time_span time_span::from_hours(const T count) noexcept
+    {
+        return { static_cast<int64>(count * 3600_g) };
+    }
+
     constexpr float32 time_span::hours() const noexcept
     {
         return hours<float32>();
@@ -109,7 +145,7 @@ namespace rsl
         return seconds();
     }
 
-    constexpr time_span time_span::operator-() noexcept
+    constexpr time_span time_span::operator-() const noexcept
     {
         return { -value };
     }
@@ -144,70 +180,66 @@ namespace rsl
         return *this;
     }
 
-    constexpr time_span time_span::operator+(const time_span& rhs) noexcept
+    constexpr time_span time_span::operator+(const time_span& rhs) const noexcept
     {
         return { value + rhs.value };
     }
 
-    constexpr time_span time_span::operator-(const time_span& rhs) noexcept
+    constexpr time_span time_span::operator-(const time_span& rhs) const noexcept
     {
         return { value - rhs.value };
     }
 
-    constexpr time_span time_span::operator*(const time_span& rhs) noexcept
+    constexpr time_span time_span::operator*(const time_span& rhs) const noexcept
     {
         return { value * rhs.value };
     }
 
-    constexpr time_span time_span::operator/(const time_span& rhs) noexcept
+    constexpr time_span time_span::operator/(const time_span& rhs) const noexcept
     {
         return { value / rhs.value };
     }
 
-    constexpr time_span time_span::operator%(const time_span& rhs) noexcept
+    constexpr time_span time_span::operator%(const time_span& rhs) const noexcept
     {
         return { value % rhs.value };
     }
 
-    constexpr auto time_span::operator<=>(const time_span& rhs) noexcept
+    constexpr auto time_span::operator<=>(const time_span& rhs) const noexcept
     {
         return value <=> rhs.value;
     }
-
-    const time_span time_span::zero{ 0 };
-
-    const time_span time_span::infinity{ math::limits<int64>::max };
 
     inline namespace literals
     {
         consteval time_span operator""_ns(const size_type count) noexcept
         {
-            return { static_cast<int64>(count) };
+            return time_span::from_nanoseconds(count);
         }
 
         consteval time_span operator""_us(const size_type count) noexcept
         {
-            return { static_cast<int64>(count * 1_k) };
+            return time_span::from_microseconds(count);
         }
 
         consteval time_span operator""_ms(const size_type count) noexcept
         {
-            return { static_cast<int64>(count * 1_m) };
+            return time_span::from_milliseconds(count);
         }
 
         consteval time_span operator""_s(const size_type count) noexcept
         {
-            return { static_cast<int64>(count * 1_g) };
+            return time_span::from_seconds(count);
         }
 
         consteval time_span operator""_min(const size_type count) noexcept
         {
-            return { static_cast<int64>(count * 60_g) };
+            return time_span::from_minutes(count);
         }
 
         consteval time_span operator""_hr(const size_type count) noexcept
         {
-            return { static_cast<int64>(count * 3600_g) };
+            return time_span::from_hours(count);
         }
 
         consteval time_span operator""_fps(const size_type count) noexcept

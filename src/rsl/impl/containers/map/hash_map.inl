@@ -11,7 +11,6 @@ namespace rsl
           m_maxPsl(0),
           m_hasher(),
           m_keyComparer(),
-          m_alloc(),
           m_factory(),
           m_memoryPool() {}
 
@@ -28,7 +27,6 @@ namespace rsl
           m_maxPsl(0),
           m_hasher(h),
           m_keyComparer(equal),
-          m_alloc(),
           m_factory(),
           m_memoryPool() {}
 
@@ -44,7 +42,6 @@ namespace rsl
           m_maxPsl(0),
           m_hasher(h),
           m_keyComparer(),
-          m_alloc(),
           m_factory(),
           m_memoryPool() {}
 
@@ -60,7 +57,6 @@ namespace rsl
           m_maxPsl(0),
           m_hasher(),
           m_keyComparer(equal),
-          m_alloc(),
           m_factory(),
           m_memoryPool() {}
 
@@ -76,7 +72,6 @@ namespace rsl
           m_maxPsl(0),
           m_hasher(),
           m_keyComparer(),
-          m_alloc(allocator),
           m_factory(),
           m_memoryPool(allocator) {}
 
@@ -92,7 +87,6 @@ namespace rsl
           m_maxPsl(0),
           m_hasher(),
           m_keyComparer(),
-          m_alloc(),
           m_factory(factoryStorage),
           m_memoryPool() {}
 
@@ -108,7 +102,6 @@ namespace rsl
           m_maxPsl(0),
           m_hasher(),
           m_keyComparer(),
-          m_alloc(allocator),
           m_factory(factoryStorage),
           m_memoryPool(allocator) {}
 
@@ -405,13 +398,13 @@ namespace rsl
     template <typename MapInfo>
     constexpr memory_allocator& hash_map_base<MapInfo>::get_allocator() noexcept
     {
-        return *m_alloc;
+        return m_values.get_allocator();
     }
 
     template <typename MapInfo>
     constexpr const memory_allocator& hash_map_base<MapInfo>::get_allocator() const noexcept
     {
-        return *m_alloc;
+        return m_values.get_allocator();
     }
 
     template <typename MapInfo>

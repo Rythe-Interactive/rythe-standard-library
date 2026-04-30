@@ -82,6 +82,8 @@ namespace
 TEST_CASE("dynamic_array", "[containers]")
 {
     using namespace rsl;
+    test_heap_allocator testAllocator;
+    global_allocator_scope allocatorScope({ &testAllocator });
 
     SECTION("construction")
     {

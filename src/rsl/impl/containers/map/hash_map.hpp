@@ -262,7 +262,6 @@ namespace rsl
 
 		hasher_type m_hasher;
 		key_comparer_type m_keyComparer;
-		allocator_storage m_alloc;
 		factory_storage_type m_factory;
 		data_pool m_memoryPool;
 	};

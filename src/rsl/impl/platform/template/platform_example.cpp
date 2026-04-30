@@ -28,25 +28,25 @@ namespace rsl
         val.m_accessFlags = flags;
     }
 
-	dynamic_library platform::load_library(cstring path)
+    dynamic_library platform::load_library(cstring path)
     {
         // TODO: Implement
         rsl_assert_unimplemented();
         return {};
-	}
+    }
 
-	void platform::release_library(const dynamic_library library)
+    void platform::release_library(const dynamic_library library)
     {
         // TODO: Implement
         rsl_assert_unimplemented();
-	}
+    }
 
-	void* platform::get_symbol(const dynamic_library library, cstring symbolName)
+    void* platform::get_symbol(const dynamic_library library, cstring symbolName)
     {
         // TODO: Implement
         rsl_assert_unimplemented();
         return nullptr;
-	}
+    }
 
     bool platform::is_debugger_attached()
     {
@@ -81,24 +81,24 @@ namespace rsl
         return false;
     }
 
-	thread_id platform::get_current_thread_id()
+    thread_id platform::get_current_thread_id()
     {
         // TODO: Implement
         rsl_assert_unimplemented();
         return {};
-	}
+    }
 
-	void platform::yield_current_thread()
+    void platform::yield_current_thread()
     {
         // TODO: Implement
         rsl_assert_unimplemented();
-	}
+    }
 
-	void platform::sleep_current_thread(const uint32 milliseconds)
+    void platform::sleep_current_thread(const uint32 milliseconds)
     {
         // TODO: Implement
         rsl_assert_unimplemented();
-	}
+    }
 
     void platform::set_thread_name(const thread_id threadId, const string_view name)
     {
@@ -403,6 +403,7 @@ namespace rsl
     }
 
     system_clock main_clock = initialize_main_clock();
+    const time_span genesis = main_clock.start_time();
 } // namespace rsl
 
 #endif

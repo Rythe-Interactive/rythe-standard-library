@@ -1,7 +1,7 @@
 #include "formatter.hpp"
 
 #include "../platform/platform.hpp"
-#include "../time/stopwatch.hpp"
+#include "../time/system_clock.hpp"
 
 #include "message.hpp"
 
@@ -20,7 +20,7 @@ namespace rsl::log
 
             void format(
                     [[maybe_unused]] const message& msg,
-                    [[maybe_unused]] const tm::point32 time,
+                    [[maybe_unused]] const time_span time,
                     fmt::memory_buffer& dest
                     ) override
             {
@@ -41,7 +41,7 @@ namespace rsl::log
 
     void pattern_formatter::format(const message& msg, fmt::memory_buffer& dest)
     {
-        const tm::point32 time = tm::main_clock.current_point();
+        const time_span time = main_clock.current_time();
 
         for (auto& formatter : m_formatters)
         {
@@ -112,12 +112,12 @@ namespace rsl::log
         }
     }
 
-    void message_flag_formatter::format(const message& msg, [[maybe_unused]] const tm::point32 time, fmt::memory_buffer& dest)
+    void message_flag_formatter::format(const message& msg, [[maybe_unused]] const time_span time, fmt::memory_buffer& dest)
     {
         fmt::vformat_to(fmt::appender(dest), fmt::string_view(msg.msg.data(), msg.msg.size()), msg.formatArgs);
     }
 
-    void severity_flag_formatter::format(const message& msg, [[maybe_unused]] const tm::point32 time, fmt::memory_buffer& dest)
+    void severity_flag_formatter::format(const message& msg, [[maybe_unused]] const time_span time, fmt::memory_buffer& dest)
     {
         // TODO(Glyn): severity colors
         switch (m_mode)
@@ -151,14 +151,14 @@ namespace rsl::log
         m_mode = options[1];
     }
 
-    void genesis_flag_formatter::format([[maybe_unused]] const message& msg, const tm::point32 time, fmt::memory_buffer& dest)
+    void genesis_flag_formatter::format([[maybe_unused]] const message& msg, const time_span time, fmt::memory_buffer& dest)
     {
-        size_type seconds = static_cast<size_type>((time - tm::genesis).seconds()); // TODO(Glyn): Underlying time should really not be floating point!
+        time_span elapsedTime = time - genesis;
 
         ::tm t{};
-        t.tm_sec = static_cast<int>(seconds % 60ull);
-        t.tm_min = static_cast<int>((seconds / 60ull) % 60ull);
-        t.tm_hour = static_cast<int>(seconds / 3600ull);
+        t.tm_hour = elapsedTime.hours<int>();
+        t.tm_min = (elapsedTime -= time_span::from_hours(t.tm_hour)).minutes<int>();
+        t.tm_sec = (elapsedTime -= time_span::from_minutes(t.tm_min)).seconds<int>();
 
         fmt::format_to(
                 fmt::appender(dest),
@@ -172,12 +172,12 @@ namespace rsl::log
         m_options = options;
     }
 
-    void logger_name_flag_formatter::format(const message& msg, [[maybe_unused]] const tm::point32 time, fmt::memory_buffer& dest)
+    void logger_name_flag_formatter::format(const message& msg, [[maybe_unused]] const time_span time, fmt::memory_buffer& dest)
     {
         append_string(dest, msg.loggerName);
     }
 
-    void thread_name_flag_formatter::format(const message& msg, [[maybe_unused]] const tm::point32 time, fmt::memory_buffer& dest)
+    void thread_name_flag_formatter::format(const message& msg, [[maybe_unused]] const time_span time, fmt::memory_buffer& dest)
     {
         append_string(dest, platform::get_thread_name(msg.threadId));
     }

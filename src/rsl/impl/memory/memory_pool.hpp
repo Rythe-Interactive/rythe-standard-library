@@ -7,12 +7,20 @@ namespace rsl
     class memory_pool
     {
     public:
-        memory_pool() noexcept = default;
+        memory_pool() noexcept
+            : memory_pool(allocator_context::globalAllocator)
+        {}
 
         memory_pool(const memory_pool&) noexcept
             : m_alloc(nullptr),
               m_head(nullptr),
               m_freeList(nullptr) {}
+
+        explicit memory_pool(allocator_storage allocator) noexcept
+            : m_alloc(allocator),
+              m_head(nullptr),
+              m_freeList(nullptr)
+        {}
 
         memory_pool(memory_pool&& other) noexcept
             : m_alloc(other.m_alloc),
@@ -36,6 +44,11 @@ namespace rsl
         memory_pool& operator=(const memory_pool&) noexcept { return *this; }
 
         ~memory_pool() noexcept { reset(); }
+
+        [[rythe_always_inline]] constexpr void set_allocator(allocator_storage allocator) noexcept { m_alloc = allocator; }
+        [[nodiscard]] [[rythe_always_inline]] constexpr memory_allocator& get_allocator() noexcept { return *m_alloc; }
+        [[nodiscard]] [[rythe_always_inline]] constexpr const memory_allocator& get_allocator() const noexcept { return *m_alloc; }
+        [[nodiscard]] [[rythe_always_inline]] constexpr allocator_storage get_allocator_storage() const noexcept { return m_alloc; }
 
         void reset() noexcept
         {

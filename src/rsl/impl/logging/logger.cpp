@@ -1,7 +1,6 @@
 #include "logger.hpp"
 
-#include "time/stopwatch.hpp"
-#include "time/time_point.hpp"
+#include "time/system_clock.hpp"
 
 #include "severity.hpp"
 
@@ -19,7 +18,7 @@ namespace rsl::log
 		{
 			.loggerName = m_name,
 			.threadId = current_thread::get_id(),
-			.timestamp = tm::main_clock.current_point(),
+			.timestamp = main_clock.current_time(),
 			.sourceLocation = format.srcLoc,
 			.severity = s,
 			.msg = format.str,
