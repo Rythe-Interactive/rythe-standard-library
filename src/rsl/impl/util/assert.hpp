@@ -16,7 +16,7 @@
 	if constexpr (false)                                                                                               \
 	{                                                                                                                  \
 		[[maybe_unused]] bool b = static_cast<bool>(expr);                                                             \
-		[[maybe_unused]] const char* m = static_cast<const char*>(msg);                                                \
+		[[maybe_unused]] string_view m = view_from_stringish(msg);													   \
 	}
 
 #define rsl_mock_assert_soft(expr)                                                                                     \
@@ -28,7 +28,7 @@
 	if constexpr (false)                                                                                               \
 	{                                                                                                                  \
 		[[maybe_unused]] bool b = static_cast<bool>(expr);                                                             \
-		[[maybe_unused]] const char* m = static_cast<const char*>(msg);                                                \
+		[[maybe_unused]] string_view m = view_from_stringish(msg);													   \
 	}
 
 namespace rsl
