@@ -40,6 +40,8 @@ namespace rsl
             requires(!is_const_v<T>);
 
         [[nodiscard]] [[rythe_always_inline]] constexpr static array_view from_value(T& src) noexcept;
+        template <size_type N>
+        [[nodiscard]] [[rythe_always_inline]] constexpr static array_view from_array(T (&arr)[N]) noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr static array_view from_buffer(
                 T* ptr,
                 size_type count

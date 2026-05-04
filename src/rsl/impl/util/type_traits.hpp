@@ -125,6 +125,12 @@ namespace rsl
                 else { return ret; }
             }
 
+            template <size_type N>
+            consteval static auto add_types(constexpr_string<N> original)
+            {
+                return original;
+            }
+
             consteval static auto construct_value() noexcept
             {
                 auto a = compiler_dependent_templated_type_name<T>();

@@ -22,10 +22,7 @@ namespace rsl::math
 		}
 		else
 		{
-			using value_type = elevated_t<decay_vector_t<A>, decay_vector_t<B>>;
-			value_type decayedA = static_cast<value_type>(static_cast<decay_vector_t<A>>(a));
-			value_type decayedB = static_cast<value_type>(static_cast<decay_vector_t<B>>(b));
-			return decayedA < decayedB ? decayedA : decayedB;
+            return a < b ? a : b;
 		}
 	}
 
@@ -46,10 +43,7 @@ namespace rsl::math
 		}
 		else
 		{
-			using value_type = elevated_t<decay_vector_t<A>, decay_vector_t<B>>;
-			value_type decayedA = static_cast<value_type>(static_cast<decay_vector_t<A>>(a));
-			value_type decayedB = static_cast<value_type>(static_cast<decay_vector_t<B>>(b));
-			return decayedA > decayedB ? decayedA : decayedB;
+			return a > b ? a : b;
 		}
 	}
 
@@ -106,11 +100,7 @@ namespace rsl::math
 		}
 		else
 		{
-			using value_type = elevated_t<decay_vector_t<In>, elevated_t<decay_vector_t<Min>, decay_vector_t<Max>>>;
-			value_type decayedIn = static_cast<value_type>(static_cast<decay_vector_t<In>>(in));
-			value_type decayedMin = static_cast<value_type>(static_cast<decay_vector_t<Min>>(min));
-			value_type decayedMax = static_cast<value_type>(static_cast<decay_vector_t<Max>>(max));
-			return decayedIn < decayedMin ? decayedMin : (decayedIn > decayedMax ? decayedMax : decayedIn);
+            return in < min ? min : (in > max ? max : in);
 		}
 	}
 
@@ -127,9 +117,9 @@ namespace rsl::math
 		}
 		else
 		{
-			return in < static_cast<value_type>(0)
-					   ? static_cast<value_type>(0)
-					   : (in > static_cast<value_type>(1) ? static_cast<value_type>(1) : static_cast<value_type>(in));
+			return in < value_type(0)
+					   ? value_type(0)
+					   : (in > value_type(1) ? value_type(1) : in);
 		}
 	}
 } // namespace rsl::math

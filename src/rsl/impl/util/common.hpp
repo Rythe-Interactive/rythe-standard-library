@@ -1513,26 +1513,35 @@ namespace rsl
         using type_at = element_at_t<I, Types...>;
     };
 
+    template <>
+    struct type_sequence<>
+    {
+        constexpr static size_type size = 0ull;
+
+        template <typename>
+        constexpr static bool contains = false;
+    };
+
     template <typename T>
     concept type_sequence_c = is_specialization_v<T, type_sequence>;
 
     template <typename...>
-    struct concat_sequence;
+    struct concat_type_sequence;
 
     template <typename... A, typename... B, type_sequence_c C, type_sequence_c... Rest>
-    struct concat_sequence<type_sequence<A...>, type_sequence<B...>, C, Rest...>
+    struct concat_type_sequence<type_sequence<A...>, type_sequence<B...>, C, Rest...>
     {
-        using type = concat_sequence<type_sequence<A..., B...>, C, Rest...>::type;
+        using type = concat_type_sequence<type_sequence<A..., B...>, C, Rest...>::type;
     };
 
     template <typename... A, typename... B>
-    struct concat_sequence<type_sequence<A...>, type_sequence<B...>>
+    struct concat_type_sequence<type_sequence<A...>, type_sequence<B...>>
     {
         using type = type_sequence<A..., B...>;
     };
 
     template <type_sequence_c... Sequences>
-    using concat_sequence_t = concat_sequence<Sequences...>::type;
+    using concat_type_sequence_t = concat_type_sequence<Sequences...>::type;
 
     template <type_sequence_c Sequence, typename T>
     constexpr bool type_sequence_contains_v = Sequence::template contains<T>;
@@ -1551,6 +1560,113 @@ namespace rsl
             : conjunction<
                 conjunction<type_sequence_contains<type_sequence<TypesA...>, TypesB>...>,
                 conjunction<type_sequence_contains<type_sequence<TypesB...>, TypesA>...>> {};
+
+    namespace internal
+    {
+        template <size_type I, bool Select, type_sequence_c Traits, type_sequence_c Sequence, typename... Selected>
+        struct _select_from_type_sequence_impl;
+
+        template <size_type I, type_sequence_c Traits, type_sequence_c Sequence, typename... Selected>
+        struct _select_from_type_sequence_impl<I, true, Traits, Sequence, Selected...> :
+            _select_from_type_sequence_impl<
+                    I - 1,
+                    Traits::template type_at<I - 1>::value,
+                    Traits,
+                    Sequence,
+                    typename Sequence::template type_at<I>,
+                    Selected...>
+        {};
+
+        template <size_type I, type_sequence_c Traits, type_sequence_c Sequence, typename... Selected>
+        struct _select_from_type_sequence_impl<I, false, Traits, Sequence, Selected...> :
+            _select_from_type_sequence_impl<I - 1, Traits::template type_at<I - 1>::value, Traits, Sequence, Selected...>
+        {};
+
+        template <type_sequence_c Traits, type_sequence_c Sequence, typename... Selected>
+        struct _select_from_type_sequence_impl<0, true, Traits, Sequence, Selected...>
+        {
+            using type = type_sequence<typename Sequence::template type_at<0>, Selected...>;
+        };
+
+        template <type_sequence_c Traits, type_sequence_c Sequence, typename... Selected>
+        struct _select_from_type_sequence_impl<0, false, Traits, Sequence, Selected...>
+        {
+            using type = type_sequence<Selected...>;
+        };
+    }
+
+    template <type_sequence_c Traits, type_sequence_c Sequence>
+        requires (Traits::size == Sequence::size)
+    struct select_from_type_sequence :
+        internal::_select_from_type_sequence_impl<Traits::size - 1, Traits::template type_at<Traits::size - 1>::value, Traits, Sequence>
+    {
+    };
+
+    template <type_sequence_c Traits, type_sequence_c Sequence>
+    using select_from_type_sequence_t = select_from_type_sequence<Traits, Sequence>::type;
+
+    template <type_sequence_c SequenceA, type_sequence_c SequenceB>
+    struct combine_type_sequences;
+
+    template <type_sequence_c SequenceA, typename... TypesB>
+    struct combine_type_sequences<SequenceA, type_sequence<TypesB...>> :
+        concat_type_sequence<
+                SequenceA,
+                select_from_type_sequence_t<
+                        type_sequence<negation<type_sequence_contains<SequenceA, TypesB>>...>,
+                        type_sequence<TypesB...>>>
+    {};
+
+    template <type_sequence_c SequenceA>
+    struct combine_type_sequences<SequenceA, type_sequence<>>
+    {
+        using type = SequenceA;
+    };
+
+    template <type_sequence_c SequenceA, type_sequence_c SequenceB>
+    using combine_type_sequences_t = combine_type_sequences<SequenceA, SequenceB>::type;
+
+    namespace internal
+    {
+        template <size_type I, type_sequence_c Sequence, type_sequence_c Result = type_sequence<>>
+        struct _combine_type_sequences_from_sequence_impl :
+            _combine_type_sequences_from_sequence_impl<
+                    I - 1,
+                    Sequence,
+                    typename combine_type_sequences<typename Sequence::template type_at<I>, Result>::type>
+        {};
+
+        template <type_sequence_c... Sequences, type_sequence_c Result>
+        struct _combine_type_sequences_from_sequence_impl<0, type_sequence<Sequences...>, Result>
+        {
+            using type = combine_type_sequences<typename type_sequence<Sequences...>::template type_at<0>, Result>::type;
+        };
+    } // namespace internal
+
+    template <type_sequence_c Sequence>
+    struct combine_type_sequences_from_sequence : internal::_combine_type_sequences_from_sequence_impl<Sequence::size - 1, Sequence>
+    {};
+
+    template <>
+    struct combine_type_sequences_from_sequence<type_sequence<>>
+    {
+        using type = type_sequence<>;
+    };
+
+    template <type_sequence_c Sequence>
+    using combine_type_sequences_from_sequence_t = combine_type_sequences_from_sequence<Sequence>::type;
+
+    template<template<typename>typename Transform, type_sequence_c Sequence>
+    struct transform_type_sequence_types;
+
+    template <template <typename> typename Transform, typename... Types>
+    struct transform_type_sequence_types<Transform, type_sequence<Types...>>
+    {
+        using type = type_sequence<typename Transform<Types>::type...>;
+    };
+
+    template <template <typename> typename Transform, type_sequence_c Sequence>
+    using transform_type_sequence_types_t = transform_type_sequence_types<Transform, Sequence>::type;
 
     template <typename T, T... Vals>
     struct integer_sequence

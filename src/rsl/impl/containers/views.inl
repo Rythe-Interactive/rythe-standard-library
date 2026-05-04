@@ -34,6 +34,13 @@ namespace rsl
     }
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
+    template <size_type N>
+    inline constexpr array_view<T, Iter, ConstIter> array_view<T, Iter, ConstIter>::from_array(T (&arr)[N]) noexcept
+    {
+        return array_view(arr);
+    }
+
+    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
     constexpr array_view<T, Iter, ConstIter> array_view<T, Iter, ConstIter>::from_buffer(
             T* ptr,
             size_type count
