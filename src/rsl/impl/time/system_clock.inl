@@ -12,7 +12,7 @@ namespace rsl
         return current_time() - m_start;
     }
 
-	inline time_span system_clock::restart() noexcept
+    inline time_span system_clock::restart() noexcept
     {
         time_span startTime = current_time();
         time_span time(startTime - m_start);

@@ -1,71 +1,71 @@
 // swizzle 1
 struct
 {
-	scalar x;
+    scalar x;
 };
 struct
 {
-	scalar u;
+    scalar u;
 };
 struct
 {
-	scalar r;
+    scalar r;
 };
 struct
 {
-	scalar s;
+    scalar s;
 };
 
 // swizzle 2
 struct
 {
-	::rsl::math::swizzle<scalar, 1, mode, 0, 0> xx;
+    ::rsl::math::swizzle<scalar, 1, mode, 0, 0> xx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 1, mode, 0, 0> uu;
+    ::rsl::math::swizzle<scalar, 1, mode, 0, 0> uu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 1, mode, 0, 0> rr;
+    ::rsl::math::swizzle<scalar, 1, mode, 0, 0> rr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 1, mode, 0, 0> ss;
+    ::rsl::math::swizzle<scalar, 1, mode, 0, 0> ss;
 };
 
 // swizzle 3
 struct
 {
-	::rsl::math::swizzle<scalar, 1, mode, 0, 0, 0> xxx;
+    ::rsl::math::swizzle<scalar, 1, mode, 0, 0, 0> xxx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 1, mode, 0, 0, 0> uuu;
+    ::rsl::math::swizzle<scalar, 1, mode, 0, 0, 0> uuu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 1, mode, 0, 0, 0> rrr;
+    ::rsl::math::swizzle<scalar, 1, mode, 0, 0, 0> rrr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 1, mode, 0, 0, 0> sss;
+    ::rsl::math::swizzle<scalar, 1, mode, 0, 0, 0> sss;
 };
 
 // swizzle 4
 struct
 {
-	::rsl::math::swizzle<scalar, 1, mode, 0, 0, 0, 0> xxxx;
+    ::rsl::math::swizzle<scalar, 1, mode, 0, 0, 0, 0> xxxx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 1, mode, 0, 0, 0, 0> uuuu;
+    ::rsl::math::swizzle<scalar, 1, mode, 0, 0, 0, 0> uuuu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 1, mode, 0, 0, 0, 0> rrrr;
+    ::rsl::math::swizzle<scalar, 1, mode, 0, 0, 0, 0> rrrr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 1, mode, 0, 0, 0, 0> ssss;
+    ::rsl::math::swizzle<scalar, 1, mode, 0, 0, 0, 0> ssss;
 };

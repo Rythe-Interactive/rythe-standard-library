@@ -1,1904 +1,1904 @@
 // swizzle 1
 struct
 {
-	scalar x, y, z;
+    scalar x, y, z;
 };
 struct
 {
-	scalar u, v, w;
+    scalar u, v, w;
 };
 struct
 {
-	scalar r, g, b;
+    scalar r, g, b;
 };
 struct
 {
-	scalar s, t, p;
+    scalar s, t, p;
 };
 
 // swizzle 2
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0> xx;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0> xx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1> xy;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1> xy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2> xz;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2> xz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0> yx;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0> yx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1> yy;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1> yy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2> yz;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2> yz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0> zx;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0> zx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1> zy;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1> zy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2> zz;
-};
-
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0> uu;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1> uv;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2> uw;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0> vu;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1> vv;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2> vw;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0> wu;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1> wv;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2> ww;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2> zz;
 };
 
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0> rr;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0> uu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1> rg;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1> uv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2> rb;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2> uw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0> gr;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0> vu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1> gg;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1> vv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2> gb;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2> vw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0> br;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0> wu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1> bg;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1> wv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2> bb;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2> ww;
 };
 
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0> ss;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0> rr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1> st;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1> rg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2> sp;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2> rb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0> ts;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0> gr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1> tt;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1> gg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2> tp;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2> gb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0> ps;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0> br;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1> pt;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1> bg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2> pp;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2> bb;
+};
+
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0> ss;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1> st;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2> sp;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0> ts;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1> tt;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2> tp;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0> ps;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1> pt;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2> pp;
 };
 
 // swizzle 3
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0> xxx;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0> xxx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1> xxy;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1> xxy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2> xxz;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2> xxz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0> xyx;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0> xyx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1> xyy;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1> xyy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2> xyz;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2> xyz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0> xzx;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0> xzx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1> xzy;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1> xzy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2> xzz;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2> xzz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0> yxx;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0> yxx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1> yxy;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1> yxy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2> yxz;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2> yxz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0> yyx;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0> yyx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1> yyy;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1> yyy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2> yyz;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2> yyz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0> yzx;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0> yzx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1> yzy;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1> yzy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2> yzz;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2> yzz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0> zxx;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0> zxx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1> zxy;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1> zxy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2> zxz;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2> zxz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0> zyx;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0> zyx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1> zyy;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1> zyy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2> zyz;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2> zyz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0> zzx;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0> zzx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1> zzy;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1> zzy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2> zzz;
-};
-
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0> uuu;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1> uuv;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2> uuw;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0> uvu;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1> uvv;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2> uvw;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0> uwu;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1> uwv;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2> uww;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0> vuu;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1> vuv;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2> vuw;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0> vvu;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1> vvv;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2> vvw;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0> vwu;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1> vwv;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2> vww;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0> wuu;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1> wuv;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2> wuw;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0> wvu;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1> wvv;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2> wvw;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0> wwu;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1> wwv;
-};
-struct
-{
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2> www;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2> zzz;
 };
 
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0> rrr;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0> uuu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1> rrg;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1> uuv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2> rrb;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2> uuw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0> rgr;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0> uvu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1> rgg;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1> uvv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2> rgb;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2> uvw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0> rbr;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0> uwu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1> rbg;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1> uwv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2> rbb;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2> uww;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0> grr;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0> vuu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1> grg;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1> vuv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2> grb;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2> vuw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0> ggr;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0> vvu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1> ggg;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1> vvv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2> ggb;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2> vvw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0> gbr;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0> vwu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1> gbg;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1> vwv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2> gbb;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2> vww;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0> brr;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0> wuu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1> brg;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1> wuv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2> brb;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2> wuw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0> bgr;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0> wvu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1> bgg;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1> wvv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2> bgb;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2> wvw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0> bbr;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0> wwu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1> bbg;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1> wwv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2> bbb;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2> www;
 };
 
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0> sss;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0> rrr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1> sst;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1> rrg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2> ssp;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2> rrb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0> sts;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0> rgr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1> stt;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1> rgg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2> stp;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2> rgb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0> sps;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0> rbr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1> spt;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1> rbg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2> spp;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2> rbb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0> tss;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0> grr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1> tst;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1> grg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2> tsp;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2> grb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0> tts;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0> ggr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1> ttt;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1> ggg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2> ttp;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2> ggb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0> tps;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0> gbr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1> tpt;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1> gbg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2> tpp;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2> gbb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0> pss;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0> brr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1> pst;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1> brg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2> psp;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2> brb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0> pts;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0> bgr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1> ptt;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1> bgg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2> ptp;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2> bgb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0> pps;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0> bbr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1> ppt;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1> bbg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2> ppp;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2> bbb;
+};
+
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0> sss;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1> sst;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2> ssp;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0> sts;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1> stt;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2> stp;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0> sps;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1> spt;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2> spp;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0> tss;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1> tst;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2> tsp;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0> tts;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1> ttt;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2> ttp;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0> tps;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1> tpt;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2> tpp;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0> pss;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1> pst;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2> psp;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0> pts;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1> ptt;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2> ptp;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0> pps;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1> ppt;
+};
+struct
+{
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2> ppp;
 };
 
 // swizzle 4
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 0> xxxx;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 0> xxxx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 1> xxxy;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 1> xxxy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 2> xxxz;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 2> xxxz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 0> xxyx;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 0> xxyx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 1> xxyy;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 1> xxyy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 2> xxyz;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 2> xxyz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 0> xxzx;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 0> xxzx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 1> xxzy;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 1> xxzy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 2> xxzz;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 2> xxzz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 0> xyxx;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 0> xyxx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 1> xyxy;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 1> xyxy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 2> xyxz;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 2> xyxz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 0> xyyx;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 0> xyyx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 1> xyyy;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 1> xyyy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 2> xyyz;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 2> xyyz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 0> xyzx;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 0> xyzx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 1> xyzy;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 1> xyzy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 2> xyzz;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 2> xyzz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 0> xzxx;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 0> xzxx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 1> xzxy;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 1> xzxy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 2> xzxz;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 2> xzxz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 0> xzyx;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 0> xzyx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 1> xzyy;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 1> xzyy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 2> xzyz;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 2> xzyz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 0> xzzx;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 0> xzzx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 1> xzzy;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 1> xzzy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 2> xzzz;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 2> xzzz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 0> yxxx;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 0> yxxx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 1> yxxy;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 1> yxxy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 2> yxxz;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 2> yxxz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 0> yxyx;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 0> yxyx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 1> yxyy;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 1> yxyy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 2> yxyz;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 2> yxyz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 0> yxzx;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 0> yxzx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 1> yxzy;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 1> yxzy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 2> yxzz;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 2> yxzz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 0> yyxx;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 0> yyxx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 1> yyxy;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 1> yyxy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 2> yyxz;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 2> yyxz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 0> yyyx;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 0> yyyx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 1> yyyy;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 1> yyyy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 2> yyyz;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 2> yyyz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 0> yyzx;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 0> yyzx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 1> yyzy;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 1> yyzy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 2> yyzz;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 2> yyzz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 0> yzxx;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 0> yzxx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 1> yzxy;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 1> yzxy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 2> yzxz;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 2> yzxz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 0> yzyx;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 0> yzyx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 1> yzyy;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 1> yzyy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 2> yzyz;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 2> yzyz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 0> yzzx;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 0> yzzx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 1> yzzy;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 1> yzzy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 2> yzzz;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 2> yzzz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 0> zxxx;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 0> zxxx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 1> zxxy;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 1> zxxy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 2> zxxz;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 2> zxxz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 0> zxyx;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 0> zxyx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 1> zxyy;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 1> zxyy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 2> zxyz;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 2> zxyz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 0> zxzx;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 0> zxzx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 1> zxzy;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 1> zxzy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 2> zxzz;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 2> zxzz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 0> zyxx;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 0> zyxx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 1> zyxy;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 1> zyxy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 2> zyxz;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 2> zyxz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 0> zyyx;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 0> zyyx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 1> zyyy;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 1> zyyy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 2> zyyz;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 2> zyyz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 0> zyzx;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 0> zyzx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 1> zyzy;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 1> zyzy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 2> zyzz;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 2> zyzz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 0> zzxx;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 0> zzxx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 1> zzxy;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 1> zzxy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 2> zzxz;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 2> zzxz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 0> zzyx;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 0> zzyx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 1> zzyy;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 1> zzyy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 2> zzyz;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 2> zzyz;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 0> zzzx;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 0> zzzx;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 1> zzzy;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 1> zzzy;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 2> zzzz;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 2> zzzz;
 };
 
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 0> uuuu;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 0> uuuu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 1> uuuv;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 1> uuuv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 2> uuuw;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 2> uuuw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 0> uuvu;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 0> uuvu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 1> uuvv;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 1> uuvv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 2> uuvw;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 2> uuvw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 0> uuwu;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 0> uuwu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 1> uuwv;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 1> uuwv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 2> uuww;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 2> uuww;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 0> uvuu;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 0> uvuu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 1> uvuv;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 1> uvuv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 2> uvuw;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 2> uvuw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 0> uvvu;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 0> uvvu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 1> uvvv;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 1> uvvv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 2> uvvw;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 2> uvvw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 0> uvwu;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 0> uvwu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 1> uvwv;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 1> uvwv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 2> uvww;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 2> uvww;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 0> uwuu;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 0> uwuu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 1> uwuv;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 1> uwuv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 2> uwuw;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 2> uwuw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 0> uwvu;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 0> uwvu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 1> uwvv;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 1> uwvv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 2> uwvw;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 2> uwvw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 0> uwwu;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 0> uwwu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 1> uwwv;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 1> uwwv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 2> uwww;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 2> uwww;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 0> vuuu;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 0> vuuu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 1> vuuv;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 1> vuuv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 2> vuuw;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 2> vuuw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 0> vuvu;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 0> vuvu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 1> vuvv;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 1> vuvv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 2> vuvw;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 2> vuvw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 0> vuwu;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 0> vuwu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 1> vuwv;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 1> vuwv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 2> vuww;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 2> vuww;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 0> vvuu;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 0> vvuu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 1> vvuv;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 1> vvuv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 2> vvuw;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 2> vvuw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 0> vvvu;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 0> vvvu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 1> vvvv;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 1> vvvv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 2> vvvw;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 2> vvvw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 0> vvwu;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 0> vvwu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 1> vvwv;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 1> vvwv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 2> vvww;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 2> vvww;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 0> vwuu;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 0> vwuu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 1> vwuv;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 1> vwuv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 2> vwuw;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 2> vwuw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 0> vwvu;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 0> vwvu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 1> vwvv;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 1> vwvv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 2> vwvw;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 2> vwvw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 0> vwwu;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 0> vwwu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 1> vwwv;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 1> vwwv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 2> vwww;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 2> vwww;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 0> wuuu;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 0> wuuu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 1> wuuv;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 1> wuuv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 2> wuuw;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 2> wuuw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 0> wuvu;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 0> wuvu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 1> wuvv;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 1> wuvv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 2> wuvw;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 2> wuvw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 0> wuwu;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 0> wuwu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 1> wuwv;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 1> wuwv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 2> wuww;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 2> wuww;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 0> wvuu;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 0> wvuu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 1> wvuv;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 1> wvuv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 2> wvuw;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 2> wvuw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 0> wvvu;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 0> wvvu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 1> wvvv;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 1> wvvv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 2> wvvw;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 2> wvvw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 0> wvwu;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 0> wvwu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 1> wvwv;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 1> wvwv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 2> wvww;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 2> wvww;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 0> wwuu;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 0> wwuu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 1> wwuv;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 1> wwuv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 2> wwuw;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 2> wwuw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 0> wwvu;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 0> wwvu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 1> wwvv;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 1> wwvv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 2> wwvw;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 2> wwvw;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 0> wwwu;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 0> wwwu;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 1> wwwv;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 1> wwwv;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 2> wwww;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 2> wwww;
 };
 
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 0> rrrr;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 0> rrrr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 1> rrrg;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 1> rrrg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 2> rrrb;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 2> rrrb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 0> rrgr;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 0> rrgr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 1> rrgg;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 1> rrgg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 2> rrgb;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 2> rrgb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 0> rrbr;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 0> rrbr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 1> rrbg;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 1> rrbg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 2> rrbb;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 2> rrbb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 0> rgrr;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 0> rgrr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 1> rgrg;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 1> rgrg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 2> rgrb;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 2> rgrb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 0> rggr;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 0> rggr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 1> rggg;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 1> rggg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 2> rggb;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 2> rggb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 0> rgbr;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 0> rgbr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 1> rgbg;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 1> rgbg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 2> rgbb;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 2> rgbb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 0> rbrr;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 0> rbrr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 1> rbrg;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 1> rbrg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 2> rbrb;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 2> rbrb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 0> rbgr;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 0> rbgr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 1> rbgg;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 1> rbgg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 2> rbgb;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 2> rbgb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 0> rbbr;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 0> rbbr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 1> rbbg;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 1> rbbg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 2> rbbb;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 2> rbbb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 0> grrr;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 0> grrr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 1> grrg;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 1> grrg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 2> grrb;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 2> grrb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 0> grgr;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 0> grgr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 1> grgg;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 1> grgg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 2> grgb;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 2> grgb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 0> grbr;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 0> grbr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 1> grbg;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 1> grbg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 2> grbb;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 2> grbb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 0> ggrr;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 0> ggrr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 1> ggrg;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 1> ggrg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 2> ggrb;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 2> ggrb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 0> gggr;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 0> gggr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 1> gggg;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 1> gggg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 2> gggb;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 2> gggb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 0> ggbr;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 0> ggbr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 1> ggbg;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 1> ggbg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 2> ggbb;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 2> ggbb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 0> gbrr;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 0> gbrr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 1> gbrg;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 1> gbrg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 2> gbrb;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 2> gbrb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 0> gbgr;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 0> gbgr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 1> gbgg;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 1> gbgg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 2> gbgb;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 2> gbgb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 0> gbbr;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 0> gbbr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 1> gbbg;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 1> gbbg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 2> gbbb;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 2> gbbb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 0> brrr;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 0> brrr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 1> brrg;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 1> brrg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 2> brrb;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 2> brrb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 0> brgr;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 0> brgr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 1> brgg;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 1> brgg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 2> brgb;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 2> brgb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 0> brbr;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 0> brbr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 1> brbg;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 1> brbg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 2> brbb;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 2> brbb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 0> bgrr;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 0> bgrr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 1> bgrg;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 1> bgrg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 2> bgrb;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 2> bgrb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 0> bggr;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 0> bggr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 1> bggg;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 1> bggg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 2> bggb;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 2> bggb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 0> bgbr;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 0> bgbr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 1> bgbg;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 1> bgbg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 2> bgbb;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 2> bgbb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 0> bbrr;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 0> bbrr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 1> bbrg;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 1> bbrg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 2> bbrb;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 2> bbrb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 0> bbgr;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 0> bbgr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 1> bbgg;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 1> bbgg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 2> bbgb;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 2> bbgb;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 0> bbbr;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 0> bbbr;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 1> bbbg;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 1> bbbg;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 2> bbbb;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 2> bbbb;
 };
 
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 0> ssss;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 0> ssss;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 1> ssst;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 1> ssst;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 2> sssp;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 0, 2> sssp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 0> ssts;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 0> ssts;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 1> sstt;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 1> sstt;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 2> sstp;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 1, 2> sstp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 0> ssps;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 0> ssps;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 1> sspt;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 1> sspt;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 2> sspp;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 0, 2, 2> sspp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 0> stss;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 0> stss;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 1> stst;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 1> stst;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 2> stsp;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 0, 2> stsp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 0> stts;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 0> stts;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 1> sttt;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 1> sttt;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 2> sttp;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 1, 2> sttp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 0> stps;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 0> stps;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 1> stpt;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 1> stpt;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 2> stpp;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 1, 2, 2> stpp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 0> spss;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 0> spss;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 1> spst;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 1> spst;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 2> spsp;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 0, 2> spsp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 0> spts;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 0> spts;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 1> sptt;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 1> sptt;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 2> sptp;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 1, 2> sptp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 0> spps;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 0> spps;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 1> sppt;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 1> sppt;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 2> sppp;
+    ::rsl::math::swizzle<scalar, 3, mode, 0, 2, 2, 2> sppp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 0> tsss;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 0> tsss;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 1> tsst;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 1> tsst;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 2> tssp;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 0, 2> tssp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 0> tsts;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 0> tsts;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 1> tstt;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 1> tstt;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 2> tstp;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 1, 2> tstp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 0> tsps;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 0> tsps;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 1> tspt;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 1> tspt;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 2> tspp;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 0, 2, 2> tspp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 0> ttss;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 0> ttss;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 1> ttst;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 1> ttst;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 2> ttsp;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 0, 2> ttsp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 0> ttts;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 0> ttts;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 1> tttt;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 1> tttt;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 2> tttp;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 1, 2> tttp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 0> ttps;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 0> ttps;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 1> ttpt;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 1> ttpt;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 2> ttpp;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 1, 2, 2> ttpp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 0> tpss;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 0> tpss;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 1> tpst;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 1> tpst;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 2> tpsp;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 0, 2> tpsp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 0> tpts;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 0> tpts;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 1> tptt;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 1> tptt;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 2> tptp;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 1, 2> tptp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 0> tpps;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 0> tpps;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 1> tppt;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 1> tppt;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 2> tppp;
+    ::rsl::math::swizzle<scalar, 3, mode, 1, 2, 2, 2> tppp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 0> psss;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 0> psss;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 1> psst;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 1> psst;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 2> pssp;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 0, 2> pssp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 0> psts;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 0> psts;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 1> pstt;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 1> pstt;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 2> pstp;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 1, 2> pstp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 0> psps;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 0> psps;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 1> pspt;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 1> pspt;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 2> pspp;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 0, 2, 2> pspp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 0> ptss;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 0> ptss;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 1> ptst;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 1> ptst;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 2> ptsp;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 0, 2> ptsp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 0> ptts;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 0> ptts;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 1> pttt;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 1> pttt;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 2> pttp;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 1, 2> pttp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 0> ptps;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 0> ptps;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 1> ptpt;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 1> ptpt;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 2> ptpp;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 1, 2, 2> ptpp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 0> ppss;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 0> ppss;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 1> ppst;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 1> ppst;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 2> ppsp;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 0, 2> ppsp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 0> ppts;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 0> ppts;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 1> pptt;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 1> pptt;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 2> pptp;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 1, 2> pptp;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 0> ppps;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 0> ppps;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 1> pppt;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 1> pppt;
 };
 struct
 {
-	::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 2> pppp;
+    ::rsl::math::swizzle<scalar, 3, mode, 2, 2, 2, 2> pppp;
 };

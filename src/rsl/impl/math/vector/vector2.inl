@@ -15,19 +15,19 @@
 
 namespace rsl::math
 {
-	template <arithmetic_type Scalar, storage_mode Mode>
-	constexpr vector<Scalar, 2, Mode>::vector(scalar _x, scalar _y) noexcept
-		: data{
-			  {_x, _y}
+    template <arithmetic_type Scalar, storage_mode Mode>
+    constexpr vector<Scalar, 2, Mode>::vector(scalar _x, scalar _y) noexcept
+        : data{
+              {_x, _y}
     }
-	{
-	}
+    {
+    }
 
-	template <storage_mode Mode>
-	constexpr vector<bool, 2, Mode>::vector(scalar _x, scalar _y) noexcept
-		: data{
-			  {_x, _y}
+    template <storage_mode Mode>
+    constexpr vector<bool, 2, Mode>::vector(scalar _x, scalar _y) noexcept
+        : data{
+              {_x, _y}
     }
-	{
-	}
+    {
+    }
 } // namespace rsl::math

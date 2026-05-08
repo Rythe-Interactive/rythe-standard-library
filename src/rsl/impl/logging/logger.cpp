@@ -12,53 +12,53 @@
 
 namespace rsl::log
 {
-	void logger::log_args(const log::severity s, const format_string format, const bool appendNewLine, const fmt::format_args args) noexcept
-	{
-		const log::message logMessage
-		{
-			.loggerName = m_name,
-			.threadId = current_thread::get_id(),
-			.timestamp = main_clock.current_time(),
-			.sourceLocation = format.srcLoc,
-			.severity = s,
-			.msg = format.str,
-			.formatArgs = args,
-		    .appendNewLine = appendNewLine,
-		};
+    void logger::log_args(const log::severity s, const format_string format, const bool appendNewLine, const fmt::format_args args) noexcept
+    {
+        const log::message logMessage
+        {
+            .loggerName = m_name,
+            .threadId = current_thread::get_id(),
+            .timestamp = main_clock.current_time(),
+            .sourceLocation = format.srcLoc,
+            .severity = s,
+            .msg = format.str,
+            .formatArgs = args,
+            .appendNewLine = appendNewLine,
+        };
 
-		log(logMessage);
-	}
+        log(logMessage);
+    }
 
-	void logger::flush()
-	{
-		for (auto* sink : m_sinks)
-		{
-			sink->flush();
-		}
-	}
+    void logger::flush()
+    {
+        for (auto* sink : m_sinks)
+        {
+            sink->flush();
+        }
+    }
 
-	void synchronous_logger::log(const log::message& message)
-	{
-		const bool logEnabled = message.severity >= m_severity && message.severity != log::severity::off;
-		if (!logEnabled)
-		{
-			return;
-		}
+    void synchronous_logger::log(const log::message& message)
+    {
+        const bool logEnabled = message.severity >= m_severity && message.severity != log::severity::off;
+        if (!logEnabled)
+        {
+            return;
+        }
 
-	    if(!m_formatter.is_armed())
-	    {
-	        set_formatter<undecorated_formatter>();
-	    }
+        if(!m_formatter.is_armed())
+        {
+            set_formatter<undecorated_formatter>();
+        }
 
-	    formatter& formatter = *m_formatter;
-		for (auto* sink : m_sinks)
-		{
-			sink->log(formatter, message);
-		}
+        formatter& formatter = *m_formatter;
+        for (auto* sink : m_sinks)
+        {
+            sink->log(formatter, message);
+        }
 
-		if (message.severity >= m_flushSeverity)
-		{
-			flush();
-		}
-	}
+        if (message.severity >= m_flushSeverity)
+        {
+            flush();
+        }
+    }
 } // namespace rsl::log

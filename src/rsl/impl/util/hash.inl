@@ -229,14 +229,14 @@ namespace rsl
     };
 
     #define RSL_HASH_INT(T)                                                                                                \
-	template <hash_mode Mode>                                                                                          \
-	struct hash_strategy<T, Mode>                                                                                      \
-	{                                                                                                                  \
-		[[rythe_always_inline]] constexpr static id_type hash(const T& val) noexcept                                   \
-		{                                                                                                              \
-			return internal::hash::hash_int<Mode>(insert_cast<uint64>(val));                                           \
-		}                                                                                                              \
-	};
+    template <hash_mode Mode>                                                                                          \
+    struct hash_strategy<T, Mode>                                                                                      \
+    {                                                                                                                  \
+        [[rythe_always_inline]] constexpr static id_type hash(const T& val) noexcept                                   \
+        {                                                                                                              \
+            return internal::hash::hash_int<Mode>(insert_cast<uint64>(val));                                           \
+        }                                                                                                              \
+    };
 
     RSL_HASH_INT(uint8);
 
