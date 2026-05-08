@@ -6,7 +6,7 @@ namespace rsl
     template<typename...>
     struct tuple;
 
-	template <size_type I, typename Tuple>
+    template <size_type I, typename Tuple>
     struct tuple_element;
 
     template <size_type I, typename... Types>

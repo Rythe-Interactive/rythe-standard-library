@@ -6,15 +6,15 @@
 
 namespace rsl
 {
-	struct logging_context
-	{
-		dynamic_string logFile = "logs/rythe.log"_ds;
-	    log::logger* logger = nullptr;
-		log::logger* undecoratedLogger = nullptr;
-	};
+    struct logging_context
+    {
+        dynamic_string logFile = "logs/rythe.log"_ds;
+        log::logger* logger = nullptr;
+        log::logger* undecoratedLogger = nullptr;
+    };
     RYTHE_DECLARE_SINGLETON(logging_context)
 
-	namespace log
+    namespace log
     {
         template <typename... Args>
         [[rythe_always_inline]] void println(severity s, format_string format, Args&&... args) noexcept;

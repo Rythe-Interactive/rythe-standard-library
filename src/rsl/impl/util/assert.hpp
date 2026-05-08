@@ -8,28 +8,28 @@
 #include "../util/container_util.hpp"
 
 #define rsl_mock_assert(expr)                                                                                          \
-	if constexpr (false)                                                                                               \
-	{                                                                                                                  \
-		[[maybe_unused]] bool b = static_cast<bool>(expr);                                                             \
-	}
+    if constexpr (false)                                                                                               \
+    {                                                                                                                  \
+        [[maybe_unused]] bool b = static_cast<bool>(expr);                                                             \
+    }
 #define rsl_mock_assert_msg(expr, msg)                                                                                 \
-	if constexpr (false)                                                                                               \
-	{                                                                                                                  \
-		[[maybe_unused]] bool b = static_cast<bool>(expr);                                                             \
-		[[maybe_unused]] string_view m = view_from_stringish(msg);													   \
-	}
+    if constexpr (false)                                                                                               \
+    {                                                                                                                  \
+        [[maybe_unused]] bool b = static_cast<bool>(expr);                                                             \
+        [[maybe_unused]] string_view m = view_from_stringish(msg);                                                     \
+    }
 
 #define rsl_mock_assert_soft(expr)                                                                                     \
-	if constexpr (false)                                                                                               \
-	{                                                                                                                  \
-		[[maybe_unused]] bool b = static_cast<bool>(expr);                                                             \
-	}
+    if constexpr (false)                                                                                               \
+    {                                                                                                                  \
+        [[maybe_unused]] bool b = static_cast<bool>(expr);                                                             \
+    }
 #define rsl_mock_assert_msg_soft(expr, msg)                                                                            \
-	if constexpr (false)                                                                                               \
-	{                                                                                                                  \
-		[[maybe_unused]] bool b = static_cast<bool>(expr);                                                             \
-		[[maybe_unused]] string_view m = view_from_stringish(msg);													   \
-	}
+    if constexpr (false)                                                                                               \
+    {                                                                                                                  \
+        [[maybe_unused]] bool b = static_cast<bool>(expr);                                                             \
+        [[maybe_unused]] string_view m = view_from_stringish(msg);                                                     \
+    }
 
 namespace rsl
 {
@@ -102,52 +102,52 @@ namespace rsl
 }
 
 #define rsl_assert_raw(expr)                                                                                           \
-	{                                                                                                                  \
-		if (!!!(expr)) [[unlikely]]                                                                                    \
-		{                                                                                                              \
-			::rsl::internal::__rsl_assert_raw_impl(RYTHE_STRINGIFY(expr), __FILE__, __LINE__, "");                     \
-		}                                                                                                              \
-	}
+    {                                                                                                                  \
+        if (!!!(expr)) [[unlikely]]                                                                                    \
+        {                                                                                                              \
+            ::rsl::internal::__rsl_assert_raw_impl(RYTHE_STRINGIFY(expr), __FILE__, __LINE__, "");                     \
+        }                                                                                                              \
+    }
 
 #define rsl_assert_msg_raw(expr, msg)                                                                                  \
-	{                                                                                                                  \
-		if (!!!(expr)) [[unlikely]]                                                                                    \
-		{                                                                                                              \
-			::rsl::internal::__rsl_assert_raw_impl(RYTHE_STRINGIFY(expr), __FILE__, __LINE__, msg);                    \
-		}                                                                                                              \
-	}
+    {                                                                                                                  \
+        if (!!!(expr)) [[unlikely]]                                                                                    \
+        {                                                                                                              \
+            ::rsl::internal::__rsl_assert_raw_impl(RYTHE_STRINGIFY(expr), __FILE__, __LINE__, msg);                    \
+        }                                                                                                              \
+    }
 
 #define rsl_assert_always(expr)                                                                                        \
-	{                                                                                                                  \
-		if (!!!(expr)) [[unlikely]]                                                                                    \
-		{                                                                                                              \
-			::rsl::internal::__rsl_assert_impl(RYTHE_STRINGIFY(expr), __FILE__, __LINE__, "", false, nullptr);         \
-		}                                                                                                              \
-	}
+    {                                                                                                                  \
+        if (!!!(expr)) [[unlikely]]                                                                                    \
+        {                                                                                                              \
+            ::rsl::internal::__rsl_assert_impl(RYTHE_STRINGIFY(expr), __FILE__, __LINE__, "", false, nullptr);         \
+        }                                                                                                              \
+    }
 #define rsl_assert_msg_always(expr, msg)                                                                               \
-	{                                                                                                                  \
-		if (!!!(expr)) [[unlikely]]                                                                                    \
-		{                                                                                                              \
-			::rsl::internal::__rsl_assert_impl(RYTHE_STRINGIFY(expr), __FILE__, __LINE__, msg, false, nullptr);        \
-		}                                                                                                              \
-	}
+    {                                                                                                                  \
+        if (!!!(expr)) [[unlikely]]                                                                                    \
+        {                                                                                                              \
+            ::rsl::internal::__rsl_assert_impl(RYTHE_STRINGIFY(expr), __FILE__, __LINE__, msg, false, nullptr);        \
+        }                                                                                                              \
+    }
 
 #define rsl_assert_soft_always(expr)                                                                                   \
-	{                                                                                                                  \
-		if (!!!(expr)) [[unlikely]]                                                                                    \
-		{                                                                                                              \
-			static bool ignore = false;                                                                                \
-			::rsl::internal::__rsl_assert_impl(RYTHE_STRINGIFY(expr), __FILE__, __LINE__, "", true, &ignore);          \
-		}                                                                                                              \
-	}
+    {                                                                                                                  \
+        if (!!!(expr)) [[unlikely]]                                                                                    \
+        {                                                                                                              \
+            static bool ignore = false;                                                                                \
+            ::rsl::internal::__rsl_assert_impl(RYTHE_STRINGIFY(expr), __FILE__, __LINE__, "", true, &ignore);          \
+        }                                                                                                              \
+    }
 #define rsl_assert_msg_soft_always(expr, msg)                                                                          \
-	{                                                                                                                  \
-		if (!!!(expr)) [[unlikely]]                                                                                    \
-		{                                                                                                              \
-			static bool ignore = false;                                                                                \
-			::rsl::internal::__rsl_assert_impl(RYTHE_STRINGIFY(expr), __FILE__, __LINE__, msg, true, &ignore);         \
-		}                                                                                                              \
-	}
+    {                                                                                                                  \
+        if (!!!(expr)) [[unlikely]]                                                                                    \
+        {                                                                                                              \
+            static bool ignore = false;                                                                                \
+            ::rsl::internal::__rsl_assert_impl(RYTHE_STRINGIFY(expr), __FILE__, __LINE__, msg, true, &ignore);         \
+        }                                                                                                              \
+    }
 
 #ifdef RYTHE_VALIDATE
 #define rsl_assert_hard(expr) rsl_assert_always(expr)
@@ -247,4 +247,4 @@ namespace rsl
 #define rsl_assert_invalid_cast(expr) rsl_assert_msg_rarely(expr, "invalid cast")
 #define rsl_assert_invalid_pattern(expr) rsl_assert_msg_rarely(expr, "invalid pattern")
 #define rsl_assert_alignment(ptr, alignment)                                                                           \
-	rsl_assert_msg_rarely((reinterpret_cast<size_type>(ptr) & ((alignment) - 1)) == 0, "wrong alignment")
+    rsl_assert_msg_rarely((reinterpret_cast<size_type>(ptr) & ((alignment) - 1)) == 0, "wrong alignment")

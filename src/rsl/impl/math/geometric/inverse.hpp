@@ -8,14 +8,14 @@
 
 namespace rsl::math
 {
-	template <vector_type VecType>
-	[[nodiscard]] [[rythe_always_inline]] auto inverse(const VecType& v) noexcept;
+    template <vector_type VecType>
+    [[nodiscard]] [[rythe_always_inline]] auto inverse(const VecType& v) noexcept;
 
-	template <quat_type QuatType>
-	[[nodiscard]] [[rythe_always_inline]] auto inverse(const QuatType& q) noexcept;
+    template <quat_type QuatType>
+    [[nodiscard]] [[rythe_always_inline]] auto inverse(const QuatType& q) noexcept;
 
-	template <matrix_type MatType>
-	[[nodiscard]] [[rythe_always_inline]] auto inverse(const MatType& m) noexcept;
+    template <matrix_type MatType>
+    [[nodiscard]] [[rythe_always_inline]] auto inverse(const MatType& m) noexcept;
 } // namespace rsl::math
 
 #include "inverse.inl"

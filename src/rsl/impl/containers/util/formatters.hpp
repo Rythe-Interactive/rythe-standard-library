@@ -34,31 +34,31 @@ namespace fmt
         }
     };
 
-	template <rsl::size_type MaxSize, typename CharType>
-	struct formatter<rsl::buffered_string<MaxSize, CharType>>
-	{
-	    formatter<rsl::string_view> stringViewFormatter;
-
-	    constexpr const char* parse(format_parse_context& ctx) { return stringViewFormatter.parse(ctx); }
-
-		template <typename FormatContext>
-		auto format(const rsl::buffered_string<MaxSize, CharType>& str, FormatContext& ctx) const
-		{
-            return stringViewFormatter.format(str.view(), ctx);
-		}
-	};
-
-	template <rsl::size_type N>
-	struct formatter<rsl::constexpr_string<N>>
-	{
-	    formatter<rsl::string_view> stringViewFormatter;
+    template <rsl::size_type MaxSize, typename CharType>
+    struct formatter<rsl::buffered_string<MaxSize, CharType>>
+    {
+        formatter<rsl::string_view> stringViewFormatter;
 
         constexpr const char* parse(format_parse_context& ctx) { return stringViewFormatter.parse(ctx); }
 
-		template <typename FormatContext>
-		auto format(const rsl::constexpr_string<N>& str, FormatContext& ctx) const
-		{
+        template <typename FormatContext>
+        auto format(const rsl::buffered_string<MaxSize, CharType>& str, FormatContext& ctx) const
+        {
             return stringViewFormatter.format(str.view(), ctx);
-		}
-	};
+        }
+    };
+
+    template <rsl::size_type N>
+    struct formatter<rsl::constexpr_string<N>>
+    {
+        formatter<rsl::string_view> stringViewFormatter;
+
+        constexpr const char* parse(format_parse_context& ctx) { return stringViewFormatter.parse(ctx); }
+
+        template <typename FormatContext>
+        auto format(const rsl::constexpr_string<N>& str, FormatContext& ctx) const
+        {
+            return stringViewFormatter.format(str.view(), ctx);
+        }
+    };
 } // namespace fmt

@@ -29,20 +29,20 @@
 #ifdef RYTHE_PCH
 namespace rsl::math
 {
-	template struct matrix<float32, 1, 1>;
-	template struct matrix<float64, 1, 1>;
-	template struct matrix<bool, 1, 1>;
+    template struct matrix<float32, 1, 1>;
+    template struct matrix<float64, 1, 1>;
+    template struct matrix<bool, 1, 1>;
 
-	template struct matrix<float32, 2, 2>;
-	template struct matrix<float64, 2, 2>;
-	template struct matrix<bool, 2, 2>;
+    template struct matrix<float32, 2, 2>;
+    template struct matrix<float64, 2, 2>;
+    template struct matrix<bool, 2, 2>;
 
-	template struct matrix<float32, 3, 3>;
-	template struct matrix<float64, 3, 3>;
-	template struct matrix<bool, 3, 3>;
+    template struct matrix<float32, 3, 3>;
+    template struct matrix<float64, 3, 3>;
+    template struct matrix<bool, 3, 3>;
 
-	template struct matrix<float32, 4, 4>;
-	template struct matrix<float64, 4, 4>;
-	template struct matrix<bool, 4, 4>;
+    template struct matrix<float32, 4, 4>;
+    template struct matrix<float64, 4, 4>;
+    template struct matrix<bool, 4, 4>;
 } // namespace rsl::math
 #endif

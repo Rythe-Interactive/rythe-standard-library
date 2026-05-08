@@ -161,7 +161,7 @@ namespace rsl
 
     // TODO(Rowan): The below functions check for any occurrence of any of the items in other in str, not for the sequence of other in
     // str. Is that intended?
-    //				https://en.cppreference.com/w/cpp/string/basic_string_view/find_last_not_of.html see overload 1
+    //              https://en.cppreference.com/w/cpp/string/basic_string_view/find_last_not_of.html see overload 1
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter,
         weakly_equality_comparable_with<T> C, contiguous_iterator CIter, contiguous_iterator CConstIter>
     [[rythe_always_inline]] constexpr size_type linear_search_sequence(

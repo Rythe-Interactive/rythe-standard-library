@@ -8,16 +8,16 @@
 
 namespace rsl::log
 {
-	struct message
-	{
-		string_view loggerName;
-		thread_id threadId;
+    struct message
+    {
+        string_view loggerName;
+        thread_id threadId;
 
-		time_span timestamp;
-		source_location sourceLocation;
-		log::severity severity;
-		string_view msg;
-		fmt::format_args formatArgs;
-	    bool appendNewLine;
-	};
+        time_span timestamp;
+        source_location sourceLocation;
+        log::severity severity;
+        string_view msg;
+        fmt::format_args formatArgs;
+        bool appendNewLine;
+    };
 }

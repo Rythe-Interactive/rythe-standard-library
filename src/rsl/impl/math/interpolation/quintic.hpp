@@ -11,41 +11,41 @@
 
 namespace rsl::math
 {
-	// quintic
-	template <typename TypeMin, typename TypeMax, typename ValueType>
-	[[nodiscard]] [[rythe_always_inline]] constexpr auto
-	quintic(TypeMin&& edgeMin, TypeMax&& edgeMax, ValueType&& value) noexcept;
+    // quintic
+    template <typename TypeMin, typename TypeMax, typename ValueType>
+    [[nodiscard]] [[rythe_always_inline]] constexpr auto
+    quintic(TypeMin&& edgeMin, TypeMax&& edgeMax, ValueType&& value) noexcept;
 
-	// quintic
-	template <typename ValueType>
-	[[nodiscard]] [[rythe_always_inline]] constexpr auto quintic(ValueType&& value) noexcept;
+    // quintic
+    template <typename ValueType>
+    [[nodiscard]] [[rythe_always_inline]] constexpr auto quintic(ValueType&& value) noexcept;
 
-	// quintic_derivative
-	template <typename TypeMin, typename TypeMax, typename ValueType>
-	[[nodiscard]] [[rythe_always_inline]] constexpr auto
-	quintic_derivative(TypeMin&& edgeMin, TypeMax&& edgeMax, ValueType&& value) noexcept;
+    // quintic_derivative
+    template <typename TypeMin, typename TypeMax, typename ValueType>
+    [[nodiscard]] [[rythe_always_inline]] constexpr auto
+    quintic_derivative(TypeMin&& edgeMin, TypeMax&& edgeMax, ValueType&& value) noexcept;
 
-	// quintic_derivative
-	template <typename ValueType>
-	[[nodiscard]] [[rythe_always_inline]] constexpr auto quintic_derivative(ValueType&& value) noexcept;
+    // quintic_derivative
+    template <typename ValueType>
+    [[nodiscard]] [[rythe_always_inline]] constexpr auto quintic_derivative(ValueType&& value) noexcept;
 
-	// inverse_quintic
-	template <typename TypeMin, typename TypeMax, typename ValueType>
-	[[nodiscard]] [[rythe_always_inline]] auto
-	inverse_quintic(TypeMin&& edgeMin, TypeMax&& edgeMax, ValueType&& value) noexcept;
+    // inverse_quintic
+    template <typename TypeMin, typename TypeMax, typename ValueType>
+    [[nodiscard]] [[rythe_always_inline]] auto
+    inverse_quintic(TypeMin&& edgeMin, TypeMax&& edgeMax, ValueType&& value) noexcept;
 
-	// inverse_quintic
-	template <typename ValueType>
-	[[nodiscard]] [[rythe_always_inline]] auto inverse_quintic(ValueType&& value) noexcept;
+    // inverse_quintic
+    template <typename ValueType>
+    [[nodiscard]] [[rythe_always_inline]] auto inverse_quintic(ValueType&& value) noexcept;
 
-	// inverse_quintic_derivative
-	template <typename TypeMin, typename TypeMax, typename ValueType>
-	[[nodiscard]] [[rythe_always_inline]] auto
-	inverse_quintic_derivative(TypeMin&& edgeMin, TypeMax&& edgeMax, ValueType&& value) noexcept;
+    // inverse_quintic_derivative
+    template <typename TypeMin, typename TypeMax, typename ValueType>
+    [[nodiscard]] [[rythe_always_inline]] auto
+    inverse_quintic_derivative(TypeMin&& edgeMin, TypeMax&& edgeMax, ValueType&& value) noexcept;
 
-	// inverse_quintic_derivative
-	template <typename ValueType>
-	[[nodiscard]] [[rythe_always_inline]] auto inverse_quintic_derivative(ValueType&& value) noexcept;
+    // inverse_quintic_derivative
+    template <typename ValueType>
+    [[nodiscard]] [[rythe_always_inline]] auto inverse_quintic_derivative(ValueType&& value) noexcept;
 } // namespace rsl::math
 
 #include "quintic.inl"
