@@ -1,5 +1,6 @@
 #pragma once
 #include "../util/concepts.hpp"
+#include "reference_wrapper.hpp"
 
 namespace rsl
 {
@@ -102,6 +103,24 @@ namespace rsl
 
         T firstValue;
     };
+
+    template<type_sequence_c TypeSequence>
+    struct tuple_from_type_sequence;
+
+    template<typename... Types>
+    struct tuple_from_type_sequence<type_sequence<Types...>>
+    {
+        using type = tuple<Types...>;
+    };
+
+    template <type_sequence_c TypeSequence>
+    using tuple_from_type_sequence_t = tuple_from_type_sequence<TypeSequence>::type;
+
+    template<typename... Types>
+    tuple<reference_unwrap_t<Types>...> make_tuple(Types&&... values)
+    {
+        return tuple<reference_unwrap_t<Types>...>(rsl::forward<Types>(values)...);
+    }
 }
 
 #include "tuple.inl"

@@ -52,4 +52,19 @@ namespace rsl
     {
         return value;
     }
+
+    template<typename T>
+    struct reference_unwrap
+    {
+        using type = T;
+    };
+
+    template <typename T>
+    struct reference_unwrap<reference_wrapper<T>>
+    {
+        using type = T&;
+    };
+
+    template <typename T>
+    using reference_unwrap_t = reference_unwrap<T>::type;
 }

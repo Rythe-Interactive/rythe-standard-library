@@ -2,6 +2,8 @@
 #include "../defines.hpp"
 #include "primitives.hpp"
 
+#include <functional> // TODO(Glyn): remove this
+
 namespace rsl
 {
     [[nodiscard]] constexpr bool is_constant_evaluated() noexcept
