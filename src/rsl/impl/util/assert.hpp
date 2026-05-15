@@ -16,7 +16,7 @@
     if constexpr (false)                                                                                               \
     {                                                                                                                  \
         [[maybe_unused]] bool b = static_cast<bool>(expr);                                                             \
-        [[maybe_unused]] string_view m = view_from_stringish(msg);                                                     \
+        [[maybe_unused]] rsl::string_view m = rsl::view_from_stringish(msg);                                           \
     }
 
 #define rsl_mock_assert_soft(expr)                                                                                     \
@@ -28,7 +28,7 @@
     if constexpr (false)                                                                                               \
     {                                                                                                                  \
         [[maybe_unused]] bool b = static_cast<bool>(expr);                                                             \
-        [[maybe_unused]] string_view m = view_from_stringish(msg);                                                     \
+        [[maybe_unused]] rsl::string_view m = rsl::view_from_stringish(msg);                                           \
     }
 
 namespace rsl

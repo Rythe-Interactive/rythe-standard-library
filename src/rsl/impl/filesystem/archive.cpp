@@ -30,7 +30,7 @@ namespace rsl::fs
 
     pair<index_type, bool> archive::create_solution_reference(const string_view path)
     {
-        auto [index, newValue] = m_solutionMap.try_emplace(dynamic_string::from_view(path));
+        auto [index, newValue] = m_solutionMap.try_emplace(path);
         if (newValue)
         {
             index = m_solutionIndexAllocator.allocate_index();

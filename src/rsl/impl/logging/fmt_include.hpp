@@ -2,6 +2,7 @@
 
 #define FMT_HEADER_ONLY
 #include <fmt/format.h>
+#include <fmt/chrono.h> // NOLINT
 
 namespace rsl
 {

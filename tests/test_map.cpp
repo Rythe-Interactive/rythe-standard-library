@@ -188,16 +188,16 @@ TEST_CASE("dynamic_map", "[containers]")
     {
         rsl::dynamic_map<dynamic_string, int32> map{};
 
-        map.emplace("Hi"_ds, 4);
-        map.emplace("Hey"_ds, 7);
+        map.emplace("Hi"_sv, 4);
+        map.emplace("Hey"_sv, 7);
         map.emplace("Hello"_ds, 11);
         map.emplace("Bye"_ds, 13);
         map.emplace("Cioa"_ds, 5);
         map.emplace("Cya"_ds, 9);
 
-        CHECK(map.contains("Hi"_sv));
+        CHECK(map.contains("Hi"_ds));
         {
-            int32* result = map.find("Hi"_sv);
+            int32* result = map.find("Hi"_ds);
             REQUIRE(result != nullptr);
             CHECK(*result == 4);
         }

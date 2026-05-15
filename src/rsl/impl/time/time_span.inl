@@ -4,6 +4,19 @@
 namespace rsl
 {
     template <arithmetic_type T>
+    constexpr T time_span::days() const noexcept
+    {
+        if constexpr (is_floating_point_v<T>)
+        {
+            return static_cast<T>(static_cast<float_max>(value) / static_cast<float_max>(86400_g));
+        }
+        else
+        {
+            return static_cast<T>(value / 86400_g);
+        }
+    }
+
+    template <arithmetic_type T>
     constexpr T time_span::hours() const noexcept
     {
         if constexpr (is_floating_point_v<T>)
@@ -74,40 +87,9 @@ namespace rsl
         return static_cast<T>(value);
     }
 
-    template <arithmetic_type T>
-    inline constexpr time_span time_span::from_nanoseconds(const T count) noexcept
+    constexpr float32 time_span::days() const noexcept
     {
-        return { static_cast<int64>(count) };
-    }
-
-    template <arithmetic_type T>
-    inline constexpr time_span time_span::from_microseconds(const T count) noexcept
-    {
-        return { static_cast<int64>(count * 1_k) };
-    }
-
-    template <arithmetic_type T>
-    inline constexpr time_span time_span::from_milliseconds(const T count) noexcept
-    {
-        return { static_cast<int64>(count * 1_m) };
-    }
-
-    template <arithmetic_type T>
-    inline constexpr time_span time_span::from_seconds(const T count) noexcept
-    {
-        return { static_cast<int64>(count * 1_g) };
-    }
-
-    template <arithmetic_type T>
-    inline constexpr time_span time_span::from_minutes(const T count) noexcept
-    {
-        return { static_cast<int64>(count * 60_g) };
-    }
-
-    template <arithmetic_type T>
-    inline constexpr time_span time_span::from_hours(const T count) noexcept
-    {
-        return { static_cast<int64>(count * 3600_g) };
+        return days<float32>();
     }
 
     constexpr float32 time_span::hours() const noexcept
@@ -210,6 +192,48 @@ namespace rsl
         return value <=> rhs.value;
     }
 
+    template <arithmetic_type T>
+    constexpr time_span time_span::from_nanoseconds(const T count) noexcept
+    {
+        return { static_cast<int64>(count) };
+    }
+
+    template <arithmetic_type T>
+    constexpr time_span time_span::from_microseconds(const T count) noexcept
+    {
+        return { static_cast<int64>(count * 1_k) };
+    }
+
+    template <arithmetic_type T>
+    constexpr time_span time_span::from_milliseconds(const T count) noexcept
+    {
+        return { static_cast<int64>(count * 1_m) };
+    }
+
+    template <arithmetic_type T>
+    constexpr time_span time_span::from_seconds(const T count) noexcept
+    {
+        return { static_cast<int64>(count * 1_g) };
+    }
+
+    template <arithmetic_type T>
+    constexpr time_span time_span::from_minutes(const T count) noexcept
+    {
+        return { static_cast<int64>(count * 60_g) };
+    }
+
+    template <arithmetic_type T>
+    constexpr time_span time_span::from_hours(const T count) noexcept
+    {
+        return { static_cast<int64>(count * 3600_g) };
+    }
+
+    template <arithmetic_type T>
+    constexpr time_span time_span::from_days(T count) noexcept
+    {
+        return { static_cast<int64>(count * 86400_g) };
+    }
+
     inline namespace literals
     {
         consteval time_span operator""_ns(const size_type count) noexcept
@@ -240,6 +264,11 @@ namespace rsl
         consteval time_span operator""_hr(const size_type count) noexcept
         {
             return time_span::from_hours(count);
+        }
+
+        consteval time_span operator""_days(size_type count) noexcept
+        {
+            return time_span::from_days(count);
         }
 
         consteval time_span operator""_fps(const size_type count) noexcept

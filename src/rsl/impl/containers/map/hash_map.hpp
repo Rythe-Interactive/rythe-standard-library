@@ -147,14 +147,24 @@ namespace rsl
 
         template <typename... Args>
         mapped_type& emplace(const key_type& key, Args&&... args);
+        template <typename... Args>
+        mapped_type& emplace(key_type&& key, Args&&... args);
+        template <typename... Args>
+        mapped_type& emplace(key_view_alternative key, Args&&... args) requires(has_key_view_alternative);
 
         template <typename... Args>
         mapped_type& emplace_or_replace(const key_type& key, Args&&... args);
+        template <typename... Args>
+        mapped_type& emplace_or_replace(key_type&& key, Args&&... args);
+        template <typename... Args>
+        mapped_type& emplace_or_replace(key_view_alternative key, Args&&... args);
 
         template <typename... Args>
         pair<mapped_type&, bool> try_emplace(const key_type& key, Args&&... args);
         template <typename... Args>
         pair<mapped_type&, bool> try_emplace(key_type&& key, Args&&... args);
+        template <typename... Args>
+        pair<mapped_type&, bool> try_emplace(key_view_alternative key, Args&&... args) requires(has_key_view_alternative);
 
         [[rythe_always_inline]] constexpr void erase(const key_type& key) noexcept;
         [[rythe_always_inline]] constexpr void erase(key_view_alternative key) noexcept requires(has_key_view_alternative);
@@ -241,8 +251,12 @@ namespace rsl
             insert_result_type type;
         };
 
+        index_type index_add(index_type index, index_type offset) const noexcept;
+        index_type index_subtract(index_type index, index_type offset) const noexcept;
+
+        template<typename KeyType>
         constexpr insert_result insert_key_internal(
-            const key_type& key, index_type valueIndexHint
+            const KeyType& key, index_type valueIndexHint
         ) noexcept(noexcept(reserve(0)));
 
     private:

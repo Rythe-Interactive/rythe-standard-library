@@ -2,10 +2,9 @@
 
 #include "../platform/platform.hpp"
 #include "../time/system_clock.hpp"
+#include "../time/util/formatters.hpp"
 
 #include "message.hpp"
-
-#include <fmt/chrono.h>
 
 namespace rsl::log
 {
@@ -153,17 +152,10 @@ namespace rsl::log
 
     void genesis_flag_formatter::format([[maybe_unused]] const message& msg, const time_span time, fmt::memory_buffer& dest)
     {
-        time_span elapsedTime = time - genesis;
-
-        ::tm t{};
-        t.tm_hour = elapsedTime.hours<int>();
-        t.tm_min = (elapsedTime -= time_span::from_hours(t.tm_hour)).minutes<int>();
-        t.tm_sec = (elapsedTime -= time_span::from_minutes(t.tm_min)).seconds<int>();
-
         fmt::format_to(
                 fmt::appender(dest),
                 fmt::runtime(fmt::string_view(m_options.data(), m_options.size())),
-                t
+                time - genesis
             );
     }
 

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+    <Type Name="rsl::basic_dynamic_array&lt;char,*&gt;">
+        <AlternativeType Name="rsl::basic_dynamic_array&lt;wchar_t,*&gt;"/>
+        <AlternativeType Name="rsl::basic_dynamic_array&lt;char8_t,*&gt;"/>
+        <AlternativeType Name="rsl::basic_dynamic_array&lt;char16_t,*&gt;"/>
+        <AlternativeType Name="rsl::basic_dynamic_array&lt;char32_t,*&gt;"/>
+        <AlternativeType Name="rsl::basic_dynamic_string&lt;*&gt;" />
+        <Intrinsic Name="size" Expression="m_size" />
+        <Intrinsic Name="capacity" Expression="use_post_fix? (m_memorySize == 0ull ? 0ull : m_memorySize - 1ull) : m_memorySize" />
+        <Intrinsic Name="size_bytes" Expression="m_size * sizeof($T1)" />
+        <DisplayString>{reinterpret_cast&lt;$T1*&gt;(m_ptr),na}</DisplayString>
+        <StringView>reinterpret_cast&lt;$T1*&gt;(m_ptr),na</StringView>
+		<Expand HideRawView="1">
+            <Item Name="[size]" ExcludeView="simple">m_size</Item>
+            <Item Name="[capacity]" ExcludeView="simple">use_post_fix? (m_memorySize == 0ull ? 0ull : m_memorySize - 1ull) : m_memorySize</Item>
+            <Item Name="[allocator]" ExcludeView="simple">m_alloc</Item>
+            <ArrayItems>
+                <Size>m_size</Size>
+                <ValuePointer>reinterpret_cast&lt;$T1*&gt;(m_ptr)</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+
+    <Type Name="rsl::basic_dynamic_array&lt;*&gt;">
+        <Intrinsic Name="size" Expression="m_size" />
+        <Intrinsic Name="capacity" Expression="use_post_fix? (m_memorySize == 0ull ? 0ull : m_memorySize - 1ull) : m_memorySize" />
+        <Intrinsic Name="size_bytes" Expression="m_size * sizeof($T1)" />
+        <DisplayString>{{ size={m_size} }}</DisplayString>
+		<Expand HideRawView="1">
+            <Item Name="[size]" ExcludeView="simple">size()</Item>
+            <Item Name="[capacity]" ExcludeView="simple">use_post_fix? (m_memorySize == 0ull ? 0ull : m_memorySize - 1ull) : m_memorySize</Item>
+            <Item Name="[allocator]" ExcludeView="simple">m_alloc</Item>
+            <ArrayItems>
+                <Size>m_size</Size>
+                <ValuePointer>reinterpret_cast&lt;$T1*&gt;(m_ptr)</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+
+	<Type Name="rsl::array_view&lt;char,*&gt;">
+        <AlternativeType Name="rsl::array_view&lt;wchar_t,*&gt;"/>
+        <AlternativeType Name="rsl::array_view&lt;char8_t,*&gt;"/>
+        <AlternativeType Name="rsl::array_view&lt;char16_t,*&gt;"/>
+        <AlternativeType Name="rsl::array_view&lt;char32_t,*&gt;"/>
+        <AlternativeType Name="rsl::array_view&lt;const char,*&gt;"/>
+        <AlternativeType Name="rsl::array_view&lt;const wchar_t,*&gt;"/>
+        <AlternativeType Name="rsl::array_view&lt;const char8_t,*&gt;"/>
+        <AlternativeType Name="rsl::array_view&lt;const char16_t,*&gt;"/>
+        <AlternativeType Name="rsl::array_view&lt;const char32_t,*&gt;"/>
+        <AlternativeType Name="rsl::string_view" />
+        <Intrinsic Name="data" Expression="m_src" />
+        <Intrinsic Name="size" Expression="m_count" />
+        <Intrinsic Name="size_bytes" Expression="m_count * sizeof($T1)" />
+        <DisplayString>{m_src,[m_count]na}</DisplayString>
+        <StringView>m_src,[m_count]na</StringView>
+        <Expand>
+            <Item Name="[size]" ExcludeView="simple">m_count</Item>
+            <ArrayItems>
+                <Size>m_count</Size>
+                <ValuePointer>m_src</ValuePointer>
+            </ArrayItems>
+        </Expand>
+	</Type>
+
+	<Type Name="rsl::array_view&lt;*&gt;">
+        <Intrinsic Name="data" Expression="m_src" />
+        <Intrinsic Name="size" Expression="m_count" />
+        <Intrinsic Name="size_bytes" Expression="m_count * sizeof($T1)" />
+        <DisplayString>{{ size={m_count} }}</DisplayString>
+        <Expand>
+            <Item Name="[size]" ExcludeView="simple">m_count</Item>
+            <ArrayItems>
+                <Size>m_count</Size>
+                <ValuePointer>m_src</ValuePointer>
+            </ArrayItems>
+        </Expand>
+	</Type>
+
+    <Type Name="rsl::dynamic_map&lt;*&gt;">
+        <DisplayString>{m_values}</DisplayString>
+        <Expand>
+            <Item Name="[bucket_count]" IncludeView="detailed">m_buckets.m_size</Item>
+            <Item Name="[load_factor]" IncludeView="detailed">((float)m_values.m_size) / ((float)m_buckets.m_size)</Item>
+            <Item Name="[key_eq]" ExcludeView="simple">m_keyComparer</Item>
+            <Item Name="[allocator]" ExcludeView="simple">m_values.m_alloc</Item>
+            <ExpandedItem>m_values,view(simple)</ExpandedItem>
+        </Expand>
+    </Type>
+
+</AutoVisualizer>

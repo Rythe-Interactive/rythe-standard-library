@@ -10,6 +10,9 @@ namespace rsl
         int64 value;
 
         template <arithmetic_type T>
+        [[nodiscard]] [[rythe_always_inline]] constexpr T days() const noexcept;
+
+        template <arithmetic_type T>
         [[nodiscard]] [[rythe_always_inline]] constexpr T hours() const noexcept;
 
         template <arithmetic_type T>
@@ -27,6 +30,7 @@ namespace rsl
         template <arithmetic_type T>
         [[nodiscard]] [[rythe_always_inline]] constexpr T nanoseconds() const noexcept;
 
+        [[nodiscard]] [[rythe_always_inline]] constexpr float32 days() const noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr float32 hours() const noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr float32 minutes() const noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr float32 seconds() const noexcept;
@@ -64,6 +68,8 @@ namespace rsl
         [[nodiscard]] [[rythe_always_inline]] static constexpr time_span from_minutes(T count) noexcept;
         template <arithmetic_type T>
         [[nodiscard]] [[rythe_always_inline]] static constexpr time_span from_hours(T count) noexcept;
+        template <arithmetic_type T>
+        [[nodiscard]] [[rythe_always_inline]] static constexpr time_span from_days(T count) noexcept;
 
         static const time_span zero;
         static const time_span infinity;
@@ -77,6 +83,7 @@ namespace rsl
         [[nodiscard]] [[rythe_always_inline]] consteval time_span operator""_s(size_type count) noexcept;
         [[nodiscard]] [[rythe_always_inline]] consteval time_span operator""_min(size_type count) noexcept;
         [[nodiscard]] [[rythe_always_inline]] consteval time_span operator""_hr(size_type count) noexcept;
+        [[nodiscard]] [[rythe_always_inline]] consteval time_span operator""_days(size_type count) noexcept;
         [[nodiscard]] [[rythe_always_inline]] consteval time_span operator""_fps(size_type count) noexcept;
     }
 } // namespace rsl

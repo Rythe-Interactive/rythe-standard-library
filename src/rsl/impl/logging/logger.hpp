@@ -57,7 +57,7 @@ namespace rsl::log
         explicit logger(string_view name, log::severity severity = log::severity::default_severity,
                               log::severity flushSeverity = log::severity::default_flush_severity);
 
-        virtual ~logger() = default;
+        virtual ~logger();
 
         template <typename... Args>
         [[rythe_always_inline]] constexpr void log(log::severity s, format_string format, Args&&... args) noexcept;

@@ -34,7 +34,7 @@ namespace rsl
                 thread_local log::default_logger logger("default logger");
                 logger.set_sinks(&defaultConsoleSink, &defaultFileSink);
                 logger.set_formatter<log::pattern_formatter>(
-                        "[{:%H:%M:%S}] [{}] [{}] [{}] : {}",
+                        "[{:.2%H:%M:%S}] [{}] [{}] [{}] : {}",
                         log::genesis_flag_formatter{},
                         log::thread_name_flag_formatter{},
                         log::logger_name_flag_formatter{},

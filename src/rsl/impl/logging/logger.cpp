@@ -12,6 +12,11 @@
 
 namespace rsl::log
 {
+    logger::~logger()
+    {
+        flush();
+    }
+
     void logger::log_args(const log::severity s, const format_string format, const bool appendNewLine, const fmt::format_args args) noexcept
     {
         const log::message logMessage

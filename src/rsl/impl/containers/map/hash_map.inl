@@ -317,6 +317,21 @@ namespace rsl
     }
 
     template <typename MapInfo>
+    template <typename ... Args>
+    typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::emplace(key_type&& key, Args&&... args)
+    {
+        return try_emplace(rsl::move(key), rsl::forward<Args>(args)...).first;
+    }
+
+    template <typename MapInfo>
+    template <typename ... Args>
+    typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::emplace(key_view_alternative key, Args&&... args)
+        requires (has_key_view_alternative)
+    {
+        return try_emplace(key, rsl::forward<Args>(args)...).first;
+    }
+
+    template <typename MapInfo>
     template <typename... Args>
     typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::emplace_or_replace(
             const key_type& key,
@@ -328,6 +343,38 @@ namespace rsl
         if (insertResult.type == insert_result_type::new_insertion)
         {
             return m_values.emplace_back(create_node(key, forward<Args>(args)...)).value();
+        }
+
+        mapped_type& value = m_values[m_buckets[insertResult.index].index].value();
+        value = move(mapped_type(forward<Args>(args)...));
+        return value;
+    }
+
+    template <typename MapInfo>
+    template <typename ... Args>
+    typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::emplace_or_replace(key_type&& key, Args&&... args)
+    {
+        insert_result insertResult = insert_key_internal(key, m_values.size());
+
+        if (insertResult.type == insert_result_type::new_insertion)
+        {
+            return m_values.emplace_back(create_node(rsl::move(key), forward<Args>(args)...)).value();
+        }
+
+        mapped_type& value = m_values[m_buckets[insertResult.index].index].value();
+        value = move(mapped_type(forward<Args>(args)...));
+        return value;
+    }
+
+    template <typename MapInfo>
+    template <typename ... Args>
+    typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::emplace_or_replace(key_view_alternative key, Args&&... args)
+    {
+        insert_result insertResult = insert_key_internal(key, m_values.size());
+
+        if (insertResult.type == insert_result_type::new_insertion)
+        {
+            return m_values.emplace_back(create_node(key_type::from_view(key), forward<Args>(args)...)).value();
         }
 
         mapped_type& value = m_values[m_buckets[insertResult.index].index].value();
@@ -361,6 +408,21 @@ namespace rsl
         if (insertResult.type == insert_result_type::new_insertion)
         {
             return { rsl::ref(m_values.emplace_back(create_node(rsl::move(key), rsl::forward<Args>(args)...)).value()), true };
+        }
+
+        return { rsl::ref(m_values[m_buckets[insertResult.index].index].value()), false };
+    }
+
+    template <typename MapInfo>
+    template <typename ... Args>
+    pair<typename hash_map_base<MapInfo>::mapped_type&, bool> hash_map_base<MapInfo>::try_emplace(key_view_alternative key, Args&&... args)
+        requires (has_key_view_alternative)
+    {
+        insert_result insertResult = insert_key_internal(key, m_values.size());
+
+        if (insertResult.type == insert_result_type::new_insertion)
+        {
+            return { rsl::ref(m_values.emplace_back(create_node(key_type::from_view(key), rsl::forward<Args>(args)...)).value()), true };
         }
 
         return { rsl::ref(m_values[m_buckets[insertResult.index].index].value()), false };
@@ -572,6 +634,11 @@ namespace rsl
     {
         for (const bucket_type& bucket : oldBuckets)
         {
+            if (bucket.pslAndFingerprint == 0u)
+            {
+                continue;
+            }
+
             size_type oldIndex = bucket.index;
             key_type key = m_values[oldIndex].key();
 
@@ -580,7 +647,7 @@ namespace rsl
             bucket_search_result searchResult = find_next_available(hash.homeIndex, 0, hash.fingerprint, key, false);
 
             const insert_result result{
-                        .index = hash.homeIndex + searchResult.unpackedPsl.psl,
+                        .index = index_add(hash.homeIndex, searchResult.unpackedPsl.psl),
                         .type =
                         (searchResult.type == search_result_type::existing_item ?
                             insert_result_type::existing_item :
@@ -598,7 +665,7 @@ namespace rsl
                 rsl::swap(m_buckets[currentIndex], insertBucket);
                 psl_type insertPsl = unpack_bucket_psl(insertBucket);
 
-                index_type homeIndex = currentIndex - insertPsl.psl;
+                index_type homeIndex = index_subtract(currentIndex, insertPsl.psl);
 
                 searchResult = find_next_available(
                         homeIndex,
@@ -607,7 +674,7 @@ namespace rsl
                         m_values[insertBucket.index].key(),
                         false
                         );
-                currentIndex = homeIndex + searchResult.unpackedPsl.psl;
+                currentIndex = index_add(homeIndex, searchResult.unpackedPsl.psl);
 
                 rsl_assert_frequent(searchResult.type != search_result_type::existing_item);
             }
@@ -661,9 +728,9 @@ namespace rsl
             return;
         }
 
-        float32 currentLoadFactor = m_values.size() / static_cast<float32>(m_buckets.size());
+        float32 nextLoadFactor = (m_values.size() + 1ull) / static_cast<float32>(m_buckets.size());
 
-        if (currentLoadFactor >= max_load_factor)
+        if (nextLoadFactor >= max_load_factor)
         {
             reserve(currentCapacity * 2);
         }
@@ -687,6 +754,19 @@ namespace rsl
         result.fingerprint = bucket.pslAndFingerprint & bucket_type::fingerprint_mask;
 
         return result;
+    }
+
+    template <typename MapInfo>
+    inline index_type hash_map_base<MapInfo>::index_add(const index_type index, const index_type offset) const noexcept
+    {
+        return (index + offset) % m_buckets.size();
+    }
+
+    template <typename MapInfo>
+    inline index_type hash_map_base<MapInfo>::index_subtract(const index_type index, const index_type offset) const noexcept
+    {
+        size_type bucketCount = m_buckets.size();
+        return (index + bucketCount - offset) % bucketCount;
     }
 
     template <typename MapInfo>
@@ -717,7 +797,7 @@ namespace rsl
     {
         psl_type insertPsl{ .psl = startPsl, .fingerprint = fingerprint };
 
-        index_type searchIndex = homeIndex + insertPsl.psl;
+        index_type searchIndex = index_add(homeIndex, insertPsl.psl);
         const size_type bucketCount = m_buckets.size();
         while (searchIndex < bucketCount)
         {
@@ -743,7 +823,7 @@ namespace rsl
             }
 
             ++insertPsl.psl;
-            searchIndex = homeIndex + insertPsl.psl;
+            searchIndex = index_add(homeIndex, insertPsl.psl);
 
             if (earlyOut && insertPsl.psl > m_maxPsl)
             {
@@ -757,8 +837,9 @@ namespace rsl
     }
 
     template <typename MapInfo>
+    template <typename KeyType>
     constexpr typename hash_map_base<MapInfo>::insert_result hash_map_base<MapInfo>::insert_key_internal(
-            const key_type& key,
+            const KeyType& key,
             const index_type valueIndexHint
             ) noexcept(noexcept(reserve(0)))
     {
@@ -768,7 +849,7 @@ namespace rsl
         bucket_search_result searchResult = find_next_available(hash.homeIndex, m_minPsl, hash.fingerprint, key, false);
 
         const insert_result result{
-                    .index = hash.homeIndex + searchResult.unpackedPsl.psl,
+                    .index = index_add(hash.homeIndex, searchResult.unpackedPsl.psl),
                     .type =
                     (searchResult.type == search_result_type::existing_item ?
                         insert_result_type::existing_item :
@@ -803,7 +884,7 @@ namespace rsl
             rsl::swap(m_buckets[currentIndex], insertBucket);
             psl_type insertPsl = unpack_bucket_psl(insertBucket);
 
-            index_type homeIndex = currentIndex - insertPsl.psl;
+            index_type homeIndex = index_subtract(currentIndex, insertPsl.psl);
 
             searchResult = find_next_available(
                     homeIndex,
@@ -823,7 +904,7 @@ namespace rsl
                 m_maxPsl = searchResult.unpackedPsl.psl;
             }
 
-            currentIndex = homeIndex + searchResult.unpackedPsl.psl;
+            currentIndex = index_add(homeIndex, searchResult.unpackedPsl.psl);
 
             rsl_assert_frequent(searchResult.type != search_result_type::existing_item);
         }
@@ -869,7 +950,7 @@ namespace rsl
             return nullptr;
         }
 
-        return &m_values[m_buckets[hash.homeIndex + searchResult.unpackedPsl.psl].index].value();
+        return &m_values[m_buckets[index_add(hash.homeIndex, searchResult.unpackedPsl.psl)].index].value();
     }
 
     template <typename MapInfo>
@@ -890,17 +971,18 @@ namespace rsl
             return;
         }
 
-        size_type index = hash.homeIndex + searchResult.unpackedPsl.psl;
-        size_type valueIndex = m_buckets[index].index;
+        index_type index = index_add(hash.homeIndex, searchResult.unpackedPsl.psl);
+        index_type valueIndex = m_buckets[index].index;
         destroy_node(m_values[valueIndex]);
         m_values.erase_swap(valueIndex);
         m_buckets[m_lastValueBucketIndex].index = valueIndex;
 
-        psl_type currentPsl = unpack_bucket_psl(m_buckets[index + 1]);
+        psl_type currentPsl = unpack_bucket_psl(m_buckets[index_add(index, 1)]);
 
+        index_type nextIndex = index_add(index, 1);
         while (currentPsl.psl != 0)
         {
-            bucket_type& bucket = m_buckets[index + 1];
+            bucket_type& bucket = m_buckets[nextIndex];
             storage_type newPsl = currentPsl.psl - 1;
             bucket.pslAndFingerprint = pack_bucket_psl(psl_type{ .psl = newPsl, .fingerprint = currentPsl.fingerprint });
             m_buckets[index] = bucket;
@@ -910,8 +992,9 @@ namespace rsl
                 m_minPsl = newPsl;
             }
 
-            ++index;
-            currentPsl = unpack_bucket_psl(m_buckets[index + 1]);
+            index = nextIndex;
+            nextIndex = index_add(index, 1);
+            currentPsl = unpack_bucket_psl(m_buckets[nextIndex]);
         }
 
         m_maxPsl = 0;
