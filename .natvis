@@ -89,4 +89,13 @@
         </Expand>
     </Type>
 
+    <Type Name="rsl::time_span">
+		<Expand HideRawView="1">
+            <Item Name="[seconds]" ExcludeView="simple">value/1000000000.0</Item>
+            <Item Name="[milliseconds]" ExcludeView="simple">value/1000000.0</Item>
+            <Item Name="[microseconds]" ExcludeView="simple">value/1000.0</Item>
+            <Item Name="[nanoseconds]" ExcludeView="simple">value</Item>
+        </Expand>
+    </Type>
+
 </AutoVisualizer>

@@ -74,7 +74,7 @@ namespace rsl::math
         constexpr static T lowest = bit_cast<T>(sign_bit<T> | bit_cast<bit_rep<T>>(max));
         constexpr static T infinity = bit_cast<T>(exponent_mask<T>);
         constexpr static T quiet_nan = bit_cast<T>((bit_cast<bit_rep<T>>(min) >> 1) | exponent_mask<T>);
-#if defined(RYTHE_MSVC) || defined(RYTHE_CLANG_MSVC)
+#if defined(RYTHE_MSVC) || defined(RYTHE_CLANG_CL)
         constexpr static T signaling_nan =
             bit_cast<T>((bit_cast<bit_rep<T>>(min) >> mantissa_bits<T>) | exponent_mask<T>);
 #else

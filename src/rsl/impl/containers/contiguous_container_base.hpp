@@ -417,9 +417,9 @@ namespace rsl
         [[rythe_always_inline]] constexpr bool maybe_shrink_to_static_storage() noexcept(move_construct_noexcept)
             requires(can_allocate);
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr bool maybe_grow() noexcept(move_construct_noexcept);
+        [[nodiscard]] constexpr bool maybe_grow() noexcept(move_construct_noexcept);
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr bool resize_capacity_unsafe(
+        [[nodiscard]] constexpr bool resize_capacity_unsafe(
                 size_type newCapacity
                 ) noexcept(move_construct_noexcept)
             requires(can_allocate);

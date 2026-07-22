@@ -193,7 +193,7 @@ namespace rsl
         struct RYTHE_CONCAT(has_, RYTHE_CONCAT(x, _impl))                                                              \
         {                                                                                                              \
             static_assert(                                                                                             \
-                ::rsl::integral_constant<bool_t<T>, false>::value,                                                     \
+                ::rsl::integral_constant<::rsl::bool_t<T>, false>::value,                                              \
                 "Second template param needs to be of function type."                                                  \
             );                                                                                                         \
         };                                                                                                             \
@@ -220,7 +220,7 @@ namespace rsl
         struct RYTHE_CONCAT(has_static_, RYTHE_CONCAT(x, _impl))                                                       \
         {                                                                                                              \
             static_assert(                                                                                             \
-                ::rsl::integral_constant<bool_t<T>, false>::value,                                                     \
+                ::rsl::integral_constant<::rsl::bool_t<T>, false>::value,                                              \
                 "Second template param needs to be of function type."                                                  \
             );                                                                                                         \
         };                                                                                                             \

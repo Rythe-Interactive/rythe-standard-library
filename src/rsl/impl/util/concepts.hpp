@@ -21,9 +21,14 @@ namespace rsl
     template <typename Func>
     concept functor = is_functor_v<Func>;
 
+#if defined(RYTHE_CLANG) || defined(RYTHE_GCC)
     template <typename Func>
     concept member_function_ptr = __is_member_function_pointer(Func);
-
+#else
+    // TODO(Glyn): create compiler agnostic version
+    template <typename Func>
+    concept member_function_ptr = std::is_member_function_pointer_v<Func>;
+#endif
     template <typename Type, template <typename...> typename Template>
     concept specialization_of = is_specialization_v<Type, Template>;
 
@@ -59,6 +64,9 @@ namespace rsl
 
     template <typename T1, typename T2>
     concept not_same_as = !is_same_v<T1, T2>;
+
+    template <typename T1, typename T2>
+    concept indistinct_from = same_as<remove_cvr_t<T1>, remove_cvr_t<T2>>;
 
     template <typename T1, typename T2>
     concept distinct_from = !same_as<remove_cvr_t<T1>, remove_cvr_t<T2>>;
@@ -215,7 +223,7 @@ namespace rsl
         struct func_traits
         {
             static_assert(
-                    ::rsl::integral_constant<bool_t<T>, false>::value,
+                    integral_constant<bool_t<T>, false>::value,
                     "Template param needs to be of function type."
                     );
         };

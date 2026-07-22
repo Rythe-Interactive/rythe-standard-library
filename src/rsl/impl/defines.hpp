@@ -141,10 +141,8 @@ namespace rsl
 #if defined(__clang__)
     // clang
     #define RYTHE_CLANG
-    #if defined(__GNUG__) || (defined(__GNUC__) && defined(__cplusplus))
-        #define RYTHE_CLANG_GCC
-    #elif defined(_MSC_VER)
-        #define RYTHE_CLANG_MSVC
+    #if defined(_MSC_VER)
+        #define RYTHE_CLANG_CL
     #endif
 #elif defined(__GNUG__) || (defined(__GNUC__) && defined(__cplusplus))
   // gcc
@@ -180,7 +178,7 @@ namespace rsl
 #endif
 
 #if !defined(rythe_debugbreak_instruction)
-    #if defined(RYTHE_MSVC) || defined(RYTHE_CLANG_MSVC)
+    #if defined(RYTHE_MSVC) || defined(RYTHE_CLANG_CL)
         #define rythe_debugbreak_instruction __debugbreak
     #elif defined(RYTHE_CLANG) && __has_builtin(__builtin_debugtrap)
         #define rythe_debugbreak_instruction __builtin_debugtrap
@@ -372,7 +370,7 @@ namespace rsl
     #define rythe_closed_enum clang::enum_extensibility(closed)
     #define rythe_flag_enum clang::flag_enum
     #define rythe_preferred_name(name) clang::preferred_name(name)
-    #if defined(RYTHE_CLANG_MSVC)
+    #if defined(RYTHE_CLANG_CL)
         #define rythe_no_unique_address msvc::no_unique_address
     #else
         #define rythe_no_unique_address no_unique_address

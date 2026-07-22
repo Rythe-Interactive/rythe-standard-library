@@ -716,7 +716,7 @@ namespace rsl
     {
         template <typename To, typename From>
             requires (sizeof(To) == sizeof(From)) && is_trivially_copyable_v<To> && is_trivially_copyable_v<From>
-        [[nodiscard]] constexpr To compiler_native_bit_cast(const From& value) noexcept
+        [[nodiscard]] [[rythe_always_inline]] constexpr To compiler_native_bit_cast(const From& value) noexcept
         {
             return __builtin_bit_cast(To, value);
         }
@@ -726,7 +726,7 @@ namespace rsl
         template <typename To, typename From>
             requires is_trivially_copyable_v<To> && is_trivially_constructible_v<To> && is_trivially_copyable_v<From> &&
             (sizeof(To) >= sizeof(From))
-        constexpr void constexpr_memcpy_impl(To* dst, const From* src, const size_type count)
+        [[rythe_always_inline]] constexpr void constexpr_memcpy_impl(To* dst, const From* src, const size_type count)
         {
             const size_type itemCount = count / sizeof(To);
             constexpr size_type stepSize = sizeof(To) / sizeof(From);
@@ -753,7 +753,7 @@ namespace rsl
         // TODO(Glyn): Needs more research
         template <typename To, typename From>
             requires is_trivially_copyable_v<To> && is_trivially_constructible_v<To> && is_trivially_copyable_v<From>
-        constexpr void constexpr_memcpy_impl_unrestricted(To* dst, const From* src, const size_type count)
+        [[rythe_always_inline]] constexpr void constexpr_memcpy_impl_unrestricted(To* dst, const From* src, const size_type count)
         {
             size_type srcCount = count / sizeof(From);
             if (srcCount * sizeof(From) != count)
@@ -810,7 +810,7 @@ namespace rsl
         // Might still break on some compilers if T is unsigned long long
         template <typename T>
             requires is_trivially_constructible_v<T>
-        constexpr void constexpr_memset_impl(T* dst, const byte val, const size_type count)
+        [[rythe_always_inline]] constexpr void constexpr_memset_impl(T* dst, const byte val, const size_type count)
         {
             const size_type itemCount = count / sizeof(T);
             constexpr size_type stepSize = sizeof(T);
@@ -839,7 +839,7 @@ namespace rsl
     // Assumes buffer size of src is larger or equal to the size of "To"
     template <typename To, typename From>
         requires is_trivially_copyable_v<To> && is_trivially_copyable_v<From> && is_trivially_constructible_v<To>
-    [[nodiscard]] constexpr To unaligned_load(const From* src) noexcept
+    [[nodiscard]] [[rythe_always_inline]] constexpr To unaligned_load(const From* src) noexcept
     {
         To dst{};
         constexpr_memcpy(&dst, src, sizeof(To));
@@ -849,7 +849,7 @@ namespace rsl
     // Requires the size of "To" to be equal to the size of "From"
     template <typename To, typename From>
         requires is_trivially_copyable_v<To> && is_trivially_copyable_v<From> && (sizeof(To) == sizeof(From))
-    [[nodiscard]] constexpr To bit_cast(const From& value) noexcept
+    [[nodiscard]] [[rythe_always_inline]] constexpr To bit_cast(const From& value) noexcept
     {
         if (is_constant_evaluated())
         {
@@ -865,7 +865,7 @@ namespace rsl
 
     template <typename To, typename From>
         requires is_trivially_copyable_v<To> && is_trivially_copyable_v<From> && (sizeof(To) >= sizeof(From))
-    [[nodiscard]] constexpr To insert_cast(const From& value) noexcept
+    [[nodiscard]] [[rythe_always_inline]] constexpr To insert_cast(const From& value) noexcept
     {
         To dst{};
         constexpr_memcpy(&dst, &value, sizeof(From));
@@ -873,7 +873,7 @@ namespace rsl
     }
 
     template <typename To, typename From>
-    constexpr void* constexpr_memcpy(To* dst, const From* src, const size_type count) noexcept
+    [[rythe_always_inline]] constexpr void* constexpr_memcpy(To* dst, const From* src, const size_type count) noexcept
     {
         if (is_constant_evaluated())
         {
@@ -906,7 +906,7 @@ namespace rsl
     }
 
     template <typename T>
-    constexpr void* constexpr_memset(T* dst, const byte value, const size_type count)
+    [[rythe_always_inline]] constexpr void* constexpr_memset(T* dst, const byte value, const size_type count)
     {
         if (is_constant_evaluated())
         {

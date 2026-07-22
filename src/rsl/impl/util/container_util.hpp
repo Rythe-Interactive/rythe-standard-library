@@ -43,7 +43,7 @@ namespace rsl
         struct has_index_operator_impl
         {
             static_assert(
-                    ::rsl::integral_constant<bool_t<T>, false>::value,
+                    integral_constant<bool_t<T>, false>::value,
                     "Second template param needs to be of function type."
                     );
         };

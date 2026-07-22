@@ -22,6 +22,7 @@ namespace rsl
         [[rythe_always_inline]] void undecoratedln(severity s, format_string format, Args&&... args) noexcept;
 
         [[rythe_always_inline]] inline void filter(severity level);
+        [[rythe_always_inline]] inline void flush_at(severity level);
 
         template <typename... Args>
         [[rythe_always_inline]] void trace(format_string format, Args&&... args);

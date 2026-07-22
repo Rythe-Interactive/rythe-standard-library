@@ -1,8 +1,8 @@
 #pragma once
 #include "hash.hpp"
 
-#if !defined(RYTHE_HAS_INT128) && (defined(RYTHE_MSVC) || defined(RYTHE_CLANG_MSVC))
-#include <intrin.h>
+#if !defined(RYTHE_HAS_INT128) && (defined(RYTHE_MSVC) || defined(RYTHE_CLANG_CL))
+    #include <intrin.h>
 #pragma intrinsic(_umul128)
 #endif
 
@@ -56,7 +56,7 @@ namespace rsl
             template <hash_mode Mode>
             constexpr void mum(uint64& a, uint64& b) noexcept
             {
-                #if defined(RYTHE_MSVC) || defined(RYTHE_CLANG_MSVC)
+                #if defined(RYTHE_MSVC) || defined(RYTHE_CLANG_CL)
                 if (is_constant_evaluated())
                 {
                     a = manual_mum<Mode>(a, b, &b);
@@ -258,7 +258,7 @@ namespace rsl
 
     RSL_HASH_INT(char);
 
-    #if defined(RYTHE_MSVC) || defined(RYTHE_CLANG_MSVC)
+    #if defined(RYTHE_MSVC) || defined(RYTHE_CLANG_CL)
     RSL_HASH_INT(long);
 
     RSL_HASH_INT(unsigned long);

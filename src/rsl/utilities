@@ -4,4 +4,5 @@
 #include "impl/util/assert.hpp"
 #include "impl/util/enum_flags.hpp"
 #include "impl/util/error_handling.hpp"
+#include "impl/util/source_location.hpp"
 #include "impl/util/utilities.hpp"

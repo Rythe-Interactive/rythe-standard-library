@@ -20,6 +20,13 @@ namespace rsl::log
         context.undecoratedLogger->filter(level);
     }
 
+    inline void flush_at(const severity level)
+    {
+        logging_context& context = get_logging_context();
+        context.logger->flush_at(level);
+        context.undecoratedLogger->flush_at(level);
+    }
+
     template <typename... Args>
     void trace(const format_string format, Args&&... args)
     {
