@@ -11,7 +11,6 @@ namespace rsl
           m_maxPsl(0),
           m_hasher(),
           m_keyComparer(),
-          m_factory(),
           m_memoryPool() {}
 
     template <typename MapInfo>
@@ -27,7 +26,6 @@ namespace rsl
           m_maxPsl(0),
           m_hasher(h),
           m_keyComparer(equal),
-          m_factory(),
           m_memoryPool() {}
 
     template <typename MapInfo>
@@ -42,7 +40,6 @@ namespace rsl
           m_maxPsl(0),
           m_hasher(h),
           m_keyComparer(),
-          m_factory(),
           m_memoryPool() {}
 
     template <typename MapInfo>
@@ -57,7 +54,6 @@ namespace rsl
           m_maxPsl(0),
           m_hasher(),
           m_keyComparer(equal),
-          m_factory(),
           m_memoryPool() {}
 
     template <typename MapInfo>
@@ -72,37 +68,6 @@ namespace rsl
           m_maxPsl(0),
           m_hasher(),
           m_keyComparer(),
-          m_factory(),
-          m_memoryPool(allocator) {}
-
-    template <typename MapInfo>
-    constexpr hash_map_base<MapInfo>::hash_map_base(
-            const factory_storage_type& factoryStorage
-            )
-        noexcept(nothrow_constructible_fact)
-        : m_values(factoryStorage),
-          m_buckets(factoryStorage),
-          m_lastValueBucketIndex(0),
-          m_minPsl(0),
-          m_maxPsl(0),
-          m_hasher(),
-          m_keyComparer(),
-          m_factory(factoryStorage),
-          m_memoryPool() {}
-
-    template <typename MapInfo>
-    constexpr hash_map_base<MapInfo>::hash_map_base(
-            allocator_storage allocator,
-            const factory_storage_type& factoryStorage
-            ) noexcept(nothrow_constructible_alloc_fact)
-        : m_values(allocator, factoryStorage),
-          m_buckets(allocator, factoryStorage),
-          m_lastValueBucketIndex(0),
-          m_minPsl(0),
-          m_maxPsl(0),
-          m_hasher(),
-          m_keyComparer(),
-          m_factory(factoryStorage),
           m_memoryPool(allocator) {}
 
     template <typename MapInfo>
@@ -470,18 +435,6 @@ namespace rsl
     }
 
     template <typename MapInfo>
-    constexpr typename hash_map_base<MapInfo>::factory_t& hash_map_base<MapInfo>::get_factory() noexcept
-    {
-        return *m_factory;
-    }
-
-    template <typename MapInfo>
-    constexpr const typename hash_map_base<MapInfo>::factory_t& hash_map_base<MapInfo>::get_factory() const noexcept
-    {
-        return *m_factory;
-    }
-
-    template <typename MapInfo>
     constexpr typename hash_map_base<MapInfo>::iterator_type hash_map_base<MapInfo>::begin() noexcept
     {
         return iterator_type(m_values.begin());
@@ -563,7 +516,7 @@ namespace rsl
     {
         if constexpr (is_flat)
         {
-            return node_type(key, m_factory->construct_single_inline(rsl::forward<Args>(args)...));
+            return node_type(key, factory<mapped_type>::construct_single_inline(rsl::forward<Args>(args)...));
         }
         else
         {
@@ -572,7 +525,7 @@ namespace rsl
             if constexpr (is_map)
             {
                 new(&newValue->first) key_type(key);
-                m_factory->construct(&newValue->second, 1, rsl::forward<Args>(args)...);
+                factory<mapped_type>::construct(&newValue->second, 1, rsl::forward<Args>(args)...);
             }
             else
             {
@@ -589,7 +542,7 @@ namespace rsl
     {
         if constexpr (is_flat)
         {
-            return node_type(rsl::move(key), m_factory->construct_single_inline(rsl::forward<Args>(args)...));
+            return node_type(rsl::move(key), factory<mapped_type>::construct_single_inline(rsl::forward<Args>(args)...));
         }
         else
         {
@@ -598,7 +551,7 @@ namespace rsl
             if constexpr (is_map)
             {
                 new(&newValue->first) key_type(rsl::move(key));
-                m_factory->construct(&newValue->second, 1, rsl::forward<Args>(args)...);
+                factory<mapped_type>::construct(&newValue->second, 1, rsl::forward<Args>(args)...);
             }
             else
             {
@@ -616,7 +569,7 @@ namespace rsl
         {
             if constexpr (is_map)
             {
-                m_factory->destroy(&node->second, 1);
+                factory<mapped_type>::destroy(&node->second, 1);
                 node->first.~key_type();
             }
             else

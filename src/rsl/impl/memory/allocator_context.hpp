@@ -42,23 +42,22 @@ namespace rsl
 
     template <typename T, typename... Args>
     [[nodiscard]] [[rythe_allocating]] [[rythe_always_inline]] T*
-    allocate(memory_allocator& alloc, size_type count = 1, Args&&... args)
-        noexcept(default_factory<T>::template noexcept_constructable<Args...>);
+    allocate(memory_allocator& alloc, size_type count = 1, Args&&... args) noexcept(is_nothrow_constructible_v<T, Args...>);
 
     template <typename T, typename... Args>
     [[nodiscard]] [[rythe_allocating]] [[rythe_always_inline]] T*
     allocate(memory_allocator& alloc, size_type count, size_type alignment, Args&&... args)
-        noexcept(default_factory<T>::template noexcept_constructable<Args...>);
+        noexcept(is_nothrow_constructible_v<T, Args...>);
 
     template <typename T, typename... Args>
     [[nodiscard]] [[rythe_allocating]] [[rythe_always_inline]] T*
     reallocate(memory_allocator& alloc, T* ptr, size_type oldCount, size_type newCount, Args&&... args)
-        noexcept(default_factory<T>::template noexcept_constructable<Args...> && default_factory<T>::noexcept_moveable);
+        noexcept(is_nothrow_constructible_v<T, Args...> && is_nothrow_move_constructible_v<T>);
 
     template <typename T, typename... Args>
     [[nodiscard]] [[rythe_allocating]] [[rythe_always_inline]] T* reallocate(
         memory_allocator& alloc, T* ptr, size_type oldCount, size_type newCount, size_type alignment, Args&&... args
-    ) noexcept(default_factory<T>::template noexcept_constructable<Args...> && default_factory<T>::noexcept_moveable);
+    ) noexcept(is_nothrow_constructible_v<T, Args...> && is_nothrow_move_constructible_v<T>);
 
     template <typename T>
     [[rythe_always_inline]] void deallocate(memory_allocator& alloc, T* ptr, size_type count = 1) noexcept;

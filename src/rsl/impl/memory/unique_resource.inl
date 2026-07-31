@@ -23,14 +23,14 @@ namespace rsl
         : mem_rsc(allocator) {}
 
     template <typename T, typed_factory_type Factory>
-    constexpr unique_resource<T, Factory>::unique_resource(const factory_storage_type& factoryStorage)
+    constexpr unique_resource<T, Factory>::unique_resource(const type_erased_factory& factory)
         noexcept(is_nothrow_constructible_v<mem_rsc>)
         : mem_rsc(), m_value(factoryStorage) {}
 
     template <typename T, typed_factory_type Factory>
     constexpr unique_resource<T, Factory>::unique_resource(
             const allocator_storage allocator,
-            const factory_storage_type& factoryStorage
+            const type_erased_factory& factory
         )
         noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage>)
         : mem_rsc(allocator), m_value(factoryStorage) {}
@@ -95,7 +95,7 @@ namespace rsl
     }
 
     template <typename T, typed_factory_type Factory>
-    constexpr void unique_resource<T, Factory>::set_factory(const factory_storage_type& factoryStorage)
+    constexpr void unique_resource<T, Factory>::set_factory(const type_erased_factory& factory)
     noexcept(is_nothrow_copy_assignable_v<factory_storage_type>)
     {
         m_value.set_factory(factoryStorage);

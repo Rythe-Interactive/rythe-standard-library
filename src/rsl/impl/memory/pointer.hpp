@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../defines.hpp"
+
 namespace rsl
 {
     /// Non owning pointer to an object managed somewhere else.

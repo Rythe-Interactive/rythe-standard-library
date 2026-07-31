@@ -5,7 +5,7 @@
 
 namespace rsl
 {
-    template <typename T, untyped_factory_type Factory>
+    template <typename T>
     class managed_resource;
 
     namespace internal
@@ -28,15 +28,12 @@ namespace rsl
         };
     } // namespace internal
 
-    template <typename T, untyped_factory_type Factory = type_erased_factory>
-    class managed_resource : public basic_reference_counter<internal::managed_payload_base, Factory>
+    template <typename T>
+    class managed_resource : public basic_reference_counter<internal::managed_payload_base, true>
     {
     public:
-        using ref_counter = basic_reference_counter<internal::managed_payload_base, Factory>;
+        using ref_counter = basic_reference_counter<internal::managed_payload_base, true>;
         using mem_rsc = typename ref_counter::mem_rsc;
-
-        using factory_storage_type = typename ref_counter::factory_storage_type;
-        using factory_t = typename ref_counter::factory_t;
 
         [[rythe_always_inline]] constexpr managed_resource(nullptr_type)
             noexcept(is_nothrow_constructible_v<ref_counter>);

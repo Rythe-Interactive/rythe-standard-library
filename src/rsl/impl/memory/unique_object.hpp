@@ -18,10 +18,10 @@ namespace rsl
         [[rythe_always_inline]] explicit unique_object(allocator_storage allocator)
             noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage>);
 
-        [[rythe_always_inline]] explicit unique_object(const factory_storage_type& factoryStorage)
+        [[rythe_always_inline]] explicit unique_object(const type_erased_factory& factory)
             noexcept(is_nothrow_constructible_v<mem_rsc>);
 
-        [[rythe_always_inline]] explicit unique_object(allocator_storage allocator, const factory_storage_type& factoryStorage)
+        [[rythe_always_inline]] explicit unique_object(allocator_storage allocator, const type_erased_factory& factory)
             noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage>);
 
         template <typename... Args>
@@ -34,7 +34,7 @@ namespace rsl
             is_nothrow_constructible_v<T, Args...>);
 
         template <typename... Args>
-        [[rythe_always_inline]] static unique_object create_in_place_alloc_factory(allocator_storage allocator, const factory_storage_type& factoryStorage, Args&&... args)
+        [[rythe_always_inline]] static unique_object create_in_place_alloc_factory(allocator_storage allocator, const type_erased_factory& Args&&... args)
             noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage> &&
                 is_nothrow_constructible_v<T, Args...>);
 
@@ -52,7 +52,7 @@ namespace rsl
             requires (is_pointer_assignable_v<T, OtherType>)
         [[rythe_always_inline]] constexpr unique_object& operator=(unique_object<OtherType, OtherFactory>&& other) noexcept;
 
-        [[rythe_always_inline]] constexpr void set_factory(const factory_storage_type& factoryStorage)
+        [[rythe_always_inline]] constexpr void set_factory(const type_erased_factory& factory)
             noexcept(is_nothrow_copy_assignable_v<factory_storage_type>) { unique_rsc::set_factory(factoryStorage); }
 
         [[nodiscard]] [[rythe_always_inline]] constexpr factory_t& get_factory() noexcept

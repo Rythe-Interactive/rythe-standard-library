@@ -40,17 +40,19 @@ namespace rsl
         }
     }
 
-    // TODO(Glyn): the factory template parameter is more trouble than it is worth.
-    template <typename T, factory_type Factory, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo>
-    class contiguous_container_base
-            : public internal::select_memory_resource<T, Factory, ContiguousContainerInfo::static_capacity,
-                                                      ContiguousContainerInfo::can_allocate>::type
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped = false,
+            size_type Alignment = alignof(T)>
+    class contiguous_container_base :
+        public internal::select_memory_resource<T, ContiguousContainerInfo::static_capacity, ContiguousContainerInfo::can_allocate, Untyped, Alignment>::type
     {
         static_assert(is_complete_v<T>);
     public:
-        using mem_rsc = typename internal::select_memory_resource<
-            T, Factory, ContiguousContainerInfo::static_capacity, ContiguousContainerInfo::can_allocate>::type;
+        using mem_rsc = typename internal::select_memory_resource<T, ContiguousContainerInfo::static_capacity, ContiguousContainerInfo::can_allocate, Untyped, Alignment>::type;
         using value_type = T;
         using iterator_type = Iter;
         using const_iterator_type = ConstIter;
@@ -58,8 +60,6 @@ namespace rsl
         using const_reverse_iterator_type = reverse_iterator<const_iterator_type>;
         using view_type = rsl::array_view<value_type, iterator_type, const_iterator_type>;
         using const_view_type = rsl::array_view<const value_type, const_iterator_type>;
-        using factory_storage_type = typename mem_rsc::factory_storage_type;
-        using factory_t = typename mem_rsc::factory_t;
 
         constexpr static bool use_post_fix = ContiguousContainerInfo::use_post_fix;
         constexpr static size_type static_capacity = ContiguousContainerInfo::static_capacity;
@@ -90,21 +90,13 @@ namespace rsl
                 ) noexcept(move_construct_container_noexcept);
         constexpr virtual ~contiguous_container_base();
 
-        [[rythe_always_inline]] explicit constexpr contiguous_container_base(
-                allocator_storage allocator
-                )
-            noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage>)
+        [[rythe_always_inline]] explicit constexpr contiguous_container_base(allocator_storage allocator) noexcept
             requires(can_allocate);
-        [[rythe_always_inline]] explicit constexpr contiguous_container_base(
-                const factory_storage_type& factoryStorage
-                )
-            noexcept(is_nothrow_constructible_v<mem_rsc, const factory_storage_type&>);
+        [[rythe_always_inline]] explicit constexpr contiguous_container_base(const type_erased_factory& factory) noexcept
+            requires(Untyped);
         [[rythe_always_inline]] constexpr contiguous_container_base(
-                allocator_storage allocator,
-                const factory_storage_type& factoryStorage
-                )
-            noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage, const factory_storage_type&>)
-            requires(can_allocate);
+                allocator_storage allocator, const type_erased_factory& factory) noexcept
+            requires(can_allocate && Untyped);
 
         [[nodiscard]] [[rythe_always_inline]] constexpr static contiguous_container_base from_value(value_type& src) noexcept;
         template <size_type N>
@@ -516,18 +508,18 @@ namespace rsl
         size_type m_memorySize = static_capacity;
     };
 
-    template <typename T, factory_type Factory, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
+    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
               ContiguousContainerInfo>
     [[rythe_always_inline]] constexpr bool operator==(
-            const contiguous_container_base<T, Factory, Iter, ConstIter, ContiguousContainerInfo>& lhs,
-            const contiguous_container_base<T, Factory, Iter, ConstIter, ContiguousContainerInfo>& rhs
+            const contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo>& lhs,
+            const contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo>& rhs
             ) noexcept;
 
-    template <typename T, factory_type Factory, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
+    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
               ContiguousContainerInfo>
     [[rythe_always_inline]] constexpr bool operator!=(
-            const contiguous_container_base<T, Factory, Iter, ConstIter, ContiguousContainerInfo>& lhs,
-            const contiguous_container_base<T, Factory, Iter, ConstIter, ContiguousContainerInfo>& rhs
+            const contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo>& lhs,
+            const contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo>& rhs
             ) noexcept { return !(lhs == rhs); }
 } // namespace rsl
 

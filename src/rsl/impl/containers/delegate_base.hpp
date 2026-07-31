@@ -10,18 +10,16 @@
 namespace rsl
 {
 
-    template <typename T, untyped_factory_type Factory = type_erased_factory>
+    template <typename T>
     class delegate_base;
 
-    template <typename ReturnType, typename... ParamTypes, untyped_factory_type Factory>
-    class delegate_base<ReturnType(ParamTypes...), Factory>
+    template <typename ReturnType, typename... ParamTypes>
+    class delegate_base<ReturnType(ParamTypes...)>
     {
     protected:
         using stub_type = ReturnType (*)(void*, ParamTypes...);
         using deleter_type = void (*)(void*);
-        using factory_storage_type = typename managed_resource<void*, Factory>::mem_rsc::factory_storage_type;
-        using factory_t = typename managed_resource<void*, Factory>::mem_rsc::factory_t;
-        using typed_alloc_type = typename managed_resource<void*, Factory>::mem_rsc::typed_alloc_type;
+        using typed_alloc_type = typename managed_resource<void*>::mem_rsc::typed_alloc_type;
 
         constexpr static deleter_type default_deleter = []([[maybe_unused]] void*) {};
 
@@ -36,10 +34,10 @@ namespace rsl
                 deleter_type deleter = nullptr
             )
                 noexcept(is_nothrow_constructible_v<
-                         managed_resource<void*, Factory>, allocator_storage, deleter_type, void*>);
+                         managed_resource<void*>, allocator_storage, deleter_type, void*>);
 
             constexpr invocation_element(const invocation_element& other)
-                noexcept(is_nothrow_copy_constructible_v<managed_resource<void*, Factory>>);
+                noexcept(is_nothrow_copy_constructible_v<managed_resource<void*>>);
 
             constexpr bool operator==(const id_type otherId) const noexcept { return id == otherId; }
             constexpr bool operator!=(const id_type otherId) const noexcept { return id != otherId; }
@@ -47,7 +45,7 @@ namespace rsl
             constexpr bool operator==(const invocation_element& other) const noexcept { return id == other.id; }
             constexpr bool operator!=(const invocation_element& other) const noexcept { return id != other.id; }
 
-            managed_resource<void*, Factory> object = nullptr;
+            managed_resource<void*> object = nullptr;
             bool ownsData = false;
             stub_type stub = nullptr;
             id_type id = invalid_id;

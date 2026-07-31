@@ -3,7 +3,6 @@
 #include "impl/memory/allocator.hpp"
 #include "impl/memory/allocator_context.hpp"
 #include "impl/memory/factory.hpp"
-#include "impl/memory/factory_storage.hpp"
 #include "impl/memory/managed_resource.hpp"
 #include "impl/memory/memory_pool.hpp"
 #include "impl/memory/memory_resource_base.hpp"

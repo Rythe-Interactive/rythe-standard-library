@@ -6,21 +6,19 @@
 
 namespace rsl
 {
-    template <
-        typename FuncSig, untyped_factory_type Factory = type_erased_factory>
+    template <typename FuncSig>
     class delegate;
 
-    template <
-        typename FuncSig, untyped_factory_type Factory = type_erased_factory>
+    template <typename FuncSig>
     class multicast_delegate;
 
-    template <typename ReturnType, typename... ParamTypes, untyped_factory_type Factory>
-    class delegate<ReturnType(ParamTypes...), Factory> final :
-        private delegate_base<ReturnType(ParamTypes...), Factory>
+    template <typename ReturnType, typename... ParamTypes>
+    class delegate<ReturnType(ParamTypes...)> final :
+        private delegate_base<ReturnType(ParamTypes...)>
     {
         friend class multicast_delegate<ReturnType(ParamTypes...)>;
 
-        using base = delegate_base<ReturnType(ParamTypes...), Factory>;
+        using base = delegate_base<ReturnType(ParamTypes...)>;
         using typed_alloc_type = typename base::typed_alloc_type;
         using stub_type = typename base::stub_type;
 
@@ -28,8 +26,6 @@ namespace rsl
         using return_type = ReturnType;
         using param_types = type_sequence<ParamTypes...>;
         using invocation_element = typename base::invocation_element;
-        using factory_storage_type = typename base::factory_storage_type;
-        using factory_t = typename base::factory_t;
 
         [[rythe_always_inline]] constexpr delegate();
 

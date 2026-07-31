@@ -1,169 +1,108 @@
 #pragma once
 
 #include "allocator_context.hpp"
-#include "factory_storage.hpp"
 #include "typed_allocator.hpp"
 
 namespace rsl
 {
-    template <typename T, size_type Capacity>
-    struct static_capacity_storage
+    template <size_type Capacity, size_type Alignment>
+    struct alignas(Alignment) static_capacity_storage
     {
-        using value_type = T;
-        T data[Capacity];
-    };
-
-    template <typename T>
-    struct static_capacity_storage<T, 0ull>
-    {
-        using value_type = T;
-    };
-
-    template <size_type Capacity>
-    struct static_capacity_storage<void, Capacity>
-    {
-        using value_type = byte;
         byte data[Capacity];
     };
 
-    template <>
-    struct static_capacity_storage<void, 0ull>
-    {
-        using value_type = byte;
-    };
+    template <size_type Alignment>
+    struct static_capacity_storage<0ull, Alignment> {};
 
     namespace internal
     {
         struct alloc_and_factory_only_signal_type {};
 
         constexpr alloc_and_factory_only_signal_type alloc_and_factory_only_signal{};
-    }
+    } // namespace internal
 
-    template <factory_type Factory, typename UtilType, bool Untyped>
-    class dynamic_memory_resource_base
+    template <typename UtilType, bool Untyped>
+    class dynamic_memory_resource
     {
     public:
-        using factory_storage_type = factory_storage<Factory>;
-        using factory_t = Factory;
-        using typed_alloc_type = internal::select_typed_allocator<UtilType, Factory>::type;
+        using typed_alloc_type = internal::select_typed_allocator<UtilType, Untyped>::type;
 
-        [[rythe_always_inline]] constexpr dynamic_memory_resource_base() noexcept
-            : dynamic_memory_resource_base(allocator_context::globalAllocator) {}
+        [[rythe_always_inline]] constexpr dynamic_memory_resource() noexcept
+            : dynamic_memory_resource(allocator_context::globalAllocator) {}
 
-        [[rythe_always_inline]] constexpr dynamic_memory_resource_base(
-                internal::alloc_and_factory_only_signal_type,
-                const dynamic_memory_resource_base& other
-                )
-            noexcept(is_nothrow_copy_constructible_v<typed_alloc_type>);
-        [[rythe_always_inline]] constexpr dynamic_memory_resource_base(
-                internal::alloc_and_factory_only_signal_type,
-                dynamic_memory_resource_base&& other
-                )
-            noexcept(is_nothrow_move_constructible_v<typed_alloc_type>);
+        [[rythe_always_inline]] constexpr dynamic_memory_resource(
+                internal::alloc_and_factory_only_signal_type, const dynamic_memory_resource& other)
+                noexcept;
+        [[rythe_always_inline]] constexpr dynamic_memory_resource(
+                internal::alloc_and_factory_only_signal_type, dynamic_memory_resource&& other)
+                noexcept;
 
-        dynamic_memory_resource_base(const dynamic_memory_resource_base&) = delete;
-        dynamic_memory_resource_base(dynamic_memory_resource_base&&) = delete;
+        dynamic_memory_resource(const dynamic_memory_resource&) = delete;
+        dynamic_memory_resource(dynamic_memory_resource&&) = delete;
 
-        dynamic_memory_resource_base& operator=(const dynamic_memory_resource_base&) = delete;
-        dynamic_memory_resource_base& operator=(dynamic_memory_resource_base&&) = delete;
+        dynamic_memory_resource& operator=(const dynamic_memory_resource&) = delete;
+        dynamic_memory_resource& operator=(dynamic_memory_resource&&) = delete;
 
-        virtual ~dynamic_memory_resource_base() = default;
+        virtual ~dynamic_memory_resource() = default;
 
-        [[rythe_always_inline]] constexpr explicit dynamic_memory_resource_base(allocator_storage allocator) noexcept;
+        [[rythe_always_inline]] constexpr explicit dynamic_memory_resource(allocator_storage allocator) noexcept;
 
-        [[rythe_always_inline]] constexpr explicit dynamic_memory_resource_base(
-                const factory_storage_type& factoryStorage
-                )
-            noexcept(is_nothrow_constructible_v<typed_alloc_type, const factory_storage_type&>);
+        [[rythe_always_inline]] constexpr explicit dynamic_memory_resource(const type_erased_factory& factory) noexcept
+            requires(Untyped);
 
-        [[rythe_always_inline]] constexpr dynamic_memory_resource_base(
-                allocator_storage allocator,
-                const factory_storage_type& factoryStorage
-                )
-                noexcept(is_nothrow_constructible_v<typed_alloc_type, allocator_storage, const factory_storage_type&>);
+        [[rythe_always_inline]] constexpr dynamic_memory_resource(
+                allocator_storage allocator, const type_erased_factory& factory) noexcept
+            requires(Untyped);
 
-        [[rythe_always_inline]] constexpr void set_allocator(
-                allocator_storage allocator
-                )
-            noexcept;
+        [[rythe_always_inline]] constexpr void set_allocator(allocator_storage allocator) noexcept;
 
         [[nodiscard]] [[rythe_always_inline]] constexpr memory_allocator& get_allocator() noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr const memory_allocator& get_allocator() const noexcept;
 
-        [[rythe_always_inline]] constexpr void set_factory(
-                const factory_storage_type& factoryStorage
-                )
-            noexcept(is_nothrow_copy_assignable_v<factory_storage_type>);
+        [[rythe_always_inline]] constexpr void set_factory(const type_erased_factory& factory) noexcept
+            requires(Untyped);
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr factory_t& get_factory() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr const factory_t& get_factory() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr type_erased_factory& get_factory() noexcept
+            requires(Untyped);
+        [[nodiscard]] [[rythe_always_inline]] constexpr const type_erased_factory& get_factory() const noexcept
+            requires(Untyped);
 
         [[nodiscard]] [[rythe_always_inline]] constexpr allocator_storage get_allocator_storage() const noexcept;
-
-        [[nodiscard]] [[rythe_always_inline]] constexpr factory_storage_type& get_factory_storage() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr const factory_storage_type& get_factory_storage() const noexcept;
 
     protected:
         [[rythe_allocating]] [[rythe_always_inline]] constexpr void allocate(size_type count = 1) noexcept;
         [[rythe_allocating]] [[rythe_always_inline]] constexpr void allocate(size_type count, size_type alignment) noexcept;
-        [[rythe_allocating]] [[rythe_always_inline]] constexpr void reallocate(
-                size_type oldCount,
-                size_type newCount
-                )
-            noexcept(factory_traits<Factory>::noexcept_moveable);
-        [[rythe_allocating]] [[rythe_always_inline]] constexpr void reallocate(
-                size_type oldCount,
-                size_type newCount,
-                size_type alignment
-                ) noexcept(factory_traits<Factory>::noexcept_moveable);
+        [[rythe_allocating]] [[rythe_always_inline]] constexpr void reallocate(size_type oldCount, size_type newCount)
+                noexcept(is_nothrow_move_constructible_v<UtilType>);
+        [[rythe_allocating]] [[rythe_always_inline]] constexpr void
+                reallocate(size_type oldCount, size_type newCount, size_type alignment)
+                        noexcept(is_nothrow_move_constructible_v<UtilType>);
         [[rythe_always_inline]] constexpr void deallocate(size_type count = 1) noexcept;
         [[rythe_always_inline]] constexpr void deallocate(size_type count, size_type alignment) noexcept;
 
-        [[rythe_always_inline]] constexpr void construct(
-                size_type count = 1,
-                size_type offset = 0
-                )
-            noexcept(factory_traits<Factory>::template noexcept_constructable<>);
-        [[rythe_always_inline]] constexpr void copy(
-                size_type count,
-                size_type offset,
-                const void* src
-                )
-            noexcept(factory_traits<Factory>::noexcept_copyable);
-        [[rythe_always_inline]] constexpr void move(
-                size_type count,
-                size_type offset,
-                void* src
-                )
-            noexcept(factory_traits<Factory>::noexcept_moveable);
+        [[rythe_always_inline]] constexpr void construct(size_type count = 1, size_type offset = 0)
+                noexcept(is_nothrow_constructible_v<UtilType>);
+        [[rythe_always_inline]] constexpr void copy(size_type count, size_type offset, const void* src)
+                noexcept(is_nothrow_copy_constructible_v<UtilType>);
+        [[rythe_always_inline]] constexpr void move(size_type count, size_type offset, void* src)
+                noexcept(is_nothrow_move_constructible_v<UtilType>);
         [[rythe_always_inline]] constexpr void destroy(size_type count = 1, size_type offset = 0) noexcept;
 
-        [[rythe_allocating]] [[rythe_always_inline]] constexpr void allocate_and_construct(
-                size_type count = 1
-                )
-            noexcept(factory_traits<Factory>::template noexcept_constructable<>);
+        [[rythe_allocating]] [[rythe_always_inline]] constexpr void allocate_and_construct(size_type count = 1)
+                noexcept(is_nothrow_constructible_v<UtilType>);
 
         template <typename... Args>
-        [[rythe_allocating]] [[rythe_always_inline]] constexpr void allocate_aligned_and_construct(
-                size_type count,
-                size_type alignment
-                )
-            noexcept(factory_traits<Factory>::template noexcept_constructable<>);
+        [[rythe_allocating]] [[rythe_always_inline]] constexpr void
+                allocate_aligned_and_construct(size_type count, size_type alignment) noexcept(is_nothrow_constructible_v<UtilType>);
 
         template <typename... Args>
-        [[rythe_allocating]] [[rythe_always_inline]] constexpr void reallocate_and_construct(
-                size_type oldCount,
-                size_type newCount
-                )
-            noexcept(factory_traits<Factory>::template noexcept_constructable<> && factory_traits<Factory>::noexcept_moveable);
+        [[rythe_allocating]] [[rythe_always_inline]] constexpr void reallocate_and_construct(size_type oldCount, size_type newCount)
+                noexcept(is_nothrow_constructible_v<UtilType> && is_nothrow_move_constructible_v<UtilType>);
 
         template <typename... Args>
-        [[rythe_allocating]] [[rythe_always_inline]] constexpr void reallocate_aligned_and_construct(
-                size_type oldCount,
-                size_type newCount,
-                size_type alignment
-                )
-            noexcept(factory_traits<Factory>::template noexcept_constructable<> && factory_traits<Factory>::noexcept_moveable);
+        [[rythe_allocating]] [[rythe_always_inline]] constexpr void
+                reallocate_aligned_and_construct(size_type oldCount, size_type newCount, size_type alignment)
+                        noexcept(is_nothrow_constructible_v<UtilType> && is_nothrow_move_constructible_v<UtilType>);
 
         [[rythe_always_inline]] constexpr void destroy_and_deallocate(size_type count = 1) noexcept;
         [[rythe_always_inline]] constexpr void destroy_and_deallocate_aligned(size_type count, size_type alignment) noexcept;
@@ -181,146 +120,84 @@ namespace rsl
         void* m_ptr = nullptr;
     };
 
-    template <untyped_factory_type Factory = type_erased_factory, typename UtilType = void>
-    class untyped_dynamic_memory_resource : public dynamic_memory_resource_base<Factory, UtilType, true>
+    template <typename UtilType = void>
+    using untyped_dynamic_memory_resource = dynamic_memory_resource<UtilType, true>;
+
+    template <typename T>
+    class typed_dynamic_memory_resource : public dynamic_memory_resource<T, false>
     {
-        using base_type = dynamic_memory_resource_base<Factory, UtilType, true>;
+        using base_type = dynamic_memory_resource<T, false>;
 
     public:
-        using factory_storage_type = typename base_type::factory_storage_type;
-        using factory_t = typename base_type::factory_t;
-        using typed_alloc_type = typename base_type::typed_alloc_type;
-
-        using dynamic_memory_resource_base<Factory, UtilType, true>::dynamic_memory_resource_base;
-    };
-
-    template <typename T, factory_type Factory = default_factory<T>>
-    class typed_dynamic_memory_resource : public dynamic_memory_resource_base<Factory, T, false>
-    {
-        using base_type = dynamic_memory_resource_base<Factory, T, false>;
-
-    public:
-        using factory_storage_type = typename base_type::factory_storage_type;
-        using factory_t = typename base_type::factory_t;
-        using typed_alloc_type = typename base_type::typed_alloc_type;
-
         using value_type = T;
         using ref_type = add_lval_ref_t<T>;
         using const_ref_type = decorate_type_t<T, const_signal, lval_ref_signal>;
         using ptr_type = add_pointer_t<T>;
         using const_ptr_type = decorate_type_t<T, const_signal, pointer_signal>;
 
-        using dynamic_memory_resource_base<Factory, T, false>::dynamic_memory_resource_base;
+        using dynamic_memory_resource<T, false>::dynamic_memory_resource;
 
     protected:
         template <typename... Args>
-        [[rythe_always_inline]] constexpr void construct(
-                size_type count = 1,
-                size_type offset = 0,
-                Args&&... args
-                )
-            noexcept(factory_traits<Factory>::template noexcept_constructable<Args...>);
+        [[rythe_always_inline]] constexpr void construct(size_type count = 1, size_type offset = 0, Args&&... args)
+                noexcept(is_nothrow_constructible_v<T, Args...>);
 
         template <typename... Args>
-        [[rythe_allocating]] [[rythe_always_inline]] constexpr void allocate_and_construct(
-                size_type count = 1,
-                Args&&... args
-                )
-            noexcept(factory_traits<Factory>::template noexcept_constructable<Args...>);
+        [[rythe_allocating]] [[rythe_always_inline]] constexpr void allocate_and_construct(size_type count = 1, Args&&... args)
+                noexcept(is_nothrow_constructible_v<T, Args...>);
 
         template <typename... Args>
-        [[rythe_allocating]] [[rythe_always_inline]] constexpr void allocate_aligned_and_construct(
-                size_type count,
-                size_type alignment,
-                Args&&... args
-                )
-            noexcept(factory_traits<Factory>::template noexcept_constructable<Args...>);
+        [[rythe_allocating]] [[rythe_always_inline]] constexpr void
+                allocate_aligned_and_construct(size_type count, size_type alignment, Args&&... args)
+                        noexcept(is_nothrow_constructible_v<T, Args...>);
 
         template <typename... Args>
-        [[rythe_allocating]] [[rythe_always_inline]] constexpr void reallocate_and_construct(
-                size_type oldCount,
-                size_type newCount,
-                Args&&... args
-                ) noexcept(
-            factory_traits<Factory>::template noexcept_constructable<Args...> && factory_traits<Factory>::noexcept_moveable);
+        [[rythe_allocating]] [[rythe_always_inline]] constexpr void
+                reallocate_and_construct(size_type oldCount, size_type newCount, Args&&... args)
+                        noexcept(is_nothrow_constructible_v<T, Args...> && is_nothrow_move_constructible_v<T>);
 
         template <typename... Args>
-        [[rythe_allocating]] [[rythe_always_inline]] constexpr void reallocate_aligned_and_construct(
-                size_type oldCount,
-                size_type newCount,
-                size_type alignment,
-                Args&&... args
-                ) noexcept(
-            factory_traits<Factory>::template noexcept_constructable<Args...> && factory_traits<Factory>::noexcept_moveable);
+        [[rythe_allocating]] [[rythe_always_inline]] constexpr void
+                reallocate_aligned_and_construct(size_type oldCount, size_type newCount, size_type alignment, Args&&... args)
+                        noexcept(is_nothrow_constructible_v<T, Args...> && is_nothrow_move_constructible_v<T>);
     };
 
-    template <size_type BufferSize, factory_type Factory, typename UtilType, bool Untyped>
-    class static_memory_resource_base
+    template <size_type BufferSize, typename UtilType, bool Untyped, size_type Alignment = alignof(UtilType)>
+    class static_memory_resource
     {
     public:
-        using factory_storage_type = factory_storage<Factory>;
-        using factory_t = Factory;
+        using factory_type = conditional_t<Untyped, type_erased_factory, factory<UtilType>>;
+
         constexpr static size_type buffer_size = BufferSize;
 
-        [[rythe_always_inline]] constexpr static_memory_resource_base()
-            noexcept(is_nothrow_constructible_v<factory_storage_type>) = default;
-        [[rythe_always_inline]] constexpr static_memory_resource_base(
-                internal::alloc_and_factory_only_signal_type,
-                const static_memory_resource_base& other
-                )
-            noexcept(is_nothrow_copy_constructible_v<factory_storage_type>);
-        [[rythe_always_inline]] constexpr static_memory_resource_base(
-                internal::alloc_and_factory_only_signal_type,
-                static_memory_resource_base&& other
-                )
-            noexcept(is_nothrow_move_constructible_v<factory_storage_type>);
+        [[rythe_always_inline]] constexpr static_memory_resource() noexcept = default;
+        [[rythe_always_inline]] constexpr static_memory_resource(
+                internal::alloc_and_factory_only_signal_type, const static_memory_resource& other) noexcept
+            requires(Untyped);
 
-        static_memory_resource_base(const static_memory_resource_base&) = delete;
-        static_memory_resource_base(static_memory_resource_base&&) = delete;
-        static_memory_resource_base& operator=(const static_memory_resource_base&) = delete;
-        static_memory_resource_base& operator=(static_memory_resource_base&&) = delete;
+        static_memory_resource(const static_memory_resource&) = delete;
+        static_memory_resource(static_memory_resource&&) = delete;
+        static_memory_resource& operator=(const static_memory_resource&) = delete;
+        static_memory_resource& operator=(static_memory_resource&&) = delete;
 
-        virtual ~static_memory_resource_base() = default;
+        virtual ~static_memory_resource() = default;
 
-        [[rythe_always_inline]] constexpr explicit static_memory_resource_base(
-                const factory_storage_type& factoryStorage
-                )
-            noexcept(is_nothrow_copy_constructible_v<factory_storage_type>);
+        [[rythe_always_inline]] constexpr explicit static_memory_resource(const type_erased_factory& factory) noexcept
+            requires(Untyped);
 
-        [[rythe_always_inline]] constexpr explicit static_memory_resource_base(
-                factory_storage_type&& factoryStorage
-                )
-            noexcept(is_nothrow_move_constructible_v<factory_storage_type>);
+        [[rythe_always_inline]] constexpr void set_factory(const type_erased_factory& factory) noexcept
+            requires(Untyped);
 
-        [[rythe_always_inline]] constexpr void set_factory(
-                const factory_storage_type& factoryStorage
-                )
-            noexcept(is_nothrow_copy_assignable_v<factory_storage_type>);
-
-        [[nodiscard]] [[rythe_always_inline]] constexpr factory_t& get_factory() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr const factory_t& get_factory() const noexcept;
-
-        [[nodiscard]] [[rythe_always_inline]] constexpr factory_storage_type& get_factory_storage() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr const factory_storage_type& get_factory_storage() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr factory_type& get_factory() noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr const factory_type& get_factory() const noexcept;
 
     protected:
-        [[rythe_always_inline]] constexpr void construct(
-                size_type count = 1,
-                size_type offset = 0
-                )
-            noexcept(factory_traits<Factory>::template noexcept_constructable<>);
-        [[rythe_always_inline]] constexpr void copy(
-                size_type count,
-                size_type offset,
-                const void* src
-                )
-            noexcept(factory_traits<Factory>::noexcept_copyable);
-        [[rythe_always_inline]] constexpr void move(
-                size_type count,
-                size_type offset,
-                void* src
-                )
-            noexcept(factory_traits<Factory>::noexcept_moveable);
+        [[rythe_always_inline]] constexpr void construct(size_type count = 1, size_type offset = 0)
+                noexcept(is_nothrow_constructible_v<UtilType>);
+        [[rythe_always_inline]] constexpr void copy(size_type count, size_type offset, const void* src)
+                noexcept(is_nothrow_copy_constructible_v<UtilType>);
+        [[rythe_always_inline]] constexpr void move(size_type count, size_type offset, void* src)
+                noexcept(is_nothrow_move_constructible_v<UtilType>);
         [[rythe_always_inline]] constexpr void destroy(size_type count = 1, size_type offset = 0) noexcept;
 
         [[nodiscard]] [[rythe_always_inline]] static constexpr bool is_static_memory() noexcept { return true; }
@@ -332,27 +209,17 @@ namespace rsl
         [[nodiscard]] [[rythe_always_inline]] constexpr const UtilType* get_ptr_at(size_type offset) const noexcept;
         [[rythe_always_inline]] static constexpr void set_ptr(UtilType* const&) noexcept {}
 
-        factory_storage_type m_factory;
-        using static_storage = static_capacity_storage<conditional_t<Untyped, void, UtilType>, BufferSize>;
-        static_storage m_buffer{};
+        [[rythe_no_unique_address]] factory_type m_factory;
+        [[rythe_no_unique_address]] static_capacity_storage<BufferSize * sizeof(UtilType), Alignment> m_buffer{};
     };
 
-    template <size_type BufferSize, untyped_factory_type Factory = type_erased_factory, typename UtilType = void>
-    class untyped_static_memory_resource : public static_memory_resource_base<BufferSize, Factory, UtilType, true>
+    template <size_type BufferSize, typename UtilType = void, size_type Alignment = alignof(UtilType)>
+    using untyped_static_memory_resource = static_memory_resource<BufferSize, UtilType, true, Alignment>;
+
+    template <typename T, size_type BufferCount>
+    class typed_static_memory_resource : public static_memory_resource<BufferCount, T, false>
     {
-        using base_type = static_memory_resource_base<BufferSize, Factory, UtilType, true>;
-
-    public:
-        using factory_storage_type = typename base_type::factory_storage_type;
-        using factory_t = typename base_type::factory_t;
-
-        using static_memory_resource_base<BufferSize, Factory, UtilType, true>::static_memory_resource_base;
-    };
-
-    template <typename T, size_type BufferCount, factory_type Factory = default_factory<T>>
-    class typed_static_memory_resource : public static_memory_resource_base<BufferCount * sizeof(T), Factory, T, false>
-    {
-        using base_type = static_memory_resource_base<BufferCount * sizeof(T), Factory, T, false>;
+        using base_type = static_memory_resource<BufferCount, T, false>;
 
     public:
         using value_type = T;
@@ -364,141 +231,95 @@ namespace rsl
         using factory_t = typename base_type::factory_t;
         constexpr static size_type buffer_count = BufferCount;
 
-        using static_memory_resource_base<BufferCount * sizeof(T), Factory, T, false>::static_memory_resource_base;
+        using static_memory_resource<BufferCount, T, false>::static_memory_resource;
 
     protected:
         template <typename... Args>
-        [[rythe_always_inline]] constexpr void construct(
-                size_type count = 1,
-                size_type offset = 0,
-                Args&&... args
-                )
-            noexcept(factory_traits<Factory>::template noexcept_constructable<Args...>);
+        [[rythe_always_inline]] constexpr void construct(size_type count = 1, size_type offset = 0, Args&&... args)
+                noexcept(is_nothrow_constructible_v<T, Args...>);
     };
 
-    template <size_type BufferSize, factory_type Factory, typename UtilType, bool Untyped>
-    class hybrid_memory_resource_base
+    template <size_type BufferSize, typename UtilType, bool Untyped, size_type Alignment = alignof(UtilType)>
+    class hybrid_memory_resource
     {
     public:
-        using factory_storage_type = factory_storage<Factory>;
-        using factory_t = Factory;
-        using typed_alloc_type = internal::select_typed_allocator<UtilType, Factory>::type;
+        using typed_alloc_type = internal::select_typed_allocator<UtilType, Untyped>::type;
         constexpr static size_type buffer_size = BufferSize;
 
-        [[rythe_always_inline]] constexpr hybrid_memory_resource_base() noexcept
-            : hybrid_memory_resource_base(allocator_context::globalAllocator)
+        [[rythe_always_inline]] constexpr hybrid_memory_resource() noexcept
+            : hybrid_memory_resource(allocator_context::globalAllocator)
         {}
 
-        [[rythe_always_inline]] constexpr hybrid_memory_resource_base(
-                internal::alloc_and_factory_only_signal_type,
-                const hybrid_memory_resource_base& other
-                )
-            noexcept(is_nothrow_copy_constructible_v<factory_storage_type>);
-        [[rythe_always_inline]] constexpr hybrid_memory_resource_base(
-                internal::alloc_and_factory_only_signal_type,
-                hybrid_memory_resource_base&& other
-                )
-            noexcept(is_nothrow_move_constructible_v<factory_storage_type>);
+        [[rythe_always_inline]] constexpr hybrid_memory_resource(
+                internal::alloc_and_factory_only_signal_type, const hybrid_memory_resource& other) noexcept;
+        [[rythe_always_inline]] constexpr hybrid_memory_resource(
+                internal::alloc_and_factory_only_signal_type, hybrid_memory_resource&& other) noexcept;
 
-        hybrid_memory_resource_base(const hybrid_memory_resource_base& other) = delete;
-        hybrid_memory_resource_base(hybrid_memory_resource_base&&) = delete;
-        hybrid_memory_resource_base& operator=(const hybrid_memory_resource_base&) = delete;
-        hybrid_memory_resource_base& operator=(hybrid_memory_resource_base&&) = delete;
+        hybrid_memory_resource(const hybrid_memory_resource& other) = delete;
+        hybrid_memory_resource(hybrid_memory_resource&&) = delete;
+        hybrid_memory_resource& operator=(const hybrid_memory_resource&) = delete;
+        hybrid_memory_resource& operator=(hybrid_memory_resource&&) = delete;
 
-        virtual ~hybrid_memory_resource_base() = default;
+        virtual ~hybrid_memory_resource() = default;
 
-        [[rythe_always_inline]] constexpr explicit hybrid_memory_resource_base(allocator_storage allocator) noexcept;
+        [[rythe_always_inline]] constexpr explicit hybrid_memory_resource(allocator_storage allocator) noexcept;
 
-        [[rythe_always_inline]] constexpr explicit hybrid_memory_resource_base(
-                const factory_storage_type& factoryStorage
-                )
-            noexcept(is_nothrow_constructible_v<typed_alloc_type, const factory_storage_type&>);
+        [[rythe_always_inline]] constexpr explicit hybrid_memory_resource(const type_erased_factory& factoryStorage) noexcept
+            requires(Untyped);
 
-        [[rythe_always_inline]] constexpr hybrid_memory_resource_base(
-                allocator_storage allocator,
-                const factory_storage_type& factoryStorage
-                )
-                noexcept(is_nothrow_constructible_v<typed_alloc_type, allocator_storage, const factory_storage_type&>);
+        [[rythe_always_inline]] constexpr hybrid_memory_resource(
+                allocator_storage allocator, const type_erased_factory& factory) noexcept
+            requires(Untyped);
 
         [[rythe_always_inline]] constexpr void set_allocator(allocator_storage allocator) noexcept;
 
         [[nodiscard]] [[rythe_always_inline]] constexpr memory_allocator& get_allocator() noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr const memory_allocator& get_allocator() const noexcept;
 
-        [[rythe_always_inline]] constexpr void set_factory(
-                const factory_storage_type& factoryStorage
-                )
-            noexcept(is_nothrow_copy_assignable_v<factory_storage_type>);
+        [[rythe_always_inline]] constexpr void set_factory(const type_erased_factory& factory) noexcept
+            requires(Untyped);
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr factory_t& get_factory() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr const factory_t& get_factory() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr type_erased_factory& get_factory() noexcept
+            requires(Untyped);
+        [[nodiscard]] [[rythe_always_inline]] constexpr const type_erased_factory& get_factory() const noexcept
+            requires(Untyped);
 
         [[nodiscard]] [[rythe_always_inline]] constexpr allocator_storage get_allocator_storage() const noexcept;
-
-        [[nodiscard]] [[rythe_always_inline]] constexpr factory_storage_type& get_factory_storage() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr const factory_storage_type& get_factory_storage() const noexcept;
 
     protected:
         [[rythe_allocating]] [[rythe_always_inline]] constexpr void allocate(size_type count = 1) noexcept;
         [[rythe_allocating]] [[rythe_always_inline]] constexpr void allocate(size_type count, size_type alignment) noexcept;
-        [[rythe_allocating]] [[rythe_always_inline]] constexpr void reallocate(
-                size_type oldCount,
-                size_type newCount
-                )
-            noexcept(factory_traits<Factory>::noexcept_moveable);
-        [[rythe_allocating]] [[rythe_always_inline]] constexpr void reallocate(
-                size_type oldCount,
-                size_type newCount,
-                size_type alignment
-                ) noexcept(factory_traits<Factory>::noexcept_moveable);
+        [[rythe_allocating]] [[rythe_always_inline]] constexpr void reallocate(size_type oldCount, size_type newCount)
+                noexcept(is_nothrow_move_constructible_v<UtilType>);
+        [[rythe_allocating]] [[rythe_always_inline]] constexpr void
+                reallocate(size_type oldCount, size_type newCount, size_type alignment)
+                        noexcept(is_nothrow_move_constructible_v<UtilType>);
         [[rythe_always_inline]] constexpr void deallocate(size_type count = 1) noexcept;
         [[rythe_always_inline]] constexpr void deallocate(size_type count, size_type alignment) noexcept;
 
-        [[rythe_always_inline]] constexpr void construct(
-                size_type count = 1,
-                size_type offset = 0
-                )
-            noexcept(factory_traits<Factory>::template noexcept_constructable<>);
-        [[rythe_always_inline]] constexpr void copy(
-                size_type count,
-                size_type offset,
-                const void* src
-                )
-            noexcept(factory_traits<Factory>::noexcept_copyable);
-        [[rythe_always_inline]] constexpr void move(
-                size_type count,
-                size_type offset,
-                void* src
-                )
-            noexcept(factory_traits<Factory>::noexcept_moveable);
+        [[rythe_always_inline]] constexpr void construct(size_type count = 1, size_type offset = 0)
+                noexcept(is_nothrow_constructible_v<UtilType>);
+        [[rythe_always_inline]] constexpr void copy(size_type count, size_type offset, const void* src)
+                noexcept(is_nothrow_copy_constructible_v<UtilType>);
+        [[rythe_always_inline]] constexpr void move(size_type count, size_type offset, void* src)
+                noexcept(is_nothrow_move_constructible_v<UtilType>);
         [[rythe_always_inline]] constexpr void destroy(size_type count = 1, size_type offset = 0) noexcept;
 
-        [[rythe_allocating]] [[rythe_always_inline]] constexpr void allocate_and_construct(
-                size_type count = 1
-                )
-            noexcept(factory_traits<Factory>::template noexcept_constructable<>);
+        [[rythe_allocating]] [[rythe_always_inline]] constexpr void allocate_and_construct(size_type count = 1)
+                noexcept(is_nothrow_constructible_v<UtilType>);
 
         template <typename... Args>
-        [[rythe_allocating]] [[rythe_always_inline]] constexpr void allocate_aligned_and_construct(
-                size_type count,
-                size_type alignment
-                )
-            noexcept(factory_traits<Factory>::template noexcept_constructable<>);
+        [[rythe_allocating]] [[rythe_always_inline]] constexpr void
+                allocate_aligned_and_construct(size_type count, size_type alignment) noexcept(is_nothrow_constructible_v<UtilType>);
 
         template <typename... Args>
-        [[rythe_allocating]] [[rythe_always_inline]] constexpr void reallocate_and_construct(
-                size_type oldCount,
-                size_type newCount
-                )
-            noexcept(factory_traits<Factory>::template noexcept_constructable<> && factory_traits<Factory>::noexcept_moveable);
+        [[rythe_allocating]] [[rythe_always_inline]] constexpr void reallocate_and_construct(size_type oldCount, size_type newCount)
+                noexcept(is_nothrow_constructible_v<UtilType> && is_nothrow_move_constructible_v<UtilType>);
 
         template <typename... Args>
-        [[rythe_allocating]] [[rythe_always_inline]] constexpr void reallocate_aligned_and_construct(
-                size_type oldCount,
-                size_type newCount,
-                size_type alignment
-                )
-            noexcept(factory_traits<Factory>::template noexcept_constructable<> && factory_traits<Factory>::noexcept_moveable);
+        [[rythe_allocating]] [[rythe_always_inline]] constexpr void
+                reallocate_aligned_and_construct(size_type oldCount, size_type newCount, size_type alignment)
+                        noexcept(is_nothrow_constructible_v<UtilType> && is_nothrow_move_constructible_v<UtilType>);
 
         [[rythe_always_inline]] constexpr void destroy_and_deallocate(size_type count = 1) noexcept;
         [[rythe_always_inline]] constexpr void destroy_and_deallocate_aligned(size_type count, size_type alignment) noexcept;
@@ -517,38 +338,22 @@ namespace rsl
         [[nodiscard]] [[rythe_always_inline]] constexpr UtilType* get_static_ptr_at(size_type offset) noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr const UtilType* get_static_ptr_at(size_type offset) const noexcept;
 
-        [[rythe_always_inline]] constexpr void move_to_static_memory_and_deallocate(
-                size_type count,
-                size_type memoryCount
-                )
-            noexcept(factory_traits<Factory>::noexcept_moveable);
+        [[rythe_always_inline]] constexpr void move_to_static_memory_and_deallocate(size_type count, size_type memoryCount)
+                noexcept(is_nothrow_move_constructible_v<UtilType>);
         [[rythe_always_inline]] constexpr void set_ptr_to_static_memory() noexcept;
 
-        static_capacity_storage<conditional_t<Untyped, void, UtilType>, BufferSize> m_buffer{};
+        static_capacity_storage<BufferSize * sizeof(UtilType), Alignment> m_buffer{};
         typed_alloc_type m_alloc;
         void* m_ptr = m_buffer.data;
     };
 
-    template <
-        size_type BufferSize,
-        untyped_factory_type Factory = type_erased_factory,
-        typename UtilType = void>
-    class untyped_hybrid_memory_resource : public hybrid_memory_resource_base<BufferSize, Factory, UtilType, true>
+    template <size_type BufferSize, typename UtilType = void, size_type Alignment = alignof(UtilType)>
+    using untyped_hybrid_memory_resource = hybrid_memory_resource<BufferSize, UtilType, true, Alignment>;
+
+    template <typename T, size_type BufferCount>
+    class typed_hybrid_memory_resource : public hybrid_memory_resource<BufferCount, T, false>
     {
-        using base_type = hybrid_memory_resource_base<BufferSize, Factory, UtilType, true>;
-
-    public:
-        using factory_storage_type = typename base_type::factory_storage_type;
-        using factory_t = typename base_type::factory_t;
-        using typed_alloc_type = typename base_type::typed_alloc_type;
-
-        using hybrid_memory_resource_base<BufferSize, Factory, UtilType, true>::hybrid_memory_resource_base;
-    };
-
-    template <typename T, size_type BufferCount, factory_type Factory = default_factory<T>>
-    class typed_hybrid_memory_resource : public hybrid_memory_resource_base<BufferCount * sizeof(T), Factory, T, false>
-    {
-        using base_type = hybrid_memory_resource_base<BufferCount * sizeof(T), Factory, T, false>;
+        using base_type = hybrid_memory_resource<BufferCount, T, false>;
 
     public:
         using factory_storage_type = typename base_type::factory_storage_type;
@@ -563,142 +368,121 @@ namespace rsl
 
         constexpr static size_type buffer_count = BufferCount;
 
-        using hybrid_memory_resource_base<BufferCount * sizeof(T), Factory, T, false>::hybrid_memory_resource_base;
+        using hybrid_memory_resource<BufferCount, T, false>::hybrid_memory_resource;
 
     protected:
         template <typename... Args>
-        [[rythe_always_inline]] constexpr void construct(
-                size_type count = 1,
-                size_type offset = 0,
-                Args&&... args
-                )
-            noexcept(factory_traits<Factory>::template noexcept_constructable<Args...>);
+        [[rythe_always_inline]] constexpr void construct(size_type count = 1, size_type offset = 0, Args&&... args)
+                noexcept(is_nothrow_constructible_v<T, Args...>);
 
         template <typename... Args>
-        [[rythe_allocating]] [[rythe_always_inline]] constexpr void allocate_and_construct(
-                size_type count = 1,
-                Args&&... args
-                )
-            noexcept(factory_traits<Factory>::template noexcept_constructable<Args...>);
+        [[rythe_allocating]] [[rythe_always_inline]] constexpr void allocate_and_construct(size_type count = 1, Args&&... args)
+                noexcept(is_nothrow_constructible_v<T, Args...>);
 
         template <typename... Args>
-        [[rythe_allocating]] [[rythe_always_inline]] constexpr void allocate_aligned_and_construct(
-                size_type count,
-                size_type alignment,
-                Args&&... args
-                )
-            noexcept(factory_traits<Factory>::template noexcept_constructable<Args...>);
+        [[rythe_allocating]] [[rythe_always_inline]] constexpr void
+                allocate_aligned_and_construct(size_type count, size_type alignment, Args&&... args)
+                        noexcept(is_nothrow_constructible_v<T, Args...>);
 
         template <typename... Args>
-        [[rythe_allocating]] [[rythe_always_inline]] constexpr void reallocate_and_construct(
-                size_type oldCount,
-                size_type newCount,
-                Args&&... args
-                ) noexcept(
-            factory_traits<Factory>::template noexcept_constructable<Args...> && factory_traits<Factory>::noexcept_moveable);
+        [[rythe_allocating]] [[rythe_always_inline]] constexpr void
+                reallocate_and_construct(size_type oldCount, size_type newCount, Args&&... args)
+                        noexcept(is_nothrow_constructible_v<T, Args...> && is_nothrow_move_constructible_v<T>);
 
         template <typename... Args>
-        [[rythe_allocating]] [[rythe_always_inline]] constexpr void reallocate_aligned_and_construct(
-                size_type oldCount,
-                size_type newCount,
-                size_type alignment,
-                Args&&... args
-                ) noexcept(
-            factory_traits<Factory>::template noexcept_constructable<Args...> && factory_traits<Factory>::noexcept_moveable);
+        [[rythe_allocating]] [[rythe_always_inline]] constexpr void
+                reallocate_aligned_and_construct(size_type oldCount, size_type newCount, size_type alignment, Args&&... args)
+                        noexcept(is_nothrow_constructible_v<T, Args...> && is_nothrow_move_constructible_v<T>);
     };
 
     namespace internal
     {
-        template <
-            typename T,
-            factory_type Factory,
-            size_type StaticStorageCount = 0ull,
-            bool CanAllocate = true,
-            bool Untyped = untyped_factory_type<Factory>>
+        template <typename T, size_type StaticStorageCount = 0ull, bool CanAllocate = true, bool Untyped = false, size_type Alignment = alignof(T)>
         struct select_memory_resource;
 
-        template <typename T, factory_type Factory>
-        struct select_memory_resource<T, Factory, 0ull, true, false>
+        template <typename T>
+        struct select_memory_resource<T, 0ull, true, false>
         {
-            using type = typed_dynamic_memory_resource<T, Factory>;
+            using type = typed_dynamic_memory_resource<T>;
             constexpr static bool is_untyped = false;
         };
 
-        template <typename T, factory_type Factory>
-        struct select_memory_resource<T, Factory, 0ull, true, true>
+        template <typename T, size_type Alignment>
+        struct select_memory_resource<T, 0ull, true, true, Alignment>
         {
-            using type = untyped_dynamic_memory_resource<Factory, T>;
+            using type = untyped_dynamic_memory_resource<T>;
             constexpr static bool is_untyped = true;
         };
 
-        template <typename T, factory_type Factory, size_type StaticStorageCount>
-        struct select_memory_resource<T, Factory, StaticStorageCount, true, false>
+        template <typename T, size_type StaticStorageCount>
+        struct select_memory_resource<T, StaticStorageCount, true, false>
         {
-            using type = typed_hybrid_memory_resource<T, StaticStorageCount, Factory>;
+            using type = typed_hybrid_memory_resource<T, StaticStorageCount>;
             constexpr static bool is_untyped = false;
         };
 
-        template <typename T, factory_type Factory, size_type StaticStorageCount>
-        struct select_memory_resource<T, Factory, StaticStorageCount, true, true>
+        template <typename T, size_type StaticStorageCount, size_type Alignment>
+        struct select_memory_resource<T, StaticStorageCount, true, true, Alignment>
         {
-            using type = untyped_hybrid_memory_resource<StaticStorageCount * sizeof(T), Factory, T>;
+            using type = untyped_hybrid_memory_resource<StaticStorageCount, T>;
             constexpr static bool is_untyped = true;
         };
 
-        template <typename T, factory_type Factory, size_type StaticStorageCount>
-        struct select_memory_resource<T, Factory, StaticStorageCount, false, false>
+        template <typename T, size_type StaticStorageCount>
+        struct select_memory_resource<T, StaticStorageCount, false, false>
         {
-            using type = typed_static_memory_resource<T, StaticStorageCount, Factory>;
+            using type = typed_static_memory_resource<T, StaticStorageCount>;
             constexpr static bool is_untyped = false;
         };
 
-        template <typename T, factory_type Factory, size_type StaticStorageCount>
-        struct select_memory_resource<T, Factory, StaticStorageCount, false, true>
+        template <typename T, size_type StaticStorageCount, size_type Alignment>
+        struct select_memory_resource<T, StaticStorageCount, false, true, Alignment>
         {
-            using type = untyped_static_memory_resource<StaticStorageCount * sizeof(T), Factory, T>;
+            using type = untyped_static_memory_resource<StaticStorageCount, T, Alignment>;
             constexpr static bool is_untyped = true;
         };
 
         template <typename>
-        struct is_hybrid_resource : false_type {};
+        struct is_hybrid_resource : false_type
+        {};
 
-        template <
-            size_type BufferSize,
-            untyped_factory_type Factory,
-            typename UtilType>
-        struct is_hybrid_resource<untyped_hybrid_memory_resource<BufferSize, Factory, UtilType>> : true_type {};
+        template <size_type BufferSize, typename UtilType>
+        struct is_hybrid_resource<untyped_hybrid_memory_resource<BufferSize, UtilType>> : true_type
+        {};
 
-        template <typename T, size_type BufferCount, factory_type Factory>
-        struct is_hybrid_resource<typed_hybrid_memory_resource<T, BufferCount, Factory>> : true_type {};
+        template <typename T, size_type BufferCount>
+        struct is_hybrid_resource<typed_hybrid_memory_resource<T, BufferCount>> : true_type
+        {};
 
         template <typename T>
         constexpr bool is_hybrid_resource_v = is_hybrid_resource<T>::value;
 
         template <typename>
-        struct is_static_resource : false_type {};
+        struct is_static_resource : false_type
+        {};
 
-        template <
-            size_type BufferSize,
-            untyped_factory_type Factory,
-            typename UtilType>
-        struct is_static_resource<untyped_static_memory_resource<BufferSize, Factory, UtilType>> : true_type {};
+        template <size_type BufferSize, typename UtilType>
+        struct is_static_resource<untyped_static_memory_resource<BufferSize, UtilType>> : true_type
+        {};
 
-        template <typename T, size_type BufferCount, factory_type Factory>
-        struct is_static_resource<typed_static_memory_resource<T, BufferCount, Factory>> : true_type {};
+        template <typename T, size_type BufferCount>
+        struct is_static_resource<typed_static_memory_resource<T, BufferCount>> : true_type
+        {};
 
         template <typename T>
         constexpr bool is_static_resource_v = is_static_resource<T>::value;
 
         template <typename>
-        struct is_dynamic_resource : false_type {};
+        struct is_dynamic_resource : false_type
+        {};
 
-        template <
-            untyped_factory_type Factory,
-            typename UtilType>
-        struct is_dynamic_resource<untyped_dynamic_memory_resource<Factory, UtilType>> : true_type {};
+        template <typename UtilType>
+        struct is_dynamic_resource<untyped_dynamic_memory_resource<UtilType>> : true_type
+        {};
 
-        template <typename T, factory_type Factory>
-        struct is_dynamic_resource<typed_dynamic_memory_resource<T, Factory>> : true_type {};
+        template <typename T>
+        struct is_dynamic_resource<typed_dynamic_memory_resource<T>> : true_type
+        {};
 
         template <typename T>
         constexpr bool is_dynamic_resource_v = is_dynamic_resource<T>::value;
@@ -712,29 +496,17 @@ namespace rsl
         template <typename MemRsc>
         void move_alloc_and_factory(MemRsc& dst, MemRsc&& src)
         {
-            if constexpr (internal::has_allocator_v<MemRsc>)
-            {
-                dst.set_allocator(rsl::move(src.get_allocator_storage()));
-            }
-            if constexpr (internal::has_factory_v<MemRsc>)
-            {
-                dst.set_factory(rsl::move(src.get_factory_storage()));
-            }
+            if constexpr (internal::has_allocator_v<MemRsc>) { dst.set_allocator(rsl::move(src.get_allocator_storage())); }
+            if constexpr (internal::has_factory_v<MemRsc>) { dst.set_factory(rsl::move(src.get_factory_storage())); }
         }
 
         template <typename MemRsc>
         void copy_alloc_and_factory(MemRsc& dst, const MemRsc& src)
         {
-            if constexpr (internal::has_allocator_v<MemRsc>)
-            {
-                dst.set_allocator(src.get_allocator_storage());
-            }
-            if constexpr (internal::has_factory_v<MemRsc>)
-            {
-                dst.set_factory(src.get_factory_storage());
-            }
+            if constexpr (internal::has_allocator_v<MemRsc>) { dst.set_allocator(src.get_allocator_storage()); }
+            if constexpr (internal::has_factory_v<MemRsc>) { dst.set_factory(src.get_factory_storage()); }
         }
     } // namespace internal
-}     // namespace rsl
+} // namespace rsl
 
 #include "memory_resource_base.inl"

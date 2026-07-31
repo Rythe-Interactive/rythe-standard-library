@@ -44,12 +44,12 @@ namespace rsl
         [[rythe_always_inline]] constexpr explicit unique_resource(allocator_storage allocator)
             noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage>);
 
-        [[rythe_always_inline]] constexpr explicit unique_resource(const factory_storage_type& factoryStorage)
+        [[rythe_always_inline]] constexpr explicit unique_resource(const type_erased_factory& factory)
             noexcept(is_nothrow_constructible_v<mem_rsc>);
 
         [[rythe_always_inline]] constexpr unique_resource(
                 allocator_storage allocator,
-                const factory_storage_type& factoryStorage
+                const type_erased_factory& factory
             ) noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage>);
 
         template <typename OtherT, typed_factory_type OtherFactory>
@@ -79,7 +79,7 @@ namespace rsl
 
         [[rythe_always_inline]] constexpr unique_resource& operator=(unique_resource&& other) noexcept;
 
-        [[rythe_always_inline]] constexpr void set_factory(const factory_storage_type& factoryStorage)
+        [[rythe_always_inline]] constexpr void set_factory(const type_erased_factory& factory)
             noexcept(is_nothrow_copy_assignable_v<factory_storage_type>);
 
         [[nodiscard]] [[rythe_always_inline]] constexpr factory_t& get_factory() noexcept;

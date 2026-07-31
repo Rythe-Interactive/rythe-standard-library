@@ -18,7 +18,7 @@ namespace rsl
 
     template <typename T, statically_optional_typed_factory_type Factory>
     unique_object<T, Factory>::unique_object(
-            const factory_storage_type& factoryStorage
+            const type_erased_factory& factory
             )
         noexcept(is_nothrow_constructible_v<mem_rsc>)
         : unique_rsc(), m_factory(factoryStorage) {}
@@ -26,7 +26,7 @@ namespace rsl
     template <typename T, statically_optional_typed_factory_type Factory>
     unique_object<T, Factory>::unique_object(
             allocator_storage allocator,
-            const factory_storage_type& factoryStorage
+            const type_erased_factory& factory
             )
         noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage>)
         : unique_rsc(allocator), m_factory(factoryStorage) {}
@@ -62,7 +62,7 @@ namespace rsl
     template <typename... Args>
     unique_object<T, Factory> unique_object<T, Factory>::create_in_place_alloc_factory(
             allocator_storage allocator,
-            const factory_storage_type& factoryStorage,
+            const type_erased_factory& factory,
             Args&&... args
             )
         noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage> && is_nothrow_constructible_v<T, Args...>)
@@ -143,13 +143,13 @@ namespace rsl
         if (is_constant_evaluated())
         {
             T* ptr = new T(forward<Args>(args)...);
-            unique_rsc::arm(deleter{ .factory = m_factory, .allocator = this->get_allocator_storage() }, ptr);
+            unique_rsc::arm(deleter{ .factory = m_.allocator = this->get_allocator_storage() }, ptr);
         }
         else
         {
             T* ptr = static_cast<T*>(this->get_allocator().allocate(m_factory->type_size()));
             m_factory->construct(ptr, 1, forward<Args>(args)...);
-            unique_rsc::arm(deleter{ .factory = m_factory, .allocator = this->get_allocator_storage() }, ptr);
+            unique_rsc::arm(deleter{ .factory = m_.allocator = this->get_allocator_storage() }, ptr);
         }
     }
 }
