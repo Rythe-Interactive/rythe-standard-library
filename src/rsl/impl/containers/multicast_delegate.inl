@@ -47,24 +47,9 @@ namespace rsl
     }
 
     template <typename ReturnType, typename... ParamTypes>
-    constexpr memory_allocator& multicast_delegate<
-        ReturnType(ParamTypes...)>::get_allocator() noexcept
+    constexpr allocator_storage multicast_delegate<ReturnType(ParamTypes...)>::get_allocator() const noexcept
     {
         return m_invocationList.get_allocator();
-    }
-
-    template <typename ReturnType, typename... ParamTypes>
-    constexpr const memory_allocator& multicast_delegate<
-        ReturnType(ParamTypes...)>::get_allocator() const noexcept
-    {
-        return m_invocationList.get_allocator();
-    }
-
-    template <typename ReturnType, typename... ParamTypes>
-    constexpr allocator_storage multicast_delegate<
-        ReturnType(ParamTypes...)>::get_allocator_storage() const noexcept
-    {
-        return m_invocationList.get_allocator_storage();
     }
 
     template <typename ReturnType, typename... ParamTypes>
@@ -281,7 +266,7 @@ namespace rsl
     constexpr multicast_delegate<ReturnType(ParamTypes...)>& multicast_delegate<
         ReturnType(ParamTypes...)>::push_back(T& instance)
     {
-        return push_back(base::template create_element<T, TMethod>(m_invocationList.get_allocator_storage(), instance));
+        return push_back(base::template create_element<T, TMethod>(m_invocationList.get_allocator(), instance));
     }
 
     template <typename ReturnType, typename... ParamTypes>
@@ -289,7 +274,7 @@ namespace rsl
     constexpr multicast_delegate<ReturnType(ParamTypes...)>& multicast_delegate<
         ReturnType(ParamTypes...)>::push_back(const T& instance)
     {
-        return push_back(base::template create_element<T, TMethod>(m_invocationList.get_allocator_storage(), instance));
+        return push_back(base::template create_element<T, TMethod>(m_invocationList.get_allocator(), instance));
     }
 
     template <typename ReturnType, typename... ParamTypes>
@@ -297,7 +282,7 @@ namespace rsl
     constexpr multicast_delegate<ReturnType(ParamTypes...)>& multicast_delegate<
         ReturnType(ParamTypes...)>::push_back()
     {
-        return push_back(base::template create_element<TMethod>(m_invocationList.get_allocator_storage()));
+        return push_back(base::template create_element<TMethod>(m_invocationList.get_allocator()));
     }
 
     template <typename ReturnType, typename... ParamTypes>
@@ -306,7 +291,7 @@ namespace rsl
         ReturnType(ParamTypes...)>::push_back(const Functor& instance)
         requires invocable<Functor, ReturnType(ParamTypes...)>
     {
-        return push_back(base::template create_element<Functor>(m_invocationList.get_allocator_storage(), instance));
+        return push_back(base::template create_element<Functor>(m_invocationList.get_allocator(), instance));
     }
 
     template <typename ReturnType, typename... ParamTypes>
@@ -328,7 +313,7 @@ namespace rsl
     constexpr multicast_delegate<ReturnType(ParamTypes...)>& multicast_delegate<
         ReturnType(ParamTypes...)>::operator+=(T& instance)
     {
-        return push_back(base::template create_element<T, TMethod>(m_invocationList.get_allocator_storage(), instance));
+        return push_back(base::template create_element<T, TMethod>(m_invocationList.get_allocator(), instance));
     }
 
     template <typename ReturnType, typename... ParamTypes>
@@ -336,7 +321,7 @@ namespace rsl
     constexpr multicast_delegate<ReturnType(ParamTypes...)>& multicast_delegate<
         ReturnType(ParamTypes...)>::operator+=(const T& instance)
     {
-        return push_back(base::template create_element<T, TMethod>(m_invocationList.get_allocator_storage(), instance));
+        return push_back(base::template create_element<T, TMethod>(m_invocationList.get_allocator(), instance));
     }
 
     template <typename ReturnType, typename... ParamTypes>
@@ -344,7 +329,7 @@ namespace rsl
     constexpr multicast_delegate<ReturnType(ParamTypes...)>& multicast_delegate<
         ReturnType(ParamTypes...)>::operator+=(const Functor& instance)
     {
-        return push_back(base::template create_element<Functor>(m_invocationList.get_allocator_storage(), instance));
+        return push_back(base::template create_element<Functor>(m_invocationList.get_allocator(), instance));
     }
 
     template <typename ReturnType, typename... ParamTypes>
@@ -502,7 +487,7 @@ namespace rsl
         ReturnType(ParamTypes...)>::operator=(T& instance)
     {
         clear();
-        return push_back(base::template create_element<T, TMethod>(m_invocationList.get_allocator_storage(), instance));
+        return push_back(base::template create_element<T, TMethod>(m_invocationList.get_allocator(), instance));
     }
 
     template <typename ReturnType, typename... ParamTypes>
@@ -511,7 +496,7 @@ namespace rsl
         ReturnType(ParamTypes...)>::operator=(const T& instance)
     {
         clear();
-        return push_back(base::template create_element<T, TMethod>(m_invocationList.get_allocator_storage(), instance));
+        return push_back(base::template create_element<T, TMethod>(m_invocationList.get_allocator(), instance));
     }
 
     template <typename ReturnType, typename... ParamTypes>
@@ -520,7 +505,7 @@ namespace rsl
         ReturnType(ParamTypes...)>::operator=(const Functor& instance)
     {
         clear();
-        return push_back(base::template create_element<Functor>(m_invocationList.get_allocator_storage(), instance));
+        return push_back(base::template create_element<Functor>(m_invocationList.get_allocator(), instance));
     }
 
     template <typename ReturnType, typename... ParamTypes>
@@ -545,7 +530,7 @@ namespace rsl
         ReturnType(ParamTypes...)>::assign(T& instance)
     {
         clear();
-        return push_back(base::template create_element<T, TMethod>(m_invocationList.get_allocator_storage(), instance));
+        return push_back(base::template create_element<T, TMethod>(m_invocationList.get_allocator(), instance));
     }
 
     template <typename ReturnType, typename... ParamTypes>
@@ -554,7 +539,7 @@ namespace rsl
         ReturnType(ParamTypes...)>::assign(const T& instance)
     {
         clear();
-        return push_back(base::template create_element<T, TMethod>(m_invocationList.get_allocator_storage(), instance));
+        return push_back(base::template create_element<T, TMethod>(m_invocationList.get_allocator(), instance));
     }
 
     template <typename ReturnType, typename... ParamTypes>
@@ -564,7 +549,7 @@ namespace rsl
         requires invocable<Functor, ReturnType(ParamTypes...)>
     {
         clear();
-        return push_back(base::template create_element<Functor>(m_invocationList.get_allocator_storage(), instance));
+        return push_back(base::template create_element<Functor>(m_invocationList.get_allocator(), instance));
     }
 
     template <typename ReturnType, typename... ParamTypes>
@@ -643,6 +628,6 @@ namespace rsl
     constexpr multicast_delegate<ReturnType(ParamTypes...)>& multicast_delegate<
         ReturnType(ParamTypes...)>::push_back(invocation_element&& elem)
     {
-        return push_back(value_type(m_invocationList.get_allocator_storage(), move(elem)));
+        return push_back(value_type(m_invocationList.get_allocator(), move(elem)));
     }
 } // namespace rsl

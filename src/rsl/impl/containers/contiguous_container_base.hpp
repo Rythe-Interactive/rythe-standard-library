@@ -508,18 +508,20 @@ namespace rsl
         size_type m_memorySize = static_capacity;
     };
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo>
+    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     [[rythe_always_inline]] constexpr bool operator==(
-            const contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo>& lhs,
-            const contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo>& rhs
+            const contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>& lhs,
+            const contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>& rhs
             ) noexcept;
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo>
+    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     [[rythe_always_inline]] constexpr bool operator!=(
-            const contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo>& lhs,
-            const contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo>& rhs
+            const contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>& lhs,
+            const contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>& rhs
             ) noexcept { return !(lhs == rhs); }
 } // namespace rsl
 

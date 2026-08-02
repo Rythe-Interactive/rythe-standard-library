@@ -423,13 +423,7 @@ namespace rsl
     }
 
     template <typename MapInfo>
-    constexpr memory_allocator& hash_map_base<MapInfo>::get_allocator() noexcept
-    {
-        return m_values.get_allocator();
-    }
-
-    template <typename MapInfo>
-    constexpr const memory_allocator& hash_map_base<MapInfo>::get_allocator() const noexcept
+    constexpr allocator_storage hash_map_base<MapInfo>::get_allocator() const noexcept
     {
         return m_values.get_allocator();
     }

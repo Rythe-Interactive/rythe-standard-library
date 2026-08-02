@@ -3,17 +3,22 @@
 
 namespace rsl
 {
-    // TODO(Rowan): constexpr strings are still useful if the string never leaks from constant evaluation time to runtime. constexpr_string is needed if you want to be able to read the results of a string at runtime.
+    // TODO(Rowan): constexpr strings are still useful if the string never leaks from constant evaluation time to runtime.
+    // constexpr_string is needed if you want to be able to read the results of a string at runtime.
     template <char_type CharType = char, size_type StaticCapacity = 0ull, bool CanAllocate = true>
-    class basic_dynamic_string final
-            : public contiguous_container_base<CharType, default_factory<CharType>, CharType*, const CharType*,
-                                               contiguous_container_info<
-                                                   true, StaticCapacity, true, CanAllocate>>
+    class basic_dynamic_string final :
+        public contiguous_container_base<
+                CharType,
+                CharType*,
+                const CharType*,
+                contiguous_container_info<true, StaticCapacity, true, CanAllocate>>
     {
     public:
         using container_base = contiguous_container_base<
-            CharType, default_factory<CharType>, CharType*, const CharType*, contiguous_container_info<
-                true, StaticCapacity, true, CanAllocate>>;
+                CharType,
+                CharType*,
+                const CharType*,
+                contiguous_container_info<true, StaticCapacity, true, CanAllocate>>;
         using mem_rsc = typename container_base::mem_rsc;
         using value_type = CharType;
         using iterator_type = typename container_base::iterator_type;
@@ -22,20 +27,17 @@ namespace rsl
         using const_reverse_iterator_type = typename container_base::const_reverse_iterator_type;
         using view_type = typename container_base::view_type;
         using const_view_type = typename container_base::const_view_type;
-        using factory_storage_type = factory_storage<default_factory<CharType>>;
-        using factory_t = default_factory<CharType>;
 
         using contiguous_container_base<
-            CharType, default_factory<CharType>, CharType*, const CharType*, contiguous_container_info<
-                true, StaticCapacity, true, CanAllocate>>::contiguous_container_base;
+                CharType,
+                CharType*,
+                const CharType*,
+                contiguous_container_info<true, StaticCapacity, true, CanAllocate>>::contiguous_container_base;
 
-        [[rythe_always_inline]] constexpr basic_dynamic_string(
-                const container_base& src
-                )
-            noexcept(container_base::copy_construct_container_noexcept);
-        [[rythe_always_inline]] constexpr basic_dynamic_string(
-                container_base&& src
-                ) noexcept(container_base::move_construct_container_noexcept);
+        [[rythe_always_inline]] constexpr basic_dynamic_string(const container_base& src)
+                noexcept(container_base::copy_construct_container_noexcept);
+        [[rythe_always_inline]] constexpr basic_dynamic_string(container_base&& src)
+                noexcept(container_base::move_construct_container_noexcept);
 
         using container_base::operator view_type;
         using container_base::operator const_view_type;
@@ -50,28 +52,21 @@ namespace rsl
     template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
     [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate> operator+(
             const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& lhs,
-            const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& rhs
-            );
+            const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& rhs);
     template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
     [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate> operator+(
             const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& lhs,
-            typename basic_dynamic_string<CharType, StaticCapacity, CanAllocate>::const_view_type rhs
-            );
+            typename basic_dynamic_string<CharType, StaticCapacity, CanAllocate>::const_view_type rhs);
     template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
     [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate>
-            operator+(const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& lhs,
-            CharType rhs
-            );
+            operator+(const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& lhs, CharType rhs);
     template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
     [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate> operator+(
             typename basic_dynamic_string<CharType, StaticCapacity, CanAllocate>::const_view_type lhs,
-            const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& rhs
-            );
+            const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& rhs);
     template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
     [[nodiscard]] [[rythe_always_inline]] constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate>
-            operator+(
-            CharType lhs, const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& rhs
-            );
+            operator+(CharType lhs, const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& rhs);
 
     using dynamic_string = basic_dynamic_string<>;
 
@@ -116,10 +111,7 @@ namespace rsl
             return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' || ch == '\f' || ch == '\v';
         }
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr bool operator!=(const char ch) const noexcept
-        {
-            return !(*this == ch);
-        }
+        [[nodiscard]] [[rythe_always_inline]] constexpr bool operator!=(const char ch) const noexcept { return !(*this == ch); }
     };
 
     [[nodiscard]] [[rythe_always_inline]] constexpr bool operator==(const char ch, white_space) noexcept
@@ -141,7 +133,7 @@ namespace rsl
         {
             return dynamic_string::from_buffer(str, size);
         }
-    }
+    } // namespace literals
 } // namespace rsl
 
 #include "../logging/fmt_include.hpp"

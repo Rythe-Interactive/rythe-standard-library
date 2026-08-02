@@ -54,10 +54,7 @@ namespace rsl
         [[rythe_always_inline]] constexpr void reserve(size_type newCap) noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr size_type capacity() const noexcept;
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr memory_allocator& get_allocator() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr const memory_allocator& get_allocator() const noexcept;
-
-        [[nodiscard]] [[rythe_always_inline]] constexpr allocator_storage get_allocator_storage() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr allocator_storage get_allocator() const noexcept;
 
         [[nodiscard]] [[rythe_always_inline]] constexpr auto begin() noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr auto cbegin() const noexcept;

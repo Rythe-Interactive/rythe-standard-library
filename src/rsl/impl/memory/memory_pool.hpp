@@ -46,9 +46,7 @@ namespace rsl
         ~memory_pool() noexcept { reset(); }
 
         [[rythe_always_inline]] constexpr void set_allocator(allocator_storage allocator) noexcept { m_alloc = allocator; }
-        [[nodiscard]] [[rythe_always_inline]] constexpr memory_allocator& get_allocator() noexcept { return *m_alloc; }
-        [[nodiscard]] [[rythe_always_inline]] constexpr const memory_allocator& get_allocator() const noexcept { return *m_alloc; }
-        [[nodiscard]] [[rythe_always_inline]] constexpr allocator_storage get_allocator_storage() const noexcept { return m_alloc; }
+        [[nodiscard]] [[rythe_always_inline]] constexpr allocator_storage get_allocator() const noexcept { return m_alloc; }
 
         void reset() noexcept
         {

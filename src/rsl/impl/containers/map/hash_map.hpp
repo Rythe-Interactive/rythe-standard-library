@@ -153,8 +153,7 @@ namespace rsl
         [[nodiscard]] [[rythe_always_inline]] constexpr const memory_pool<value_type>& get_memory_pool() const noexcept
             requires(!is_flat);
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr memory_allocator& get_allocator() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr const memory_allocator& get_allocator() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr allocator_storage get_allocator() const noexcept;
 
         [[nodiscard]] [[rythe_always_inline]] constexpr iterator_type begin() noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr const_iterator_type begin() const noexcept;

@@ -35,7 +35,7 @@ namespace rsl
     constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::contiguous_container_base(
             contiguous_container_base&& src
             ) noexcept(move_construct_container_noexcept)
-        : mem_rsc(internal::alloc_and_factory_only_signal, rsl::move(src))
+        : mem_rsc(internal::alloc_and_factory_only_signal, src)
     {
         if (src.is_static_memory())
         {
@@ -370,7 +370,7 @@ namespace rsl
     constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>& contiguous_container_base<T,
         Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::operator=(contiguous_container_base&& src) noexcept
     {
-        internal::move_alloc_and_factory<mem_rsc>(*this, rsl::move(src));
+        mem_rsc::set_allocator(src.get_allocator());
         mem_rsc::set_ptr(src.get_ptr());
         m_size = src.m_size;
         m_memorySize = src.m_memorySize;
@@ -2005,8 +2005,7 @@ namespace rsl
         }
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
     constexpr bool operator==(
             const contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>& lhs,
             const contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>& rhs

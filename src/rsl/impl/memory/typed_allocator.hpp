@@ -89,20 +89,16 @@ namespace rsl
                 allocator_storage baseAllocator, const type_erased_factory& factory) noexcept;
 
         [[rythe_always_inline]] constexpr void set_allocator(allocator_storage baseAllocator) noexcept;
-
-        [[nodiscard]] [[rythe_always_inline]] constexpr memory_allocator& get_allocator() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr const memory_allocator& get_allocator() const noexcept;
-
-        [[nodiscard]] [[rythe_always_inline]] constexpr allocator_storage get_allocator_storage() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr allocator_storage get_allocator() const noexcept;
 
         [[rythe_always_inline]] constexpr void set_factory(const type_erased_factory& factoryStorage) noexcept;
 
         [[nodiscard]] [[rythe_always_inline]] constexpr type_erased_factory& get_factory() noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr const type_erased_factory& get_factory() const noexcept;
 
-        [[nodiscard]] [[rythe_always_inline]] size_type type_size() const noexcept;
-        [[nodiscard]] [[rythe_always_inline]] bool trivial_copy() const noexcept;
-        [[nodiscard]] [[rythe_always_inline]] id_type type_id() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr size_type type_size() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr bool trivial_copy() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr id_type type_id() const noexcept;
 
         [[nodiscard]] [[rythe_allocating]] [[rythe_always_inline]] constexpr void* allocate(size_type count = 1) noexcept;
         [[nodiscard]] [[rythe_allocating]] [[rythe_always_inline]] constexpr void*

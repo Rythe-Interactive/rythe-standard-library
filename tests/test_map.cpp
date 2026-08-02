@@ -66,19 +66,19 @@ TEST_CASE("dynamic_map", "[containers]")
     {
         {
             rsl::dynamic_map<float32, test_struct> map{};
-            CHECK(static_cast<test_heap_allocator&>(map.get_allocator()).id == 1012234_id);
+            CHECK(static_cast<test_heap_allocator&>(*map.get_allocator()).id == 1012234_id);
 
         }
         {
             test_heap_allocator alloc{1234};
             rsl::dynamic_map<float32, test_struct> map{ { &alloc } };
-            CHECK(static_cast<test_heap_allocator&>(map.get_allocator()).id == 1234_id);
+            CHECK(static_cast<test_heap_allocator&>(*map.get_allocator()).id == 1234_id);
         }
         {
             default_allocator alloc;
             allocator_storage store(&alloc);
             rsl::dynamic_map<float32, test_struct> map{store};
-            CHECK((&(map.get_allocator())) == &alloc);
+            CHECK(map.get_allocator().ptr == &alloc);
         }
     }
 

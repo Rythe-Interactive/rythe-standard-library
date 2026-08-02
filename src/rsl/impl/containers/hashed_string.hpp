@@ -104,8 +104,6 @@ namespace rsl
         using hashed_view_type = basic_hashed_string_view<CharType>;
         using const_view_type = typename string_type::const_view_type;
         using const_hashed_view_type = basic_hashed_string_view<const CharType>;
-        using factory_storage_type = typename string_type::factory_storage_type;
-        using factory_t = typename string_type::factory_t;
 
         constexpr static bool use_post_fix = string_type::use_post_fix;
         constexpr static size_type static_capacity = string_type::static_capacity;

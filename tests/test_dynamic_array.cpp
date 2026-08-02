@@ -89,18 +89,18 @@ TEST_CASE("dynamic_array", "[containers]")
     {
         {
             rsl::dynamic_array<int> list{};
-            CHECK(static_cast<test_heap_allocator&>(list.get_allocator()).id == 1012234_id);
+            CHECK(static_cast<test_heap_allocator&>(*list.get_allocator()).id == 1012234_id);
         }
         {
             test_heap_allocator alloc{1234_id};
             rsl::dynamic_array<int> list{ { &alloc } };
-            CHECK(static_cast<test_heap_allocator&>(list.get_allocator()).id == 1234_id);
+            CHECK(static_cast<test_heap_allocator&>(*list.get_allocator()).id == 1234_id);
         }
         {
             default_allocator alloc;
             allocator_storage store(&alloc);
             rsl::dynamic_array<int> list{store};
-            CHECK((&(list.get_allocator())) == &alloc);
+            CHECK(list.get_allocator().ptr == &alloc);
         }
     }
 

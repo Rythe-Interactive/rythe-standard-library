@@ -67,7 +67,7 @@ namespace rsl
             disarm();
         }
 
-        internal::copy_alloc_and_factory<mem_rsc>(*this, other);
+        mem_rsc::set_allocator(other.get_allocator());
         mem_rsc::set_ptr(static_cast<Counter* const>(other.m_ptr));
 
         if (is_armed())
@@ -82,7 +82,7 @@ namespace rsl
     constexpr basic_reference_counter<Counter, Untyped>&
     basic_reference_counter<Counter, Untyped>::operator=(basic_reference_counter&& other) noexcept
     {
-        internal::move_alloc_and_factory<mem_rsc>(*this, rsl::move(other));
+        mem_rsc::set_allocator(other.get_allocator());
         mem_rsc::set_ptr(other.get_ptr());
         other.set_ptr(nullptr);
         return *this;

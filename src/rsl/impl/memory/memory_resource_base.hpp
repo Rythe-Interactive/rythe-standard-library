@@ -9,6 +9,18 @@ namespace rsl
     struct alignas(Alignment) static_capacity_storage
     {
         byte data[Capacity];
+
+        template<typename T = byte>
+        T* get_data_ptr() noexcept
+        {
+            return bit_cast<T*>(&data[0]);
+        }
+
+        template <typename T = byte>
+        const T* get_data_ptr() const noexcept
+        {
+            return bit_cast<const T*>(&data[0]);
+        }
     };
 
     template <size_type Alignment>
@@ -33,9 +45,6 @@ namespace rsl
         [[rythe_always_inline]] constexpr dynamic_memory_resource(
                 internal::alloc_and_factory_only_signal_type, const dynamic_memory_resource& other)
                 noexcept;
-        [[rythe_always_inline]] constexpr dynamic_memory_resource(
-                internal::alloc_and_factory_only_signal_type, dynamic_memory_resource&& other)
-                noexcept;
 
         dynamic_memory_resource(const dynamic_memory_resource&) = delete;
         dynamic_memory_resource(dynamic_memory_resource&&) = delete;
@@ -56,8 +65,7 @@ namespace rsl
 
         [[rythe_always_inline]] constexpr void set_allocator(allocator_storage allocator) noexcept;
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr memory_allocator& get_allocator() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr const memory_allocator& get_allocator() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr allocator_storage get_allocator() const noexcept;
 
         [[rythe_always_inline]] constexpr void set_factory(const type_erased_factory& factory) noexcept
             requires(Untyped);
@@ -66,8 +74,6 @@ namespace rsl
             requires(Untyped);
         [[nodiscard]] [[rythe_always_inline]] constexpr const type_erased_factory& get_factory() const noexcept
             requires(Untyped);
-
-        [[nodiscard]] [[rythe_always_inline]] constexpr allocator_storage get_allocator_storage() const noexcept;
 
     protected:
         [[rythe_allocating]] [[rythe_always_inline]] constexpr void allocate(size_type count = 1) noexcept;
@@ -172,8 +178,7 @@ namespace rsl
 
         [[rythe_always_inline]] constexpr static_memory_resource() noexcept = default;
         [[rythe_always_inline]] constexpr static_memory_resource(
-                internal::alloc_and_factory_only_signal_type, const static_memory_resource& other) noexcept
-            requires(Untyped);
+                internal::alloc_and_factory_only_signal_type, const static_memory_resource& other) noexcept;
 
         static_memory_resource(const static_memory_resource&) = delete;
         static_memory_resource(static_memory_resource&&) = delete;
@@ -227,8 +232,6 @@ namespace rsl
         using const_ref_type = decorate_type_t<T, const_signal, lval_ref_signal>;
         using ptr_type = add_pointer_t<T>;
         using const_ptr_type = decorate_type_t<T, const_signal, pointer_signal>;
-        using factory_storage_type = typename base_type::factory_storage_type;
-        using factory_t = typename base_type::factory_t;
         constexpr static size_type buffer_count = BufferCount;
 
         using static_memory_resource<BufferCount, T, false>::static_memory_resource;
@@ -273,8 +276,7 @@ namespace rsl
 
         [[rythe_always_inline]] constexpr void set_allocator(allocator_storage allocator) noexcept;
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr memory_allocator& get_allocator() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr const memory_allocator& get_allocator() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr allocator_storage get_allocator() const noexcept;
 
         [[rythe_always_inline]] constexpr void set_factory(const type_erased_factory& factory) noexcept
             requires(Untyped);
@@ -283,8 +285,6 @@ namespace rsl
             requires(Untyped);
         [[nodiscard]] [[rythe_always_inline]] constexpr const type_erased_factory& get_factory() const noexcept
             requires(Untyped);
-
-        [[nodiscard]] [[rythe_always_inline]] constexpr allocator_storage get_allocator_storage() const noexcept;
 
     protected:
         [[rythe_allocating]] [[rythe_always_inline]] constexpr void allocate(size_type count = 1) noexcept;
@@ -344,7 +344,7 @@ namespace rsl
 
         static_capacity_storage<BufferSize * sizeof(UtilType), Alignment> m_buffer{};
         typed_alloc_type m_alloc;
-        void* m_ptr = m_buffer.data;
+        void* m_ptr = m_buffer.template get_data_ptr<void>();
     };
 
     template <size_type BufferSize, typename UtilType = void, size_type Alignment = alignof(UtilType)>
@@ -356,8 +356,6 @@ namespace rsl
         using base_type = hybrid_memory_resource<BufferCount, T, false>;
 
     public:
-        using factory_storage_type = typename base_type::factory_storage_type;
-        using factory_t = typename base_type::factory_t;
         using typed_alloc_type = typename base_type::typed_alloc_type;
 
         using value_type = T;
@@ -488,24 +486,7 @@ namespace rsl
         constexpr bool is_dynamic_resource_v = is_dynamic_resource<T>::value;
 
         template <typename T>
-        constexpr bool has_factory_v = true;
-
-        template <typename T>
         constexpr bool has_allocator_v = !is_static_resource_v<T>;
-
-        template <typename MemRsc>
-        void move_alloc_and_factory(MemRsc& dst, MemRsc&& src)
-        {
-            if constexpr (internal::has_allocator_v<MemRsc>) { dst.set_allocator(rsl::move(src.get_allocator_storage())); }
-            if constexpr (internal::has_factory_v<MemRsc>) { dst.set_factory(rsl::move(src.get_factory_storage())); }
-        }
-
-        template <typename MemRsc>
-        void copy_alloc_and_factory(MemRsc& dst, const MemRsc& src)
-        {
-            if constexpr (internal::has_allocator_v<MemRsc>) { dst.set_allocator(src.get_allocator_storage()); }
-            if constexpr (internal::has_factory_v<MemRsc>) { dst.set_factory(src.get_factory_storage()); }
-        }
     } // namespace internal
 } // namespace rsl
 

@@ -11,12 +11,6 @@ namespace rsl
     {}
 
     template <typename UtilType, bool Untyped>
-    constexpr dynamic_memory_resource<UtilType, Untyped>::dynamic_memory_resource(
-            internal::alloc_and_factory_only_signal_type, dynamic_memory_resource&& other)
-            noexcept
-        : m_alloc(rsl::move(other.m_alloc)) {}
-
-    template <typename UtilType, bool Untyped>
     constexpr dynamic_memory_resource<UtilType, Untyped>::dynamic_memory_resource(allocator_storage allocator) noexcept
         : m_alloc(allocator, construct_type_signal<UtilType>)
     {}
@@ -44,13 +38,7 @@ namespace rsl
     }
 
     template <typename UtilType, bool Untyped>
-    constexpr memory_allocator& dynamic_memory_resource<UtilType, Untyped>::get_allocator() noexcept
-    {
-        return m_alloc.get_allocator();
-    }
-
-    template <typename UtilType, bool Untyped>
-    constexpr const memory_allocator& dynamic_memory_resource<UtilType, Untyped>::get_allocator() const noexcept
+    constexpr allocator_storage dynamic_memory_resource<UtilType, Untyped>::get_allocator() const noexcept
     {
         return m_alloc.get_allocator();
     }
@@ -74,13 +62,6 @@ namespace rsl
         requires(Untyped)
     {
         return m_alloc.get_factory();
-    }
-
-    template <typename UtilType, bool Untyped>
-    constexpr allocator_storage
-    dynamic_memory_resource<UtilType, Untyped>::get_allocator_storage() const noexcept
-    {
-        return m_alloc.get_allocator_storage();
     }
 
     template <typename UtilType, bool Untyped>
@@ -353,7 +334,6 @@ namespace rsl
             internal::alloc_and_factory_only_signal_type,
             const static_memory_resource& other
             ) noexcept
-        requires (Untyped)
         : m_factory(other.m_factory)
     {}
 
@@ -427,13 +407,13 @@ namespace rsl
     template <size_type BufferSize, typename UtilType, bool Untyped, size_type Alignment>
     constexpr UtilType* static_memory_resource<BufferSize, UtilType, Untyped, Alignment>::get_ptr() noexcept
     {
-        return bit_cast<UtilType*>(static_cast<byte*>(m_buffer.data));
+        return m_buffer.template get_data_ptr<UtilType>();
     }
 
     template <size_type BufferSize, typename UtilType, bool Untyped, size_type Alignment>
     constexpr const UtilType* static_memory_resource<BufferSize, UtilType, Untyped, Alignment>::get_ptr() const noexcept
     {
-        return bit_cast<const UtilType*>(static_cast<const byte*>(m_buffer.data));
+        return m_buffer.template get_data_ptr<UtilType>();
     }
 
     template <size_type BufferSize, typename UtilType, bool Untyped, size_type Alignment>
@@ -507,15 +487,7 @@ namespace rsl
     }
 
     template <size_type BufferSize, typename UtilType, bool Untyped, size_type Alignment>
-    constexpr memory_allocator&
-    hybrid_memory_resource<BufferSize, UtilType, Untyped, Alignment>::get_allocator() noexcept
-    {
-        return m_alloc.get_allocator();
-    }
-
-    template <size_type BufferSize, typename UtilType, bool Untyped, size_type Alignment>
-    constexpr const memory_allocator&
-    hybrid_memory_resource<BufferSize, UtilType, Untyped, Alignment>::get_allocator() const noexcept
+    constexpr allocator_storage hybrid_memory_resource<BufferSize, UtilType, Untyped, Alignment>::get_allocator() const noexcept
     {
         return m_alloc.get_allocator();
     }
@@ -542,13 +514,6 @@ namespace rsl
         requires(Untyped)
     {
         return m_alloc.get_factory();
-    }
-
-    template <size_type BufferSize, typename UtilType, bool Untyped, size_type Alignment>
-    constexpr allocator_storage
-    hybrid_memory_resource<BufferSize, UtilType, Untyped, Alignment>::get_allocator_storage() const noexcept
-    {
-        return m_alloc.get_allocator_storage();
     }
 
     template <size_type BufferSize, typename UtilType, bool Untyped, size_type Alignment>
@@ -583,7 +548,7 @@ namespace rsl
                 m_ptr = m_alloc.allocate(newCount);
                 if (m_ptr) [[likely]]
                 {
-                    m_alloc.move(get_ptr(), m_buffer.data, oldCount);
+                    m_alloc.move(get_ptr(), m_buffer.template get_data_ptr<UtilType>(), oldCount);
                 }
             }
         }
@@ -607,7 +572,7 @@ namespace rsl
                 m_ptr = m_alloc.allocate(newCount, alignment);
                 if (m_ptr) [[likely]]
                 {
-                    m_alloc.move(m_ptr, m_buffer.data, oldCount);
+                    m_alloc.move(m_ptr, m_buffer.template get_data_ptr<UtilType>(), oldCount);
                 }
             }
         }
@@ -751,7 +716,7 @@ namespace rsl
     template <size_type BufferSize, typename UtilType, bool Untyped, size_type Alignment>
     constexpr bool hybrid_memory_resource<BufferSize, UtilType, Untyped, Alignment>::is_static_memory() const noexcept
     {
-        return m_ptr >= m_buffer.data && m_ptr < m_buffer.data + BufferSize;
+        return m_ptr >= m_buffer.template get_data_ptr<UtilType>() && m_ptr < m_buffer.template get_data_ptr<UtilType>() + BufferSize;
     }
 
     template <size_type BufferSize, typename UtilType, bool Untyped, size_type Alignment>
@@ -804,14 +769,14 @@ namespace rsl
     template <size_type BufferSize, typename UtilType, bool Untyped, size_type Alignment>
     constexpr UtilType* hybrid_memory_resource<BufferSize, UtilType, Untyped, Alignment>::get_static_ptr() noexcept
     {
-        return bit_cast<UtilType*>(static_cast<byte*>(m_buffer.data));
+        return m_buffer.template get_data_ptr<UtilType>();
     }
 
     template <size_type BufferSize, typename UtilType, bool Untyped, size_type Alignment>
     constexpr const UtilType* hybrid_memory_resource<BufferSize, UtilType, Untyped, Alignment>::
     get_static_ptr() const noexcept
     {
-        return bit_cast<const UtilType*>(static_cast<const byte*>(m_buffer.data));
+        return m_buffer.template get_data_ptr<UtilType>();
     }
 
     template <size_type BufferSize, typename UtilType, bool Untyped, size_type Alignment>
@@ -850,7 +815,7 @@ namespace rsl
     template <size_type BufferSize, typename UtilType, bool Untyped, size_type Alignment>
     constexpr void hybrid_memory_resource<BufferSize, UtilType, Untyped, Alignment>::set_ptr_to_static_memory() noexcept
     {
-        set_ptr(m_buffer.data);
+        set_ptr(m_buffer.template get_data_ptr<UtilType>());
     }
 
     template <typename T, size_type BufferCount>

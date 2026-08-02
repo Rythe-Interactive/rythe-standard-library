@@ -3,28 +3,28 @@
 namespace rsl
 {
     template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
-    constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate>::basic_dynamic_string(
-            const container_base& src
-            ) noexcept(container_base::copy_construct_container_noexcept) : container_base(src) {}
+    constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate>::basic_dynamic_string(const container_base& src)
+            noexcept(container_base::copy_construct_container_noexcept)
+        : container_base(src)
+    {}
 
     template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
-    constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate>::basic_dynamic_string(
-            container_base&& src
-            ) noexcept(container_base::move_construct_container_noexcept) : container_base(rsl::move(src)) {}
+    constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate>::basic_dynamic_string(container_base&& src)
+            noexcept(container_base::move_construct_container_noexcept)
+        : container_base(rsl::move(src))
+    {}
 
     template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
-    constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& basic_dynamic_string<CharType, StaticCapacity, CanAllocate>::operator+=(
-            const_view_type rhs
-            )
+    constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate>&
+            basic_dynamic_string<CharType, StaticCapacity, CanAllocate>::operator+=(const_view_type rhs)
     {
         this->append(rhs);
         return *this;
     }
 
     template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
-    constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& basic_dynamic_string<CharType, StaticCapacity, CanAllocate>::operator+=(
-            const CharType rhs
-            )
+    constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate>&
+            basic_dynamic_string<CharType, StaticCapacity, CanAllocate>::operator+=(const CharType rhs)
     {
         this->append(rhs);
         return *this;
@@ -33,8 +33,7 @@ namespace rsl
     template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
     constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate> operator+(
             const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& lhs,
-            const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& rhs
-            )
+            const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& rhs)
     {
         basic_dynamic_string<CharType, StaticCapacity, CanAllocate> result;
         result.reserve(lhs.size() + rhs.size());
@@ -46,8 +45,7 @@ namespace rsl
     template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
     constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate> operator+(
             const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& lhs,
-            typename basic_dynamic_string<CharType, StaticCapacity, CanAllocate>::const_view_type rhs
-            )
+            typename basic_dynamic_string<CharType, StaticCapacity, CanAllocate>::const_view_type rhs)
     {
         basic_dynamic_string<CharType, StaticCapacity, CanAllocate> result;
         result.reserve(lhs.size() + rhs.size());
@@ -57,10 +55,8 @@ namespace rsl
     }
 
     template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
-    constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate> operator+(
-            const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& lhs,
-            CharType rhs
-            )
+    constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate>
+            operator+(const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& lhs, CharType rhs)
     {
         basic_dynamic_string<CharType, StaticCapacity, CanAllocate> result;
         result.reserve(lhs.size() + 1ull);
@@ -72,8 +68,7 @@ namespace rsl
     template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
     constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate> operator+(
             typename basic_dynamic_string<CharType, StaticCapacity, CanAllocate>::const_view_type lhs,
-            const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& rhs
-            )
+            const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& rhs)
     {
         basic_dynamic_string<CharType, StaticCapacity, CanAllocate> result;
         result.reserve(lhs.size() + rhs.size());
@@ -83,10 +78,8 @@ namespace rsl
     }
 
     template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
-    constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate> operator+(
-            CharType lhs,
-            const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& rhs
-            )
+    constexpr basic_dynamic_string<CharType, StaticCapacity, CanAllocate>
+            operator+(CharType lhs, const basic_dynamic_string<CharType, StaticCapacity, CanAllocate>& rhs)
     {
         basic_dynamic_string<CharType, StaticCapacity, CanAllocate> result;
         result.reserve(rhs.size() + 1ull);
@@ -97,43 +90,35 @@ namespace rsl
 
     constexpr char to_upper(const char ch)
     {
-        static constexpr unsigned char toUpperMap[256] = {
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-            22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-            41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
-            60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78,
-            79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 65,
-            66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84,
-            85, 86, 87, 88, 89, 90, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133,
-            134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149,
-            150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165,
-            166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181,
-            182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197,
-            198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213,
-            214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229,
-            230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245,
-            246, 247, 248, 249, 250, 251, 252, 253, 254, 255
+        constexpr unsigned char toUpperMap[256] = {
+            0,   1,   2,   3,   4,   5,   6,   7,   8,   9,   10,  11,  12,  13,  14,  15,  16,  17,  18,  19,  20,  21,  22,  23,
+            24,  25,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,
+            48,  49,  50,  51,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  62,  63,  64,  65,  66,  67,  68,  69,  70,  71,
+            72,  73,  74,  75,  76,  77,  78,  79,  80,  81,  82,  83,  84,  85,  86,  87,  88,  89,  90,  91,  92,  93,  94,  95,
+            96,  65,  66,  67,  68,  69,  70,  71,  72,  73,  74,  75,  76,  77,  78,  79,  80,  81,  82,  83,  84,  85,  86,  87,
+            88,  89,  90,  123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143,
+            144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167,
+            168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191,
+            192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215,
+            216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
+            240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255
         };
         return static_cast<char>(toUpperMap[static_cast<unsigned char>(ch)]);
     }
 
     constexpr char to_lower(const char ch)
     {
-        static constexpr unsigned char toLowerMap[256] = {
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-            22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41,
-            42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61,
-            62, 63, 64, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110,
-            111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 91, 92, 93, 94, 95,
-            96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111,
-            112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127,
-            128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143,
-            144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159,
-            160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175,
-            176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191,
-            192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207,
-            208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223,
-            224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
+        constexpr unsigned char toLowerMap[256] = {
+            0,   1,   2,   3,   4,   5,   6,   7,   8,   9,   10,  11,  12,  13,  14,  15,  16,  17,  18,  19,  20,  21,  22,  23,
+            24,  25,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,
+            48,  49,  50,  51,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  62,  63,  64,  97,  98,  99,  100, 101, 102, 103,
+            104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 91,  92,  93,  94,  95,
+            96,  97,  98,  99,  100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119,
+            120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143,
+            144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167,
+            168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191,
+            192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215,
+            216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
             240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255
         };
         return static_cast<char>(toLowerMap[static_cast<unsigned char>(ch)]);
@@ -144,10 +129,7 @@ namespace rsl
         dynamic_string result;
         result.resize(str.size());
 
-        for (size_type i = 0; i < str.size(); i++)
-        {
-            result[i] = to_upper(str[i]);
-        }
+        for (size_type i = 0; i < str.size(); i++) { result[i] = to_upper(str[i]); }
 
         return result;
     }
@@ -157,10 +139,7 @@ namespace rsl
         dynamic_string result;
         result.resize(str.size());
 
-        for (size_type i = 0; i < str.size(); i++)
-        {
-            result[i] = to_lower(str[i]);
-        }
+        for (size_type i = 0; i < str.size(); i++) { result[i] = to_lower(str[i]); }
 
         return result;
     }
@@ -170,4 +149,4 @@ namespace rsl
     {
         return rsl::format("{}", value);
     }
-}
+} // namespace rsl

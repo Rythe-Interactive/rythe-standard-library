@@ -26,50 +26,36 @@ namespace rsl
         };
     }
 
-    template <typename T, typed_factory_type Factory = default_factory<T>>
-    class unique_resource : public internal::select_memory_resource<
-            internal::unique_payload_base, type_erased_factory>::type
+    template <typename T>
+    class unique_resource : public untyped_dynamic_memory_resource<internal::unique_payload_base>
     {
     public:
-        constexpr static bool untyped_memory_resource =
-            internal::select_memory_resource<internal::unique_payload_base, type_erased_factory>::is_untyped;
-        using mem_rsc = typename internal::select_memory_resource<
-            internal::unique_payload_base, type_erased_factory>::type;
-        using factory_storage_type = factory_storage<Factory>;
-        using factory_t = Factory;
+        using mem_rsc = untyped_dynamic_memory_resource<internal::unique_payload_base>;
 
         [[rythe_always_inline]] constexpr unique_resource(nullptr_type)
-            noexcept(is_nothrow_constructible_v<mem_rsc>);
+            noexcept;
 
         [[rythe_always_inline]] constexpr explicit unique_resource(allocator_storage allocator)
-            noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage>);
+            noexcept;
 
-        [[rythe_always_inline]] constexpr explicit unique_resource(const type_erased_factory& factory)
-            noexcept(is_nothrow_constructible_v<mem_rsc>);
-
-        [[rythe_always_inline]] constexpr unique_resource(
-                allocator_storage allocator,
-                const type_erased_factory& factory
-            ) noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage>);
-
-        template <typename OtherT, typed_factory_type OtherFactory>
+        template <typename OtherT>
         [[rythe_always_inline]] constexpr unique_resource(
                 internal::alloc_and_factory_only_signal_type,
-                const unique_resource<OtherT, OtherFactory>& other
-            ) noexcept(is_nothrow_constructible_v<mem_rsc, internal::alloc_and_factory_only_signal_type, const mem_rsc&>);
+                const unique_resource<OtherT>& other
+            ) noexcept;
 
         template <internal::unique_deleter_type<T> Deleter, typename... Args>
         [[rythe_always_inline]] constexpr explicit unique_resource(
                 Deleter deleter,
                 Args&&... args
-            ) noexcept(is_nothrow_constructible_v<mem_rsc> && is_nothrow_constructible_v<T, Args...>);
+            ) noexcept(is_nothrow_constructible_v<T, Args...>);
 
         template <internal::unique_deleter_type<T> Deleter, typename... Args>
         [[rythe_always_inline]] constexpr unique_resource(
                 allocator_storage allocator,
                 Deleter deleter,
                 Args&&... args
-            ) noexcept(is_nothrow_constructible_v<mem_rsc, allocator_storage> && is_nothrow_constructible_v<T, Args...>);
+            ) noexcept(is_nothrow_constructible_v<T, Args...>);
 
         [[rythe_always_inline]] constexpr unique_resource() noexcept = default;
         unique_resource(const unique_resource&) = delete;
@@ -78,16 +64,6 @@ namespace rsl
         [[rythe_always_inline]] constexpr ~unique_resource() noexcept;
 
         [[rythe_always_inline]] constexpr unique_resource& operator=(unique_resource&& other) noexcept;
-
-        [[rythe_always_inline]] constexpr void set_factory(const type_erased_factory& factory)
-            noexcept(is_nothrow_copy_assignable_v<factory_storage_type>);
-
-        [[nodiscard]] [[rythe_always_inline]] constexpr factory_t& get_factory() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr const factory_t& get_factory() const noexcept;
-
-        [[nodiscard]] [[rythe_always_inline]] constexpr factory_storage_type& get_factory_storage() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr const factory_storage_type&
-        get_factory_storage() const noexcept;
 
         template <internal::unique_deleter_type<T> Deleter, typename... Args>
         [[rythe_always_inline]] constexpr void arm(Deleter deleter, Args&&... args)

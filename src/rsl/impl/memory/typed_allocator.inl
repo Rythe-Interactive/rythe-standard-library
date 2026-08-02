@@ -223,17 +223,7 @@ namespace rsl
         m_alloc = baseAllocator;
     }
 
-    constexpr memory_allocator& type_erased_allocator::get_allocator() noexcept
-    {
-        return *m_alloc;
-    }
-
-    constexpr const memory_allocator& type_erased_allocator::get_allocator() const noexcept
-    {
-        return *m_alloc;
-    }
-
-    constexpr allocator_storage type_erased_allocator::get_allocator_storage() const noexcept
+    constexpr allocator_storage type_erased_allocator::get_allocator() const noexcept
     {
         return m_alloc;
     }
@@ -254,17 +244,17 @@ namespace rsl
         return m_factory;
     }
 
-    size_type type_erased_allocator::type_size() const noexcept
+    constexpr size_type type_erased_allocator::type_size() const noexcept
     {
         return m_factory.type_size();
     }
 
-    bool type_erased_allocator::trivial_copy() const noexcept
+    constexpr bool type_erased_allocator::trivial_copy() const noexcept
     {
         return m_factory.trivial_copy();
     }
 
-    id_type type_erased_allocator::type_id() const noexcept
+    constexpr id_type type_erased_allocator::type_id() const noexcept
     {
         return m_factory.type_id();
     }

@@ -94,18 +94,18 @@ TEST_CASE("type_map", "[containers]")
     {
         {
             rsl::type_map map{};
-            CHECK(static_cast<test_heap_allocator&>(map.get_allocator()).id == 1012234_id);
+            CHECK(static_cast<test_heap_allocator&>(*map.get_allocator()).id == 1012234_id);
         }
         {
             test_heap_allocator alloc{1234};
-            rsl::basic_type_map<> map{ { &alloc } };
-            CHECK(static_cast<test_heap_allocator&>(map.get_allocator()).id == 1234_id);
+            rsl::type_map map{ { &alloc } };
+            CHECK(static_cast<test_heap_allocator&>(*map.get_allocator()).id == 1234_id);
         }
         {
             default_allocator alloc;
             allocator_storage store(&alloc);
-            rsl::basic_type_map<> map{store};
-            REQUIRE((&(map.get_allocator())) == &alloc);
+            rsl::type_map map{ store };
+            REQUIRE(map.get_allocator().ptr == &alloc);
         }
     }
 
