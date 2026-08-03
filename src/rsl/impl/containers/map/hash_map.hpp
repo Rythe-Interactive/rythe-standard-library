@@ -101,7 +101,7 @@ namespace rsl
             noexcept(noexcept(declval<bucket_container>().reserve(0)) && noexcept(declval<value_container>().reserve(0))
             );
 
-        void clear() noexcept;
+        [[rythe_always_inline]] constexpr void clear() noexcept;
 
         [[nodiscard]] [[rythe_always_inline]] bool contains(const key_type& key) const noexcept;
         [[nodiscard]] [[rythe_always_inline]] bool contains(key_view_alternative key) const noexcept requires(has_key_view_alternative);

@@ -12,7 +12,7 @@
         <Intrinsic Name="size_bytes" Expression="m_size * sizeof($T1)" />
         <DisplayString>{reinterpret_cast&lt;$T1*&gt;(m_ptr),na}</DisplayString>
         <StringView>reinterpret_cast&lt;$T1*&gt;(m_ptr),na</StringView>
-		<Expand HideRawView="1">
+		<Expand>
             <Item Name="[size]" ExcludeView="simple">m_size</Item>
             <Item Name="[capacity]" ExcludeView="simple">use_post_fix? (m_memorySize == 0ull ? 0ull : m_memorySize - 1ull) : m_memorySize</Item>
             <Item Name="[allocator]" ExcludeView="simple">m_alloc</Item>
@@ -28,7 +28,7 @@
         <Intrinsic Name="capacity" Expression="use_post_fix? (m_memorySize == 0ull ? 0ull : m_memorySize - 1ull) : m_memorySize" />
         <Intrinsic Name="size_bytes" Expression="m_size * sizeof($T1)" />
         <DisplayString>{{ size={m_size} }}</DisplayString>
-		<Expand HideRawView="1">
+		<Expand>
             <Item Name="[size]" ExcludeView="simple">size()</Item>
             <Item Name="[capacity]" ExcludeView="simple">use_post_fix? (m_memorySize == 0ull ? 0ull : m_memorySize - 1ull) : m_memorySize</Item>
             <Item Name="[allocator]" ExcludeView="simple">m_alloc</Item>
@@ -90,7 +90,7 @@
     </Type>
 
     <Type Name="rsl::time_span">
-		<Expand HideRawView="1">
+		<Expand>
             <Item Name="[seconds]" ExcludeView="simple">value/1000000000.0</Item>
             <Item Name="[milliseconds]" ExcludeView="simple">value/1000000.0</Item>
             <Item Name="[microseconds]" ExcludeView="simple">value/1000.0</Item>

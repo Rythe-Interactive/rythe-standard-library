@@ -163,7 +163,7 @@ namespace rsl
     }
 
     template <typename MapInfo>
-    void hash_map_base<MapInfo>::clear() noexcept
+    constexpr void hash_map_base<MapInfo>::clear() noexcept
     {
         for (node_type& node : m_values)
         {

@@ -244,17 +244,17 @@ namespace rsl
         return m_factory;
     }
 
-    constexpr size_type type_erased_allocator::type_size() const noexcept
+    inline size_type type_erased_allocator::type_size() const noexcept
     {
         return m_factory.type_size();
     }
 
-    constexpr bool type_erased_allocator::trivial_copy() const noexcept
+    inline bool type_erased_allocator::trivial_copy() const noexcept
     {
         return m_factory.trivial_copy();
     }
 
-    constexpr id_type type_erased_allocator::type_id() const noexcept
+    inline id_type type_erased_allocator::type_id() const noexcept
     {
         return m_factory.type_id();
     }
@@ -269,7 +269,7 @@ namespace rsl
         return m_alloc->allocate(count * type_size(), alignment);
     }
 
-    constexpr void* type_erased_allocator::reallocate(void* ptr, const size_type oldCount, const size_type newCount)
+    inline void* type_erased_allocator::reallocate(void* ptr, const size_type oldCount, const size_type newCount)
     {
         const size_type typeSize = type_size();
         const bool canTriviallyCopy = m_factory.trivial_copy();
@@ -289,7 +289,7 @@ namespace rsl
         return mem;
     }
 
-    constexpr void*
+    inline void*
             type_erased_allocator::reallocate(void* ptr, const size_type oldCount, const size_type newCount, const size_type alignment)
     {
         size_type typeSize = type_size();
@@ -319,39 +319,39 @@ namespace rsl
         m_alloc->deallocate(ptr, count * type_size(), alignment);
     }
 
-    constexpr void* type_erased_allocator::construct(void* ptr, const size_type count)
+    inline void* type_erased_allocator::construct(void* ptr, const size_type count)
     {
         return m_factory.construct(ptr, count);
     }
 
-    constexpr void* type_erased_allocator::copy(void* dst, const void* src, const size_type count)
+    inline void* type_erased_allocator::copy(void* dst, const void* src, const size_type count)
     {
         return m_factory.copy(dst, src, count);
     }
 
-    constexpr void* type_erased_allocator::move(void* dst, void* src, const size_type count)
+    inline void* type_erased_allocator::move(void* dst, void* src, const size_type count)
     {
         return m_factory.move(dst, src, count);
     }
 
-    constexpr void type_erased_allocator::destroy(void* ptr, size_type count) noexcept
+    inline void type_erased_allocator::destroy(void* ptr, size_type count) noexcept
     {
         m_factory.destroy(ptr, count);
     }
 
-    constexpr void* type_erased_allocator::allocate_and_construct(const size_type count)
+    inline void* type_erased_allocator::allocate_and_construct(const size_type count)
     {
         void* mem = m_alloc->allocate(count * type_size());
         return m_factory.construct(mem, count);
     }
 
-    constexpr void* type_erased_allocator::allocate_aligned_and_construct(const size_type count, const size_type alignment)
+    inline void* type_erased_allocator::allocate_aligned_and_construct(const size_type count, const size_type alignment)
     {
         void* mem = m_alloc->allocate(count * type_size(), alignment);
         return m_factory.construct(mem, count);
     }
 
-    constexpr void* type_erased_allocator::reallocate_and_construct(void* ptr, const size_type oldCount, const size_type newCount)
+    inline void* type_erased_allocator::reallocate_and_construct(void* ptr, const size_type oldCount, const size_type newCount)
     {
         const size_type typeSize = type_size();
         bool canTriviallyCopy = m_factory.trivial_copy();
@@ -379,7 +379,7 @@ namespace rsl
         return mem;
     }
 
-    constexpr void* type_erased_allocator::reallocate_aligned_and_construct(
+    inline void* type_erased_allocator::reallocate_aligned_and_construct(
             void* ptr, const size_type oldCount, const size_type newCount, const size_type alignment)
     {
         size_type typeSize = type_size();
@@ -408,13 +408,13 @@ namespace rsl
         return mem;
     }
 
-    constexpr void type_erased_allocator::destroy_and_deallocate(void* ptr, size_type count) noexcept
+    inline void type_erased_allocator::destroy_and_deallocate(void* ptr, size_type count) noexcept
     {
         m_factory.destroy(ptr, count);
         m_alloc->deallocate(ptr, count * type_size());
     }
 
-    constexpr void
+    inline void
             type_erased_allocator::destroy_and_deallocate_aligned(void* ptr, const size_type count, const size_type alignment) noexcept
     {
         m_factory.destroy(ptr, count);

@@ -68,7 +68,7 @@ namespace rsl
         [[rythe_always_inline]] constexpr void set_allocator(allocator_storage baseAllocator) noexcept { m_alloc = baseAllocator; }
         [[nodiscard]] [[rythe_always_inline]] constexpr allocator_storage get_allocator() const noexcept { return m_alloc; }
 
-        [[nodiscard]] [[rythe_always_inline]] size_type type_size() const noexcept { return rsl::type_id<T>(); }
+        [[nodiscard]] [[rythe_always_inline]] size_type type_size() const noexcept { return sizeof(T); }
 
     private:
         allocator_storage m_alloc;
@@ -96,40 +96,40 @@ namespace rsl
         [[nodiscard]] [[rythe_always_inline]] constexpr type_erased_factory& get_factory() noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr const type_erased_factory& get_factory() const noexcept;
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr size_type type_size() const noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr bool trivial_copy() const noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr id_type type_id() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] size_type type_size() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] bool trivial_copy() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] id_type type_id() const noexcept;
 
         [[nodiscard]] [[rythe_allocating]] [[rythe_always_inline]] constexpr void* allocate(size_type count = 1) noexcept;
         [[nodiscard]] [[rythe_allocating]] [[rythe_always_inline]] constexpr void*
                 allocate(size_type count, size_type alignment) noexcept;
 
-        [[nodiscard]] [[rythe_allocating]] [[rythe_always_inline]] constexpr void*
+        [[nodiscard]] [[rythe_allocating]] [[rythe_always_inline]] void*
                 reallocate(void* ptr, size_type oldCount, size_type newCount);
-        [[nodiscard]] [[rythe_allocating]] [[rythe_always_inline]] constexpr void*
+        [[nodiscard]] [[rythe_allocating]] [[rythe_always_inline]] void*
                 reallocate(void* ptr, size_type oldCount, size_type newCount, size_type alignment);
 
         [[rythe_always_inline]] constexpr void deallocate(void* ptr, size_type count = 1) noexcept;
         [[rythe_always_inline]] constexpr void deallocate(void* ptr, size_type count, size_type alignment) noexcept;
 
-        [[rythe_always_inline]] constexpr void* construct(void* ptr, size_type count = 1);
-        [[rythe_always_inline]] constexpr void* copy(void* dst, const void* src, size_type count = 1);
-        [[rythe_always_inline]] constexpr void* move(void* dst, void* src, size_type count = 1);
-        [[rythe_always_inline]] constexpr void destroy(void* ptr, size_type count = 1) noexcept;
+        [[rythe_always_inline]] void* construct(void* ptr, size_type count = 1);
+        [[rythe_always_inline]] void* copy(void* dst, const void* src, size_type count = 1);
+        [[rythe_always_inline]] void* move(void* dst, void* src, size_type count = 1);
+        [[rythe_always_inline]] void destroy(void* ptr, size_type count = 1) noexcept;
 
-        [[nodiscard]] [[rythe_allocating]] [[rythe_always_inline]] constexpr void* allocate_and_construct(size_type count = 1);
+        [[nodiscard]] [[rythe_allocating]] [[rythe_always_inline]] void* allocate_and_construct(size_type count = 1);
 
-        [[nodiscard]] [[rythe_allocating]] [[rythe_always_inline]] constexpr void*
+        [[nodiscard]] [[rythe_allocating]] [[rythe_always_inline]] void*
                 allocate_aligned_and_construct(size_type count, size_type alignment);
 
-        [[nodiscard]] [[rythe_allocating]] [[rythe_always_inline]] constexpr void*
+        [[nodiscard]] [[rythe_allocating]] [[rythe_always_inline]] void*
                 reallocate_and_construct(void* ptr, size_type oldCount, size_type newCount);
 
-        [[nodiscard]] [[rythe_allocating]] [[rythe_always_inline]] constexpr void*
+        [[nodiscard]] [[rythe_allocating]] [[rythe_always_inline]] void*
                 reallocate_aligned_and_construct(void* ptr, size_type oldCount, size_type newCount, size_type alignment);
 
-        [[rythe_always_inline]] constexpr void destroy_and_deallocate(void* ptr, size_type count = 1) noexcept;
-        [[rythe_always_inline]] constexpr void
+        [[rythe_always_inline]] void destroy_and_deallocate(void* ptr, size_type count = 1) noexcept;
+        [[rythe_always_inline]] void
                 destroy_and_deallocate_aligned(void* ptr, size_type count, size_type alignment) noexcept;
 
     private:

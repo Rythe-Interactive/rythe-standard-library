@@ -398,9 +398,10 @@ namespace rsl
         template <typename T, size_type StaticStorageCount = 0ull, bool CanAllocate = true, bool Untyped = false, size_type Alignment = alignof(T)>
         struct select_memory_resource;
 
-        template <typename T>
-        struct select_memory_resource<T, 0ull, true, false>
+        template <typename T, size_type Alignment>
+        struct select_memory_resource<T, 0ull, true, false, Alignment>
         {
+            static_assert(Alignment == alignof(T));
             using type = typed_dynamic_memory_resource<T>;
             constexpr static bool is_untyped = false;
         };
@@ -412,9 +413,10 @@ namespace rsl
             constexpr static bool is_untyped = true;
         };
 
-        template <typename T, size_type StaticStorageCount>
-        struct select_memory_resource<T, StaticStorageCount, true, false>
+        template <typename T, size_type StaticStorageCount, size_type Alignment>
+        struct select_memory_resource<T, StaticStorageCount, true, false, Alignment>
         {
+            static_assert(Alignment == alignof(T));
             using type = typed_hybrid_memory_resource<T, StaticStorageCount>;
             constexpr static bool is_untyped = false;
         };
@@ -426,9 +428,10 @@ namespace rsl
             constexpr static bool is_untyped = true;
         };
 
-        template <typename T, size_type StaticStorageCount>
-        struct select_memory_resource<T, StaticStorageCount, false, false>
+        template <typename T, size_type StaticStorageCount, size_type Alignment>
+        struct select_memory_resource<T, StaticStorageCount, false, false, Alignment>
         {
+            static_assert(Alignment == alignof(T));
             using type = typed_static_memory_resource<T, StaticStorageCount>;
             constexpr static bool is_untyped = false;
         };

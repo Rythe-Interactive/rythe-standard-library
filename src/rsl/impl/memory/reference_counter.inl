@@ -68,6 +68,10 @@ namespace rsl
         }
 
         mem_rsc::set_allocator(other.get_allocator());
+        if constexpr (Untyped)
+        {
+            mem_rsc::set_factory(other.get_factory());
+        }
         mem_rsc::set_ptr(static_cast<Counter* const>(other.m_ptr));
 
         if (is_armed())
@@ -82,7 +86,16 @@ namespace rsl
     constexpr basic_reference_counter<Counter, Untyped>&
     basic_reference_counter<Counter, Untyped>::operator=(basic_reference_counter&& other) noexcept
     {
+        if (is_armed())
+        {
+            disarm();
+        }
+
         mem_rsc::set_allocator(other.get_allocator());
+        if constexpr (Untyped)
+        {
+            mem_rsc::set_factory(other.get_factory());
+        }
         mem_rsc::set_ptr(other.get_ptr());
         other.set_ptr(nullptr);
         return *this;
