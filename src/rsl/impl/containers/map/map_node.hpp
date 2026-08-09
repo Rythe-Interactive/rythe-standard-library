@@ -28,44 +28,44 @@ namespace rsl::internal
             rsl_assert_invalid_operation(m_data == nullptr);
         }
 
-        value_type* operator->() noexcept { return m_data; }
-        const value_type* operator->() const noexcept { return m_data; }
+        [[nodiscard]] [[rythe_always_inline]] value_type* operator->() noexcept { return m_data; }
+        [[nodiscard]] [[rythe_always_inline]] const value_type* operator->() const noexcept { return m_data; }
 
-        value_type& operator*() { return *m_data; }
-        const value_type& operator*() const { return *m_data; }
+        [[nodiscard]] [[rythe_always_inline]] value_type& operator*() { return *m_data; }
+        [[nodiscard]] [[rythe_always_inline]] const value_type& operator*() const { return *m_data; }
 
-        [[nodiscard]] key_type& key() noexcept
-            requires is_map
+        [[nodiscard]] [[rythe_always_inline]] key_type& key() noexcept
+            requires(is_map)
         {
             return m_data->first;
         }
 
-        [[nodiscard]] const key_type& key() const noexcept
-            requires is_map
+        [[nodiscard]] [[rythe_always_inline]] const key_type& key() const noexcept
+            requires(is_map)
         {
             return m_data->first;
         }
 
-        [[nodiscard]] value_type& key() noexcept
-            requires is_set
+        [[nodiscard]] [[rythe_always_inline]] value_type& key() noexcept
+            requires(is_set)
         {
             return *m_data;
         }
 
-        [[nodiscard]] const value_type& key() const noexcept
-            requires is_set
+        [[nodiscard]] [[rythe_always_inline]] const value_type& key() const noexcept
+            requires(is_set)
         {
             return *m_data;
         }
 
-        [[nodiscard]] mapped_type& value() noexcept
-            requires is_map
+        [[nodiscard]] [[rythe_always_inline]] typename MapInfo::mapped_type_ref value() noexcept
+            requires(is_map)
         {
             return m_data->second;
         }
 
-        [[nodiscard]] const mapped_type& value() const noexcept
-            requires is_map
+        [[nodiscard]] [[rythe_always_inline]] typename MapInfo::mapped_type_const_ref value() const noexcept
+            requires(is_map)
         {
             return m_data->second;
         }
@@ -95,44 +95,44 @@ namespace rsl::internal
             noexcept(is_nothrow_move_constructible_v<value_type>)
             : m_data(rsl::move(other.m_data)) {}
 
-        value_type* operator->() noexcept { return &m_data; }
-        const value_type* operator->() const noexcept { return &m_data; }
+        [[nodiscard]] [[rythe_always_inline]] value_type* operator->() noexcept { return &m_data; }
+        [[nodiscard]] [[rythe_always_inline]] const value_type* operator->() const noexcept { return &m_data; }
 
-        value_type& operator*() noexcept { return m_data; }
-        const value_type& operator*() const noexcept { return m_data; }
+        [[nodiscard]] [[rythe_always_inline]] value_type& operator*() noexcept { return m_data; }
+        [[nodiscard]] [[rythe_always_inline]] const value_type& operator*() const noexcept { return m_data; }
 
-        [[nodiscard]] key_type& key() noexcept
-            requires is_map
+        [[nodiscard]] [[rythe_always_inline]] key_type& key() noexcept
+            requires(is_map)
         {
             return m_data.first;
         }
 
-        [[nodiscard]] const key_type& key() const noexcept
-            requires is_map
+        [[nodiscard]] [[rythe_always_inline]] const key_type& key() const noexcept
+            requires(is_map)
         {
             return m_data.first;
         }
 
-        [[nodiscard]] value_type& key() noexcept
-            requires is_set
+        [[nodiscard]] [[rythe_always_inline]] value_type& key() noexcept
+            requires(is_set)
         {
             return m_data;
         }
 
-        [[nodiscard]] const value_type& key() const noexcept
-            requires is_set
+        [[nodiscard]] [[rythe_always_inline]] const value_type& key() const noexcept
+            requires(is_set)
         {
             return m_data;
         }
 
-        [[nodiscard]] mapped_type& value() noexcept
-            requires is_map
+        [[nodiscard]] [[rythe_always_inline]] typename MapInfo::mapped_type_ref value() noexcept
+            requires(is_map)
         {
             return m_data.second;
         }
 
-        [[nodiscard]] const mapped_type& value() const noexcept
-            requires is_map
+        [[nodiscard]] [[rythe_always_inline]] typename MapInfo::mapped_type_const_ref value() const noexcept
+            requires(is_map)
         {
             return m_data.second;
         }

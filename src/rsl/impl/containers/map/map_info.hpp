@@ -14,7 +14,9 @@ namespace rsl
     {
         template <typename Key, typename Value, bool IsFlat>
         using map_value_type = typename conditional<
-            is_void<Value>::value, Key, pair<typename conditional<IsFlat, Key, const Key>::type, Value>>::type;
+                is_void<Value>::value,
+                typename conditional<IsFlat, Key, const Key>::type,
+                pair<typename conditional<IsFlat, Key, const Key>::type, Value>>::type;
 
         template <typename>
         struct key_view_alternative
@@ -89,6 +91,9 @@ namespace rsl
 
         using key_type = Key;
         using mapped_type = Value;
+
+        using mapped_type_ref = add_lval_ref_t<mapped_type>;
+        using mapped_type_const_ref = add_lval_ref_t<add_const_t<mapped_type>>;
 
         constexpr static bool is_flat = hash_map_flags_is_flat(Flags);
         constexpr static bool is_large = hash_map_flags_is_large(Flags);

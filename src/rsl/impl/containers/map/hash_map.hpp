@@ -115,35 +115,49 @@ namespace rsl
         [[nodiscard]] [[rythe_always_inline]] mapped_type* find(key_view_alternative key) noexcept
             requires (MapInfo::is_map && has_key_view_alternative);
 
-        [[nodiscard]] [[rythe_always_inline]] const mapped_type& at(const key_type& key) const
+        [[nodiscard]] [[rythe_always_inline]] typename MapInfo::mapped_type_const_ref at(const key_type& key) const
             requires (MapInfo::is_map);
-        [[nodiscard]] [[rythe_always_inline]] mapped_type& at(const key_type& key)
+        [[nodiscard]] [[rythe_always_inline]] typename MapInfo::mapped_type_ref at(const key_type& key)
             requires (MapInfo::is_map);
-        [[nodiscard]] [[rythe_always_inline]] const mapped_type& at(key_view_alternative key) const
+        [[nodiscard]] [[rythe_always_inline]] typename MapInfo::mapped_type_const_ref at(key_view_alternative key) const
             requires (MapInfo::is_map && has_key_view_alternative);
-        [[nodiscard]] [[rythe_always_inline]] mapped_type& at(key_view_alternative key)
+        [[nodiscard]] [[rythe_always_inline]] typename MapInfo::mapped_type_ref at(key_view_alternative key)
             requires (MapInfo::is_map && has_key_view_alternative);
 
-        template <typename... Args>
-        mapped_type& emplace(const key_type& key, Args&&... args);
-        template <typename... Args>
-        mapped_type& emplace(key_type&& key, Args&&... args);
-        template <typename... Args>
-        mapped_type& emplace(key_view_alternative key, Args&&... args) requires(has_key_view_alternative);
+        [[rythe_always_inline]] bool insert(const key_type& key);
+        [[rythe_always_inline]] bool insert(key_type&& key);
+        [[rythe_always_inline]] bool insert(key_view_alternative key)
+            requires(has_key_view_alternative);
 
         template <typename... Args>
-        mapped_type& emplace_or_replace(const key_type& key, Args&&... args);
+        [[rythe_always_inline]] typename MapInfo::mapped_type_ref emplace(const key_type& key, Args&&... args)
+            requires(MapInfo::is_map);
         template <typename... Args>
-        mapped_type& emplace_or_replace(key_type&& key, Args&&... args);
+        [[rythe_always_inline]] typename MapInfo::mapped_type_ref emplace(key_type&& key, Args&&... args)
+            requires(MapInfo::is_map);
         template <typename... Args>
-        mapped_type& emplace_or_replace(key_view_alternative key, Args&&... args);
+        [[rythe_always_inline]] typename MapInfo::mapped_type_ref emplace(key_view_alternative key, Args&&... args)
+                requires(MapInfo::is_map && has_key_view_alternative);
 
         template <typename... Args>
-        pair<mapped_type&, bool> try_emplace(const key_type& key, Args&&... args);
+        [[rythe_always_inline]] typename MapInfo::mapped_type_ref emplace_or_replace(const key_type& key, Args&&... args)
+            requires(MapInfo::is_map);
         template <typename... Args>
-        pair<mapped_type&, bool> try_emplace(key_type&& key, Args&&... args);
+        [[rythe_always_inline]] typename MapInfo::mapped_type_ref emplace_or_replace(key_type&& key, Args&&... args)
+            requires(MapInfo::is_map);
         template <typename... Args>
-        pair<mapped_type&, bool> try_emplace(key_view_alternative key, Args&&... args) requires(has_key_view_alternative);
+        [[rythe_always_inline]] typename MapInfo::mapped_type_ref emplace_or_replace(key_view_alternative key, Args&&... args)
+            requires(MapInfo::is_map);
+
+        template <typename... Args>
+        [[rythe_always_inline]] pair<typename MapInfo::mapped_type_ref, bool> try_emplace(const key_type& key, Args&&... args)
+            requires(MapInfo::is_map);
+        template <typename... Args>
+        [[rythe_always_inline]] pair<typename MapInfo::mapped_type_ref, bool> try_emplace(key_type&& key, Args&&... args)
+            requires(MapInfo::is_map);
+        template <typename... Args>
+        [[rythe_always_inline]] pair<typename MapInfo::mapped_type_ref, bool> try_emplace(key_view_alternative key, Args&&... args)
+            requires(MapInfo::is_map && has_key_view_alternative);
 
         [[rythe_always_inline]] constexpr void erase(const key_type& key) noexcept;
         [[rythe_always_inline]] constexpr void erase(key_view_alternative key) noexcept requires(has_key_view_alternative);

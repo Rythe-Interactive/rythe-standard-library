@@ -1,3 +1,4 @@
+#include "hash_map.hpp"
 #pragma once
 
 namespace rsl
@@ -239,7 +240,7 @@ namespace rsl
     }
 
     template <typename MapInfo>
-    const typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::at(const key_type& key) const
+    typename MapInfo::mapped_type_const_ref hash_map_base<MapInfo>::at(const key_type& key) const
         requires (MapInfo::is_map)
     {
         const mapped_type* result = find(key);
@@ -248,7 +249,7 @@ namespace rsl
     }
 
     template <typename MapInfo>
-    typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::at(const key_type& key)
+    typename MapInfo::mapped_type_ref hash_map_base<MapInfo>::at(const key_type& key)
         requires (MapInfo::is_map)
     {
         mapped_type* result = find(key);
@@ -257,7 +258,7 @@ namespace rsl
     }
 
     template <typename MapInfo>
-    const typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::at(key_view_alternative key) const
+    typename MapInfo::mapped_type_const_ref hash_map_base<MapInfo>::at(key_view_alternative key) const
         requires (MapInfo::is_map && has_key_view_alternative)
     {
         const mapped_type* result = find(key);
@@ -266,42 +267,87 @@ namespace rsl
     }
 
     template <typename MapInfo>
-    typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::at(key_view_alternative key)
+    typename MapInfo::mapped_type_ref hash_map_base<MapInfo>::at(key_view_alternative key)
         requires (MapInfo::is_map && has_key_view_alternative)
     {
         mapped_type* result = find(key);
         rsl_assert_invalid_access(result != nullptr);
         return *result;
+    }
+
+    template <typename MapInfo>
+    bool hash_map_base<MapInfo>::insert(const key_type& key)
+    {
+        insert_result insertResult = insert_key_internal(key, m_values.size());
+
+        if (insertResult.type == insert_result_type::new_insertion)
+        {
+            m_values.emplace_back(create_node(key));
+            return true;
+        }
+
+        return false;
+    }
+
+    template <typename MapInfo>
+    bool hash_map_base<MapInfo>::insert(key_type&& key)
+    {
+        insert_result insertResult = insert_key_internal(key, m_values.size());
+
+        if (insertResult.type == insert_result_type::new_insertion)
+        {
+            m_values.emplace_back(create_node(rsl::move(key)));
+            return true;
+        }
+
+        return false;
+    }
+
+    template <typename MapInfo>
+    bool hash_map_base<MapInfo>::insert(key_view_alternative key)
+        requires(has_key_view_alternative)
+    {
+        insert_result insertResult = insert_key_internal(key, m_values.size());
+
+        if (insertResult.type == insert_result_type::new_insertion)
+        {
+            m_values.emplace_back(create_node(key_type::from_view(key)));
+            return true;
+        }
+
+        return false;
     }
 
     template <typename MapInfo>
     template <typename... Args>
-    typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::emplace(const key_type& key, Args&&... args)
+    typename MapInfo::mapped_type_ref hash_map_base<MapInfo>::emplace(const key_type& key, Args&&... args)
+        requires(MapInfo::is_map)
     {
         return try_emplace(key, rsl::forward<Args>(args)...).first;
     }
 
     template <typename MapInfo>
     template <typename ... Args>
-    typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::emplace(key_type&& key, Args&&... args)
+    typename MapInfo::mapped_type_ref hash_map_base<MapInfo>::emplace(key_type&& key, Args&&... args)
+        requires(MapInfo::is_map)
     {
         return try_emplace(rsl::move(key), rsl::forward<Args>(args)...).first;
     }
 
     template <typename MapInfo>
     template <typename ... Args>
-    typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::emplace(key_view_alternative key, Args&&... args)
-        requires (has_key_view_alternative)
+    typename MapInfo::mapped_type_ref hash_map_base<MapInfo>::emplace(key_view_alternative key, Args&&... args)
+        requires(MapInfo::is_map && has_key_view_alternative)
     {
         return try_emplace(key, rsl::forward<Args>(args)...).first;
     }
 
     template <typename MapInfo>
     template <typename... Args>
-    typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::emplace_or_replace(
+    typename MapInfo::mapped_type_ref hash_map_base<MapInfo>::emplace_or_replace(
             const key_type& key,
-            Args&&... args
-            )
+            Args&&... args)
+        requires(MapInfo::is_map)
     {
         insert_result insertResult = insert_key_internal(key, m_values.size());
 
@@ -317,7 +363,8 @@ namespace rsl
 
     template <typename MapInfo>
     template <typename ... Args>
-    typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::emplace_or_replace(key_type&& key, Args&&... args)
+    typename MapInfo::mapped_type_ref hash_map_base<MapInfo>::emplace_or_replace(key_type&& key, Args&&... args)
+        requires(MapInfo::is_map)
     {
         insert_result insertResult = insert_key_internal(key, m_values.size());
 
@@ -333,7 +380,8 @@ namespace rsl
 
     template <typename MapInfo>
     template <typename ... Args>
-    typename hash_map_base<MapInfo>::mapped_type& hash_map_base<MapInfo>::emplace_or_replace(key_view_alternative key, Args&&... args)
+    typename MapInfo::mapped_type_ref hash_map_base<MapInfo>::emplace_or_replace(key_view_alternative key, Args&&... args)
+        requires(MapInfo::is_map)
     {
         insert_result insertResult = insert_key_internal(key, m_values.size());
 
@@ -349,10 +397,10 @@ namespace rsl
 
     template <typename MapInfo>
     template <typename... Args>
-    pair<typename hash_map_base<MapInfo>::mapped_type&, bool> hash_map_base<MapInfo>::try_emplace(
+    pair<typename MapInfo::mapped_type_ref, bool> hash_map_base<MapInfo>::try_emplace(
             const key_type& key,
-            Args&&... args
-            )
+            Args&&... args)
+        requires(MapInfo::is_map)
     {
         insert_result insertResult = insert_key_internal(key, m_values.size());
 
@@ -366,7 +414,8 @@ namespace rsl
 
     template <typename MapInfo>
     template <typename... Args>
-    pair<typename hash_map_base<MapInfo>::mapped_type&, bool> hash_map_base<MapInfo>::try_emplace(key_type&& key, Args&&... args)
+    pair<typename MapInfo::mapped_type_ref, bool> hash_map_base<MapInfo>::try_emplace(key_type&& key, Args&&... args)
+        requires(MapInfo::is_map)
     {
         insert_result insertResult = insert_key_internal(key, m_values.size());
 
@@ -380,8 +429,8 @@ namespace rsl
 
     template <typename MapInfo>
     template <typename ... Args>
-    pair<typename hash_map_base<MapInfo>::mapped_type&, bool> hash_map_base<MapInfo>::try_emplace(key_view_alternative key, Args&&... args)
-        requires (has_key_view_alternative)
+    pair<typename MapInfo::mapped_type_ref, bool> hash_map_base<MapInfo>::try_emplace(key_view_alternative key, Args&&... args)
+        requires(MapInfo::is_map && has_key_view_alternative)
     {
         insert_result insertResult = insert_key_internal(key, m_values.size());
 
@@ -536,7 +585,14 @@ namespace rsl
     {
         if constexpr (is_flat)
         {
-            return node_type(rsl::move(key), factory<mapped_type>::construct_single_inline(rsl::forward<Args>(args)...));
+            if constexpr (is_map)
+            {
+                return node_type(rsl::move(key), factory<mapped_type>::construct_single_inline(rsl::forward<Args>(args)...));
+            }
+            else
+            {
+                return node_type(rsl::move(key));
+            }
         }
         else
         {
