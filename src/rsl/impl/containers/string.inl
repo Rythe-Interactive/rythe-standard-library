@@ -144,6 +144,26 @@ namespace rsl
         return result;
     }
 
+    constexpr bool is_digit(const char ch) noexcept
+    {
+        return ch >= '0' && ch <= '9';
+    }
+
+    constexpr bool is_operator(const char ch) noexcept
+    {
+        return ch == '<' || ch == '>' || ch == '=';
+    }
+
+    constexpr bool is_letter(const char ch) noexcept
+    {
+        return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
+    }
+
+    constexpr uint8 to_digit(const char ch) noexcept
+    {
+        return (ch >= '0' && ch <= '9') ? static_cast<uint8>(ch - '0') : 0xFFu;
+    }
+
     template <typename T>
     dynamic_string to_string(const T& value)
     {

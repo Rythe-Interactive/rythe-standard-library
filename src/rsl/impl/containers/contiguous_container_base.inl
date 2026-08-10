@@ -566,7 +566,24 @@ namespace rsl
         construct_postfix();
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    inline constexpr void rsl::contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::assign(
+            array_view<const value_type> view)
+        requires(can_resize)
+    {
+        assign(view.data(), view.size());
+    }
+
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator
               ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
     constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::assign(
             const size_type count,

@@ -12,11 +12,12 @@ namespace rsl
 {
     namespace internal
     {
-        template <typename Key, typename Value, bool IsFlat>
+        template <typename Key, typename Value, bool IsFlat, bool IsMulti>
         using map_value_type = typename conditional<
                 is_void<Value>::value,
                 typename conditional<IsFlat, Key, const Key>::type,
-                pair<typename conditional<IsFlat, Key, const Key>::type, Value>>::type;
+                pair<typename conditional<IsFlat, Key, const Key>::type,
+                     typename conditional<IsMulti, dynamic_array<Value>, Value>::type>>::type;
 
         template <typename>
         struct key_view_alternative
@@ -63,8 +64,9 @@ namespace rsl
         none          = 0,
         flat          = 1 << 0,
         large         = 1 << 1,
-        all           = flat | large,
-        default_flags = all,
+        multi         = 1 << 2,
+        all           = flat | large | multi,
+        default_flags = flat | large,
     };
     RYTHE_BIT_FLAG_OPERATORS(hash_map_flags)
 
@@ -76,6 +78,11 @@ namespace rsl
     constexpr bool hash_map_flags_is_large(const hash_map_flags flags) noexcept
     {
         return (flags & hash_map_flags::large) != hash_map_flags::none;
+    }
+
+    constexpr bool hash_map_flags_is_multi(const hash_map_flags flags) noexcept
+    {
+        return (flags & hash_map_flags::multi) != hash_map_flags::none;
     }
 
     template <
@@ -97,6 +104,9 @@ namespace rsl
 
         constexpr static bool is_flat = hash_map_flags_is_flat(Flags);
         constexpr static bool is_large = hash_map_flags_is_large(Flags);
+        constexpr static bool is_multi = hash_map_flags_is_multi(Flags);
+
+        static_assert(!is_multi || is_flat, "Non flat multi-map is not supported at the moment.");
 
         using bucket_type = internal::hash_map_bucket<is_large, FingerprintSize>;
         using psl_type = typename bucket_type::psl_type;
@@ -113,10 +123,13 @@ namespace rsl
 
         static constexpr bool is_map = !is_void<mapped_type>::value;
         static constexpr bool is_set = !is_map;
+
+        static_assert(!is_multi || !is_set, "Multi-set is not supported at the moment.");
+
         static constexpr bool is_transparent =
                 has_is_transparent<hasher_type>::value && has_is_transparent<key_comparer_type>::value;
 
-        using value_type = internal::map_value_type<Key, Value, is_flat>;
+        using value_type = internal::map_value_type<Key, Value, is_flat, is_multi>;
 
         constexpr static bool nothrow_constructible =
                 is_nothrow_constructible_v<hasher_type> && is_nothrow_constructible_v<key_comparer_type>;

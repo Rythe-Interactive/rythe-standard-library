@@ -96,6 +96,12 @@ namespace rsl
     [[nodiscard]] [[rythe_always_inline]] constexpr dynamic_string to_upper(dynamic_string::const_view_type str);
     [[nodiscard]] [[rythe_always_inline]] constexpr dynamic_string to_lower(dynamic_string::const_view_type str);
 
+    [[nodiscard]] [[rythe_always_inline]] constexpr bool is_digit(char ch) noexcept;
+    [[nodiscard]] [[rythe_always_inline]] constexpr bool is_operator(char ch) noexcept;
+    [[nodiscard]] [[rythe_always_inline]] constexpr bool is_letter(char ch) noexcept;
+
+    [[nodiscard]] [[rythe_always_inline]] constexpr uint8 to_digit(char ch) noexcept;
+
     using static_string64 = static_string<64>;
     using static_string128 = static_string<128>;
     using static_string256 = static_string<256>;

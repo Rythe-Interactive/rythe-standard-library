@@ -188,6 +188,8 @@ namespace rsl
         [[rythe_always_inline]] constexpr void clear() noexcept
             requires(can_resize);
 
+        [[rythe_always_inline]] constexpr void assign(array_view<const value_type> view)
+            requires(can_resize);
         [[rythe_always_inline]] constexpr void assign(size_type count, const value_type& value)
             requires(can_resize);
         template <input_iterator InputIt>

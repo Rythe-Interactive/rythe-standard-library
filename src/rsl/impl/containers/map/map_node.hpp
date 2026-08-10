@@ -141,16 +141,75 @@ namespace rsl::internal
         value_type m_data;
     };
 
-    template <typename MapInfo, bool IsFlat = false>
+    template <typename MapInfo>
+    class multi_hash_map_node
+    {
+    public:
+        static constexpr bool is_map = MapInfo::is_map;
+        static constexpr bool is_transparent = MapInfo::is_transparent;
+
+        using key_type = typename MapInfo::key_type;
+        using mapped_type = typename MapInfo::mapped_type;
+        using value_type = typename MapInfo::value_type;
+        using mapped_container_type = typename value_type::second_type;
+
+        template <typename... Args>
+        explicit multi_hash_map_node(Args&&... args) // NOLINT(cppcoreguidelines*)
+                noexcept(is_nothrow_constructible_v<value_type, Args...>)
+            : m_data(rsl::forward<Args>(args)...)
+        {}
+
+        multi_hash_map_node(multi_hash_map_node&& other) // NOLINT(cppcoreguidelines*)
+                noexcept(is_nothrow_move_constructible_v<value_type>)
+            : m_data(rsl::move(other.m_data))
+        {}
+
+        [[nodiscard]] [[rythe_always_inline]] value_type* operator->() noexcept { return &m_data; }
+        [[nodiscard]] [[rythe_always_inline]] const value_type* operator->() const noexcept { return &m_data; }
+
+        [[nodiscard]] [[rythe_always_inline]] value_type& operator*() noexcept { return m_data; }
+        [[nodiscard]] [[rythe_always_inline]] const value_type& operator*() const noexcept { return m_data; }
+
+        [[nodiscard]] [[rythe_always_inline]] key_type& key() noexcept
+        {
+            return m_data.first;
+        }
+
+        [[nodiscard]] [[rythe_always_inline]] const key_type& key() const noexcept
+        {
+            return m_data.first;
+        }
+
+        [[nodiscard]] [[rythe_always_inline]] mapped_container_type& values() noexcept
+        {
+            return m_data.second;
+        }
+
+        [[nodiscard]] [[rythe_always_inline]] const mapped_container_type& values() const noexcept
+        {
+            return m_data.second;
+        }
+
+    private:
+        value_type m_data;
+    };
+
+    template <typename MapInfo, bool IsFlat = false, bool IsMulti = false>
     struct select_node_type
     {
         using type = hash_map_node<MapInfo>;
     };
 
     template <typename MapInfo>
-    struct select_node_type<MapInfo, true>
+    struct select_node_type<MapInfo, true, false>
     {
         using type = flat_hash_map_node<MapInfo>;
+    };
+
+    template <typename MapInfo>
+    struct select_node_type<MapInfo, true, true>
+    {
+        using type = multi_hash_map_node<MapInfo>;
     };
 
     template <typename MapInfo>
