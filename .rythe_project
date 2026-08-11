@@ -8,7 +8,8 @@ local project = {
         "public third_party/fmt:header-only"
     },
     defines = { "RYTHE_INTERNAL" },
-    pch_file_name = "./impl/pch"
+    pch_file_name = "./impl/pch",
+    pch_auto_generate = true
 }
 
 return project
