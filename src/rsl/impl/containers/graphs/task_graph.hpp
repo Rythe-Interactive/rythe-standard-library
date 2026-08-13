@@ -49,7 +49,7 @@ namespace rsl
             const index_type nextIndex = m_nodes.size();
             if (m_nodeIdMap.try_emplace(id, nextIndex).second)
             {
-                m_nodes.emplace_back(builder_task{ .id = id });
+                m_nodes.emplace_back().id = id;
                 return true;
             }
             return false;

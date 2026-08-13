@@ -587,7 +587,16 @@ namespace rsl
         {
             if constexpr (is_map)
             {
-                return node_type(rsl::move(key), factory<mapped_type>::construct_single_inline(rsl::forward<Args>(args)...));
+                if constexpr (is_multi)
+                {
+                    node_type node(rsl::move(key), factory<mapped_type>::construct_single_inline());
+                    node.value().emplace_back(rsl::forward<Args>(args)...);
+                    return rsl::move(node);
+                }
+                else
+                {
+                    return node_type(rsl::move(key), factory<mapped_type>::construct_single_inline(rsl::forward<Args>(args)...));
+                }
             }
             else
             {

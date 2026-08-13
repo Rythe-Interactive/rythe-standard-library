@@ -6,6 +6,8 @@
 
 namespace rsl
 {
+    RYTHE_HAS_FUNC(from_view)
+
     template <typename T>
     struct factory;
 

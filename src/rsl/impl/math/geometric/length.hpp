@@ -1,5 +1,6 @@
 #pragma once
 #include "../matrix/determinant.hpp"
+#include "../exponential/sqrt.hpp"
 
 namespace rsl::math
 {

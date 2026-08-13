@@ -187,4 +187,3 @@
 #include "math\matrix\row\row.hpp"
 #include "math\vector\swizzle\swizzle_base.hpp"
 #include "time\util\formatters.hpp"
-

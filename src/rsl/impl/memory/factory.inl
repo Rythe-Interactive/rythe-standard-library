@@ -50,13 +50,30 @@ namespace rsl
         {
             factory<T>{}.destroy(static_cast<T*>(ptr), count);
         }
+
+        template <typename...>
+        struct can_construct_from_view : false_type
+        {};
+
+        template<typename T, typename Arg>
+        struct can_construct_from_view<T, Arg>
+        {
+            static constexpr bool value = has_static_from_view_v<T, T(Arg)>;
+        };
     } // namespace internal
 
     template <constructible_at_all T>
     template <typename ... Args>
     constexpr T factory<T>::construct_single_inline(Args&&... args) noexcept(is_nothrow_constructible_v<T, Args...>)
     {
-        return T(rsl::forward<Args>(args)...);
+        if constexpr (internal::can_construct_from_view<T, Args...>::value)
+        {
+            return T::from_view(args...);
+        }
+        else
+        {
+            return T(rsl::forward<Args>(args)...);
+        }
     }
 
     template <constructible_at_all T>
@@ -75,14 +92,22 @@ namespace rsl
         }
         else
         {
-            T* first = new (ptr) T(rsl::forward<Args>(args)...);
-
-            for (size_type i = 1; i < count; i++)
+            if constexpr (internal::can_construct_from_view<T, Args...>::value)
             {
-                new (first + i) T(rsl::forward<Args>(args)...);
-            }
+                T* first = new (ptr) T(T::from_view(args...));
 
-            return first;
+                for (size_type i = 1; i < count; i++) { new (first + i) T(T::from_view(args...)); }
+
+                return first;
+            }
+            else
+            {
+                T* first = new (ptr) T(rsl::forward<Args>(args)...);
+
+                for (size_type i = 1; i < count; i++) { new (first + i) T(rsl::forward<Args>(args)...); }
+
+                return first;
+            }
         }
     }
 

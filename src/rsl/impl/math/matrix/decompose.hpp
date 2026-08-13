@@ -1,6 +1,6 @@
 #pragma once
-#include "../quaternion/matrix_quat_conv.inl"
 #include "predefined.hpp"
+#include "../quaternion/quaternion.hpp"
 
 namespace rsl::math
 {

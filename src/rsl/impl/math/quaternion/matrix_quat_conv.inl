@@ -1,5 +1,4 @@
 #pragma once
-#include "quaternion.hpp"
 
 namespace rsl::math
 {

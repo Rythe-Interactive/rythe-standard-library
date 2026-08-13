@@ -2,6 +2,7 @@
 #include "basic/abs.hpp"
 #include "geometric/geometric.hpp"
 #include "vector/vector.hpp"
+#include "logic/equality.hpp"
 
 /**
  * @file geometry.hpp

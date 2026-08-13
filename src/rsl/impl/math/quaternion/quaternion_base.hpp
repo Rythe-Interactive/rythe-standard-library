@@ -95,6 +95,7 @@ namespace rsl::math
 #endif
 } // namespace rsl::math
 
+#include "../matrix/matrix.hpp"
 #include "matrix_quat_conv.inl"
 
 #include "quaternion_base.inl"

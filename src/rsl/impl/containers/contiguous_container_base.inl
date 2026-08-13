@@ -608,7 +608,6 @@ namespace rsl
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator
               ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    template <input_iterator InputIt>
     constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::assign(
             const value_type* ptr,
             const size_type count
@@ -1668,7 +1667,7 @@ namespace rsl
     split_reserve(size_type pos, diff_type offset) noexcept(move_construct_noexcept)
         requires (can_resize)
     {
-        rsl_assert_out_of_range(pos < m_size);
+        rsl_assert_out_of_range(pos < m_size || m_size == 0ull);
         rsl_assert_invalid_operation_frequent(static_cast<diff_type>(pos) + offset >= 0ll);
 
         const size_type newSize = m_size + offset;
@@ -1678,7 +1677,9 @@ namespace rsl
         {
             if (m_memorySize == 0) [[unlikely]]
             {
-                rsl_ensure(resize_capacity_unsafe(newSize));
+                rsl_ensure(resize_capacity_unsafe(newFootprint));
+                m_size = newSize;
+                return;
             }
             else
             {

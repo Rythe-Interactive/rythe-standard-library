@@ -3,6 +3,7 @@
 #include "../util/common.hpp"
 #include "../util/container_util.hpp"
 #include "../util/primitives.hpp"
+#include "../math/util/limits.hpp"
 
 #include "iterators.hpp"
 
@@ -100,7 +101,7 @@ namespace rsl
         [[nodiscard]] [[rythe_always_inline]] constexpr bool empty() const noexcept;
 
         // negative count will assume size() - abs(count)
-        [[nodiscard]] [[rythe_always_inline]] constexpr array_view subview(size_type offset, diff_type count = npos) const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr array_view subview(size_type offset, diff_type count = math::limits<diff_type>::max) const noexcept;
 
         [[rythe_always_inline]] constexpr void set_data(pointer data, size_type count) noexcept;
         [[rythe_always_inline]] constexpr void reset() noexcept;

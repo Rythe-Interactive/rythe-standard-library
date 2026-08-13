@@ -347,49 +347,17 @@ namespace rsl
         /**@brief Returns item from dense container.
          * @param index Index of item in dense container.
          */
-        [[nodiscard]] value_reference operator[](size_type&& index)
+        [[nodiscard]] value_reference operator[](const size_type index)
         {
-            if (index < 0 || index > m_size)
-            {
-                throw std::out_of_range("hashed_sparse_set subscript out of range");
-            }
-            return m_dense[index];
+            return at(index);
         }
 
         /**@brief Returns item from dense container.
          * @param index Index of item in dense container.
          */
-        [[nodiscard]] value_reference operator[](const size_type& index)
+        [[nodiscard]] value_const_reference operator[](const size_type index) const
         {
-            if (index < 0 || index > m_size)
-            {
-                throw std::out_of_range("hashed_sparse_set subscript out of range");
-            }
-            return m_dense[index];
-        }
-
-        /**@brief Returns item from dense container.
-         * @param index Index of item in dense container.
-         */
-        [[nodiscard]] value_const_reference operator[](size_type&& index) const
-        {
-            if (index < 0 || index > m_size)
-            {
-                throw std::out_of_range("hashed_sparse_set subscript out of range");
-            }
-            return m_dense[index];
-        }
-
-        /**@brief Returns item from dense container.
-         * @param index Index of item in dense container.
-         */
-        [[nodiscard]] value_const_reference operator[](const size_type& index) const
-        {
-            if (index < 0 || index > m_size)
-            {
-                throw std::out_of_range("hashed_sparse_set subscript out of range");
-            }
-            return m_dense[index];
+            return at(index);
         }
 #pragma endregion
 
@@ -397,48 +365,18 @@ namespace rsl
         /**@brief Returns item from dense container.
          * @param index Index of item in dense container.
          */
-        [[nodiscard]] value_reference at(size_type&& index)
+        [[nodiscard]] value_reference at(const size_type index)
         {
-            if (index < 0 || index > m_size)
-            {
-                throw std::out_of_range("hashed_sparse_set subscript out of range");
-            }
+            rsl_assert_out_of_range(index < m_size);
             return m_dense[index];
         }
 
         /**@brief Returns item from dense container.
          * @param index Index of item in dense container.
          */
-        [[nodiscard]] value_reference at(const size_type& index)
+        [[nodiscard]] value_const_reference at(const size_type index) const
         {
-            if (index < 0 || index > m_size)
-            {
-                throw std::out_of_range("hashed_sparse_set subscript out of range");
-            }
-            return m_dense[index];
-        }
-
-        /**@brief Returns item from dense container.
-         * @param index Index of item in dense container.
-         */
-        [[nodiscard]] value_const_reference at(size_type&& index) const
-        {
-            if (index < 0 || index > m_size)
-            {
-                throw std::out_of_range("hashed_sparse_set subscript out of range");
-            }
-            return m_dense[index];
-        }
-
-        /**@brief Returns item from dense container.
-         * @param index Index of item in dense container.
-         */
-        [[nodiscard]] value_const_reference at(const size_type& index) const
-        {
-            if (index < 0 || index > m_size)
-            {
-                throw std::out_of_range("hashed_sparse_set subscript out of range");
-            }
+            rsl_assert_out_of_range(index < m_size);
             return m_dense[index];
         }
 #pragma endregion

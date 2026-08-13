@@ -195,7 +195,6 @@ namespace rsl
         template <input_iterator InputIt>
         [[rythe_always_inline]] constexpr void assign(InputIt first, InputIt last)
             requires(can_resize);
-        template <input_iterator InputIt>
         [[rythe_always_inline]] constexpr void assign(const value_type* ptr, size_type count)
             requires(can_resize);
         template <size_type N>

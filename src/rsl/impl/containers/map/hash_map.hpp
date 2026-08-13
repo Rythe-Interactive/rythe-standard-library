@@ -25,6 +25,7 @@ namespace rsl
     public:
         static constexpr bool is_flat = MapInfo::is_flat;
         static constexpr bool is_large = MapInfo::is_large;
+        static constexpr bool is_multi = MapInfo::is_multi;
 
         using key_type = typename MapInfo::key_type;
         using mapped_type = typename MapInfo::mapped_type;

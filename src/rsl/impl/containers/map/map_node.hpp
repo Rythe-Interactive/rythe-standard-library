@@ -180,12 +180,12 @@ namespace rsl::internal
             return m_data.first;
         }
 
-        [[nodiscard]] [[rythe_always_inline]] mapped_container_type& values() noexcept
+        [[nodiscard]] [[rythe_always_inline]] mapped_container_type& value() noexcept
         {
             return m_data.second;
         }
 
-        [[nodiscard]] [[rythe_always_inline]] const mapped_container_type& values() const noexcept
+        [[nodiscard]] [[rythe_always_inline]] const mapped_container_type& value() const noexcept
         {
             return m_data.second;
         }
@@ -213,7 +213,7 @@ namespace rsl::internal
     };
 
     template <typename MapInfo>
-    using map_node = typename select_node_type<MapInfo, MapInfo::is_flat>::type;
+    using map_node = typename select_node_type<MapInfo, MapInfo::is_flat, MapInfo::is_multi>::type;
 
 
 } // namespace rsl::internal

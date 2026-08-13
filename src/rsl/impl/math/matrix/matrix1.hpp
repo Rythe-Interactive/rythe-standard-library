@@ -73,7 +73,7 @@ namespace rsl::math
         [[rythe_always_inline]] explicit constexpr matrix(scalar s, identity_matrix_signal) noexcept;
 
         template <typename MatType>
-            requires not_same_as<Scalar, typename MatType::scalar> || (MatType::row_count != 1) ||
+            requires not_same_as<bool, typename MatType::scalar> || (MatType::row_count != 1) ||
                      (MatType::col_count != 1)
         [[rythe_always_inline]] constexpr matrix(const MatType& other) noexcept;
 

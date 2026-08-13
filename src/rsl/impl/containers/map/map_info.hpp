@@ -12,12 +12,17 @@ namespace rsl
 {
     namespace internal
     {
+        template <typename Value, bool IsMulti>
+        using map_mapped_type =
+                typename conditional<is_void<Value>::value, void, typename conditional<IsMulti, dynamic_array<Value>, Value>::type>::
+                        type;
+
         template <typename Key, typename Value, bool IsFlat, bool IsMulti>
         using map_value_type = typename conditional<
                 is_void<Value>::value,
                 typename conditional<IsFlat, Key, const Key>::type,
                 pair<typename conditional<IsFlat, Key, const Key>::type,
-                     typename conditional<IsMulti, dynamic_array<Value>, Value>::type>>::type;
+                    map_mapped_type<Value, IsMulti>>>::type;
 
         template <typename>
         struct key_view_alternative
@@ -96,15 +101,16 @@ namespace rsl
                 static_cast<float32>(MaxLoadFactor::numerator) / static_cast<float32>(MaxLoadFactor::denominator);
         static_assert(max_load_factor > 0.1f && max_load_factor <= 0.99f, "MaxLoadFactor needs to be > 0.1 && < 0.99");
 
-        using key_type = Key;
-        using mapped_type = Value;
-
-        using mapped_type_ref = add_lval_ref_t<mapped_type>;
-        using mapped_type_const_ref = add_lval_ref_t<add_const_t<mapped_type>>;
-
         constexpr static bool is_flat = hash_map_flags_is_flat(Flags);
         constexpr static bool is_large = hash_map_flags_is_large(Flags);
         constexpr static bool is_multi = hash_map_flags_is_multi(Flags);
+        
+        using value_type = typename internal::map_value_type<Key, Value, is_flat, is_multi>;
+        using key_type = Key;
+        using mapped_type = typename internal::map_mapped_type<Value, is_multi>;
+
+        using mapped_type_ref = add_lval_ref_t<mapped_type>;
+        using mapped_type_const_ref = add_lval_ref_t<add_const_t<mapped_type>>;
 
         static_assert(!is_multi || is_flat, "Non flat multi-map is not supported at the moment.");
 
@@ -128,8 +134,6 @@ namespace rsl
 
         static constexpr bool is_transparent =
                 has_is_transparent<hasher_type>::value && has_is_transparent<key_comparer_type>::value;
-
-        using value_type = internal::map_value_type<Key, Value, is_flat, is_multi>;
 
         constexpr static bool nothrow_constructible =
                 is_nothrow_constructible_v<hasher_type> && is_nothrow_constructible_v<key_comparer_type>;

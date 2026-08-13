@@ -1,3 +1,4 @@
+#pragma once
 #include "../../util/error_handling.hpp"
 
 namespace rsl
