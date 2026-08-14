@@ -10,15 +10,15 @@ namespace rsl
             return pos != npos ? name.subview(pos) : name;
         }
 
-        static bool is_number([[maybe_unused]] const string_view arg)
+        static bool is_number([[maybe_unused]] const string_view arg) noexcept
         {
             // TODO(Glyn): from_chars implementation
             return false;
         }
 
-        static bool is_option(const string_view arg)
+        static bool is_option(const string_view arg) noexcept
         {
-            rsl_assert_invalid_parameters(!arg.empty());
+            rsl_assert_invalid_parameters(!arg.is_empty());
             if (is_number(arg))
             {
                 return false;
@@ -27,26 +27,23 @@ namespace rsl
         }
     }
 
-    void cli_parser::add_param(const string_view name)
+    void cli_parser::add_param(const string_view name, const string_view usage)
     {
-        m_registeredParams.insert(internal::trim_leading_dashes(name));
+        m_registeredParams.emplace(internal::trim_leading_dashes(name), usage);
     }
 
     void cli_parser::parse(const int argc, const char* const argv[])
     {
-        // clear out possible previous parsing remnants
         m_flags.clear();
         m_params.clear();
         m_posArgs.clear();
 
-        // convert to strings
         m_args.resize(static_cast<size_type>(argc));
         for (size_type i = 0ull; i < m_args.size(); ++i)
         {
             m_args[i].assign(string_view::from_string_length(argv[i]));
         }
 
-        // parse line
         for (size_type i = 0ull; i < m_args.size(); ++i)
         {
             if (!internal::is_option(m_args[i]))
@@ -74,8 +71,9 @@ namespace rsl
 
             if (is_param(name))
             {
+                // "--param value" instead of "--param=value"
                 m_params.emplace(name, m_args[i + 1]);
-                ++i; // skip next value, it is not a free parameter
+                ++i;
                 continue;
             }
 
@@ -83,23 +81,12 @@ namespace rsl
         }
     }
 
-    cli_parser::args_view cli_parser::params(const string_view name) const
-    {
-        auto trimmed_name = internal::trim_leading_dashes(name);
-        auto* values = m_params.find(trimmed_name);
-        if (values && !values->empty())
-        {
-            return *values;
-        }
-        return {};
-    }
-
-    bool cli_parser::has_flag(const string_view name) const
+    bool cli_parser::has_flag(const string_view name) const noexcept
     {
         return m_flags.contains(internal::trim_leading_dashes(name));
     }
 
-    bool cli_parser::has_flag(array_view<string_view> aliases) const
+    bool cli_parser::has_flag(const array_view<const string_view> aliases) const noexcept
     {
         for (const string_view alias : aliases)
         {
@@ -111,50 +98,44 @@ namespace rsl
         return false;
     }
 
-    string_view cli_parser::operator()(const string_view name) const
+    string_view cli_parser::get_param(const string_view name) const noexcept
     {
-        return operator()(name, {});
+        args_view view = get_params(name);
+        return view.is_empty() ? string_view{} : view[0ull];
     }
 
-    string_view cli_parser::operator()(const std::initializer_list<char const* const> init_list) const
+    string_view cli_parser::get_param(const array_view<const string_view> aliases) const noexcept
     {
-        for (auto& name : init_list)
+        args_view view = get_params(aliases);
+        return view.is_empty() ? string_view{} : view[0ull];
+    }
+
+    cli_parser::args_view cli_parser::get_params(const string_view name) const noexcept
+    {
+        const args_container* values = m_params.find(internal::trim_leading_dashes(name));
+        if (values && !values->is_empty())
         {
-            const auto* values = m_params.find(internal::trim_leading_dashes(string_view::from_string_length(name)));
-            if (values && !values->empty())
-            {
-                return values->at(0ull);
-            }
+            return values->view();
         }
+
         return {};
     }
 
-    string_view cli_parser::operator()(const string_view name, const string_view defaultValue) const
+    cli_parser::args_view cli_parser::get_params(const array_view<const string_view> aliases) const noexcept
     {
-        const auto* values = m_params.find(internal::trim_leading_dashes(name));
-        if (values && !values->empty())
+        for (string_view name : aliases)
         {
-            return values->at(0ull);
-        }
-
-        return defaultValue;
-    }
-
-    string_view cli_parser::operator()(const std::initializer_list<char const* const> init_list, const string_view defaultValue) const
-    {
-        for (auto& name : init_list)
-        {
-            const auto* values = m_params.find(internal::trim_leading_dashes(string_view::from_string_length(name)));
-            if (values && !values->empty())
+            const args_container* values = m_params.find(internal::trim_leading_dashes(name));
+            if (values && !values->is_empty())
             {
-                return values->at(0ull);
+                return values->view();
             }
         }
 
-        return defaultValue;
+        return {};
     }
 
-    bool cli_parser::is_param(const string_view name) const
+    bool cli_parser::is_param(const string_view name) const noexcept
     {
         return m_registeredParams.contains(name);
     }

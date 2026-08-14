@@ -20,49 +20,38 @@ namespace rsl
 
         cli_parser() = default;
 
-        void add_param(string_view name);
-        template <string_like... Names>
-        [[rythe_always_inline]] void add_params(Names&&... names);
+        void add_param(string_view name, string_view usage = {});
+        template <same_as<pair<string_view, string_view>>... Names>
+        [[rythe_always_inline]] void add_params(Names... names);
 
         void parse(int argc, const char* const argv[]);
 
-        flags_container const& flags() const { return m_flags; }
-        params_container const& params() const { return m_params; }
-        args_view params(string_view name) const;
-        args_view pos_args() const { return m_posArgs; }
+        [[nodiscard]] [[rythe_always_inline]] flags_container const& flags() const noexcept { return m_flags; }
+        [[nodiscard]] [[rythe_always_inline]] params_container const& params() const noexcept { return m_params; }
+        [[nodiscard]] [[rythe_always_inline]] args_view pos_args() const noexcept { return m_posArgs; }
 
-        args_iterator begin() const { return m_posArgs.cbegin(); }
-        args_iterator end() const { return m_posArgs.cend(); }
-        size_type size() const { return m_posArgs.size(); }
+        [[nodiscard]] [[rythe_always_inline]] args_iterator begin() const noexcept { return m_posArgs.cbegin(); }
+        [[nodiscard]] [[rythe_always_inline]] args_iterator end() const noexcept { return m_posArgs.cend(); }
+        [[nodiscard]] [[rythe_always_inline]] size_type size() const noexcept { return m_posArgs.size(); }
 
-        bool has_flag(string_view name) const;
-        bool has_flag(array_view<string_view> aliases) const;
+        [[nodiscard]] bool has_flag(string_view name) const noexcept;
+        [[nodiscard]] bool has_flag(array_view<const string_view> aliases) const noexcept;
 
-        // parameter accessors, give a name get an std::istream that can be used to convert to a typed value.
-        // call .str() on result to get as string
-        string_view operator()(string_view name) const;
+        // Get first param in the list of values, or an invalid string view if not present
+        [[nodiscard]] string_view get_param(string_view name) const noexcept;
+        [[nodiscard]] string_view get_param(array_view<const string_view> aliases) const noexcept;
 
-        // accessor for a parameter with multiple names, give a list of names, get an std::istream that can be used to convert to a
-        // typed value. call .str() on result to get as string returns the first value in the list to be found.
-        string_view operator()(std::initializer_list<char const* const> init_list) const;
-
-        // same as above, but with a default value in case the param was missing.
-        // Non-string defaultValue types must have an operator<<() (output stream operator)
-        // If T only has an input stream operator, pass the string version of the type as in "3" instead of 3.
-        string_view operator()(string_view name, string_view defaultValue) const;
-
-        // same as above but for a list of names. returns the first value to be found.
-        string_view operator()(std::initializer_list<char const* const> init_list, string_view defaultValue) const;
+        [[nodiscard]] args_view get_params(string_view name) const noexcept;
+        [[nodiscard]] args_view get_params(array_view<const string_view> aliases) const noexcept;
 
     private:
-        bool is_param(string_view name) const;
+        bool is_param(string_view name) const noexcept;
 
-        dynamic_array<dynamic_string>
-                m_args; // TODO(Glyn): all the other containers can use string_view, args already creates the memory
+        dynamic_array<dynamic_string> m_args;
         params_container m_params;
         args_container m_posArgs;
         flags_container m_flags;
-        rsl::dynamic_set<rsl::dynamic_string> m_registeredParams;
+        dynamic_map<dynamic_string, dynamic_string> m_registeredParams;
     };
 } // namespace rsl
 
