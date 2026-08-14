@@ -63,7 +63,7 @@ namespace rsl
         }
         else
         {
-            if (!empty()) [[unlikely]]
+            if (!is_empty()) [[unlikely]]
             {
                 reset();
             }
@@ -334,7 +334,8 @@ namespace rsl
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
               ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr bool contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::empty() const noexcept
+    constexpr bool
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::is_empty() const noexcept
     {
         return m_size == 0;
     }

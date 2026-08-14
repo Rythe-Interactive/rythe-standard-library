@@ -91,7 +91,7 @@ namespace rsl::fs
                 continue;
             }
 
-            if (token.empty())
+            if (token.is_empty())
             {
                 continue;
             }
@@ -99,7 +99,7 @@ namespace rsl::fs
             //handle upwards
             if (trim_right(token) == "..")
             {
-                if (!recreation.empty() && recreation.back() != "..")
+                if (!recreation.is_empty() && recreation.back() != "..")
                 {
                     recreation.pop_back();
                 }

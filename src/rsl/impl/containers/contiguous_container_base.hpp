@@ -144,7 +144,7 @@ namespace rsl
                 ) noexcept(construct_noexcept<Args...>);
 
         [[nodiscard]] [[rythe_always_inline]] constexpr size_type size() const noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr bool empty() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr bool is_empty() const noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr size_type capacity() const noexcept;
 
         [[rythe_always_inline]] constexpr contiguous_container_base& operator=(

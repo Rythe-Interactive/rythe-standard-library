@@ -75,7 +75,8 @@ namespace rsl
 
         [[nodiscard]] [[rythe_always_inline]] constexpr size_type size() const noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr size_type size_bytes() const noexcept;
-        [[nodiscard]] [[rythe_always_inline]] constexpr bool empty() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr bool is_empty() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr bool is_valid() const noexcept;
 
         [[nodiscard]] [[rythe_always_inline]] constexpr string_view_type view() const noexcept;
     };

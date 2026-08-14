@@ -12,29 +12,29 @@ TEST_CASE("string","[containers]")
         {//operator=
             rsl::dynamic_string s;
             s = "hello world"_ds;
-            CHECK(!s.empty());
+            CHECK(!s.is_empty());
             CHECK(s.size() == 11);
         }
 
         {//copy constructor
             rsl::dynamic_string s = dynamic_string::from_array("hello world");
             rsl::dynamic_string s2(s);
-            CHECK(!s.empty());
-            CHECK(!s2.empty());
+            CHECK(!s.is_empty());
+            CHECK(!s2.is_empty());
             CHECK(s.size() == s2.size());
             CHECK(s == s2);
         }
 
         {//capacity constructor
             rsl::dynamic_string s = dynamic_string::create_reserved(10);
-            CHECK(s.empty());
+            CHECK(s.is_empty());
             CHECK(s.capacity() == 10);
         }
 
         {//char array constructor
             constexpr char str[5] = {'h','e','l','l','o'};
             rsl::dynamic_string s = dynamic_string::from_array(str);
-            CHECK(!s.empty());
+            CHECK(!s.is_empty());
             CHECK(s.capacity() == 5);
         }
     }

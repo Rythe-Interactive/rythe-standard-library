@@ -27,7 +27,7 @@ namespace rsl
     RYTHE_HAS_FUNC(crbegin)
     RYTHE_HAS_FUNC(crend)
     RYTHE_HAS_FUNC(size)
-    RYTHE_HAS_FUNC(empty)
+    RYTHE_HAS_FUNC(is_empty)
     RYTHE_HAS_FUNC(data)
     RYTHE_HAS_FUNC(at)
     RYTHE_HAS_FUNC(view)
@@ -71,7 +71,7 @@ namespace rsl
     using container_value_type = iter_value_t<container_iter_type<T>>;
 
     template <typename T>
-    concept container_like = has_begin<T, any_type()> && has_end<T, any_type()> && has_size<T, size_type()> && has_empty<T, bool()>;
+    concept container_like = has_begin<T, any_type()> && has_end<T, any_type()> && has_size<T, size_type()> && has_is_empty<T, bool()>;
 
     template <typename T>
     concept contiguous_container_like = container_like<T> && has_data<T, any_type()> && has_at<T, any_type(size_type)> && has_index_operator<T, any_type(size_type)>;
@@ -273,10 +273,10 @@ namespace rsl
     }
 
     template <typename Container>
-        requires has_empty<const Container, any_type()>
-    [[nodiscard]] constexpr auto empty(const Container& container) noexcept(noexcept(container.empty())) -> decltype(container.empty())
+        requires has_is_empty<const Container, any_type()>
+    [[nodiscard]] constexpr auto empty(const Container& container) noexcept(noexcept(container.is_empty())) -> decltype(container.is_empty())
     {
-        return container.empty();
+        return container.is_empty();
     }
 
     template <typename T, size_type Size>

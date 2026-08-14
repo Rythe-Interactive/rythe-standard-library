@@ -58,7 +58,7 @@ namespace rsl
     template <contiguous_container_like Range>
     constexpr dynamic_string join_strings_with(const Range& elements, const string_view delimiters) noexcept
     {
-        if (elements.empty())
+        if (elements.is_empty())
         {
             return dynamic_string{};
         }

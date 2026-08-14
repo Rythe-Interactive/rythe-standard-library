@@ -277,9 +277,15 @@ namespace rsl
     }
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
-    constexpr bool array_view<T, Iter, ConstIter>::empty() const noexcept
+    constexpr bool array_view<T, Iter, ConstIter>::is_empty() const noexcept
     {
         return m_count == 0 || m_src == nullptr;
+    }
+
+    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
+    constexpr bool array_view<T, Iter, ConstIter>::is_valid() const noexcept
+    {
+        return m_src != nullptr;
     }
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
@@ -363,7 +369,7 @@ namespace rsl
             return npos;
         }
 
-        if (key.empty())
+        if (key.is_empty())
         {
             return 0ull;
         }
@@ -409,7 +415,7 @@ namespace rsl
             return npos;
         }
 
-        if (key.empty())
+        if (key.is_empty())
         {
             return arr.size() - 1ull;
         }

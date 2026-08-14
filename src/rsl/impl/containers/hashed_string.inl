@@ -222,9 +222,15 @@ namespace rsl
     }
 
     template <char_type CharType>
-    constexpr bool basic_hashed_string_view<CharType>::empty() const noexcept
+    constexpr bool basic_hashed_string_view<CharType>::is_empty() const noexcept
     {
-        return string.empty();
+        return string.is_empty();
+    }
+
+    template <char_type CharType>
+    constexpr bool basic_hashed_string_view<CharType>::is_valid() const noexcept
+    {
+        return string.is_valid() && hash != invalid_id;
     }
 
     template <char_type CharType>

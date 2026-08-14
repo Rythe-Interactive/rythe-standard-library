@@ -60,7 +60,7 @@ namespace rsl::log
         {
             if (*character == '{')
             {
-                if (!forwardingSection.empty())
+                if (!forwardingSection.is_empty())
                 {
                     m_formatters.emplace_back(
                             unique_object<forwarding_formatter>::create_in_place(forwardingSection)
@@ -91,7 +91,7 @@ namespace rsl::log
             }
             else // chars not following the { sign should be displayed as is
             {
-                if (forwardingSection.empty())
+                if (forwardingSection.is_empty())
                 {
                     forwardingSection.set_data(character, 1ull);
                 }
@@ -102,7 +102,7 @@ namespace rsl::log
             }
         }
 
-        if (!forwardingSection.empty())
+        if (!forwardingSection.is_empty())
         {
             m_formatters.emplace_back(
                     unique_object<forwarding_formatter>::create_in_place(forwardingSection)

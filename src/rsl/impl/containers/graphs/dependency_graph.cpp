@@ -6,7 +6,7 @@ namespace rsl
     {
         for (size_type i = 0ull; i < m_nodes.size(); ++i)
         {
-            if (!m_nodes[i].dependencies.empty())
+            if (!m_nodes[i].dependencies.is_empty())
             {
                 return m_nodes.subview(0ull, i);
             }
@@ -89,7 +89,7 @@ namespace rsl
                 }
                 );
 
-        if (!sortedNodes.front()->dependencies.empty())
+        if (!sortedNodes.front()->dependencies.is_empty())
         {
             return make_error(graph_error::no_root);
         }

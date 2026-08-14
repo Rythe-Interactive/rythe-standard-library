@@ -14,7 +14,7 @@ namespace rsl::fs
 
     inline bool view::is_valid(const bool deepCheck) const
     {
-        if (m_path.empty())
+        if (m_path.is_empty())
         {
             return false;
         }

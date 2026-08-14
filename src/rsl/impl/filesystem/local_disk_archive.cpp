@@ -141,7 +141,7 @@ namespace rsl::fs
 
     bool local_disk_archive::is_valid() const
     {
-        return !m_rootPath.empty();
+        return !m_rootPath.is_empty();
     }
 
     result<file_solution*> local_disk_archive::create_solution(const string_view path)

@@ -18,7 +18,7 @@ namespace rsl
 
     inline index_type index_allocator::allocate_index()
     {
-        if (m_freeIndices.empty())
+        if (m_freeIndices.is_empty())
         {
             return m_nextIndex++;
         }
