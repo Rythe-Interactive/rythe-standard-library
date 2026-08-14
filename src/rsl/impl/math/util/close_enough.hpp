@@ -1,14 +1,14 @@
 #pragma once
 #include "../basic/abs.hpp"
-#include "../util/type_util.hpp"
+#include "type_util.hpp"
 
 namespace rsl::math
 {
     template <typename TypeA, typename TypeB>
     [[nodiscard]] [[rythe_always_inline]] constexpr bool close_enough(TypeA lhs, TypeB rhs)
     {
-        constexpr bool lhsIsInt = std::is_integral_v<TypeA>;
-        constexpr bool rhsIsInt = std::is_integral_v<TypeB>;
+        constexpr bool lhsIsInt = is_integral_v<TypeA>;
+        constexpr bool rhsIsInt = is_integral_v<TypeB>;
 
         if constexpr (lhsIsInt && rhsIsInt)
         {

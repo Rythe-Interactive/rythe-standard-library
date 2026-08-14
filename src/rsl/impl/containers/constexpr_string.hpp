@@ -1,7 +1,6 @@
 #pragma once
 
-#include "../util/common.hpp"
-#include "../util/primitives.hpp"
+#include "../rsl_core.hpp"
 
 #include "views.hpp"
 

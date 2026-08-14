@@ -4,8 +4,6 @@
 #include "../memory/unique_object.hpp"
 #include "../time/time_span.hpp"
 
-#include "fmt_include.hpp"
-
 namespace rsl::log
 {
     struct message;

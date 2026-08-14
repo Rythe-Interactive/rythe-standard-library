@@ -1,5 +1,4 @@
 #pragma once
-#include "../defines.hpp"
 
 RYTHE_MSVC_SUPPRESS_WARNING_WITH_PUSH(5046)
 #include <cstddef>
@@ -130,3 +129,4 @@ namespace rsl
 
     constexpr npos_type npos = static_cast<npos_type>(-1);
 } // namespace rsl
+

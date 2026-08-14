@@ -1,12 +1,9 @@
 #pragma once
-#include "../../defines.hpp"
+#include "../../rsl_core.hpp"
 
 RYTHE_MSVC_SUPPRESS_WARNING_WITH_PUSH(4267)
 #include <random>
 RYTHE_MSVC_SUPPRESS_WARNING_POP
-
-#include "../../util/primitives.hpp"
-#include "../util/limits.hpp"
 
 namespace rsl::math
 {

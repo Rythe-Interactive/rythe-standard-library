@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../util/primitives.hpp"
+#include "../rsl_core.hpp"
 
 #include "contiguous_container_base.hpp"
 

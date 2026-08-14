@@ -1,6 +1,6 @@
 // ReSharper disable CppWrongIncludesOrder
 // ReSharper disable CppZeroConstantCanBeReplacedWithNullptr
-#include "../../defines.hpp"
+#include "../../rsl_core.hpp"
 
 #if RYTHE_PLATFORM_WINDOWS
 

@@ -1,6 +1,5 @@
 #pragma once
-
-#include "concepts.hpp"
+#include "../rsl_core.hpp"
 
 namespace rsl::enum_flags
 {

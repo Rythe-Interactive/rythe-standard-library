@@ -1,4 +1,4 @@
-#include "../../defines.hpp"
+#include "../../rsl_core.hpp"
 
 #if RYTHE_PLATFORM_EXAMPLE
 

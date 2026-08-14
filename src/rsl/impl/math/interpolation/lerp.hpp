@@ -1,5 +1,5 @@
 #pragma once
-#include "../../util/primitives.hpp"
+#include "../../rsl_core.hpp"
 #include "../basic/constraint.hpp"
 #include "../matrix/matrix.hpp"
 #include "../quaternion/quaternion_base.hpp"

@@ -1,6 +1,5 @@
 #pragma once
-#include "../defines.hpp"
-#include "../util/primitives.hpp"
+#include "../rsl_core.hpp"
 
 #include "time_span.hpp"
 

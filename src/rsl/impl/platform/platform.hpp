@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../util/primitives.hpp"
+#include "../rsl_core.hpp"
 
 #include "../memory/allocator_context.hpp"
 #include "../threading/thread.hpp"

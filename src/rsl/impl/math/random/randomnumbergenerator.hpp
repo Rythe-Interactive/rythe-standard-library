@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../util/primitives.hpp"
+#include "../../rsl_core.hpp"
 #include "../../memory/unique_object.hpp"
 
 #include "random_number_engine.hpp"

@@ -1,5 +1,5 @@
 #pragma once
-#include "../../defines.hpp"
+#include "../../rsl_core.hpp"
 #include "../constants.hpp"
 
 namespace rsl::math

@@ -14,7 +14,7 @@
 // ReSharper disable once CppUnusedIncludeDirective
 #include "../reference_wrapper.hpp" // used in .inl
 // ReSharper disable once CppUnusedIncludeDirective
-#include "../../math/util/limits.hpp" // used in .inl
+#include "../../rsl_core.hpp" // used in .inl
 
 namespace rsl
 {

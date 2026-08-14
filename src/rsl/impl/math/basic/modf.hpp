@@ -1,7 +1,7 @@
 #pragma once
 #include <cmath>
 
-#include "../../util/primitives.hpp"
+#include "../../rsl_core.hpp"
 #include "../util/type_util.hpp"
 
 namespace rsl::math

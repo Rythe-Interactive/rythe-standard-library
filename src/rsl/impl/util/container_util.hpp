@@ -1,6 +1,5 @@
 #pragma once
-
-#include "common.hpp"
+#include "../rsl_core.hpp"
 
 #include "../containers/iterators.hpp"
 

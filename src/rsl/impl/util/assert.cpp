@@ -1,4 +1,4 @@
-#include "assert.hpp"
+#include "../rsl_core.hpp"
 
 #include "../../logging"
 
@@ -32,6 +32,25 @@ namespace rsl::asserts
         {
             rythe_debugbreak_instruction();
             std::abort();
+        }
+
+        void forward_to_assert_handler(
+                string_view expression,
+                string_view file,
+                size_type line,
+                string_view message,
+                fmt::format_args args,
+                bool soft,
+                bool* ignore)
+        {
+            if (!asserts::assert_handler)
+            {
+                asserts::internal::default_assert_handler(expression, file, line, rsl::format(message, args), soft, ignore);
+            }
+            else
+            {
+                asserts::assert_handler(expression, file, line, rsl::format(message, args), soft, ignore);
+            }
         }
     } // namespace internal
 

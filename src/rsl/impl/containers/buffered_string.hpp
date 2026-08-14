@@ -1,9 +1,5 @@
 #pragma once
-
-#include <string_view>
-
-#include "../util/assert.hpp"
-#include "../util/primitives.hpp"
+#include "../rsl_core.hpp"
 
 #include "iterators.hpp"
 
@@ -173,13 +169,6 @@ namespace rsl
         constexpr const_reverse_iterator_type rbegin() const noexcept { return crbegin(); }
         constexpr const_reverse_iterator_type crbegin() const noexcept { return const_reverse_iterator_type(cend()); }
     };
-
-    template <size_type MaxSize, typename CharType>
-    std::ostream& operator<<(std::ostream& os, const buffered_string<MaxSize, CharType>& str)
-    {
-        os << str.view();
-        return os;
-    }
 
     template <size_type MaxSize, typename CharType>
     buffered_string(const CharType (&)[MaxSize]) -> buffered_string<MaxSize, CharType>;

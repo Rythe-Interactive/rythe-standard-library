@@ -1,7 +1,4 @@
 #pragma once
-
-#include "../util/concepts.hpp"
-
 #include "delegate_base.hpp"
 
 namespace rsl

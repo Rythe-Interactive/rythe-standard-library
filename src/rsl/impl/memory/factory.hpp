@@ -1,7 +1,5 @@
 #pragma once
-
-#include "../util/assert.hpp"
-#include "../util/concepts.hpp"
+#include "../rsl_core.hpp"
 #include "../util/type_traits.hpp"
 
 namespace rsl

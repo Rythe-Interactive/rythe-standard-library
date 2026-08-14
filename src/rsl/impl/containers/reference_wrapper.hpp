@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "../util/common.hpp"
+#include "../rsl_core.hpp"
 
 namespace rsl
 {

@@ -1,10 +1,8 @@
 #pragma once
+#include "../rsl_core.hpp"
 
 #include "views.hpp"
 
-#include "../util/assert.hpp"
-#include "../util/common.hpp"
-#include "../util/primitives.hpp"
 #include "iterators.hpp"
 
 namespace rsl

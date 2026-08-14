@@ -1,9 +1,4 @@
-#pragma once
-#include "../../util/primitives.hpp"
-
-#include "type_util.hpp"
-
-namespace rsl::math
+namespace rsl
 {
     namespace internal
     {
@@ -69,14 +64,13 @@ namespace rsl::math
     struct limits<T>
     {
         constexpr static size_type bit_count = sizeof(T) * 8;
-        constexpr static T min = bit_cast<T>(static_cast<bit_rep<T>>(1) << mantissa_bits<T>);
         constexpr static T max = bit_cast<T>((exponent_mask<T> - static_cast<bit_rep<T>>(1)) | mantissa_mask<T>);
-        constexpr static T lowest = bit_cast<T>(sign_bit<T> | bit_cast<bit_rep<T>>(max));
+        constexpr static T min = bit_cast<T>(sign_bit<T> | bit_cast<bit_rep<T>>(max));
+        constexpr static T epsilon = bit_cast<T>(static_cast<bit_rep<T>>(1) << mantissa_bits<T>);
         constexpr static T infinity = bit_cast<T>(exponent_mask<T>);
         constexpr static T quiet_nan = bit_cast<T>((bit_cast<bit_rep<T>>(min) >> 1) | exponent_mask<T>);
 #if defined(RYTHE_MSVC) || defined(RYTHE_CLANG_CL)
-        constexpr static T signaling_nan =
-            bit_cast<T>((bit_cast<bit_rep<T>>(min) >> mantissa_bits<T>) | exponent_mask<T>);
+        constexpr static T signaling_nan = bit_cast<T>((bit_cast<bit_rep<T>>(min) >> mantissa_bits<T>) | exponent_mask<T>);
 #else
         constexpr static T signaling_nan = bit_cast<T>((bit_cast<bit_rep<T>>(min) >> 2) | exponent_mask<T>);
 #endif
@@ -109,4 +103,4 @@ namespace rsl::math
     static_assert(limits<int16>::max == 0x7FFF);
     static_assert(limits<int32>::max == 0x7FFFFFFF);
     static_assert(limits<int64>::max == 0x7FFFFFFFFFFFFFFF);
-} // namespace rsl::math
+} // namespace rsl

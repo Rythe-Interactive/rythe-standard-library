@@ -1,3 +1,4 @@
+#include "string.hpp"
 #pragma once
 
 namespace rsl
@@ -168,5 +169,20 @@ namespace rsl
     dynamic_string to_string(const T& value)
     {
         return rsl::format("{}", value);
+    }
+
+    template <typename... Args>
+    dynamic_string format(fmt::format_string<Args...> fmt, Args&&... args)
+    {
+        dynamic_string result;
+        fmt::format_to(back_inserter(result), fmt, rsl::forward<Args>(args)...);
+        return result;
+    }
+
+    inline dynamic_string format(string_view fmt, fmt::format_args args)
+    {
+        dynamic_string result;
+        fmt::vformat_to(back_inserter(result), fmt::string_view(fmt.data(), fmt.size()), args);
+        return result;
     }
 } // namespace rsl

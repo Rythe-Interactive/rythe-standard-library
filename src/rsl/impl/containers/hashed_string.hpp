@@ -1,7 +1,7 @@
 #pragma once
+#include "../rsl_core.hpp"
 #include "../memory/allocator.hpp"
 #include "../util/hash.hpp"
-#include "../util/primitives.hpp"
 
 #include "string.hpp"
 #include "views.hpp"

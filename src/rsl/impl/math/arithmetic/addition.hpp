@@ -1,5 +1,5 @@
 #pragma once
-#include "../../util/primitives.hpp"
+#include "../../rsl_core.hpp"
 #include "../util/type_util.hpp"
 #include "../vector/vector.hpp"
 

@@ -1,6 +1,4 @@
 #pragma once
-#include "../defines.hpp"
-#include "primitives.hpp"
 
 #include <functional> // TODO(Glyn): remove this
 
@@ -2041,4 +2039,7 @@ namespace rsl
     {
         return lhs < rhs ? rhs : lhs;
     }
+
+    template <typename... Types>
+    constexpr void surpress_unused(Types&&...) {}
 } // namespace rsl

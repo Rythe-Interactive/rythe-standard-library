@@ -1,6 +1,4 @@
 #pragma once
-#include "../../logging/fmt_include.hpp"
-
 #include "../buffered_string.hpp"
 #include "../constexpr_string.hpp"
 #include "../string.hpp"

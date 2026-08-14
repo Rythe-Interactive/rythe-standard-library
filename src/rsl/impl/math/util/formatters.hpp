@@ -1,8 +1,7 @@
 #pragma once
-#include "../../containers/string.hpp"
-#include "../../logging/fmt_include.hpp"
+#include "../../rsl_core.hpp"
 
-#include "../../util/assert.hpp"
+#include "../../containers/string.hpp"
 
 #include "../color.hpp"
 #include "../matrix/matrix.hpp"

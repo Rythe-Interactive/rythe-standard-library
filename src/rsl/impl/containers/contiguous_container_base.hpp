@@ -375,10 +375,10 @@ namespace rsl
         [[nodiscard]] [[rythe_always_inline]] constexpr operator const_view_type() const noexcept;
 
         // negative count will assume size() - abs(count)
-        [[nodiscard]] [[rythe_always_inline]] constexpr view_type subview(size_type offset, diff_type count = npos) noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr view_type subview(size_type offset, diff_type count = diff_npos) noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr const_view_type subview(
                 size_type offset,
-                diff_type count = npos
+                diff_type count = diff_npos
                 ) const noexcept;
 
         [[nodiscard]] [[rythe_always_inline]] constexpr value_type& front() noexcept;

@@ -3,6 +3,12 @@
 namespace rsl
 {
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
+    inline constexpr array_view<T, Iter, ConstIter>::array_view(std::initializer_list<value_type> initializerList)
+        : m_src(initializerList.begin()),
+          m_count(initializerList.size())
+    {}
+
+    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
     constexpr array_view<T, Iter, ConstIter>::operator array_view<const T, ConstIter>() const noexcept
         requires(!is_const_v<T>)
     {
@@ -10,19 +16,16 @@ namespace rsl
     }
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
-    constexpr array_view<T, Iter, ConstIter> array_view<T, Iter, ConstIter>::from_value(
-            T& src
-            ) noexcept
+    constexpr array_view<T, Iter, ConstIter> array_view<T, Iter, ConstIter>::from_value(T& src) noexcept
     {
         return from_buffer(&src, 1ull);
     }
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
     template <size_type N>
-    constexpr array_view<T, Iter, ConstIter>::array_view(
-            T (& arr)[N]
-            ) noexcept
-        : m_src(arr), m_count(N)
+    constexpr array_view<T, Iter, ConstIter>::array_view(T (&arr)[N]) noexcept
+        : m_src(arr),
+          m_count(N)
     {
         if constexpr (char_type<value_type>)
         {
@@ -41,10 +44,7 @@ namespace rsl
     }
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
-    constexpr array_view<T, Iter, ConstIter> array_view<T, Iter, ConstIter>::from_buffer(
-            T* ptr,
-            size_type count
-            ) noexcept
+    constexpr array_view<T, Iter, ConstIter> array_view<T, Iter, ConstIter>::from_buffer(T* ptr, size_type count) noexcept
     {
         array_view result;
         result.m_src = ptr;
@@ -54,10 +54,7 @@ namespace rsl
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
     template <not_same_as<T> Other>
-    constexpr array_view<T, Iter, ConstIter> array_view<T, Iter, ConstIter>::from_buffer(
-            Other* ptr,
-            const size_type count
-            ) noexcept
+    constexpr array_view<T, Iter, ConstIter> array_view<T, Iter, ConstIter>::from_buffer(Other* ptr, const size_type count) noexcept
         requires same_as<byte, remove_cvr_t<T>> && (is_const_v<T> || !is_const_v<Other>)
     {
         array_view result;
@@ -76,10 +73,8 @@ namespace rsl
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
     template <contiguous_iterator It>
-    constexpr array_view<T, Iter, ConstIter> array_view<T, Iter, ConstIter>::from_iterator_pair(
-            It first,
-            It last
-            ) noexcept(iter_noexcept_deref<It> && iter_noexcept_diff<It>)
+    constexpr array_view<T, Iter, ConstIter> array_view<T, Iter, ConstIter>::from_iterator_pair(It first, It last)
+            noexcept(iter_noexcept_deref<It> && iter_noexcept_diff<It>)
         requires same_as<iter_pointer_t<It>, T*>
     {
         return from_buffer(&(*first), last - first);
@@ -97,7 +92,10 @@ namespace rsl
     {
         for (size_type i = 0; i < this->size(); ++i)
         {
-            if (this->at(i) != rhs.at(i)) { return false; }
+            if (this->at(i) != rhs.at(i))
+            {
+                return false;
+            }
         }
 
         return true;
@@ -111,17 +109,20 @@ namespace rsl
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
     template <size_type N>
-    constexpr bool array_view<T, Iter, ConstIter>::operator==(const value_type (& rhs)[N]) const noexcept
+    constexpr bool array_view<T, Iter, ConstIter>::operator==(const value_type (&rhs)[N]) const noexcept
     {
         bool result = true;
-        for (size_type i = 0; i < this->size(); ++i) { result &= this->at(i) == rhs[i]; }
+        for (size_type i = 0; i < this->size(); ++i)
+        {
+            result &= this->at(i) == rhs[i];
+        }
 
         return result;
     }
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
     template <size_type N>
-    constexpr bool array_view<T, Iter, ConstIter>::operator!=(const value_type (& rhs)[N]) const noexcept
+    constexpr bool array_view<T, Iter, ConstIter>::operator!=(const value_type (&rhs)[N]) const noexcept
     {
         return !(*this == rhs);
     }
@@ -169,15 +170,15 @@ namespace rsl
     }
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
-    constexpr typename array_view<T, Iter, ConstIter>::const_reverse_iterator_type array_view<
-        T, Iter, ConstIter>::rbegin() const noexcept
+    constexpr typename array_view<T, Iter, ConstIter>::const_reverse_iterator_type
+            array_view<T, Iter, ConstIter>::rbegin() const noexcept
     {
         return crbegin();
     }
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
-    constexpr typename array_view<T, Iter, ConstIter>::const_reverse_iterator_type array_view<
-        T, Iter, ConstIter>::crbegin() const noexcept
+    constexpr typename array_view<T, Iter, ConstIter>::const_reverse_iterator_type
+            array_view<T, Iter, ConstIter>::crbegin() const noexcept
     {
         return const_reverse_iterator_type(cend());
     }
@@ -189,15 +190,15 @@ namespace rsl
     }
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
-    constexpr typename array_view<T, Iter, ConstIter>::const_reverse_iterator_type array_view<
-        T, Iter, ConstIter>::rend() const noexcept
+    constexpr typename array_view<T, Iter, ConstIter>::const_reverse_iterator_type
+            array_view<T, Iter, ConstIter>::rend() const noexcept
     {
         return crend();
     }
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
-    constexpr typename array_view<T, Iter, ConstIter>::const_reverse_iterator_type array_view<
-        T, Iter, ConstIter>::crend() const noexcept
+    constexpr typename array_view<T, Iter, ConstIter>::const_reverse_iterator_type
+            array_view<T, Iter, ConstIter>::crend() const noexcept
     {
         return const_reverse_iterator_type(cbegin());
     }
@@ -245,9 +246,8 @@ namespace rsl
     }
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
-    constexpr typename array_view<T, Iter, ConstIter>::const_reference array_view<T, Iter, ConstIter>::operator[](
-            const size_type n
-            ) const
+    constexpr typename array_view<T, Iter, ConstIter>::const_reference
+            array_view<T, Iter, ConstIter>::operator[](const size_type n) const
     {
         return at(n);
     }
@@ -283,10 +283,8 @@ namespace rsl
     }
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
-    constexpr array_view<T, Iter, ConstIter> array_view<T, Iter, ConstIter>::subview(
-            const size_type offset,
-            diff_type count
-            ) const noexcept
+    constexpr array_view<T, Iter, ConstIter>
+            array_view<T, Iter, ConstIter>::subview(const size_type offset, diff_type count) const noexcept
     {
         if (offset >= m_count)
         {
@@ -326,15 +324,12 @@ namespace rsl
         m_count = 0ull;
     }
 
-    template <contiguous_container_like ArrayType, weakly_equality_comparable_with<container_value_type<ArrayType>> Comparable,
-        convertible_to<container_value_type<ArrayType>> Replacement>
+    template <
+            contiguous_container_like ArrayType,
+            weakly_equality_comparable_with<container_value_type<ArrayType>> Comparable,
+            convertible_to<container_value_type<ArrayType>> Replacement>
     constexpr size_type linear_search_and_replace(
-            ArrayType& arr,
-            const Comparable& key,
-            const Replacement& replacement,
-            size_type offset,
-            size_type endSearch
-            ) noexcept
+            ArrayType& arr, const Comparable& key, const Replacement& replacement, size_type offset, size_type endSearch) noexcept
     {
         size_type count = 0ull;
         size_type index;
@@ -348,14 +343,15 @@ namespace rsl
         return count;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter,
-        weakly_equality_comparable_with<T> C, contiguous_iterator CIter, contiguous_iterator CConstIter>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            weakly_equality_comparable_with<T> C,
+            contiguous_iterator CIter,
+            contiguous_iterator CConstIter>
     constexpr size_type linear_search_sequence(
-            array_view<T, Iter, ConstIter> arr,
-            array_view<C, CIter, CConstIter> key,
-            size_type offset,
-            size_type endSearch
-            ) noexcept
+            array_view<T, Iter, ConstIter> arr, array_view<C, CIter, CConstIter> key, size_type offset, size_type endSearch) noexcept
     {
         if (offset >= endSearch)
         {
@@ -398,13 +394,15 @@ namespace rsl
         return npos;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter,
-        weakly_equality_comparable_with<T> C, contiguous_iterator CIter, contiguous_iterator CConstIter>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            weakly_equality_comparable_with<T> C,
+            contiguous_iterator CIter,
+            contiguous_iterator CConstIter>
     constexpr size_type reverse_linear_search_sequence(
-            array_view<T, Iter, ConstIter> arr,
-            array_view<C, CIter, CConstIter> key,
-            size_type offset
-            ) noexcept
+            array_view<T, Iter, ConstIter> arr, array_view<C, CIter, CConstIter> key, size_type offset) noexcept
     {
         if (key.size() > arr.size())
         {
@@ -444,14 +442,15 @@ namespace rsl
     }
 
     // TODO(Rowan): Implement a better search algo
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter,
-        weakly_equality_comparable_with<T> C, contiguous_iterator CIter, contiguous_iterator CConstIter>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            weakly_equality_comparable_with<T> C,
+            contiguous_iterator CIter,
+            contiguous_iterator CConstIter>
     constexpr size_type linear_search_collection(
-            array_view<T, Iter, ConstIter> arr,
-            array_view<C, CIter, CConstIter> key,
-            size_type offset,
-            size_type endSearch
-            ) noexcept
+            array_view<T, Iter, ConstIter> arr, array_view<C, CIter, CConstIter> key, size_type offset, size_type endSearch) noexcept
     {
         if (offset >= endSearch)
         {
@@ -463,20 +462,25 @@ namespace rsl
         {
             for (auto it = key.begin(); it != key.end(); ++it)
             {
-                if (*iter == *it) { return offset; }
+                if (*iter == *it)
+                {
+                    return offset;
+                }
             }
             ++offset;
         }
         return npos;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter,
-        weakly_equality_comparable_with<T> C, contiguous_iterator CIter, contiguous_iterator CConstIter>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            weakly_equality_comparable_with<T> C,
+            contiguous_iterator CIter,
+            contiguous_iterator CConstIter>
     constexpr size_type linear_search_outside_collection(
-            array_view<T, Iter, ConstIter> arr,
-            array_view<C, CIter, CConstIter> key,
-            size_type offset
-            ) noexcept
+            array_view<T, Iter, ConstIter> arr, array_view<C, CIter, CConstIter> key, size_type offset) noexcept
     {
         for (auto iter = arr.begin() + offset; iter != arr.end(); ++iter)
         {
@@ -490,20 +494,25 @@ namespace rsl
                 }
             }
 
-            if (found) { return offset; }
+            if (found)
+            {
+                return offset;
+            }
 
             ++offset;
         }
         return npos;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter,
-        weakly_equality_comparable_with<T> C, contiguous_iterator CIter, contiguous_iterator CConstIter>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            weakly_equality_comparable_with<T> C,
+            contiguous_iterator CIter,
+            contiguous_iterator CConstIter>
     constexpr size_type reverse_linear_search_collection(
-            array_view<T, Iter, ConstIter> arr,
-            array_view<C, CIter, CConstIter> key,
-            size_type offset
-            ) noexcept
+            array_view<T, Iter, ConstIter> arr, array_view<C, CIter, CConstIter> key, size_type offset) noexcept
     {
         using reverse_iter = typename array_view<T, Iter, ConstIter>::reverse_iterator_type;
         reverse_iter endIter = reverse_iter(arr.begin() + offset);
@@ -515,19 +524,24 @@ namespace rsl
             ++offset;
             for (auto it = keyBegin; it != keyEnd; ++it)
             {
-                if (*iter == *it) { return arr.size() - offset; }
+                if (*iter == *it)
+                {
+                    return arr.size() - offset;
+                }
             }
         }
         return npos;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter,
-        weakly_equality_comparable_with<T> C, contiguous_iterator CIter, contiguous_iterator CConstIter>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            weakly_equality_comparable_with<T> C,
+            contiguous_iterator CIter,
+            contiguous_iterator CConstIter>
     constexpr size_type reverse_linear_search_outside_collection(
-            array_view<T, Iter, ConstIter> arr,
-            array_view<C, CIter, CConstIter> key,
-            [[maybe_unused]] size_type offset
-            ) noexcept
+            array_view<T, Iter, ConstIter> arr, array_view<C, CIter, CConstIter> key, [[maybe_unused]] size_type offset) noexcept
     {
         using reverse_iter = typename array_view<T, Iter, ConstIter>::reverse_iterator_type;
         reverse_iter endIter = reverse_iter(arr.begin() + offset);
@@ -547,7 +561,10 @@ namespace rsl
                 }
             }
 
-            if (found) { return arr.size() - offset; }
+            if (found)
+            {
+                return arr.size() - offset;
+            }
         }
         return npos;
     }
@@ -607,13 +624,15 @@ namespace rsl
         return npos;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter,
-        weakly_equality_comparable_with<T> C, contiguous_iterator CIter, contiguous_iterator CConstIter>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            weakly_equality_comparable_with<T> C,
+            contiguous_iterator CIter,
+            contiguous_iterator CConstIter>
     constexpr size_type linear_count_sequence(
-            const array_view<T, Iter, ConstIter> arr,
-            const array_view<C, CIter, CConstIter> key,
-            const size_type offset
-            ) noexcept
+            const array_view<T, Iter, ConstIter> arr, const array_view<C, CIter, CConstIter> key, const size_type offset) noexcept
     {
         const size_type keyLength = key.size();
         const size_type strLength = arr.size();
@@ -630,13 +649,15 @@ namespace rsl
         return count;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter,
-        weakly_equality_comparable_with<T> C, contiguous_iterator CIter, contiguous_iterator CConstIter>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            weakly_equality_comparable_with<T> C,
+            contiguous_iterator CIter,
+            contiguous_iterator CConstIter>
     constexpr size_type linear_count_collection(
-            const array_view<T, Iter, ConstIter> arr,
-            const array_view<C, CIter, CConstIter> key,
-            const size_type offset
-            ) noexcept
+            const array_view<T, Iter, ConstIter> arr, const array_view<C, CIter, CConstIter> key, const size_type offset) noexcept
     {
         const size_type strLength = arr.size();
 
@@ -651,13 +672,15 @@ namespace rsl
         return count;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter,
-        weakly_equality_comparable_with<T> C, contiguous_iterator CIter, contiguous_iterator CConstIter>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            weakly_equality_comparable_with<T> C,
+            contiguous_iterator CIter,
+            contiguous_iterator CConstIter>
     constexpr size_type linear_count_outside_collection(
-            const array_view<T, Iter, ConstIter> arr,
-            const array_view<C, CIter, CConstIter> key,
-            const size_type offset
-            ) noexcept
+            const array_view<T, Iter, ConstIter> arr, const array_view<C, CIter, CConstIter> key, const size_type offset) noexcept
     {
         const size_type strLength = arr.size();
 
@@ -707,26 +730,30 @@ namespace rsl
     template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
     constexpr iterator_view<Iter, ConstIter>::iterator_view(iterator_type start, iterator_type end) noexcept
         : m_start(start),
-          m_end(end) {}
+          m_end(end)
+    {}
 
     template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
     constexpr iterator_view<Iter, ConstIter>::iterator_view(pointer ptr, size_type count) noexcept
         requires same_as<Iter, pointer>
         : m_start(ptr),
-          m_end(ptr + count) {}
+          m_end(ptr + count)
+    {}
 
     template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
     template <size_type N>
-    constexpr iterator_view<Iter, ConstIter>::iterator_view(value_type (& arr)[N]) noexcept
+    constexpr iterator_view<Iter, ConstIter>::iterator_view(value_type (&arr)[N]) noexcept
         requires same_as<Iter, pointer>
         : m_start(arr),
-          m_end(arr + N) {}
+          m_end(arr + N)
+    {}
 
     template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
     constexpr iterator_view<Iter, ConstIter>::iterator_view(const value_type& other) noexcept
         requires same_as<Iter, pointer>
         : m_start(&other),
-          m_end((&other) + 1u) {}
+          m_end((&other) + 1u)
+    {}
 
     template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
     constexpr iterator_view<Iter, ConstIter>::operator iterator_view<ConstIter>() noexcept
@@ -739,15 +766,19 @@ namespace rsl
     constexpr iterator_view<Iter, ConstIter>::operator contiguous_view_type() noexcept
         requires(contiguous_iterator<Iter> && contiguous_iterator<ConstIter>)
     {
-        if constexpr (!is_void_v<contiguous_view_type>) { return contiguous_view_type(&*m_start, size()); }
-        else { return contiguous_view_type(); }
+        if constexpr (!is_void_v<contiguous_view_type>)
+        {
+            return contiguous_view_type(&*m_start, size());
+        }
+        else
+        {
+            return contiguous_view_type();
+        }
     }
 
     template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
-    constexpr iterator_view<Iter, ConstIter> iterator_view<Iter, ConstIter>::from_string_length(
-            pointer str,
-            value_type terminator
-            ) noexcept
+    constexpr iterator_view<Iter, ConstIter>
+            iterator_view<Iter, ConstIter>::from_string_length(pointer str, value_type terminator) noexcept
         requires(char_type<value_type> && same_as<Iter, pointer>)
     {
         return iterator_view(str, str + string_length(str, terminator));
@@ -809,16 +840,16 @@ namespace rsl
     }
 
     template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
-    constexpr typename iterator_view<Iter, ConstIter>::const_reverse_iterator_type iterator_view<
-        Iter, ConstIter>::rbegin() const noexcept
+    constexpr typename iterator_view<Iter, ConstIter>::const_reverse_iterator_type
+            iterator_view<Iter, ConstIter>::rbegin() const noexcept
         requires(reverse_iterable)
     {
         return crbegin();
     }
 
     template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
-    constexpr typename iterator_view<Iter, ConstIter>::const_reverse_iterator_type iterator_view<
-        Iter, ConstIter>::crbegin() const noexcept
+    constexpr typename iterator_view<Iter, ConstIter>::const_reverse_iterator_type
+            iterator_view<Iter, ConstIter>::crbegin() const noexcept
         requires(reverse_iterable)
     {
         return const_reverse_iterator_type(cend());
@@ -832,16 +863,16 @@ namespace rsl
     }
 
     template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
-    constexpr typename iterator_view<Iter, ConstIter>::const_reverse_iterator_type iterator_view<
-        Iter, ConstIter>::rend() const noexcept
+    constexpr typename iterator_view<Iter, ConstIter>::const_reverse_iterator_type
+            iterator_view<Iter, ConstIter>::rend() const noexcept
         requires(reverse_iterable)
     {
         return crend();
     }
 
     template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
-    constexpr typename iterator_view<Iter, ConstIter>::const_reverse_iterator_type iterator_view<
-        Iter, ConstIter>::crend() const noexcept
+    constexpr typename iterator_view<Iter, ConstIter>::const_reverse_iterator_type
+            iterator_view<Iter, ConstIter>::crend() const noexcept
         requires(reverse_iterable)
     {
         return const_reverse_iterator_type(cbegin());

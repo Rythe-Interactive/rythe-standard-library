@@ -1,7 +1,5 @@
 #pragma once
-#include "../util/concepts.hpp"
-#include "../util/common.hpp"
-#include "../math/util/limits.hpp"
+#include "../rsl_core.hpp"
 
 namespace rsl
 {

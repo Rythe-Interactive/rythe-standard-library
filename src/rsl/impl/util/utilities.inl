@@ -1,10 +1,3 @@
-#pragma once
-
-#include "../defines.hpp"
-
-#include "common.hpp"
-#include "primitives.hpp"
-
 #if defined(RYTHE_MSVC)
     #include <intrin.h>
     #pragma intrinsic(_BitScanForward64)
@@ -69,5 +62,28 @@ namespace rsl
     [[rythe_always_inline]] constexpr To force_cast(const From& f) noexcept
     {
         return *bit_cast<To*>(&f);
+    }
+
+    template <typename To, typename From>
+    [[rythe_always_inline]] constexpr bool is_within_limits(const From& f) noexcept
+    {
+        if (f > 0ll && static_cast<uint_max>(f) > limits<To>::max)
+        {
+            return false;
+        }
+
+        if (f < 0ll && static_cast<int_max>(f) < static_cast<int_max>(limits<To>::min))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    template <typename To, typename From>
+    [[rythe_always_inline]] constexpr To narrowing_cast(const From& f) noexcept
+    {
+        rsl_assert_msg_soft_frequent(is_within_limits<To>(f), "Narrowing cast failed, value {} is out of range [{}, {}]", f, limits<To>::min, limits<To>::max)
+        return static_cast<To>(f);
     }
 } // namespace rsl

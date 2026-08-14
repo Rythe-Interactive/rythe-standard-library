@@ -24,27 +24,27 @@ namespace rsl::math
                 return limits<Scalar>::quiet_nan;
             }
 
-            if (limits<Scalar>::min > abs(value))
+            if (limits<Scalar>::epsilon > abs(value))
             {
                 return static_cast<Scalar>(0);
             }
 
-            if (limits<Scalar>::min > abs(value - half_pi<Scalar>))
+            if (limits<Scalar>::epsilon > abs(value - half_pi<Scalar>))
             {
                 return static_cast<Scalar>(1);
             }
 
-            if (limits<Scalar>::min > abs(value + half_pi<Scalar>))
+            if (limits<Scalar>::epsilon > abs(value + half_pi<Scalar>))
             {
                 return -static_cast<Scalar>(1);
             }
 
-            if (limits<Scalar>::min > abs(value - pi<Scalar>))
+            if (limits<Scalar>::epsilon > abs(value - pi<Scalar>))
             {
                 return static_cast<Scalar>(0);
             }
 
-            if (limits<Scalar>::min > abs(value + pi<Scalar>))
+            if (limits<Scalar>::epsilon > abs(value + pi<Scalar>))
             {
                 return -static_cast<Scalar>(0);
             }
@@ -60,12 +60,12 @@ namespace rsl::math
                 return limits<Scalar>::quiet_nan;
             }
 
-            if (limits<Scalar>::min > abs(value - static_cast<Scalar>(1)))
+            if (limits<Scalar>::epsilon > abs(value - static_cast<Scalar>(1)))
             {
                 return half_pi<Scalar>;
             }
 
-            if (limits<Scalar>::min > value)
+            if (limits<Scalar>::epsilon > value)
             {
                 return static_cast<Scalar>(0);
             }

@@ -1,5 +1,5 @@
 #pragma once
-#include "../../util/primitives.hpp"
+#include "../../rsl_core.hpp"
 #include "../basic/constraint.hpp"
 #include "../exponential/sqrt.hpp"
 #include "../matrix/matrix.hpp"

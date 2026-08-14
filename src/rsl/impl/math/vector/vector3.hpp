@@ -1,5 +1,5 @@
 #pragma once
-#include "../../defines.hpp"
+#include "../../rsl_core.hpp"
 #include "predefined.hpp"
 #include "vector_additions.hpp"
 

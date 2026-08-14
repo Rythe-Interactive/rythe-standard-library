@@ -1,6 +1,5 @@
 #pragma once
-#include "../../defines.hpp"
-#include "../util/limits.hpp"
+#include "../../rsl_core.hpp"
 
 #include "sqrt.hpp"
 #include <emmintrin.h>

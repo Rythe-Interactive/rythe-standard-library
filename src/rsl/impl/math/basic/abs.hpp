@@ -1,8 +1,5 @@
 #pragma once
-#include "../../defines.hpp"
-#include "../../util/primitives.hpp"
-#include "../../util/utilities.hpp"
-#include "../util/limits.hpp"
+#include "../../rsl_core.hpp"
 #include "../util/type_util.hpp"
 
 namespace rsl::math

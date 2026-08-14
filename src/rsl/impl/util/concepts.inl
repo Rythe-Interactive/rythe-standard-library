@@ -1,11 +1,6 @@
-#pragma once
-#include "../defines.hpp"
-
 RYTHE_MSVC_SUPPRESS_WARNING_WITH_PUSH(5046)
 #include <concepts>
 RYTHE_MSVC_SUPPRESS_WARNING_POP
-
-#include "common.hpp"
 
 namespace rsl
 {

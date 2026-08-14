@@ -1,11 +1,11 @@
 #pragma once
+// TODO(Glyn): Give this some love!!!
 #include <algorithm>
 #include <stdexcept>
 #include <unordered_map>
 #include <vector>
 
-#include "../util/common.hpp"
-#include "../util/primitives.hpp"
+#include "../rsl_core.hpp"
 #include "iterators.hpp"
 
 /**

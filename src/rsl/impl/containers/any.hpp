@@ -1,8 +1,6 @@
 #pragma once
 
-#include "../util/assert.hpp"
-#include "../util/common.hpp"
-#include "../util/primitives.hpp"
+#include "../rsl_core.hpp"
 
 namespace rsl
 {

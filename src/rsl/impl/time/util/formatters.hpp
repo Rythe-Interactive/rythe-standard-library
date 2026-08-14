@@ -1,6 +1,4 @@
 #pragma once
-#include "../../logging/fmt_include.hpp"
-
 #include "../time_span.hpp"
 
 // TODO(Glyn): Implement a propper time formatter

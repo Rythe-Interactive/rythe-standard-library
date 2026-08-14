@@ -1,9 +1,6 @@
 #pragma once
 
-#include "../defines.hpp"
-#include "../util/concepts.hpp"
-// ReSharper disable once CppUnusedIncludeDirective
-#include "../util/utilities.hpp"
+#include "../rsl_core.hpp"
 
 #include "../memory/managed_resource.hpp"
 

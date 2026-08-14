@@ -140,10 +140,10 @@ namespace rsl
             return dynamic_string::from_buffer(str, size);
         }
     } // namespace literals
+    
+    template <typename... Args>
+    [[nodiscard]] [[rythe_always_inline]] dynamic_string format(fmt::format_string<Args...> fmt, Args&&... args);
+    [[nodiscard]] [[rythe_always_inline]] dynamic_string format(string_view fmt, fmt::format_args args);
 } // namespace rsl
 
-#include "../logging/fmt_include.hpp"
-
 #include "string.inl"
-
-#include "../logging/fmt.inl"

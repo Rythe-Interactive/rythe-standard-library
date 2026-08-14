@@ -2,7 +2,7 @@
 #include "../basic/abs.hpp"
 #include "../basic/is_nan.hpp"
 #include "../basic/round.hpp"
-#include "../util/limits.hpp"
+#include "../../rsl_core.hpp"
 #include "tan.hpp"
 
 #include "tan_vector.inl"
@@ -19,7 +19,7 @@ namespace rsl::math
         {
             value -= half_pi<Scalar>;
 
-            if (limits<Scalar>::min > abs(value))
+            if (limits<Scalar>::epsilon > abs(value))
             {
                 return static_cast<Scalar>(1.633124e+16);
             }
@@ -100,7 +100,7 @@ namespace rsl::math
                 return limits<Scalar>::quiet_nan;
             }
 
-            if (limits<Scalar>::min > abs(value))
+            if (limits<Scalar>::epsilon > abs(value))
             {
                 return static_cast<Scalar>(0.0);
             }
@@ -188,7 +188,7 @@ namespace rsl::math
                 return limits<Scalar>::quiet_nan;
             }
 
-            if (limits<Scalar>::min > abs(value))
+            if (limits<Scalar>::epsilon > abs(value))
             {
                 return static_cast<Scalar>(0.0);
             }

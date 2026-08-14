@@ -6,56 +6,51 @@ namespace rsl
     namespace internal
     {
         template <typename T>
-        struct memset_zero : bool_constant<is_char_v<T>>
-        {
-        };
+        struct memset_zero : bool_constant<is_char_v<T>> {};
 
         template <typename T>
-            requires requires{ T::memset_zero; }
-        struct memset_zero<T> : bool_constant<T::memset_zero>
-        {
-        };
+            requires requires { T::memset_zero; }
+        struct memset_zero<T> : bool_constant<T::memset_zero> {};
 
         template <typename T, typename... Args>
         [[rythe_always_inline]] constexpr T default_construct_single_inline(Args&&... args)
-            noexcept(noexcept(factory<T>{}.construct_single_inline(forward<Args>(args)...)))
+                noexcept(noexcept(factory<T>{}.construct_single_inline(forward<Args>(args)...)))
         {
             return factory<T>{}.construct_single_inline(forward<Args>(args)...);
         }
 
         template <typename T, typename... Args>
         [[rythe_always_inline]] constexpr void* default_construct(void* ptr, size_type count, Args&&... args)
-            noexcept(noexcept(factory<T>{}.construct(ptr, count, forward<Args>(args)...)))
+                noexcept(noexcept(factory<T>{}.construct(ptr, count, forward<Args>(args)...)))
         {
             return factory<T>{}.construct(ptr, count, forward<Args>(args)...);
         }
 
         template <typename T>
         [[rythe_always_inline]] constexpr void* default_copy(void* dst, const void* src, size_type count)
-            noexcept(noexcept(factory<T>{}.copy(dst, static_cast<const T*>(src), count)))
+                noexcept(noexcept(factory<T>{}.copy(dst, static_cast<const T*>(src), count)))
         {
             return factory<T>{}.copy(dst, static_cast<const T*>(src), count);
         }
 
         template <typename T>
         [[rythe_always_inline]] constexpr void* default_move(void* dst, void* src, size_type count)
-            noexcept(noexcept(factory<T>{}.move(dst, static_cast<T*>(src), count)))
+                noexcept(noexcept(factory<T>{}.move(dst, static_cast<T*>(src), count)))
         {
             return factory<T>{}.move(dst, static_cast<T*>(src), count);
         }
 
         template <typename T>
         [[rythe_always_inline]] constexpr void default_destroy(void* ptr, size_type count)
-            noexcept(noexcept(factory<T>{}.destroy(static_cast<T*>(ptr), count)))
+                noexcept(noexcept(factory<T>{}.destroy(static_cast<T*>(ptr), count)))
         {
             factory<T>{}.destroy(static_cast<T*>(ptr), count);
         }
 
         template <typename...>
-        struct can_construct_from_view : false_type
-        {};
+        struct can_construct_from_view : false_type {};
 
-        template<typename T, typename Arg>
+        template <typename T, typename Arg>
         struct can_construct_from_view<T, Arg>
         {
             static constexpr bool value = has_static_from_view_v<T, T(Arg)>;
@@ -63,7 +58,7 @@ namespace rsl
     } // namespace internal
 
     template <constructible_at_all T>
-    template <typename ... Args>
+    template <typename... Args>
     constexpr T factory<T>::construct_single_inline(Args&&... args) noexcept(is_nothrow_constructible_v<T, Args...>)
     {
         if constexpr (internal::can_construct_from_view<T, Args...>::value)
@@ -79,7 +74,7 @@ namespace rsl
     template <constructible_at_all T>
     template <typename... Args>
     constexpr T* factory<T>::construct(void* ptr, const size_type count, Args&&... args)
-        noexcept(is_nothrow_constructible_v<T, Args...>)
+            noexcept(is_nothrow_constructible_v<T, Args...>)
     {
         if constexpr ((is_trivially_default_constructible_v<T>) && sizeof...(Args) == 0)
         {
@@ -96,7 +91,10 @@ namespace rsl
             {
                 T* first = new (ptr) T(T::from_view(args...));
 
-                for (size_type i = 1; i < count; i++) { new (first + i) T(T::from_view(args...)); }
+                for (size_type i = 1; i < count; i++)
+                {
+                    new (first + i) T(T::from_view(args...));
+                }
 
                 return first;
             }
@@ -104,7 +102,10 @@ namespace rsl
             {
                 T* first = new (ptr) T(rsl::forward<Args>(args)...);
 
-                for (size_type i = 1; i < count; i++) { new (first + i) T(rsl::forward<Args>(args)...); }
+                for (size_type i = 1; i < count; i++)
+                {
+                    new (first + i) T(rsl::forward<Args>(args)...);
+                }
 
                 return first;
             }
@@ -185,6 +186,5 @@ namespace rsl
           m_typeSize(sizeof(T)),
           m_triviallyCopyable(is_trivially_copyable_v<T>),
           m_typeId(rsl::type_id<T>())
-    {
-    }
+    {}
 } // namespace rsl

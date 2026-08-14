@@ -1,4 +1,3 @@
-#include "hash_map.hpp"
 #pragma once
 
 namespace rsl
@@ -559,7 +558,24 @@ namespace rsl
     {
         if constexpr (is_flat)
         {
-            return node_type(key, factory<mapped_type>::construct_single_inline(rsl::forward<Args>(args)...));
+            if constexpr (is_multi)
+            {
+                node_type node(key, factory<mapped_type>::construct_single_inline());
+                node.value().emplace_back(rsl::forward<Args>(args)...);
+                return rsl::move(node);
+            }
+            else
+            {
+                if constexpr (is_map)
+                {
+                    return node_type(key, factory<mapped_type>::construct_single_inline(rsl::forward<Args>(args)...));
+                }
+                else
+                {
+                    static_assert(sizeof...(Args) == 0ull);
+                    return node_type(key);
+                }
+            }
         }
         else
         {
@@ -595,7 +611,15 @@ namespace rsl
                 }
                 else
                 {
-                    return node_type(rsl::move(key), factory<mapped_type>::construct_single_inline(rsl::forward<Args>(args)...));
+                    if constexpr (is_map)
+                    {
+                        return node_type(rsl::move(key), factory<mapped_type>::construct_single_inline(rsl::forward<Args>(args)...));
+                    }
+                    else
+                    {
+                        static_assert(sizeof...(Args) == 0ull);
+                        return node_type(rsl::move(key));
+                    }
                 }
             }
             else
@@ -697,7 +721,7 @@ namespace rsl
         }
 
         m_maxPsl = 0;
-        m_minPsl = math::limits<storage_type>::max;
+        m_minPsl = limits<storage_type>::max;
         m_lastValueBucketIndex = 0;
         for (size_type i = 0; i < m_buckets.size(); ++i)
         {
@@ -923,7 +947,7 @@ namespace rsl
 
         if (recalcMin)
         {
-            m_minPsl = math::limits<storage_type>::max;
+            m_minPsl = limits<storage_type>::max;
             for (const bucket_type& bucket : m_buckets)
             {
                 psl_type unpackedPsl = unpack_bucket_psl(bucket);

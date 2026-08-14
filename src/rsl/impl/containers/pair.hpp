@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../util/concepts.hpp"
+#include "../rsl_core.hpp"
 
 namespace rsl
 {

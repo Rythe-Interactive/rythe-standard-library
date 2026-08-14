@@ -1,11 +1,8 @@
 #pragma once
+#include "../rsl_core.hpp"
 
-#include "../defines.hpp"
 #include "../containers/array.hpp"
 #include "../containers/string.hpp"
-#include "../math/util/limits.hpp"
-#include "../util/assert.hpp"
-#include "../util/primitives.hpp"
 
 namespace rsl
 {
@@ -31,7 +28,7 @@ namespace rsl
 
     using errid = RSL_ERR_ID_UNDERLYING;
 
-    #define RSL_ERR_MAX_COUNT rsl::math::limits<errid>::max
+    #define RSL_ERR_MAX_COUNT rsl::limits<errid>::max
 
     constexpr errid invalid_err_id = RSL_ERR_MAX_COUNT;
 
