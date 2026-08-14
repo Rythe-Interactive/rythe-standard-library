@@ -25,11 +25,29 @@ namespace rsl
             }
             return '-' == arg[0];
         }
+    } // namespace internal
+
+    void cli_parser::set_command_usage(string_view usage)
+    {
+        m_commandUsage = usage;
     }
 
-    void cli_parser::add_param(const string_view name, const string_view usage)
+    void cli_parser::add_param(const string_view name, bool isFlag, const string_view usagePattern)
     {
-        m_registeredParams.emplace(internal::trim_leading_dashes(name), usage);
+        m_registeredParams.emplace(
+                internal::trim_leading_dashes(name),
+                param_info{
+                        .isFlag = isFlag,
+                        .usagePattern = usagePattern,
+                });
+    }
+
+    void cli_parser::add_param(const array_view<const string_view> aliases, bool isFlag, const string_view usagePattern)
+    {
+        for (const string_view name : aliases)
+        {
+            add_param(name, isFlag, usagePattern);
+        }
     }
 
     void cli_parser::parse(const int argc, const char* const argv[])
@@ -41,7 +59,7 @@ namespace rsl
         m_args.resize(static_cast<size_type>(argc));
         for (size_type i = 0ull; i < m_args.size(); ++i)
         {
-            m_args[i].assign(string_view::from_string_length(argv[i]));
+            m_args[i] = string_view::from_string_length(argv[i]);
         }
 
         for (size_type i = 0ull; i < m_args.size(); ++i)
@@ -135,8 +153,23 @@ namespace rsl
         return {};
     }
 
+    void cli_parser::print_usage(const rsl::log::severity severity, pointer<rsl::log::logger> logger) const
+    {
+        if (logger == nullptr)
+        {
+            logger = rsl::get_logging_context().undecoratedLogger;
+        }
+
+        logger->logln(severity, "{}", m_commandUsage);
+        for (const auto& [param, info] : m_registeredParams)
+        {
+            logger->logln(severity, rsl::log::runtime_format(info.usagePattern), param);
+        }
+    }
+
     bool cli_parser::is_param(const string_view name) const noexcept
     {
-        return m_registeredParams.contains(name);
+        const param_info* info = m_registeredParams.find(name);
+        return info && !info->isFlag;
     }
 } // namespace rsl

@@ -2,6 +2,7 @@
 #include "../containers/string.hpp"
 #include "../containers/map/dynamic_map.hpp"
 #include "../containers/map/dynamic_set.hpp"
+#include "../logging/logging.hpp"
 
 namespace rsl
 {
@@ -20,9 +21,10 @@ namespace rsl
 
         cli_parser() = default;
 
-        void add_param(string_view name, string_view usage = {});
-        template <same_as<pair<string_view, string_view>>... Names>
-        [[rythe_always_inline]] void add_params(Names... names);
+        void set_command_usage(string_view usage);
+
+        void add_param(string_view name, bool isFlag = false, string_view usagePattern = "{}");
+        void add_param(array_view<const string_view> aliases, bool isFlag = false, string_view usagePattern = "{}");
 
         void parse(int argc, const char* const argv[]);
 
@@ -33,6 +35,7 @@ namespace rsl
         [[nodiscard]] [[rythe_always_inline]] args_iterator begin() const noexcept { return m_posArgs.cbegin(); }
         [[nodiscard]] [[rythe_always_inline]] args_iterator end() const noexcept { return m_posArgs.cend(); }
         [[nodiscard]] [[rythe_always_inline]] size_type size() const noexcept { return m_posArgs.size(); }
+        [[nodiscard]] [[rythe_always_inline]] bool is_empty() const noexcept { return m_posArgs.is_empty(); }
 
         [[nodiscard]] bool has_flag(string_view name) const noexcept;
         [[nodiscard]] bool has_flag(array_view<const string_view> aliases) const noexcept;
@@ -44,15 +47,25 @@ namespace rsl
         [[nodiscard]] args_view get_params(string_view name) const noexcept;
         [[nodiscard]] args_view get_params(array_view<const string_view> aliases) const noexcept;
 
+        // Will use the default undecorated logger if logger is nullptr
+        void print_usage(
+                rsl::log::severity severity = rsl::log::severity::info,
+                pointer<rsl::log::logger> logger = { nullptr }) const;
+
     private:
         bool is_param(string_view name) const noexcept;
 
-        dynamic_array<dynamic_string> m_args;
+        struct param_info
+        {
+            bool isFlag;
+            string_view usagePattern;
+        };
+
+        string_view m_commandUsage;
+        dynamic_array<string_view> m_args;
         params_container m_params;
         args_container m_posArgs;
         flags_container m_flags;
-        dynamic_map<dynamic_string, dynamic_string> m_registeredParams;
+        dynamic_map<string_view, param_info> m_registeredParams;
     };
 } // namespace rsl
-
-#include "cli_parser.inl"

@@ -9,8 +9,8 @@ namespace rsl
     struct logging_context
     {
         dynamic_string logFile = "logs/rythe.log"_ds;
-        log::logger* logger = nullptr;
-        log::logger* undecoratedLogger = nullptr;
+        pointer<log::logger> logger = { nullptr };
+        pointer<log::logger> undecoratedLogger = { nullptr };
     };
     RYTHE_DECLARE_SINGLETON(logging_context)
 

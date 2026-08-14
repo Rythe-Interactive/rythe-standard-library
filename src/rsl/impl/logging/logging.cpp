@@ -29,7 +29,7 @@ namespace rsl
                 undecoratedLogger.set_sinks(&defaultConsoleSink, &defaultFileSink);
                 undecoratedLogger.set_formatter<log::undecorated_formatter>();
 
-                context.undecoratedLogger = &undecoratedLogger;
+                context.undecoratedLogger = { &undecoratedLogger };
 
                 thread_local log::default_logger logger("default logger");
                 logger.set_sinks(&defaultConsoleSink, &defaultFileSink);
@@ -42,7 +42,7 @@ namespace rsl
                         log::message_flag_formatter{}
                         );
 
-                context.logger = &logger;
+                context.logger = { &logger };
 
                 undecoratedLogger.log(log::severity::info, "== Initializing Logging ==\n"_sv);
                 return context;
