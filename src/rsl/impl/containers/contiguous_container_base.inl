@@ -2,9 +2,15 @@
 
 namespace rsl
 {
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
-    contiguous_container_base() noexcept(is_nothrow_constructible_v<mem_rsc>)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::contiguous_container_base()
+            noexcept(is_nothrow_constructible_v<mem_rsc>)
     {
         if constexpr (!can_resize)
         {
@@ -12,11 +18,15 @@ namespace rsl
         }
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::contiguous_container_base(
-            const contiguous_container_base& src
-            ) noexcept(copy_construct_container_noexcept)
+            const contiguous_container_base& src) noexcept(copy_construct_container_noexcept)
         : mem_rsc(internal::alloc_and_factory_only_signal, src)
     {
         if (src.m_memorySize == 0ull)
@@ -30,11 +40,15 @@ namespace rsl
         copy_construct_from_unsafe_impl(0ull, calc_memory_size(m_size), src.get_ptr());
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::contiguous_container_base(
-            contiguous_container_base&& src
-            ) noexcept(move_construct_container_noexcept)
+            contiguous_container_base&& src) noexcept(move_construct_container_noexcept)
         : mem_rsc(internal::alloc_and_factory_only_signal, src)
     {
         if (src.is_static_memory())
@@ -53,8 +67,13 @@ namespace rsl
         src.construct_postfix();
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::~contiguous_container_base()
     {
         if constexpr (!can_resize)
@@ -129,39 +148,60 @@ namespace rsl
         }
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment> contiguous_container_base<T
-        , Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::from_value(value_type& src) noexcept
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::from_value(
+                    value_type& src) noexcept
     {
         return from_buffer(&src, 1ull);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     template <size_type N>
-    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment> contiguous_container_base<T
-        , Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::from_array(const value_type (& arr)[N]) noexcept(copy_construct_noexcept)
+    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::from_array(
+                    const value_type (&arr)[N]) noexcept(copy_construct_noexcept)
     {
         return from_buffer(arr, N);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     template <size_type N>
-    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment> contiguous_container_base<T
-        , Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::from_array(value_type (&& arr)[N]) noexcept(move_construct_noexcept)
+    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::from_array(
+                    value_type (&&arr)[N]) noexcept(move_construct_noexcept)
     {
         return move_from_buffer(arr, N);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment> contiguous_container_base<T
-        , Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::from_buffer(
-            const value_type* ptr,
-            const size_type count
-            ) noexcept(copy_construct_noexcept)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::from_buffer(
+                    const value_type* ptr, const size_type count) noexcept(copy_construct_noexcept)
     {
         contiguous_container_base result;
 
@@ -196,13 +236,16 @@ namespace rsl
         return result;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment> contiguous_container_base<T
-        , Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::move_from_buffer(
-            const value_type* ptr,
-            size_type count
-            ) noexcept(move_construct_noexcept)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::move_from_buffer(
+                    value_type* ptr, size_type count) noexcept(move_construct_noexcept)
     {
         contiguous_container_base result;
 
@@ -225,18 +268,78 @@ namespace rsl
         return result;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment> contiguous_container_base<T
-        , Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::from_view(const_view_type src) noexcept(copy_construct_noexcept)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::from_view(const_view_type src)
+                    noexcept(copy_construct_noexcept)
     {
         return from_buffer(src.data(), src.size());
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment> contiguous_container_base<T
-        , Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::from_string_length(const T* str, T terminator) noexcept
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::move_from_view(view_type src)
+                    noexcept(move_construct_noexcept)
+    {
+        return move_from_buffer(src.data(), src.size());
+    }
+
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    template <typename ViewIter, typename ViewConstIter>
+    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::from_view(
+                    iterator_view<ViewIter, ViewConstIter> src) noexcept(copy_construct_noexcept)
+    {
+        contiguous_container_base result;
+        result.assign(src);
+        return result;
+    }
+
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    template <typename ViewIter, typename ViewConstIter>
+    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::move_from_view(
+                    iterator_view<ViewIter, ViewConstIter> src) noexcept(move_construct_noexcept)
+    {
+        contiguous_container_base result;
+        result.assign(move_signal{}, src);
+        return result;
+    }
+
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::from_string_length(
+                    const T* str, T terminator) noexcept
         requires char_type<T>
     {
         return from_buffer(str, string_length(str, terminator));
@@ -257,20 +360,24 @@ namespace rsl
             }
         }
 
-        template <typename T, variadic_item_type<T> ... ItemTypes>
+        template <typename T, variadic_item_type<T>... ItemTypes>
         constexpr size_type calc_total_variadic_item_size(ItemTypes&&... items) noexcept
         {
             return (variadic_item_size<T>(rsl::forward<ItemTypes>(items)) + ...);
         }
-    }
+    } // namespace internal
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    template <variadic_item_type<T> ... ItemTypes>
-    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment> contiguous_container_base<T
-        , Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::from_variadic_items(
-            ItemTypes&&... items
-            ) noexcept(noexcept_construct_from_all<ItemTypes...>)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    template <variadic_item_type<T>... ItemTypes>
+    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::from_variadic_items(
+                    ItemTypes&&... items) noexcept(noexcept_construct_from_all<ItemTypes...>)
     {
         contiguous_container_base result;
         if constexpr (can_allocate)
@@ -280,9 +387,8 @@ namespace rsl
         else
         {
             rsl_assert_invalid_operation(
-                    contiguous_container_base::calc_memory_size(internal::calc_total_variadic_item_size<T>(rsl::forward<ItemTypes>(
-                        items)...)) <= static_capacity
-                    );
+                    contiguous_container_base::calc_memory_size(
+                            internal::calc_total_variadic_item_size<T>(rsl::forward<ItemTypes>(items)...)) <= static_capacity);
         }
 
         if constexpr (can_resize)
@@ -295,11 +401,17 @@ namespace rsl
         return result;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment> contiguous_container_base<T
-        , Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::create_reserved(const size_type capacity) noexcept
-        requires (can_allocate)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::create_reserved(
+                    const size_type capacity) noexcept
+        requires(can_allocate)
     {
         contiguous_container_base result;
         result.reserve(capacity);
@@ -307,14 +419,17 @@ namespace rsl
         return result;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     template <typename... Args>
-    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment> contiguous_container_base<T
-        , Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::create_in_place(
-            const size_type count,
-            Args&&... args
-            ) noexcept(construct_noexcept<Args...>)
+    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::create_in_place(
+                    const size_type count, Args&&... args) noexcept(construct_noexcept<Args...>)
     {
         contiguous_container_base result;
         result.reserve(count);
@@ -325,35 +440,55 @@ namespace rsl
         return result;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::size() const noexcept
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr size_type
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::size() const noexcept
     {
         return m_size;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr bool
             contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::is_empty() const noexcept
     {
         return m_size == 0;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr size_type contiguous_container_base<T, Iter, ConstIter,
-                                                  ContiguousContainerInfo, Untyped, Alignment>::capacity() const noexcept
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr size_type
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::capacity() const noexcept
     {
         return calc_max_size();
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>& contiguous_container_base<T,
-        Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::operator=(
-            const contiguous_container_base& src
-            ) noexcept(copy_assign_noexcept && copy_construct_noexcept)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>&
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::operator=(
+                    const contiguous_container_base& src) noexcept(copy_assign_noexcept && copy_construct_noexcept)
     {
         if constexpr (internal::is_static_resource_v<mem_rsc>)
         {
@@ -366,10 +501,16 @@ namespace rsl
         return *this;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>& contiguous_container_base<T,
-        Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::operator=(contiguous_container_base&& src) noexcept
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>&
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::operator=(
+                    contiguous_container_base&& src) noexcept
     {
         mem_rsc::set_allocator(src.get_allocator());
         mem_rsc::set_ptr(src.get_ptr());
@@ -383,15 +524,17 @@ namespace rsl
         return *this;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     template <typename... Args>
     constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::resize(
-            size_type newSize,
-            Args&&... args
-            )
-        noexcept(construct_noexcept<Args...> && move_construct_noexcept)
-        requires (can_resize)
+            size_type newSize, Args&&... args) noexcept(construct_noexcept<Args...> && move_construct_noexcept)
+        requires(can_resize)
     {
         destroy_postfix();
 
@@ -418,13 +561,17 @@ namespace rsl
         construct_postfix();
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::reserve(
-            size_type newCapacity
-            )
-        noexcept(move_construct_noexcept)
-        requires (can_allocate)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr void
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::reserve(size_type newCapacity)
+                    noexcept(move_construct_noexcept)
+        requires(can_allocate)
     {
         newCapacity = calc_memory_size(newCapacity);
 
@@ -436,10 +583,15 @@ namespace rsl
         rsl_ensure(resize_capacity_unsafe(newCapacity));
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::reset() noexcept
-        requires (can_resize)
+        requires(can_resize)
     {
         destroy_postfix();
         reset_unsafe_impl();
@@ -447,11 +599,16 @@ namespace rsl
         construct_postfix();
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr void contiguous_container_base<T, Iter, ConstIter,
-                                             ContiguousContainerInfo, Untyped, Alignment>::shrink_to_fit() noexcept(move_construct_noexcept)
-        requires (can_allocate)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::shrink_to_fit()
+            noexcept(move_construct_noexcept)
+        requires(can_allocate)
     {
         if (m_size == 0ull)
         {
@@ -470,13 +627,16 @@ namespace rsl
         rsl_ensure(resize_capacity_unsafe(calc_memory_size(m_size)));
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::push_back(
-            const value_type& value
-            )
-        noexcept(copy_construct_noexcept)
-        requires (can_resize)
+            const value_type& value) noexcept(copy_construct_noexcept)
+        requires(can_resize)
     {
         destroy_postfix();
 
@@ -487,13 +647,17 @@ namespace rsl
         construct_postfix();
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::push_back(
-            value_type&& value
-            )
-        noexcept(move_construct_noexcept)
-        requires (can_resize)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr void
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::push_back(value_type&& value)
+                    noexcept(move_construct_noexcept)
+        requires(can_resize)
     {
         destroy_postfix();
 
@@ -504,15 +668,18 @@ namespace rsl
         construct_postfix();
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     template <typename... Args>
     constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::value_type&
-    contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::emplace_back(
-            Args&&... args
-            )
-        noexcept(construct_noexcept<Args...> && move_construct_noexcept)
-        requires (can_resize)
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::emplace_back(Args&&... args)
+                    noexcept(construct_noexcept<Args...> && move_construct_noexcept)
+        requires(can_resize)
     {
         destroy_postfix();
 
@@ -525,22 +692,29 @@ namespace rsl
         return back();
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::pop_back()
-        noexcept
-        requires (can_resize)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::pop_back() noexcept
+        requires(can_resize)
     {
         reduce(1);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::reduce(
-            size_type count
-            )
-        noexcept
-        requires (can_resize)
+            size_type count) noexcept
+        requires(can_resize)
     {
         if (count > m_size) [[unlikely]]
         {
@@ -555,11 +729,15 @@ namespace rsl
         construct_postfix();
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::clear()
-        noexcept
-        requires (can_resize)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::clear() noexcept
+        requires(can_resize)
     {
         destroy_postfix();
         reset_unsafe_impl();
@@ -575,7 +753,7 @@ namespace rsl
             bool Untyped,
             size_type Alignment>
     inline constexpr void rsl::contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::assign(
-            array_view<const value_type> view)
+            const array_view<const value_type> view) noexcept(copy_construct_noexcept)
         requires(can_resize)
     {
         assign(view.data(), view.size());
@@ -584,190 +762,282 @@ namespace rsl
     template <
             typename T,
             contiguous_iterator Iter,
-            contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    inline constexpr void rsl::contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::assign(
+            move_signal, array_view<value_type> view) noexcept(move_construct_noexcept)
+        requires(can_resize)
+    {
+        clear();
+        insert(0, move_signal{}, view.data(), view.size());
+    }
+
+
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    template <typename ViewIter, typename ViewConstIter>
+    inline constexpr void rsl::contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::assign(
+            const iterator_view<ViewIter, ViewConstIter> view) noexcept(copy_construct_noexcept)
+        requires(can_resize)
+    {
+        assign(view.begin(), view.end());
+    }
+
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::assign(
-            const size_type count,
-            const value_type& value
-            )
-        requires (can_resize)
+            const size_type count, const value_type& value) noexcept(copy_construct_noexcept)
+        requires(can_resize)
     {
         clear();
         insert(0, count, value);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     template <input_iterator InputIt>
-    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
-    assign(InputIt first, InputIt last)
-        requires (can_resize)
+    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::assign(
+            InputIt first, InputIt last)
+        requires(can_resize)
     {
         clear();
         insert(0, first, last);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::assign(
-            const value_type* ptr,
-            const size_type count
-            )
-        requires (can_resize)
+            const value_type* ptr, const size_type count)
+        requires(can_resize)
     {
         clear();
         insert(0, ptr, count);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     template <size_type N>
-    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
-    assign(const value_type (& src)[N])
-        requires (can_resize || (N == static_capacity))
+    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::assign(
+            const value_type (&src)[N])
+        requires(can_resize || (N == static_capacity))
     {
         clear();
         insert<N>(0, src);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     template <size_type N>
-    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
-    assign(value_type (&& src)[N])
-        requires (can_resize || (N == static_capacity))
+    constexpr void
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::assign(value_type (&&src)[N])
+        requires(can_resize || (N == static_capacity))
     {
         clear();
         insert<N>(0, rsl::move(src));
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
-    iterator_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::iterator_at(
-            size_type i
-            )
-        noexcept
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::iterator_type
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::iterator_at(
+                    size_type i) noexcept
     {
         return begin() + i;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::const_iterator_type
-        contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::iterator_at(size_type i) const noexcept
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::iterator_at(
+                    size_type i) const noexcept
     {
         return begin() + i;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::append(
-            array_view<const value_type> other
-            ) noexcept(move_construct_noexcept && copy_construct_noexcept)
-        requires (can_resize)
+            array_view<const value_type> other) noexcept(move_construct_noexcept && copy_construct_noexcept)
+        requires(can_resize)
     {
         return insert(m_size, other);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::append(
-            move_signal,
-            array_view<value_type> other
-            ) noexcept(move_construct_noexcept)
-        requires (can_resize)
+            move_signal, array_view<value_type> other) noexcept(move_construct_noexcept)
+        requires(can_resize)
     {
         return insert(m_size, move_signal{}, other);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::append(
-            const value_type& value
-            )
-        noexcept(move_construct_noexcept && copy_construct_noexcept)
-        requires (can_resize)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr size_type
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::append(const value_type& value)
+                    noexcept(move_construct_noexcept && copy_construct_noexcept)
+        requires(can_resize)
     {
         return insert(m_size, value);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::append(
-            value_type&& value
-            )
-        noexcept(move_construct_noexcept)
-        requires (can_resize)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr size_type
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::append(value_type&& value)
+                    noexcept(move_construct_noexcept)
+        requires(can_resize)
     {
         return insert(m_size, rsl::move(value));
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::append(
-            const size_type count,
-            const value_type& value
-            ) noexcept(move_construct_noexcept && copy_construct_noexcept)
-        requires (can_resize)
+            const size_type count, const value_type& value) noexcept(move_construct_noexcept && copy_construct_noexcept)
+        requires(can_resize)
     {
         return insert(m_size, count, value);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     template <input_iterator InputIt>
     constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::append(
-            InputIt first,
-            InputIt last
-            ) noexcept(move_construct_noexcept && construct_noexcept<iter_read_t<InputIt>>)
-        requires (
-            can_resize)
+            InputIt first, InputIt last) noexcept(move_construct_noexcept && construct_noexcept<iter_read_t<InputIt>>)
+        requires(can_resize)
     {
         return insert(m_size, first, last);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::append(
-            const value_type* ptr,
-            const size_type count
-            ) noexcept(move_construct_noexcept && copy_construct_noexcept)
-        requires (can_resize)
+            const value_type* ptr, const size_type count) noexcept(move_construct_noexcept && copy_construct_noexcept)
+        requires(can_resize)
     {
         return insert(m_size, ptr, count);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     template <size_type N>
     constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::append(
-            const value_type (& src)[N]
-            ) noexcept(move_construct_noexcept && copy_construct_noexcept)
-        requires (can_resize
-        )
+            const value_type (&src)[N]) noexcept(move_construct_noexcept && copy_construct_noexcept)
+        requires(can_resize)
     {
         return insert(m_size, src);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     template <size_type N>
-    constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::append(
-            value_type (&& src)[N]
-            ) noexcept(move_construct_noexcept)
-        requires (can_resize)
+    constexpr size_type
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::append(value_type (&&src)[N])
+                    noexcept(move_construct_noexcept)
+        requires(can_resize)
     {
         return insert(m_size, rsl::move(src));
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::insert(
-            size_type pos,
-            array_view<const value_type> other
-            ) noexcept(move_construct_noexcept && copy_construct_noexcept)
-        requires (can_resize)
+            size_type pos, array_view<const value_type> other) noexcept(move_construct_noexcept && copy_construct_noexcept)
+        requires(can_resize)
     {
         const size_type count = other.size();
         split_reserve(pos, count);
@@ -777,14 +1047,16 @@ namespace rsl
         return pos;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::insert(
-            size_type pos,
-            move_signal,
-            array_view<value_type> other
-            ) noexcept(move_construct_noexcept)
-        requires (can_resize)
+            size_type pos, move_signal, array_view<value_type> other) noexcept(move_construct_noexcept)
+        requires(can_resize)
     {
         const size_type count = other.size();
         split_reserve(pos, count);
@@ -794,58 +1066,67 @@ namespace rsl
         return pos;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::insert(
-            size_type pos,
-            const value_type& value
-            ) noexcept(move_construct_noexcept && copy_construct_noexcept)
-        requires (can_resize)
+            size_type pos, const value_type& value) noexcept(move_construct_noexcept && copy_construct_noexcept)
+        requires(can_resize)
     {
         split_reserve(pos, 1);
         mem_rsc::construct(1, pos, value);
         return pos;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::insert(
-            size_type pos,
-            value_type&& value
-            ) noexcept(move_construct_noexcept)
-        requires (can_resize)
+            size_type pos, value_type&& value) noexcept(move_construct_noexcept)
+        requires(can_resize)
     {
         split_reserve(pos, 1);
         mem_rsc::construct(1, pos, move(value));
         return pos;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::insert(
-            size_type pos,
-            size_type count,
-            const value_type& value
-            ) noexcept(move_construct_noexcept && copy_construct_noexcept)
-        requires (can_resize)
+            size_type pos, size_type count, const value_type& value) noexcept(move_construct_noexcept && copy_construct_noexcept)
+        requires(can_resize)
     {
         split_reserve(pos, count);
         mem_rsc::construct(count, pos, value);
         return pos;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     template <input_iterator InputIt>
     constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::insert(
-            size_type pos,
-            InputIt first,
-            InputIt last
-            ) noexcept(move_construct_noexcept && construct_noexcept<iter_read_t<InputIt>>)
-        requires (
-            can_resize)
+            size_type pos, InputIt first, InputIt last) noexcept(move_construct_noexcept && construct_noexcept<iter_read_t<InputIt>>)
+        requires(can_resize)
     {
-        size_type count = iterator_diff(first, last);
+        const size_type count = narrowing_cast<size_type>(iterator_diff(first, last));
         split_reserve(pos, count);
 
         copy_construct_from_unsafe_impl(pos, pos + count, first);
@@ -853,14 +1134,16 @@ namespace rsl
         return pos;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::insert(
-            size_type pos,
-            const value_type* ptr,
-            const size_type count
-            ) noexcept(move_construct_noexcept && copy_construct_noexcept)
-        requires (can_resize)
+            size_type pos, const value_type* ptr, const size_type count) noexcept(move_construct_noexcept && copy_construct_noexcept)
+        requires(can_resize)
     {
         split_reserve(pos, count);
 
@@ -869,15 +1152,17 @@ namespace rsl
         return pos;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     template <size_type N>
     constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::insert(
-            size_type pos,
-            const value_type (& src)[N]
-            ) noexcept(move_construct_noexcept && copy_construct_noexcept)
-        requires (can_resize
-        )
+            size_type pos, const value_type (&src)[N]) noexcept(move_construct_noexcept && copy_construct_noexcept)
+        requires(can_resize)
     {
         split_reserve(pos, N);
 
@@ -886,14 +1171,17 @@ namespace rsl
         return pos;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     template <size_type N>
     constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::insert(
-            size_type pos,
-            value_type (&& src)[N]
-            ) noexcept(move_construct_noexcept)
-        requires (can_resize)
+            size_type pos, value_type (&&src)[N]) noexcept(move_construct_noexcept)
+        requires(can_resize)
     {
         split_reserve(pos, N);
 
@@ -902,11 +1190,17 @@ namespace rsl
         return pos;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
-    erase_swap(const size_type pos) noexcept(move_construct_noexcept)
-        requires (can_resize)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr size_type
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::erase_swap(const size_type pos)
+                    noexcept(move_construct_noexcept)
+        requires(can_resize)
     {
         rsl_assert_out_of_range(pos < m_size);
 
@@ -920,28 +1214,34 @@ namespace rsl
         return pos;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
-    erase_swap(const_view_type view) noexcept(move_construct_noexcept)
-        requires (can_resize)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::erase_swap(
+            const_view_type view) noexcept(move_construct_noexcept)
+        requires(can_resize)
     {
         rsl_assert_ptr_out_of_range(view.data(), mem_rsc::get_ptr(), mem_rsc::get_ptr() + m_size);
-        rsl_assert_ptr_out_of_range(
-                view.data() + view.size(),
-                mem_rsc::get_ptr(),
-                mem_rsc::get_ptr() + m_size
-                );
+        rsl_assert_ptr_out_of_range(view.data() + view.size(), mem_rsc::get_ptr(), mem_rsc::get_ptr() + m_size);
 
         size_type beginIndex = view.data() - mem_rsc::get_ptr();
         return erase_swap(beginIndex, view.size());
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
-    erase_swap(const size_type pos, size_type count) noexcept(move_construct_noexcept)
-        requires (can_resize)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::erase_swap(
+            const size_type pos, size_type count) noexcept(move_construct_noexcept)
+        requires(can_resize)
     {
         rsl_assert_out_of_range(pos < m_size);
         if (pos + count > m_size) [[unlikely]]
@@ -965,24 +1265,33 @@ namespace rsl
         return pos;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     template <typename Comp>
-    constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
-    erase_swap(const Comp& comparable) noexcept(move_construct_noexcept)
-        requires equality_comparable_with<Comp, T> &&
-        can_resize
+    constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::erase_swap(
+            const Comp& comparable) noexcept(move_construct_noexcept)
+        requires equality_comparable_with<Comp, T> && can_resize
     {
         return erase_swap([&](const_iterator_type iter) { return (*iter) == comparable; });
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     template <typename Func>
-    constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
-    erase_swap(Func&& comparer) noexcept(move_construct_noexcept)
-        requires invocable<Func, bool(ConstIter)> &&
-        can_resize
+    constexpr size_type
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::erase_swap(Func&& comparer)
+                    noexcept(move_construct_noexcept)
+        requires invocable<Func, bool(ConstIter)> && can_resize
     {
         size_type newSize = m_size;
         for (size_type i = m_size; i != 0ull; --i)
@@ -1006,11 +1315,17 @@ namespace rsl
         return erasureCount;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
-    erase_shift(size_type pos) noexcept(move_construct_noexcept)
-        requires (can_resize)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr size_type
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::erase_shift(size_type pos)
+                    noexcept(move_construct_noexcept)
+        requires(can_resize)
     {
         rsl_assert_out_of_range(pos < m_size);
 
@@ -1024,28 +1339,34 @@ namespace rsl
         return pos;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
-    erase_shift(const_view_type view) noexcept(move_construct_noexcept)
-        requires (can_resize)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::erase_shift(
+            const_view_type view) noexcept(move_construct_noexcept)
+        requires(can_resize)
     {
         rsl_assert_ptr_out_of_range(view.data(), mem_rsc::get_ptr(), mem_rsc::get_ptr() + m_size);
-        rsl_assert_ptr_out_of_range(
-                view.data() + view.size(),
-                mem_rsc::get_ptr(),
-                mem_rsc::get_ptr() + m_size
-                );
+        rsl_assert_ptr_out_of_range(view.data() + view.size(), mem_rsc::get_ptr(), mem_rsc::get_ptr() + m_size);
 
         size_type beginIndex = view.data() - mem_rsc::get_ptr();
         return erase_shift(beginIndex, view.size());
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
-    erase_shift(const size_type pos, size_type count) noexcept(move_construct_noexcept)
-        requires (can_resize)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::erase_shift(
+            const size_type pos, size_type count) noexcept(move_construct_noexcept)
+        requires(can_resize)
     {
         rsl_assert_out_of_range(pos < m_size);
         size_type last = pos + count;
@@ -1065,24 +1386,33 @@ namespace rsl
         return pos;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     template <typename Comp>
-    constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
-    erase_shift(const Comp& comparable) noexcept(move_construct_noexcept)
-        requires equality_comparable_with<Comp, T> &&
-        can_resize
+    constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::erase_shift(
+            const Comp& comparable) noexcept(move_construct_noexcept)
+        requires equality_comparable_with<Comp, T> && can_resize
     {
         return erase_shift([&](const_iterator_type iter) { return (*iter) == comparable; });
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     template <typename Func>
-    constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
-    erase_shift(Func&& comparer) noexcept(move_construct_noexcept)
-        requires invocable<Func, bool(ConstIter)> &&
-        can_resize
+    constexpr size_type
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::erase_shift(Func&& comparer)
+                    noexcept(move_construct_noexcept)
+        requires invocable<Func, bool(ConstIter)> && can_resize
     {
         size_type eraseLocation = npos;
         diff_type shift = -1ll;
@@ -1122,13 +1452,16 @@ namespace rsl
         return erasureCount;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::replace(
-            const size_type pos,
-            size_type count,
-            const_view_type replacement
-            ) noexcept(move_construct_noexcept && copy_construct_noexcept)
+            const size_type pos, size_type count, const_view_type replacement)
+            noexcept(move_construct_noexcept && copy_construct_noexcept)
     {
         rsl_assert_out_of_range(pos < m_size);
         size_type last = pos + count;
@@ -1151,248 +1484,391 @@ namespace rsl
         return pos;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::value_type&
-    contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::at(const size_type i) noexcept
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::at(const size_type i) noexcept
     {
         rsl_assert_out_of_range(i < m_size);
         return *get_ptr_at(i);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr const typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::value_type&
-    contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::at(const size_type i) const noexcept
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::at(
+                    const size_type i) const noexcept
     {
         rsl_assert_out_of_range(i < m_size);
         return *get_ptr_at(i);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::value_type&
-    contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::operator[](const size_type i) noexcept
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::operator[](
+                    const size_type i) noexcept
     {
         return at(i);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr const typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::value_type&
-    contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::operator[](
-            const size_type i
-            ) const noexcept
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::operator[](
+                    const size_type i) const noexcept
     {
         return at(i);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr T* contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::data() noexcept
     {
         return mem_rsc::get_ptr();
     }
 
     template <
-        typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-        ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr const T* contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::data() const noexcept
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr const T*
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::data() const noexcept
     {
         return mem_rsc::get_ptr();
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::view_type
-        contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::view() noexcept
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::view() noexcept
     {
         return view_type::from_buffer(mem_rsc::get_ptr(), m_size);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::const_view_type
-        contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::view() const noexcept
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::view() const noexcept
     {
         return const_view_type::from_buffer(mem_rsc::get_ptr(), m_size);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::operator view_type() noexcept
     {
         return view();
     }
 
     template <
-        typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-        ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::operator const_view_type(
-            ) const noexcept
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::operator const_view_type()
+            const noexcept
     {
         return view();
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::view_type
-        contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::subview(
-                size_type offset,
-                diff_type count
-                ) noexcept
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::subview(
+                    size_type offset, diff_type count) noexcept
     {
         return view().subview(offset, count);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::const_view_type
-        contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::subview(
-                size_type offset,
-                diff_type count
-                ) const noexcept
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::subview(
+                    size_type offset, diff_type count) const noexcept
     {
         return view().subview(offset, count);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::value_type&
-    contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::front() noexcept
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::front() noexcept
     {
         return at(0);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr const typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::value_type&
-    contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::front() const noexcept
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::front() const noexcept
     {
         return at(0);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::value_type&
-    contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::back() noexcept
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::back() noexcept
     {
         return at(m_size - 1);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr const typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::value_type&
-    contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::back() const noexcept
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::back() const noexcept
     {
         return at(m_size - 1);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::iterator_type
-        contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::begin() noexcept
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::begin() noexcept
     {
         return contiguous_container_base::iterator_type(mem_rsc::m_ptr);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::const_iterator_type
-        contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::begin() const noexcept
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::begin() const noexcept
     {
         return cbegin();
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::const_iterator_type
-        contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::cbegin() const noexcept
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::cbegin() const noexcept
     {
         return const_iterator_type(mem_rsc::get_ptr());
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::iterator_type
-        contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::end() noexcept
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::end() noexcept
     {
         return iterator_type(mem_rsc::get_ptr() + m_size);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::const_iterator_type
-        contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::end() const noexcept
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::end() const noexcept
     {
         return cend();
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::const_iterator_type
-        contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::cend() const noexcept
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::cend() const noexcept
     {
         return const_iterator_type(mem_rsc::get_ptr() + m_size);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::reverse_iterator_type
-        contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::rbegin() noexcept
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr
+            typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::reverse_iterator_type
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::rbegin() noexcept
     {
         return reverse_iterator_type(end());
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr typename contiguous_container_base<T, Iter, ConstIter,
-                                                 ContiguousContainerInfo, Untyped, Alignment>::const_reverse_iterator_type contiguous_container_base<
-        T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::rbegin() const noexcept
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
+            const_reverse_iterator_type
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::rbegin() const noexcept
     {
         return crbegin();
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr typename contiguous_container_base<T, Iter, ConstIter,
-                                                 ContiguousContainerInfo, Untyped, Alignment>::const_reverse_iterator_type contiguous_container_base<
-        T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::crbegin() const noexcept
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
+            const_reverse_iterator_type
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::crbegin() const noexcept
     {
         return const_reverse_iterator_type(cend());
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::reverse_iterator_type
-        contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::rend() noexcept
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr
+            typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::reverse_iterator_type
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::rend() noexcept
     {
         return reverse_iterator_type(begin());
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr typename contiguous_container_base<T, Iter, ConstIter,
-                                                 ContiguousContainerInfo, Untyped, Alignment>::const_reverse_iterator_type contiguous_container_base<
-        T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::rend() const noexcept
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
+            const_reverse_iterator_type
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::rend() const noexcept
     {
         return crend();
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr typename contiguous_container_base<T, Iter, ConstIter,
-                                                 ContiguousContainerInfo, Untyped, Alignment>::const_reverse_iterator_type contiguous_container_base<
-        T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::crend() const noexcept
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr typename contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
+            const_reverse_iterator_type
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::crend() const noexcept
     {
         return const_reverse_iterator_type(cbegin());
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr bool contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
-    maybe_shrink_to_static_storage() noexcept(move_construct_noexcept)
-        requires (can_allocate)
+            maybe_shrink_to_static_storage() noexcept(move_construct_noexcept)
+        requires(can_allocate)
     {
         if constexpr (internal::is_hybrid_resource_v<mem_rsc>)
         {
@@ -1419,10 +1895,15 @@ namespace rsl
         }
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr bool contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::maybe_grow()
-        noexcept(move_construct_noexcept)
+            noexcept(move_construct_noexcept)
     {
         if constexpr (can_allocate)
         {
@@ -1447,11 +1928,16 @@ namespace rsl
         }
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr bool contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
-    resize_capacity_unsafe(const size_type newCapacity) noexcept(move_construct_noexcept)
-        requires (can_allocate)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr bool contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::resize_capacity_unsafe(
+            const size_type newCapacity) noexcept(move_construct_noexcept)
+        requires(can_allocate)
     {
         const size_type oldCapacity = m_memorySize;
         if constexpr (internal::is_dynamic_resource_v<mem_rsc>)
@@ -1516,14 +2002,16 @@ namespace rsl
         return true;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
-    copy_assign_impl(
-            const value_type* src,
-            size_type srcSize,
-            const void* allocOrFactory
-            ) noexcept(copy_assign_noexcept && copy_construct_noexcept)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::copy_assign_impl(
+            const value_type* src, size_type srcSize, const void* allocOrFactory)
+            noexcept(copy_assign_noexcept && copy_construct_noexcept)
     {
         if constexpr (!can_resize)
         {
@@ -1583,13 +2071,15 @@ namespace rsl
         construct_postfix();
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
-    move_data_assign_impl(
-            const value_type* src,
-            size_type srcSize
-            ) noexcept(move_assign_noexcept && move_construct_noexcept)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::move_data_assign_impl(
+            const value_type* src, size_type srcSize) noexcept(move_assign_noexcept && move_construct_noexcept)
     {
         if constexpr (!can_resize)
         {
@@ -1640,11 +2130,7 @@ namespace rsl
 
         if (m_size < srcSize)
         {
-            move_construct_from_unsafe_impl(
-                    m_size,
-                    srcSize,
-                    src + m_size
-                    );
+            move_construct_from_unsafe_impl(m_size, srcSize, src + m_size);
             m_size = srcSize;
         }
 
@@ -1662,11 +2148,16 @@ namespace rsl
         construct_postfix();
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
-    split_reserve(size_type pos, diff_type offset) noexcept(move_construct_noexcept)
-        requires (can_resize)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::split_reserve(
+            size_type pos, diff_type offset) noexcept(move_construct_noexcept)
+        requires(can_resize)
     {
         rsl_assert_out_of_range(pos < m_size || m_size == 0ull);
         rsl_assert_invalid_operation_frequent(static_cast<diff_type>(pos) + offset >= 0ll);
@@ -1728,11 +2219,16 @@ namespace rsl
         construct_postfix();
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator
-              ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
-    erase_swap_unsafe_impl(size_type pos) noexcept(move_construct_noexcept)
-        requires (can_resize)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::erase_swap_unsafe_impl(
+            size_type pos) noexcept(move_construct_noexcept)
+        requires(can_resize)
     {
         mem_rsc::destroy(1, pos);
 
@@ -1745,15 +2241,16 @@ namespace rsl
     }
 
     template <
-        typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-        ContiguousContainerInfo, bool Untyped, size_type Alignment>
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     template <input_iterator InputIt>
-    constexpr void contiguous_container_base<T, Iter, ConstIter,
-                                             ContiguousContainerInfo, Untyped, Alignment>::copy_assign_from_unsafe_impl(
-            const size_type offset,
-            const size_type end,
-            InputIt srcIter
-            ) noexcept(copy_assign_noexcept)
+    constexpr void
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::copy_assign_from_unsafe_impl(
+                    const size_type offset, const size_type end, InputIt srcIter) noexcept(copy_assign_noexcept)
     {
         for (auto to = mem_rsc::get_ptr() + offset; to != mem_rsc::get_ptr() + end; ++to, ++srcIter)
         {
@@ -1762,15 +2259,16 @@ namespace rsl
     }
 
     template <
-        typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-        ContiguousContainerInfo, bool Untyped, size_type Alignment>
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     template <input_iterator InputIt>
-    constexpr void contiguous_container_base<T, Iter, ConstIter,
-                                             ContiguousContainerInfo, Untyped, Alignment>::copy_construct_from_unsafe_impl(
-            const size_type offset,
-            const size_type end,
-            InputIt srcIter
-            ) noexcept(copy_construct_noexcept)
+    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
+            copy_construct_from_unsafe_impl(const size_type offset, const size_type end, InputIt srcIter)
+                    noexcept(copy_construct_noexcept)
     {
         if constexpr (is_pointer_v<InputIt>)
         {
@@ -1786,15 +2284,16 @@ namespace rsl
     }
 
     template <
-        typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-        ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    template <input_iterator InputIt>
-    constexpr void contiguous_container_base<T, Iter, ConstIter,
-                                             ContiguousContainerInfo, Untyped, Alignment>::move_assign_from_unsafe_impl(
-            const size_type offset,
-            const size_type end,
-            InputIt srcIter
-            ) noexcept(move_assign_noexcept)
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    template <movable_input_iterator InputIt>
+    constexpr void
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::move_assign_from_unsafe_impl(
+                    const size_type offset, const size_type end, InputIt srcIter) noexcept(move_assign_noexcept)
     {
         for (auto to = mem_rsc::get_ptr() + offset; to != mem_rsc::get_ptr() + end; ++to, ++srcIter)
         {
@@ -1802,15 +2301,17 @@ namespace rsl
         }
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    template <input_iterator InputIt>
-    constexpr void contiguous_container_base<T, Iter, ConstIter,
-                                             ContiguousContainerInfo, Untyped, Alignment>::move_construct_from_unsafe_impl(
-            const size_type offset,
-            const size_type end,
-            InputIt srcIter
-            ) noexcept(move_construct_noexcept)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    template <movable_input_iterator InputIt>
+    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::
+            move_construct_from_unsafe_impl(const size_type offset, const size_type end, InputIt srcIter)
+                    noexcept(move_construct_noexcept)
     {
         if constexpr (is_pointer_v<InputIt>)
         {
@@ -1825,14 +2326,16 @@ namespace rsl
         }
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     template <typename Type, typename... Types>
     void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::container_construct_items(
-            const size_type offset,
-            Type&& arg,
-            Types&&... args
-            ) noexcept(noexcept_construct_from_all<Type, Types...>)
+            const size_type offset, Type&& arg, Types&&... args) noexcept(noexcept_construct_from_all<Type, Types...>)
     {
         if constexpr (container_like<Type> || is_array_v<Type>)
         {
@@ -1857,33 +2360,33 @@ namespace rsl
 
         if constexpr (sizeof...(Types) != 0)
         {
-            container_construct_items(
-                    offset + internal::variadic_item_size<value_type>(arg),
-                    rsl::forward<Types>(args)...
-                    );
+            container_construct_items(offset + internal::variadic_item_size<value_type>(arg), rsl::forward<Types>(args)...);
         }
     }
 
     template <
-        typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-        ContiguousContainerInfo, bool Untyped, size_type Alignment>
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     template <typename... Args>
     constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::emplace_unsafe_impl(
-            const size_type offset,
-            const size_type end,
-            Args&&... args
-            ) noexcept(construct_noexcept<Args...>)
+            const size_type offset, const size_type end, Args&&... args) noexcept(construct_noexcept<Args...>)
     {
         mem_rsc::construct(end - offset, offset, rsl::forward<Args>(args)...);
     }
 
     template <
-        typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-        ContiguousContainerInfo, bool Untyped, size_type Alignment>
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::reset_unsafe_impl(
-            const size_type offset,
-            size_type end
-            ) noexcept
+            const size_type offset, size_type end) noexcept
     {
         if (end > m_size) [[unlikely]]
         {
@@ -1893,13 +2396,16 @@ namespace rsl
         mem_rsc::destroy(end - offset, offset);
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::move_shift_elements_unsafe(
-            const size_type offset,
-            const size_type end,
-            const diff_type shift
-            ) noexcept(move_construct_noexcept)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr void
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::move_shift_elements_unsafe(
+                    const size_type offset, const size_type end, const diff_type shift) noexcept(move_construct_noexcept)
     {
         if (shift > 0ll)
         {
@@ -1920,28 +2426,41 @@ namespace rsl
         }
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr T* contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::get_ptr_at(
-            const size_type i
-            ) noexcept
+            const size_type i) noexcept
     {
         return mem_rsc::get_ptr() + i;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr const T* contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::get_ptr_at(
-            const size_type i
-            ) const noexcept
+            const size_type i) const noexcept
     {
         return mem_rsc::get_ptr() + i;
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr void contiguous_container_base<T, Iter, ConstIter,
-                                             ContiguousContainerInfo, Untyped, Alignment>::shrink_to_postfix() noexcept
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr void
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::shrink_to_postfix() noexcept
     {
         if constexpr (use_post_fix)
         {
@@ -1965,10 +2484,15 @@ namespace rsl
         }
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr void contiguous_container_base<T, Iter, ConstIter,
-                                             ContiguousContainerInfo, Untyped, Alignment>::construct_postfix() noexcept(construct_noexcept<>)
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr void contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::construct_postfix()
+            noexcept(construct_noexcept<>)
     {
         if constexpr (use_post_fix)
         {
@@ -1979,10 +2503,15 @@ namespace rsl
         }
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr void contiguous_container_base<T, Iter, ConstIter,
-                                             ContiguousContainerInfo, Untyped, Alignment>::destroy_postfix() noexcept
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr void
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::destroy_postfix() noexcept
     {
         if constexpr (use_post_fix)
         {
@@ -1993,10 +2522,15 @@ namespace rsl
         }
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
-    constexpr size_type contiguous_container_base<T, Iter, ConstIter,
-                                                  ContiguousContainerInfo, Untyped, Alignment>::calc_max_size() const noexcept
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
+    constexpr size_type
+            contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::calc_max_size() const noexcept
     {
         if constexpr (use_post_fix)
         {
@@ -2008,11 +2542,15 @@ namespace rsl
         }
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename
-              ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr size_type contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>::calc_memory_size(
-            const size_type itemCount
-            ) noexcept
+            const size_type itemCount) noexcept
     {
         if constexpr (use_post_fix)
         {
@@ -2024,11 +2562,16 @@ namespace rsl
         }
     }
 
-    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter, typename ContiguousContainerInfo, bool Untyped, size_type Alignment>
+    template <
+            typename T,
+            contiguous_iterator Iter,
+            contiguous_iterator ConstIter,
+            typename ContiguousContainerInfo,
+            bool Untyped,
+            size_type Alignment>
     constexpr bool operator==(
             const contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>& lhs,
-            const contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>& rhs
-            ) noexcept
+            const contiguous_container_base<T, Iter, ConstIter, ContiguousContainerInfo, Untyped, Alignment>& rhs) noexcept
     {
         if (lhs.size() != rhs.size())
         {

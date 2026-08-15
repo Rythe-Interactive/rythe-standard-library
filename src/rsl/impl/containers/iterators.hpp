@@ -204,9 +204,16 @@ namespace rsl
     template <typename It>
     concept input_iterator = weak_input_or_output_iterator<It> && indirectly_readable<It>;
 
+    template <typename It>
+    concept movable_input_iterator =
+            input_iterator<It> && requires(It&& iter, iter_reference_t<It> val) { val = static_cast<iter_read_t<It>&&>(*iter); };
+
     template <typename It, typename T>
     concept output_iterator = weak_input_or_output_iterator<It> && indirectly_writable<It, T> &&
                               requires(It iter, T&& val) { *iter++ = static_cast<T&&>(val); };
+
+    template <typename It, typename T>
+    concept input_output_iterator = input_iterator<It> && output_iterator<It, T>;
 
     template <typename It>
     concept forward_iterator = input_iterator<It> && incrementable<It> && sentinel_for<It, It>;

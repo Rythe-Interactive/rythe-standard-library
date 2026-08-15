@@ -12,6 +12,8 @@ namespace rsl
     template <typename MapInfo, weak_input_or_output_iterator NodeIter>
     class hash_map_iterator
     {
+        template <typename OtherMapInfo, weak_input_or_output_iterator OtherNodeIter>
+        friend class hash_map_iterator;
     public:
         static constexpr bool is_map = MapInfo::is_map;
         static constexpr bool is_set = MapInfo::is_set;
