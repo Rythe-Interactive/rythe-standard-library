@@ -7,45 +7,39 @@ namespace rsl
     inline constexpr pair<T1, T2>::pair() noexcept(is_nothrow_constructible_v<U1> && is_nothrow_constructible_v<U2>)
         : first(),
           second()
-    {
-    }
+    {}
 
     template <typename T1, typename T2>
     inline constexpr pair<T1, T2>::pair(first_type&& lhs, second_type&& rhs)
-        noexcept(is_nothrow_move_constructible_v<first_type> && is_nothrow_move_constructible_v<second_type>)
+            noexcept(is_nothrow_move_constructible_v<first_type> && is_nothrow_move_constructible_v<second_type>)
         : first(move(lhs)),
           second(move(rhs))
-    {
-    }
+    {}
 
     template <typename T1, typename T2>
     template <typename U1, typename U2>
     inline constexpr pair<T1, T2>::pair(U1&& lhs, U2&& rhs)
-        noexcept(is_nothrow_constructible_v<first_type, U1> && is_nothrow_constructible_v<second_type, U2>)
+            noexcept(is_nothrow_constructible_v<first_type, U1> && is_nothrow_constructible_v<second_type, U2>)
         : first(forward<U1>(lhs)),
           second(forward<U2>(rhs))
-    {
-    }
+    {}
 
     template <typename A, typename B>
-    [[rythe_always_inline]] constexpr bool operator==(pair<A, B> const& x, pair<A, B> const& y) noexcept(
-        noexcept(declval<A const&>() == declval<A const&>()) && noexcept(declval<B const&>() == declval<B const&>())
-    )
+    [[rythe_always_inline]] constexpr bool operator==(pair<A, B> const& x, pair<A, B> const& y)
+            noexcept(noexcept(declval<A const&>() == declval<A const&>()) && noexcept(declval<B const&>() == declval<B const&>()))
     {
         return (x.first == y.first) && (x.second == y.second);
     }
 
     template <typename A, typename B>
-    [[rythe_always_inline]] constexpr bool operator!=(pair<A, B> const& x, pair<A, B> const& y)
-        noexcept(noexcept(x == y))
+    [[rythe_always_inline]] constexpr bool operator!=(pair<A, B> const& x, pair<A, B> const& y) noexcept(noexcept(x == y))
     {
         return !(x == y);
     }
 
     template <typename A, typename B>
-    [[rythe_always_inline]] constexpr bool operator<(pair<A, B> const& x, pair<A, B> const& y) noexcept(
-        noexcept(declval<A const&>() < declval<A const&>()) && noexcept(declval<B const&>() < declval<B const&>())
-    )
+    [[rythe_always_inline]] constexpr bool operator<(pair<A, B> const& x, pair<A, B> const& y)
+            noexcept(noexcept(declval<A const&>() < declval<A const&>()) && noexcept(declval<B const&>() < declval<B const&>()))
     {
         return x.first < y.first || (!(y.first < x.first) && x.second < y.second);
     }
@@ -57,15 +51,13 @@ namespace rsl
     }
 
     template <typename A, typename B>
-    [[rythe_always_inline]] constexpr bool operator<=(pair<A, B> const& x, pair<A, B> const& y)
-        noexcept(noexcept(x > y))
+    [[rythe_always_inline]] constexpr bool operator<=(pair<A, B> const& x, pair<A, B> const& y) noexcept(noexcept(x > y))
     {
         return !(x > y);
     }
 
     template <typename A, typename B>
-    [[rythe_always_inline]] constexpr bool operator>=(pair<A, B> const& x, pair<A, B> const& y)
-        noexcept(noexcept(x < y))
+    [[rythe_always_inline]] constexpr bool operator>=(pair<A, B> const& x, pair<A, B> const& y) noexcept(noexcept(x < y))
     {
         return !(x < y);
     }
@@ -104,7 +96,7 @@ namespace rsl
             return val.second;
         }
     }
-    
+
     template <size_type I, typename T1, typename T2>
     [[rythe_always_inline]] constexpr element_at_t<I, T1, T2>&& get(pair<T1, T2>&& val) noexcept
     {
@@ -129,7 +121,7 @@ namespace rsl
     {
         return get<index_of_element_v<T, T1, T2>>(val);
     }
-    
+
     template <typename T, typename T1, typename T2>
     [[rythe_always_inline]] constexpr T&& get(pair<T1, T2>&& val) noexcept
     {
@@ -140,7 +132,5 @@ namespace rsl
     struct tuple_size;
 
     template <typename T1, typename T2>
-    struct tuple_size<pair<T1, T2>> : public integral_constant<size_type, 2>
-    {
-    };
+    struct tuple_size<pair<T1, T2>> : public integral_constant<size_type, 2> {};
 } // namespace rsl

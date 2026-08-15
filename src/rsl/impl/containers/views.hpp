@@ -344,6 +344,8 @@ namespace rsl
             requires same_as<Iter, pointer>;
         [[rythe_always_inline]] constexpr iterator_view(const value_type& other) noexcept
             requires same_as<Iter, pointer>;
+        [[rythe_always_inline]] constexpr iterator_view(array_view<value_type> other) noexcept
+            requires same_as<Iter, pointer>;
 
         [[nodiscard]] [[rythe_always_inline]] constexpr operator iterator_view<const_iterator_type>() noexcept
             requires(!is_const_v<value_type>);
@@ -391,7 +393,10 @@ namespace rsl
     };
 
     template <weak_input_or_output_iterator Iter>
-    iterator_view(Iter, Iter) -> iterator_view<iter_read_t<remove_cvr_t<Iter>>, remove_cvr_t<Iter>>;
+    iterator_view(Iter, Iter) -> iterator_view<remove_cvr_t<Iter>>;
+
+    template <typename T>
+    iterator_view(array_view<T>) -> iterator_view<typename array_view<T>::iterator_type>;
 
     template <has_view<any_type()> Container>
     [[nodiscard]] constexpr auto view(Container&& container) noexcept -> decltype(container.view())

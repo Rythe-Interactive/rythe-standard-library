@@ -1,4 +1,5 @@
 #pragma once
+#include "../../rsl_core.hpp"
 
 #include "../any.hpp"
 #include "../array.hpp"
@@ -13,8 +14,6 @@
 
 // ReSharper disable once CppUnusedIncludeDirective
 #include "../reference_wrapper.hpp" // used in .inl
-// ReSharper disable once CppUnusedIncludeDirective
-#include "../../rsl_core.hpp" // used in .inl
 
 namespace rsl
 {
@@ -46,7 +45,7 @@ namespace rsl
 
         constexpr static bool view_hash_identical = true;
 
-    private:
+    protected:
         using data_pool = conditional_storage<!is_flat, memory_pool<value_type>>;
         using value_container = dynamic_array<node_type>;
         using bucket_container = dynamic_array<bucket_type>;
@@ -59,6 +58,12 @@ namespace rsl
         using key_view_alternative = MapInfo::key_view_alternative;
         constexpr static bool has_key_view_alternative = MapInfo::has_key_view_alternative;
 
+        constexpr static bool copy_construct_container_noexcept = MapInfo::nothrow_copy_constructible;
+        constexpr static bool construct_container_noexcept = MapInfo::nothrow_constructible;
+
+        constexpr static bool copy_assign_noexcept = false /*TODO(Glyn)*/;
+        constexpr static bool copy_construct_noexcept = false /*TODO(Glyn)*/;
+
     public:
         using iterator_type = hash_map_iterator<hash_map_base, typename value_container::iterator_type>;
         using const_iterator_type = hash_map_iterator<hash_map_base, typename value_container::const_iterator_type>;
@@ -68,6 +73,7 @@ namespace rsl
         using view_type = iterator_view<iterator_type, const_iterator_type>;
         using const_view_type = typename view_type::const_view_type;
 
+        // TODO(Glyn): Move, copy and assign.
         [[rythe_always_inline]] constexpr hash_map_base() noexcept(MapInfo::nothrow_constructible);
 
         [[rythe_always_inline]] constexpr hash_map_base(const hasher_type& h, const key_comparer_type& equal)
@@ -82,6 +88,8 @@ namespace rsl
         [[rythe_always_inline]] explicit constexpr hash_map_base(allocator_storage allocator)
             noexcept(nothrow_constructible_alloc);
 
+        [[rythe_always_inline]] constexpr static hash_map_base from_view(array_view<const typename MapInfo::input_type> src);
+
         template <typename Iter, typename ConstIter>
         [[rythe_always_inline]] constexpr static hash_map_base from_view(iterator_view<Iter, ConstIter> src);
 
@@ -95,8 +103,14 @@ namespace rsl
         [[nodiscard]] [[rythe_always_inline]] constexpr bool empty() const noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr size_type capacity() const noexcept;
 
+        //[[rythe_always_inline]] constexpr hash_map_base& operator=(const hash_map_base& src)
+        //        noexcept(copy_assign_noexcept && copy_construct_noexcept) = default;
+        //[[rythe_always_inline]] constexpr hash_map_base& operator=(hash_map_base&& src) noexcept = default;
+
         [[nodiscard]] [[rythe_always_inline]] constexpr const_view_type view() const noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr view_type view() noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr operator view_type() noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr operator const_view_type() const noexcept;
 
         void reserve(size_type newCapacity)
             noexcept(noexcept(declval<bucket_container>().reserve(0)) && noexcept(declval<value_container>().reserve(0))

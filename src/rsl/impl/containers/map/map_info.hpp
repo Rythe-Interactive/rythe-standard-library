@@ -12,17 +12,38 @@ namespace rsl
 {
     namespace internal
     {
+        template<bool IsMulti, typename Value, template<typename...> typename MultiType>
+        struct wrap_multi_type {};
+
+        template <typename Value, template <typename...> typename MultiType>
+        struct wrap_multi_type<true, Value, MultiType>
+        {
+            using type = MultiType<Value>;
+        };
+
+        template <typename Value, template <typename...> typename MultiType>
+        struct wrap_multi_type<false, Value, MultiType>
+        {
+            using type = Value;
+        };
+
+        template <template <typename...> typename MultiType>
+        struct wrap_multi_type<true, void, MultiType>
+        {
+            using type = void;
+        };
+
         template <typename Value, bool IsMulti>
-        using map_mapped_type =
-                typename conditional<is_void<Value>::value, void, typename conditional<IsMulti, dynamic_array<Value>, Value>::type>::
-                        type;
+        using map_mapped_type = typename wrap_multi_type<IsMulti, Value, dynamic_array>::type;
 
         template <typename Key, typename Value, bool IsFlat, bool IsMulti>
         using map_value_type = typename conditional<
                 is_void<Value>::value,
                 typename conditional<IsFlat, Key, const Key>::type,
-                pair<typename conditional<IsFlat, Key, const Key>::type,
-                    map_mapped_type<Value, IsMulti>>>::type;
+                pair<typename conditional<IsFlat, Key, const Key>::type, map_mapped_type<Value, IsMulti>>>::type;
+
+        template <typename Key, typename Value, bool IsMulti>
+        using map_input_type = typename conditional<is_void<Value>::value, Key, pair<Key, Value>>::type;
 
         template <typename>
         struct key_view_alternative
@@ -108,6 +129,7 @@ namespace rsl
         using value_type = typename internal::map_value_type<Key, Value, is_flat, is_multi>;
         using key_type = Key;
         using mapped_type = typename internal::map_mapped_type<Value, is_multi>;
+        using input_type = typename internal::map_input_type<Key, Value, is_multi>;
 
         using mapped_type_ref = add_lval_ref_t<mapped_type>;
         using mapped_type_const_ref = add_lval_ref_t<add_const_t<mapped_type>>;

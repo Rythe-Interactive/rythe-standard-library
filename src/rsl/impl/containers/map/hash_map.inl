@@ -1,5 +1,3 @@
-#pragma once
-
 namespace rsl
 {
     template <typename MapInfo>
@@ -71,14 +69,30 @@ namespace rsl
           m_memoryPool(allocator) {}
 
     template <typename MapInfo>
+    inline constexpr hash_map_base<MapInfo> hash_map_base<MapInfo>::from_view(const array_view<const typename MapInfo::input_type> src)
+    {
+        return from_view(iterator_view(src));
+    }
+
+    template <typename MapInfo>
     template <typename Iter, typename ConstIter>
     constexpr hash_map_base<MapInfo> hash_map_base<MapInfo>::from_view(const iterator_view<Iter, ConstIter> src)
     {
         hash_map_base result;
 
-        for (auto& [key, value] : src)
+        if constexpr (is_map)
         {
-            result.emplace(key, value);
+            for (auto& [key, value] : src)
+            {
+                result.emplace(key, value);
+            }
+        }
+        else
+        {
+            for (auto& key : src)
+            {
+                result.insert(key);
+            }
         }
 
         return result;
@@ -127,6 +141,21 @@ namespace rsl
     {
         return m_buckets.size();
     }
+
+    //template <typename MapInfo>
+    //inline constexpr hash_map_base& hash_map_base<MapInfo>::operator=(const hash_map_base& src)
+    //        noexcept(copy_assign_noexcept && copy_construct_noexcept)
+    //{
+    //    rsl_assert_unimplemented()
+    //    return *this;
+    //}
+
+    //template <typename MapInfo>
+    //inline constexpr hash_map_base& hash_map_base<MapInfo>::operator=(hash_map_base&& src) noexcept
+    //{
+    //    rsl_assert_unimplemented()
+    //    return *this;
+    //}
 
     template <typename MapInfo>
     constexpr typename hash_map_base<MapInfo>::const_view_type hash_map_base<MapInfo>::view() const noexcept

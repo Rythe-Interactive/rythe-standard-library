@@ -1,3 +1,4 @@
+#include "views.hpp"
 #pragma once
 
 namespace rsl
@@ -750,15 +751,19 @@ namespace rsl
     template <size_type N>
     constexpr iterator_view<Iter, ConstIter>::iterator_view(value_type (&arr)[N]) noexcept
         requires same_as<Iter, pointer>
-        : m_start(arr),
-          m_end(arr + N)
+        : iterator_view(arr, N)
     {}
 
     template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
     constexpr iterator_view<Iter, ConstIter>::iterator_view(const value_type& other) noexcept
         requires same_as<Iter, pointer>
-        : m_start(&other),
-          m_end((&other) + 1u)
+        : iterator_view(&other, 1ull)
+    {}
+
+    template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
+    inline constexpr iterator_view<Iter, ConstIter>::iterator_view(array_view<value_type> other) noexcept
+        requires same_as<Iter, pointer>
+        : iterator_view(other.data(), other.size())
     {}
 
     template <weak_input_or_output_iterator Iter, weak_input_or_output_iterator ConstIter>
