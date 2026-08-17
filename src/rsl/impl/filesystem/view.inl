@@ -1,7 +1,4 @@
-﻿#pragma once
-#include "path_util.hpp"
-
-namespace rsl::fs
+﻿namespace rsl::fs
 {
     constexpr view::view(const string_view path) noexcept : m_path(dynamic_string::from_view(path)) {}
 

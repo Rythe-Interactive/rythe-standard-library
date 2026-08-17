@@ -1,6 +1,7 @@
 #pragma once
 #include "../containers/array.hpp"
 #include "../memory/index_allocator.hpp"
+#include "../memory/reference_counter.hpp"
 #include "../util/container_util.hpp"
 #include "../util/error_handling.hpp"
 

@@ -25,7 +25,9 @@ namespace rsl
             [[nodiscard]] [[rythe_always_inline]] operator bool() const noexcept;
             [[nodiscard]] [[rythe_always_inline]] bool is_valid(bool deepCheck = false) const;
 
-            [[rythe_always_inline]] result<void> prefetch_solution(bool ignoreMultipleSolutions = false) const;
+            [[rythe_always_inline]] result<void> prefetch_solution(bool ignoreMultipleSolutions = !rythe_validate_high_impact) const;
+
+            [[nodiscard]] bool exists() const;
 
             [[nodiscard]] file_traits file_info() const;
             [[nodiscard]] filesystem_traits filesystem_info() const;
@@ -42,6 +44,8 @@ namespace rsl
 
             [[nodiscard]] result<view_list> ls() const;
 
+            view& replace_extension(string_view extension, bool fullExtension = false);
+
             [[nodiscard]] result<byte_view> read() const;
             [[nodiscard]] result<void> write(byte_view data);
             [[nodiscard]] result<void> append(byte_view data);
@@ -49,8 +53,9 @@ namespace rsl
 
         protected:
             void set_path(dynamic_string&& path);
-            [[nodiscard]] const file_solution* find_solution() const;
-            [[nodiscard]] file_solution* find_solution();
+            void release_solution() const;
+            [[nodiscard]] const file_solution* find_solution(bool reportErrors) const;
+            [[nodiscard]] file_solution* find_solution(bool reportErrors);
 
         private:
             dynamic_string m_path;

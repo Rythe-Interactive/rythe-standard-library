@@ -19,7 +19,7 @@ namespace rsl::fs
 
     result<file_solution*> archive_registry::find_solution(const string_view path, const bool ignoreMultipleSolutions)
     {
-        const string_view domain = fs::domain(path);
+        const dynamic_string domain = fs::domain(path);
 
         dynamic_array<archive*>* providers = m_domainMap.find(domain);
         if (!providers) [[unlikely]]

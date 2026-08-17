@@ -1,3 +1,7 @@
 #pragma once
+#include "impl/platform/directory_iterator.hpp"
+#include "impl/platform/dynamic_library.hpp"
+#include "impl/platform/file.hpp"
 #include "impl/platform/platform.hpp"
 #include "impl/platform/platform_dependent_var.hpp"
+#include "impl/platform/platform_error.hpp"

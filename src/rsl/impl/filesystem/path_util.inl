@@ -1,6 +1,4 @@
-﻿#pragma once
-
-namespace rsl::fs
+﻿namespace rsl::fs
 {
     constexpr char separator() noexcept
     {
@@ -66,13 +64,8 @@ namespace rsl::fs
 
     constexpr dynamic_string subdir(const string_view path, const string_view sub)
     {
-        const string_view sanitizedPath = trim_right(path, separator_char{});
-        dynamic_string result;
-        result.reserve(sanitizedPath.size() + sub.size() + 1ull);
-        result.append(sanitizedPath);
-        result.append(separator());
-        result.append(sub);
-        return result;
+        dynamic_string result = dynamic_string::from_view(path);
+        return subdir(in_place_signal, result, sub);
     }
 
     constexpr dynamic_string sanitize(const string_view path, const bool failOnFsLeave)
@@ -127,27 +120,41 @@ namespace rsl::fs
     constexpr dynamic_string localize(const string_view path)
     {
         dynamic_string result = dynamic_string::from_view(path);
-        localize(in_place_signal, result);
-        return result;
+        return localize(in_place_signal, result);
     }
 
     constexpr dynamic_string standardize(const string_view path)
     {
         dynamic_string result = dynamic_string::from_view(path);
-        standardize(in_place_signal, result);
-        return result;
+        return standardize(in_place_signal, result);
     }
 
     template <string_like StringType>
-    constexpr void localize(in_place_signal_type, StringType& path)
+    constexpr StringType& subdir(in_place_signal_type, StringType& path, const string_view sub)
+    {
+        const string_view sanitizedPath = trim_right(path, separator_char{});
+        path.reserve(sanitizedPath.size() + sub.size() + 1ull);
+        if (path.size() != sanitizedPath.size())
+        {
+            path.assign(sanitizedPath);
+        }
+        path.append(separator());
+        path.append(sub);
+        return path;
+    }
+
+    template <string_like StringType>
+    constexpr StringType& localize(in_place_signal_type, StringType& path)
     {
         linear_search_and_replace(path, anti_separator(), separator());
+        return path;
     }
 
     template <string_like StringType>
-    constexpr void standardize(in_place_signal_type, StringType& path)
+    constexpr StringType& standardize(in_place_signal_type, StringType& path)
     {
         linear_search_and_replace(path, '\\', '/');
+        return path;
     }
 
     constexpr string_view strip_domain(const string_view path) noexcept
@@ -164,19 +171,19 @@ namespace rsl::fs
     constexpr dynamic_string replace_domain(const string_view path, const string_view replacement) noexcept
     {
         dynamic_string result = dynamic_string::from_view(path);
-        replace_domain(in_place_signal, result, replacement);
-        return result;
+        return replace_domain(in_place_signal, result, replacement);
     }
 
     template <string_like StringType>
-    constexpr void replace_domain(in_place_signal_type, StringType& path, const string_view replacement) noexcept
+    constexpr StringType& replace_domain(in_place_signal_type, StringType& path, const string_view replacement) noexcept
     {
         const size_type idx = linear_search_sequence(view(path), "://"_sv, 0ull, 64ull);
         if (idx == npos)
         {
-            return;
+            return path;
         }
 
         path.replace(0ull, idx + 3ull, replacement);
+        return path;
     }
 }

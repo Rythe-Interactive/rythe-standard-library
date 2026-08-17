@@ -1,6 +1,4 @@
-﻿#pragma once
-
-namespace rsl::fs
+﻿namespace rsl::fs
 {
     inline const archive* file_solution::get_provider() const noexcept
     {
@@ -20,7 +18,6 @@ namespace rsl::fs
         }
 
         m_provider->release_solution(this);
-        m_provider = nullptr;
     }
 
     inline file_traits file_solution::file_info() const

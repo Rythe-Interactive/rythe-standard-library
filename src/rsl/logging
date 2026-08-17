@@ -4,3 +4,5 @@
 #include "impl/containers/util/formatters.hpp"
 
 #include "impl/logging/logging.hpp"
+
+namespace rlog = rsl::log;

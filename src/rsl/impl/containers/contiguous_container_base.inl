@@ -2159,7 +2159,11 @@ namespace rsl
             size_type pos, diff_type offset) noexcept(move_construct_noexcept)
         requires(can_resize)
     {
-        rsl_assert_out_of_range(pos < m_size || m_size == 0ull);
+        if (pos > m_size)
+        {
+            pos = m_size;
+        }
+
         rsl_assert_invalid_operation_frequent(static_cast<diff_type>(pos) + offset >= 0ll);
 
         const size_type newSize = m_size + offset;

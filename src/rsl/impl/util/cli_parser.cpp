@@ -27,12 +27,12 @@ namespace rsl
         }
     } // namespace internal
 
-    void cli_parser::set_command_usage(string_view usage)
+    void cli_parser::set_command_usage(const string_view usage)
     {
         m_commandUsage = usage;
     }
 
-    void cli_parser::add_param(const string_view name, bool isFlag, const string_view usagePattern)
+    void cli_parser::add_param(const string_view name, const bool isFlag, const string_view usagePattern)
     {
         m_registeredParams.emplace(
                 internal::trim_leading_dashes(name),
@@ -42,7 +42,7 @@ namespace rsl
                 });
     }
 
-    void cli_parser::add_param(const array_view<const string_view> aliases, bool isFlag, const string_view usagePattern)
+    void cli_parser::add_param(const array_view<const string_view> aliases, const bool isFlag, const string_view usagePattern)
     {
         for (const string_view name : aliases)
         {

@@ -1,0 +1,13 @@
+#pragma once
+
+#include "impl/filesystem/archive.hpp"
+#include "impl/filesystem/archive_registry.hpp"
+#include "impl/filesystem/filesystem.hpp"
+#include "impl/filesystem/filesystem_error.hpp"
+#include "impl/filesystem/file_solution.hpp"
+#include "impl/filesystem/local_disk_archive.hpp"
+#include "impl/filesystem/path_util.hpp"
+#include "impl/filesystem/traits.hpp"
+#include "impl/filesystem/view.hpp"
+
+namespace rfs = rsl::fs;
