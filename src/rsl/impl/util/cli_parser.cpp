@@ -62,7 +62,7 @@ namespace rsl
             m_args[i] = string_view::from_string_length(argv[i]);
         }
 
-        for (size_type i = 0ull; i < m_args.size(); ++i)
+        for (size_type i = 1ull; i < m_args.size(); ++i)
         {
             if (!internal::is_option(m_args[i]))
             {

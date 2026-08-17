@@ -135,7 +135,7 @@ namespace rsl
             return {};
         }
 
-        return str.subview(0ull, -static_cast<diff_type>(offset));
+        return str.subview(0ull, offset + 1ull);
     }
 
     template <weakly_equality_comparable_with<char> C>

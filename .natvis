@@ -10,8 +10,8 @@
         <Intrinsic Name="size" Expression="m_size" />
         <Intrinsic Name="capacity" Expression="use_post_fix? (m_memorySize == 0ull ? 0ull : m_memorySize - 1ull) : m_memorySize" />
         <Intrinsic Name="size_bytes" Expression="m_size * sizeof($T1)" />
-        <DisplayString>{reinterpret_cast&lt;$T1*&gt;(m_ptr),na}</DisplayString>
-        <StringView>reinterpret_cast&lt;$T1*&gt;(m_ptr),na</StringView>
+        <DisplayString>{reinterpret_cast&lt;$T1*&gt;(m_ptr),s}</DisplayString>
+        <StringView>reinterpret_cast&lt;$T1*&gt;(m_ptr),s</StringView>
 		<Expand>
             <Item Name="[size]" ExcludeView="simple">m_size</Item>
             <Item Name="[capacity]" ExcludeView="simple">use_post_fix? (m_memorySize == 0ull ? 0ull : m_memorySize - 1ull) : m_memorySize</Item>
@@ -53,8 +53,8 @@
         <Intrinsic Name="data" Expression="m_src" />
         <Intrinsic Name="size" Expression="m_count" />
         <Intrinsic Name="size_bytes" Expression="m_count * sizeof($T1)" />
-        <DisplayString>{m_src,[m_count]na}</DisplayString>
-        <StringView>m_src,[m_count]na</StringView>
+        <DisplayString>{m_src,[m_count]s} ({m_count})</DisplayString>
+        <StringView>m_src,[m_count]s</StringView>
         <Expand>
             <Item Name="[size]" ExcludeView="simple">m_count</Item>
             <ArrayItems>

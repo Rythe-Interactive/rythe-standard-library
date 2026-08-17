@@ -545,7 +545,7 @@ namespace rsl
         contiguous_iterator CIter,
         contiguous_iterator CConstIter>
     constexpr size_type reverse_linear_search_outside_collection(
-            array_view<T, Iter, ConstIter> arr, array_view<C, CIter, CConstIter> key, [[maybe_unused]] size_type offset) noexcept
+            array_view<T, Iter, ConstIter> arr, array_view<C, CIter, CConstIter> key, size_type offset) noexcept
     {
         using reverse_iter = typename array_view<T, Iter, ConstIter>::reverse_iterator_type;
         reverse_iter endIter = reverse_iter(arr.begin() + offset);

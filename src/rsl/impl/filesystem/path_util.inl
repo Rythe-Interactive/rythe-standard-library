@@ -65,7 +65,8 @@
     constexpr dynamic_string subdir(const string_view path, const string_view sub)
     {
         dynamic_string result = dynamic_string::from_view(path);
-        return subdir(in_place_signal, result, sub);
+        subdir(in_place_signal, result, sub);
+        return result;
     }
 
     constexpr dynamic_string sanitize(const string_view path, const bool failOnFsLeave)
@@ -120,13 +121,15 @@
     constexpr dynamic_string localize(const string_view path)
     {
         dynamic_string result = dynamic_string::from_view(path);
-        return localize(in_place_signal, result);
+        localize(in_place_signal, result);
+        return result;
     }
 
     constexpr dynamic_string standardize(const string_view path)
     {
         dynamic_string result = dynamic_string::from_view(path);
-        return standardize(in_place_signal, result);
+        standardize(in_place_signal, result);
+        return result;
     }
 
     template <string_like StringType>
