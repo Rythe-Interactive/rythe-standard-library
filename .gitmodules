@@ -1,6 +1,6 @@
-[submodule "third_party/argh"]
-	path = third_party/argh
-	url = https://github.com/adishavit/argh.git
 [submodule "third_party/fmt"]
 	path = third_party/fmt
 	url = https://github.com/Rythe-Interactive/fmt.git
+[submodule "third_party/meow_hash"]
+	path = third_party/meow_hash
+	url = https://github.com/Rythe-Interactive/meow_hash.git
