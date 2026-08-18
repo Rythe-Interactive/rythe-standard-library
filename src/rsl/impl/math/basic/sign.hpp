@@ -8,7 +8,7 @@ namespace rsl::math
     template <typename Scalar>
     [[nodiscard]] [[rythe_always_inline]] constexpr Scalar sign(Scalar val) noexcept
     {
-        if constexpr (::std::is_signed_v<Scalar>)
+        if constexpr (is_unsigned_v<Scalar>)
         {
             return static_cast<Scalar>(1);
         }
@@ -21,7 +21,7 @@ namespace rsl::math
     template <typename Scalar>
     [[nodiscard]] [[rythe_always_inline]] constexpr Scalar signum(Scalar val) noexcept
     {
-        if constexpr (::std::is_signed_v<Scalar>)
+        if constexpr (is_unsigned_v<Scalar>)
         {
             return static_cast<Scalar>(0) < val;
         }

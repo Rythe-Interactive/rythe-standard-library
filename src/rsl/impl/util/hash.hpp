@@ -107,6 +107,22 @@ namespace rsl
             return hash_strategy<T, hash_mode::protected_hash>::hash(val);
         }
     };
+
+    struct content_hash
+    {
+        size_type size;
+        union alignas(16) hash
+        {
+            uint64 u64[2];
+            uint32 u32[4];
+        } value;
+    };
+
+    [[nodiscard]] [[rythe_always_inline]] constexpr bool operator==(const content_hash& lhs, const content_hash& rhs) noexcept;
+    [[nodiscard]] [[rythe_always_inline]] constexpr bool operator!=(const content_hash& lhs, const content_hash& rhs) noexcept;
+
+    content_hash hash_content(byte_view bytes) noexcept;
+
 } // namespace rsl
 
 #include "hash.inl"

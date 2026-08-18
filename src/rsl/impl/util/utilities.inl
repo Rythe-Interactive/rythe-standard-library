@@ -64,23 +64,24 @@ namespace rsl
         return *bit_cast<To*>(&f);
     }
 
-    template <typename To, typename From>
+    template <arithmetic_type To, arithmetic_type From>
     [[rythe_always_inline]] constexpr bool is_within_limits(const From& f) noexcept
     {
-        if (f > 0ll && static_cast<uint_max>(f) > limits<To>::max)
+        if constexpr (is_signed_v<To> && is_signed_v<From>)
         {
-            return false;
+            return f >= limits<To>::min && f <= limits<To>::max;
         }
-
-        if (f < 0ll && static_cast<int_max>(f) < static_cast<int_max>(limits<To>::min))
+        else if constexpr (is_unsigned_v<From>)
         {
-            return false;
+            return f <= limits<To>::max;
         }
-
-        return true;
+        else
+        {
+            return f >= static_cast<From>(0) && f <= limits<To>::max;
+        }
     }
 
-    template <typename To, typename From>
+    template <arithmetic_type To, arithmetic_type From>
     [[rythe_always_inline]] constexpr To narrowing_cast(const From& f) noexcept
     {
         rsl_assert_msg_soft_frequent(is_within_limits<To>(f), "Narrowing cast failed, value {} is out of range [{}, {}]", f, limits<To>::min, limits<To>::max)

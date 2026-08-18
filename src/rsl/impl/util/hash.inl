@@ -372,4 +372,13 @@ namespace rsl
     {
         return combine_hash<hash_mode::default_hash>(seed, hash, hashes...);
     }
+
+    inline constexpr bool operator==(const content_hash& lhs, const content_hash& rhs) noexcept
+    {
+        return lhs.size == rhs.size && lhs.value.u64[0] == rhs.value.u64[0] && lhs.value.u64[1] == rhs.value.u64[1];
+    }
+    constexpr bool operator!=(const content_hash& lhs, const content_hash& rhs) noexcept
+    {
+        return !(lhs == rhs);
+    }
 } // namespace rsl

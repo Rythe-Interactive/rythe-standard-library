@@ -192,6 +192,27 @@ namespace rsl
     #endif
 #endif
 
+#ifdef __has_feature
+    #define rythe_has_feature(x) __has_feature(x)
+#else
+    #define rythe_has_feature(x) 0
+#endif
+#ifdef __has_include
+    #define rythe_has_include(x) __has_include(x)
+#else
+    #define rythe_has_include(x) 0
+#endif
+#ifdef __has_builtin
+    #define rythe_has_builtin(x) __has_builtin(x)
+#else
+    #define rythe_has_builtin(x) 0
+#endif
+#ifdef __has_cpp_attribute
+    #define rythe_has_cpp_attribute(x) __has_cpp_attribute(x)
+#else
+    #define rythe_has_cpp_attribute(x) 0
+#endif
+
 #if !defined(__RYTHE_FULL_FUNC__)
     #if defined(RYTHE_CLANG) || defined(RYTHE_GCC)
         #define __RYTHE_FULL_FUNC__ __PRETTY_FUNCTION__
