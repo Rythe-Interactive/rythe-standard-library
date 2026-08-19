@@ -162,6 +162,7 @@ namespace rsl
     {
     public:
         using result_type = remove_cvr_t<T>;
+        using const_result_type_ref = add_const_t<add_lval_ref_t<result_type>>;
 
         [[rythe_always_inline]] result(error_signal) noexcept;
         [[rythe_always_inline]] result(nullptr_type) noexcept;
@@ -180,12 +181,14 @@ namespace rsl
         [[rythe_always_inline]] void set_value(Args&&... args) noexcept(rsl::is_nothrow_constructible_v<T, Args...>);
         [[rythe_always_inline]] void discard_value() noexcept;
 
+        [[nodiscard]] [[rythe_always_inline]] const_result_type_ref value_or(const_result_type_ref alternative = {}) const noexcept;
+
         [[nodiscard]] [[rythe_always_inline]] result_type& value() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] const result_type& value() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] const_result_type_ref value() const noexcept;
         [[nodiscard]] [[rythe_always_inline]] result_type* operator->() noexcept;
         [[nodiscard]] [[rythe_always_inline]] const result_type* operator->() const noexcept;
         [[nodiscard]] [[rythe_always_inline]] result_type& operator*() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] const result_type& operator*() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] const_result_type_ref operator*() const noexcept;
 
     private:
         bool m_cariesValue;

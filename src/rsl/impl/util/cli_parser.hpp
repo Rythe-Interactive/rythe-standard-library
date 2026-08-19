@@ -48,9 +48,10 @@ namespace rsl
         [[nodiscard]] args_view get_params(array_view<const string_view> aliases) const noexcept;
 
         // Will use the default undecorated logger if logger is nullptr
-        void print_usage(
-                rsl::log::severity severity = rsl::log::severity::info,
-                pointer<rsl::log::logger> logger = { nullptr }) const;
+        void print_current_command(rsl::log::severity severity = rsl::log::severity::info, pointer<rsl::log::logger> logger = { nullptr }) const;
+
+        // Will use the default undecorated logger if logger is nullptr
+        void print_usage(rsl::log::severity severity = rsl::log::severity::info, pointer<rsl::log::logger> logger = { nullptr }) const;
 
     private:
         bool is_param(string_view name) const noexcept;

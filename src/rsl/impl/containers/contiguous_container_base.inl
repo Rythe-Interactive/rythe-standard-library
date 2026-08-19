@@ -54,10 +54,12 @@ namespace rsl
         if (src.is_static_memory())
         {
             mem_rsc::move(calc_memory_size(src.m_size), 0ull, src.get_ptr());
-            return;
+        }
+        else
+        {
+            mem_rsc::set_ptr(src.get_ptr());
         }
 
-        mem_rsc::set_ptr(src.get_ptr());
         m_size = src.m_size;
         m_memorySize = src.m_memorySize;
 

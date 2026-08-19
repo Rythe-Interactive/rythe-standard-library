@@ -32,7 +32,7 @@
             return dynamic_string{};
         }
 
-        return dynamic_string::from_variadic_items(path.subview(0, idx + 1), separator(), separator());
+        return dynamic_string::from_variadic_items(path.subview(0, idx + 1), '/', '/');
     }
 
     constexpr string_view parent(const string_view path) noexcept
@@ -81,7 +81,7 @@
             //skip filesystem decl
             if (linear_search(token, ':') != npos)
             {
-                filesystem = dynamic_string::from_variadic_items(token, separator(), separator());
+                filesystem = dynamic_string::from_variadic_items(token, '/', '/');
                 continue;
             }
 
@@ -115,7 +115,7 @@
             }
         }
 
-        return filesystem + join_strings_with(recreation, separator());
+        return filesystem + join_strings_with(recreation, '/');
     }
 
     constexpr dynamic_string localize(const string_view path)
@@ -141,7 +141,7 @@
         {
             path.assign(sanitizedPath);
         }
-        path.append(separator());
+        path.append('/');
         path.append(sub);
         return path;
     }

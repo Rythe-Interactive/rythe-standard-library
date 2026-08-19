@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿#include "error_handling.hpp"
+#pragma once
 
 namespace rsl
 {
@@ -212,16 +213,26 @@ namespace rsl
     }
 
     template <typename T>
+    typename result<T>::const_result_type_ref result<T>::value_or(const_result_type_ref alternative) const noexcept
+    {
+        if (carries_value())
+        {
+            return value();
+        }
+        return alternative;
+    }
+
+    template <typename T>
     typename result<T>::result_type& result<T>::value() noexcept
     {
-        rsl_assert_msg_hard(report_errors() == no_error_code, "Tried to get value of result with unresolved error.");
+        rsl_assert_msg_hard(carries_value(), "Tried to get value of result that did not carry a value.");
         return m_value;
     }
 
     template <typename T>
-    const typename result<T>::result_type& result<T>::value() const noexcept
+    typename result<T>::const_result_type_ref result<T>::value() const noexcept
     {
-        rsl_assert_msg_hard(report_errors() == no_error_code, "Tried to get value of result with unresolved error.");
+        rsl_assert_msg_hard(carries_value(), "Tried to get value of result that did not carry a value.");
         return m_value;
     }
 
@@ -244,7 +255,7 @@ namespace rsl
     }
 
     template <typename T>
-    const typename result<T>::result_type& result<T>::operator*() const noexcept
+    typename result<T>::const_result_type_ref result<T>::operator*() const noexcept
     {
         return value();
     }

@@ -30,35 +30,42 @@ namespace rsl::fs
 
     file_traits view::file_info() const
     {
-        const file_solution* solution = find_solution(false);
-        if (!solution)
+        result<const file_solution*> solution = find_solution();
+        if (solution.has_errors())
         {
+            solution.resolve();
             return invalid_file_traits;
         }
 
-        return solution->file_info();
+        return solution.value()->file_info();
     }
 
     filesystem_traits view::filesystem_info() const
     {
-        const file_solution* solution = find_solution(false);
-        if (!solution)
+        result<const file_solution*> solution = find_solution();
+        if (solution.has_errors())
         {
+            solution.resolve();
             return invalid_filesystem_traits;
         }
 
-        return solution->filesystem_info();
+        return solution.value()->filesystem_info();
     }
 
     result<view_list> view::ls() const
     {
-        result<dynamic_array<view>> solutionResult = find_solution(true)->ls();
-        if (solutionResult.carries_value())
+        result<const file_solution*> solution = find_solution();
+        if (solution.has_errors())
         {
-            return make_partial_result<view_list>(solutionResult.propagate(), solutionResult.value());
+            return solution.propagate();
+        }
+        result<dynamic_array<view>> listResult = solution.value()->ls();
+        if (listResult.carries_value())
+        {
+            return make_partial_result<view_list>(listResult.propagate(), listResult.value());
         }
 
-        return solutionResult.propagate();
+        return listResult.propagate();
     }
 
     view& view::replace_extension(const string_view extension, const bool fullExtension)
@@ -73,22 +80,42 @@ namespace rsl::fs
 
     result<byte_view> view::read() const
     {
-        return find_solution(true)->read();
+        result<const file_solution*> solution = find_solution();
+        if (solution.has_errors())
+        {
+            return solution.propagate();
+        }
+        return solution.value()->read();
     }
 
     result<void> view::write(const byte_view data) // NOLINT
     {
-        return find_solution(true)->write(data);
+        result<file_solution*> solution = find_solution();
+        if (solution.has_errors())
+        {
+            return solution.propagate();
+        }
+        return solution.value()->write(data);
     }
 
     result<void> view::append(const byte_view data) // NOLINT
     {
-        return find_solution(true)->append(data);
+        result<file_solution*> solution = find_solution();
+        if (solution.has_errors())
+        {
+            return solution.propagate();
+        }
+        return solution.value()->append(data);
     }
 
     result<void> view::flush() const
     {
-        return find_solution(true)->flush();
+        result<const file_solution*> solution = find_solution();
+        if (solution.has_errors())
+        {
+            return solution.propagate();
+        }
+        return solution.value()->flush();
     }
 
     void view::set_path(dynamic_string&& path)
@@ -106,30 +133,22 @@ namespace rsl::fs
         m_solution = nullptr;
     }
 
-    const file_solution* view::find_solution(bool reportErrors) const
+    result<const file_solution*> view::find_solution() const
     {
         result<void> result = prefetch_solution();
-        if (reportErrors)
+        if (result.has_errors())
         {
-            result.report_errors_and_resolve();
-        }
-        else if (result.has_errors())
-        {
-            result.resolve();
+            return result.propagate();
         }
         return m_solution;
     }
 
-    file_solution* view::find_solution(bool reportErrors)
+    result<file_solution*> view::find_solution()
     {
         result<void> result = prefetch_solution();
-        if (reportErrors)
+        if (result.has_errors())
         {
-            result.report_errors_and_resolve();
-        }
-        else if (result.has_errors())
-        {
-            result.resolve();
+            return result.propagate();
         }
         return m_solution;
     }

@@ -11,6 +11,8 @@ namespace rsl
         dynamic_string logFile = "logs/rythe.log"_ds;
         pointer<log::logger> logger = { nullptr };
         pointer<log::logger> undecoratedLogger = { nullptr };
+        size_type indent;
+        char indentChar;
     };
     RYTHE_DECLARE_SINGLETON(logging_context)
 
@@ -23,6 +25,23 @@ namespace rsl
 
         [[rythe_always_inline]] inline void filter(severity level);
         [[rythe_always_inline]] inline void flush_at(severity level);
+
+        [[rythe_always_inline]] inline void set_indent_char(char indentChar);
+        [[rythe_always_inline]] inline void indent(size_type amount = 1ull);
+        [[rythe_always_inline]] inline void unindent(size_type amount = 1ull);
+
+        struct indent_scope
+        {
+            [[rythe_always_inline]] indent_scope(size_type amount = 1ull)
+                : m_amount(amount)
+            {
+                indent(m_amount);
+            }
+            [[rythe_always_inline]] ~indent_scope() { unindent(m_amount); }
+
+        private:
+            size_type m_amount;
+        };
 
         template <typename... Args>
         [[rythe_always_inline]] void trace(format_string format, Args&&... args);

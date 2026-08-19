@@ -153,6 +153,26 @@ namespace rsl
         return {};
     }
 
+    void cli_parser::print_current_command(rsl::log::severity severity, pointer<rsl::log::logger> logger) const
+    {
+        if (logger == nullptr)
+        {
+            logger = rsl::get_logging_context().undecoratedLogger;
+        }
+
+        for (size_type i = 0ull; i < m_args.size(); ++i)
+        {
+            if (i == m_args.size() - 1ull) [[unlikely]]
+            {
+                logger->logln(severity, "{}\n", m_args[i]);
+            }
+            else
+            {
+                logger->log(severity, "{} ", m_args[i]);
+            }
+        }
+    }
+
     void cli_parser::print_usage(const rsl::log::severity severity, pointer<rsl::log::logger> logger) const
     {
         if (logger == nullptr)

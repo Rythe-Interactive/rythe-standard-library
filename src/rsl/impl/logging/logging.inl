@@ -1,3 +1,4 @@
+#include "logging.hpp"
 #pragma once
 namespace rsl::log
 {
@@ -25,6 +26,26 @@ namespace rsl::log
         logging_context& context = get_logging_context();
         context.logger->flush_at(level);
         context.undecoratedLogger->flush_at(level);
+    }
+
+    inline void set_indent_char(char indentChar)
+    {
+        logging_context& context = get_logging_context();
+        context.indentChar = indentChar;
+    }
+
+    inline void indent(size_type amount)
+    {
+        logging_context& context = get_logging_context();
+        rsl_assert_consistent(context.indent + amount >= context.indent);
+        context.indent += amount;
+    }
+
+    inline void unindent(size_type amount)
+    {
+        logging_context& context = get_logging_context();
+        rsl_assert_consistent(context.indent >= amount);
+        context.indent -= amount;
     }
 
     template <typename... Args>

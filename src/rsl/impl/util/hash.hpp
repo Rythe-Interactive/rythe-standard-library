@@ -111,7 +111,7 @@ namespace rsl
     struct content_hash
     {
         size_type size;
-        union alignas(16) hash
+        union hash
         {
             uint64 u64[2];
             uint32 u32[4];

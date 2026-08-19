@@ -54,8 +54,8 @@ namespace rsl
         protected:
             void set_path(dynamic_string&& path);
             void release_solution() const;
-            [[nodiscard]] const file_solution* find_solution(bool reportErrors) const;
-            [[nodiscard]] file_solution* find_solution(bool reportErrors);
+            [[nodiscard]] result<const file_solution*> find_solution() const;
+            [[nodiscard]] result<file_solution*> find_solution();
 
         private:
             dynamic_string m_path;

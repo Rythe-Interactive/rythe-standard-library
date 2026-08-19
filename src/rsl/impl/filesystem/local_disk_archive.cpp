@@ -206,6 +206,8 @@ namespace rsl::fs
         }
     }
 
+    //TODO(Glyn): I assume i forgot about these...
+
     result<void> local_disk_archive::open_file_for_read([[maybe_unused]] const file_solution* solution) const { return error; }
 
     result<void> local_disk_archive::open_file_for_write([[maybe_unused]] file_solution* solution) { return error; }
