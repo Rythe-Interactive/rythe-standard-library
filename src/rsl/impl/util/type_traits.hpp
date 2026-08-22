@@ -56,23 +56,27 @@ namespace rsl
             constexpr string_view functionName = __RYTHE_FULL_FUNC__;
 
             constexpr_string<functionName.size()> ret{};
-            #if defined(RYTHE_MSVC)
-            auto first = linear_search(functionName, '<', linear_search_sequence(functionName, "compiler_dependent_type_name"_sv)) + 1;
+#if defined(RYTHE_MSVC)
+            auto searchStart = linear_search_sequence(functionName, "compiler_dependent_type_name"_sv);
+            auto first = linear_search(functionName.subview(searchStart), '<') + searchStart + 1;
             auto end = reverse_linear_search(functionName, '>');
 
             ret.copy_from(functionName.subview(first, end - first));
-            #elif defined(RYTHE_GCC)
+#elif defined(RYTHE_GCC)
             auto first = reverse_linear_search(functionName, '=') + 2ull;
             auto end = reverse_linear_search(functionName, ';');
-            if (end == std::string_view::npos) { end = reverse_linear_search(functionName, ']'); }
+            if (end == std::string_view::npos)
+            {
+                end = reverse_linear_search(functionName, ']');
+            }
 
             ret.copy_from(functionName.subview(first, end - first));
-            #elif defined(RYTHE_CLANG)
+#elif defined(RYTHE_CLANG)
             auto first = reverse_linear_search(functionName, '=') + 2ull;
             ret.copy_from(functionName.subview(first, reverse_linear_search(functionName, ']') - first));
-            #else
+#else
             ret.copy_from(functionName);
-            #endif
+#endif
 
             return ret;
         }
@@ -83,22 +87,21 @@ namespace rsl
             constexpr string_view functionName = __RYTHE_FULL_FUNC__;
 
             constexpr_string<functionName.size()> ret{};
-            #if defined(RYTHE_MSVC)
-            auto first =
-                    linear_search(functionName, '<', linear_search_sequence(functionName, "compiler_dependent_templated_type_name"_sv)) +
-                    1;
+#if defined(RYTHE_MSVC)
+            auto searchStart = linear_search_sequence(functionName, "compiler_dependent_templated_type_name"_sv);
+            auto first = linear_search(functionName.subview(searchStart), '<') + searchStart + 1;
             auto end = reverse_linear_search(functionName, '>');
 
             ret.copy_from(functionName.subview(first, end - first));
-            #elif defined(RYTHE_GCC)
+#elif defined(RYTHE_GCC)
             auto first = linear_search_not_eq(functionName, ' ', linear_search(functionName, '=') + 1);
             ret.copy_from(functionName.subview(first, reverse_linear_search(functionName, ']') - first));
-            #elif defined(RYTHE_CLANG)
+#elif defined(RYTHE_CLANG)
             auto first = linear_search_not_eq(functionName, ' ', linear_search(functionName, '=') + 1);
             ret.copy_from(functionName.subview(first, reverse_linear_search(functionName, ']') - first));
-            #else
+#else
             ret.copy_from(functionName);
-            #endif
+#endif
 
             return ret;
         }
@@ -121,8 +124,14 @@ namespace rsl
             {
                 auto ret = original + compose_type_name<A>::get_value();
 
-                if constexpr (sizeof...(As) != 0) { return add_types<As...>(ret + constexpr_string(", ")); }
-                else { return ret; }
+                if constexpr (sizeof...(As) != 0)
+                {
+                    return add_types<As...>(ret + constexpr_string(", "));
+                }
+                else
+                {
+                    return ret;
+                }
             }
 
             template <size_type N>
@@ -212,11 +221,9 @@ namespace rsl
             template <typename Other>
             using rebind = typename get_rebind_alias<T, Other>::type;
 
-            [[nodiscard]] [[rythe_always_inline]] static constexpr ptr_type pointer_to(
-                    conditional_t<is_void_v<Elem>, char, Elem>& val
-                    )
-                noexcept(noexcept(T::pointer_to(val))) /* strengthened */
-            {                                          // Per LWG-3454
+            [[nodiscard]] [[rythe_always_inline]] static constexpr ptr_type pointer_to(conditional_t<is_void_v<Elem>, char, Elem>& val)
+                    noexcept(noexcept(T::pointer_to(val))) /* strengthened */
+            {                                              // Per LWG-3454
                 return T::pointer_to(val);
             }
         };
@@ -225,8 +232,8 @@ namespace rsl
         struct ptr_traits_sfinae_layer {};
 
         template <typename T, typename Uty>
-        struct ptr_traits_sfinae_layer<T, Uty, void_t<typename get_first_parameter<T>::type>>
-                : ptr_traits_base<T, typename get_first_parameter<T>::type> {};
+        struct ptr_traits_sfinae_layer<T, Uty, void_t<typename get_first_parameter<T>::type>> :
+            ptr_traits_base<T, typename get_first_parameter<T>::type> {};
 
         template <typename T>
         struct ptr_traits_sfinae_layer<T, void_t<typename T::element_type>, void> : ptr_traits_base<T, typename T::element_type> {};

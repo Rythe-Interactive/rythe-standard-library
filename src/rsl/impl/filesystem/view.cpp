@@ -184,4 +184,4 @@ namespace rsl::fs
         }
         return m_solution;
     }
-}
+} // namespace rsl::fs

@@ -37,7 +37,7 @@
 
     constexpr string_view parent(const string_view path) noexcept
     {
-        return path.subview(0ull, reverse_linear_search(path, separator_char{}, path.size() - 2ull));
+        return path.subview(0ull, reverse_linear_search(path.subview(0ull, -2ll), separator_char{}));
     }
 
     constexpr string_view filename(const string_view path) noexcept
@@ -78,7 +78,7 @@
         dynamic_string filesystem;
         for (const string_view& token : tokens)
         {
-            //skip filesystem decl
+            // skip filesystem decl
             if (linear_search(token, ':') != npos)
             {
                 filesystem = dynamic_string::from_variadic_items(token, '/', '/');
@@ -90,7 +90,7 @@
                 continue;
             }
 
-            //handle upwards
+            // handle upwards
             if (trim_right(token) == "..")
             {
                 if (!recreation.is_empty() && recreation.back() != "..")
@@ -99,7 +99,7 @@
                 }
                 else if (failOnFsLeave)
                 {
-                    //someone is trying something fishy! terminate parsing
+                    // someone is trying something fishy! terminate parsing
                     return {};
                 }
                 else
@@ -108,7 +108,7 @@
                 }
             }
 
-            //handle normal tokens and .
+            // handle normal tokens and .
             else if (trim_right(token) != ".")
             {
                 recreation.push_back(token);
@@ -136,11 +136,11 @@
     constexpr StringType& subdir(in_place_signal_type, StringType& path, const string_view sub)
     {
         const string_view sanitizedPath = trim_right(path, separator_char{});
-        path.reserve(sanitizedPath.size() + sub.size() + 1ull);
         if (path.size() != sanitizedPath.size())
         {
-            path.assign(sanitizedPath);
+            path.resize(sanitizedPath.size());
         }
+        path.reserve(sanitizedPath.size() + sub.size() + 1ull);
         path.append('/');
         path.append(sub);
         return path;
@@ -162,7 +162,7 @@
 
     constexpr string_view strip_domain(const string_view path) noexcept
     {
-        const size_type idx = linear_search_sequence(path, "://"_sv, 0ull, 64ull);
+        const size_type idx = linear_search_sequence(path.subview(0ull, 64ull), "://"_sv);
         if (idx == npos)
         {
             return path;
@@ -180,7 +180,7 @@
     template <string_like StringType>
     constexpr StringType& replace_domain(in_place_signal_type, StringType& path, const string_view replacement) noexcept
     {
-        const size_type idx = linear_search_sequence(view(path), "://"_sv, 0ull, 64ull);
+        const size_type idx = linear_search_sequence(view(path).subview(0ull, 64ull), "://"_sv);
         if (idx == npos)
         {
             return path;
@@ -189,4 +189,4 @@
         path.replace(0ull, idx + 3ull, replacement);
         return path;
     }
-}
+} // namespace rsl::fs

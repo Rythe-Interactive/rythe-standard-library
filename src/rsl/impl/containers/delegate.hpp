@@ -77,7 +77,7 @@ namespace rsl
         [[nodiscard]] [[rythe_always_inline]] constexpr memory_allocator& get_allocator() noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr const memory_allocator& get_allocator() const noexcept;
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr bool empty() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr bool is_empty() const noexcept;
         [[rythe_always_inline]] constexpr void clear() noexcept;
 
         [[nodiscard]] [[rythe_always_inline]] constexpr bool operator==(nullptr_type) const noexcept;

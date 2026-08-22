@@ -8,16 +8,13 @@ namespace rsl
     }
 
     template <weakly_equality_comparable_with<char> TokenType>
-    constexpr dynamic_array<string_view> split_string_at(
-            string_view str,
-            const TokenType& token
-            ) noexcept
+    constexpr dynamic_array<string_view> split_string_at(string_view str, const TokenType& token) noexcept
     {
         dynamic_array<string_view> result;
 
         size_type start = 0;
         size_type end;
-        while ((end = linear_search(str, token, start)) != npos)
+        while ((end = linear_search(str.subview(start), token) + start) != npos)
         {
             result.push_back(str.subview(start, end - start));
             start = end + 1ull;
@@ -173,4 +170,4 @@ namespace rsl
     {
         return trim_left(trim_right(str, comparer), comparer);
     }
-}
+} // namespace rsl

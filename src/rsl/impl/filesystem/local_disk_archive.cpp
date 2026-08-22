@@ -86,11 +86,39 @@ namespace rsl::fs
         return result;
     }
 
+    namespace
+    {
+        result<void> create_directory_recursive(string_view path)
+        {
+            string_view parentPath = parent(path);
+            if (!platform::does_path_entry_exist(parentPath))
+            {
+                result<void> parentCreationResult = create_directory_recursive(parentPath);
+                if (parentCreationResult.has_errors())
+                {
+                    return parentCreationResult.propagate();
+                }
+            }
+
+            return platform::create_directory(path);
+        }
+    } // namespace
+
     result<void> local_disk_file_solution::create() const
     {
         if (m_absolutePath[m_absolutePath.size() - 1ull] == '\\')
         {
-            return platform::create_directory(m_absolutePath);
+            return create_directory_recursive(m_absolutePath);
+        }
+
+        string_view parentPath = parent(m_absolutePath);
+        if (!platform::does_path_entry_exist(parentPath))
+        {
+            result<void> parentCreationResult = create_directory_recursive(parentPath);
+            if (parentCreationResult.has_errors())
+            {
+                return parentCreationResult.propagate();
+            }
         }
 
         return platform::create_file(m_absolutePath);

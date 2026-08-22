@@ -153,8 +153,8 @@ namespace rsl::math
     {
         constexpr storage_mode mode = elevated_storage_mode_v<MatMode, VecMode>;
         Scalar const a = angle;
-        Scalar const c = cos(a);
-        Scalar const s = sin(a);
+        Scalar const c = rsl::math::cos(a);
+        Scalar const s = rsl::math::sin(a);
 
         vector<Scalar, 3, mode> axis(normalize(_axis));
         vector<Scalar, 3, mode> temp((Scalar(1) - c) * axis);

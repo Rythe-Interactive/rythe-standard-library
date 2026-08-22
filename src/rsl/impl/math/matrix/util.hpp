@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../geometric/geometric.hpp"
+#include "../trigonometric/trigonometric.hpp"
 
 namespace rsl::math
 {

@@ -85,7 +85,7 @@ namespace
     {
         delegate_type2 del2;
 
-        CHECK(del2.empty());
+        CHECK(del2.is_empty());
         CHECK(del2 == nullptr);
 
         counter = 0;
@@ -94,7 +94,7 @@ namespace
             del2 = &funcParam;
         }
 
-        CHECK(!del2.empty());
+        CHECK(!del2.is_empty());
         CHECK(del2 != nullptr);
         CHECK(counter == 0);
 
@@ -109,14 +109,14 @@ namespace
 
         delegate_type del;
 
-        CHECK(del.empty());
+        CHECK(del.is_empty());
         CHECK(del == nullptr);
 
         {
             del = &func;
         }
 
-        CHECK(!del.empty());
+        CHECK(!del.is_empty());
         CHECK(del != nullptr);
         CHECK(counter == 0);
 
@@ -125,7 +125,7 @@ namespace
         CHECK(counter == 1);
 
         del.clear();
-        CHECK(del.empty());
+        CHECK(del.is_empty());
         CHECK(del == nullptr);
 
         counter = 0;
@@ -134,7 +134,7 @@ namespace
             del = []() { counter++; };
         }
 
-        CHECK(!del.empty());
+        CHECK(!del.is_empty());
         CHECK(counter == 0);
 
         del();
@@ -216,7 +216,7 @@ TEST_CASE("multicast_delegate", "[delegates]")
 
         rsl::multicast_delegate<void(rsl::uint32&)> del2;
 
-        CHECK(del2.empty());
+        CHECK(del2.is_empty());
         CHECK(del2 == nullptr);
         CHECK(del2.size() == 0);
 
@@ -234,7 +234,7 @@ TEST_CASE("multicast_delegate", "[delegates]")
 
         CHECK(del2.size() == 2);
 
-        CHECK(!del2.empty());
+        CHECK(!del2.is_empty());
         CHECK(del2 != nullptr);
         CHECK(counter == 0);
 
@@ -252,17 +252,17 @@ TEST_CASE("multicast_delegate", "[delegates]")
         }
 
         del2.remove(funcParam);
-        CHECK(!del2.empty());
+        CHECK(!del2.is_empty());
         CHECK(del2 != nullptr);
         CHECK(del2.size() == 1);
 
         del2.remove(funcParam);
-        CHECK(!del2.empty());
+        CHECK(!del2.is_empty());
         CHECK(del2 != nullptr);
         CHECK(del2.size() == 1);
 
         del2 -= funcParam2;
-        CHECK(del2.empty());
+        CHECK(del2.is_empty());
         CHECK(del2 == nullptr);
         CHECK(del2.size() == 0);
 
@@ -287,7 +287,7 @@ TEST_CASE("multicast_delegate", "[delegates]")
         CHECK(counter == 14);
 
         del.clear();
-        CHECK(del.empty());
+        CHECK(del.is_empty());
         CHECK(del == nullptr);
         CHECK(del.size() == 0);
 
@@ -300,7 +300,7 @@ TEST_CASE("multicast_delegate", "[delegates]")
             auto lambda = []() { counter *= 3; };
             del += lambda;
 
-            CHECK(!del.empty());
+            CHECK(!del.is_empty());
             CHECK(del != nullptr);
             CHECK(del.size() == 2);
 
@@ -315,7 +315,7 @@ TEST_CASE("multicast_delegate", "[delegates]")
 
             del -= lambda;
 
-            CHECK(!del.empty());
+            CHECK(!del.is_empty());
             CHECK(del != nullptr);
             CHECK(del.size() == 1);
             CHECK(!del.contains(lambda));
@@ -323,7 +323,7 @@ TEST_CASE("multicast_delegate", "[delegates]")
 
         del.clear();
 
-        CHECK(del.empty());
+        CHECK(del.is_empty());
         CHECK(del == nullptr);
         CHECK(del.size() == 0);
 
@@ -376,7 +376,7 @@ TEST_CASE("multicast_delegate", "[delegates]")
 
             del.pop_back();
 
-            CHECK(!del.empty());
+            CHECK(!del.is_empty());
             CHECK(del != nullptr);
             CHECK(del.size() == 1);
             CHECK(del.contains<Object, &Object::memberFunc>(obj));
@@ -384,7 +384,7 @@ TEST_CASE("multicast_delegate", "[delegates]")
 
             del.pop_back();
 
-            CHECK(del.empty());
+            CHECK(del.is_empty());
             CHECK(del == nullptr);
             CHECK(del.size() == 0);
             CHECK(!del.contains<Object, &Object::memberFunc>(obj));

@@ -48,7 +48,7 @@ namespace rsl
         [[rythe_always_inline]] explicit constexpr multicast_delegate(allocator_storage allocator)
             noexcept(is_nothrow_constructible_v<invocation_container, allocator_storage>);
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr bool empty() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr bool is_empty() const noexcept;
         [[rythe_always_inline]] constexpr void clear() noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr size_type size() const noexcept;
         [[rythe_always_inline]] constexpr void reserve(size_type newCap) noexcept;

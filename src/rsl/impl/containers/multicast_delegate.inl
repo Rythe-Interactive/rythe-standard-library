@@ -15,9 +15,9 @@ namespace rsl
         : m_invocationList(allocator) {}
 
     template <typename ReturnType, typename... ParamTypes>
-    constexpr bool multicast_delegate<ReturnType(ParamTypes...)>::empty() const noexcept
+    constexpr bool multicast_delegate<ReturnType(ParamTypes...)>::is_empty() const noexcept
     {
-        return m_invocationList.empty();
+        return m_invocationList.is_empty();
     }
 
     template <typename ReturnType, typename... ParamTypes>
@@ -224,13 +224,13 @@ namespace rsl
     template <typename ReturnType, typename... ParamTypes>
     constexpr bool multicast_delegate<ReturnType(ParamTypes...)>::operator==(nullptr_type) const noexcept
     {
-        return empty();
+        return is_empty();
     }
 
     template <typename ReturnType, typename... ParamTypes>
     constexpr bool multicast_delegate<ReturnType(ParamTypes...)>::operator!=(nullptr_type) const noexcept
     {
-        return !empty();
+        return !is_empty();
     }
 
     template <typename ReturnType, typename... ParamTypes>

@@ -336,9 +336,9 @@ namespace rsl
     }
 
     template <char_type CharType, size_type StaticCapacity, bool CanAllocate>
-    constexpr bool basic_hashed_string<CharType, StaticCapacity, CanAllocate>::empty() const noexcept
+    constexpr bool basic_hashed_string<CharType, StaticCapacity, CanAllocate>::is_empty() const noexcept
     {
-        return string.empty();
+        return string.is_empty();
     }
 
     template <char_type CharType, size_type StaticCapacity, bool CanAllocate>

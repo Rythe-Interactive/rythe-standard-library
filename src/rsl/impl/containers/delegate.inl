@@ -146,7 +146,7 @@ namespace rsl
     }
 
     template <typename ReturnType, typename... ParamTypes>
-    constexpr bool delegate<ReturnType(ParamTypes...)>::empty() const noexcept
+    constexpr bool delegate<ReturnType(ParamTypes...)>::is_empty() const noexcept
     {
         return m_invocation.stub == nullptr;
     }
@@ -160,13 +160,13 @@ namespace rsl
     template <typename ReturnType, typename... ParamTypes>
     constexpr bool delegate<ReturnType(ParamTypes...)>::operator==(nullptr_type) const noexcept
     {
-        return empty();
+        return is_empty();
     }
 
     template <typename ReturnType, typename... ParamTypes>
     constexpr bool delegate<ReturnType(ParamTypes...)>::operator!=(nullptr_type) const noexcept
     {
-        return !empty();
+        return !is_empty();
     }
 
     template <typename ReturnType, typename... ParamTypes>
