@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "../util/error_handling.hpp"
+#include "../platform/file.hpp"
 
 #include "archive.hpp"
 #include "filesystem_error.hpp"
@@ -33,6 +34,8 @@ namespace rsl::fs
         [[nodiscard]] [[rythe_always_inline]] filesystem_traits filesystem_info() const;
         [[nodiscard]] virtual result<dynamic_array<view>> ls() const = 0;
 
+        virtual void set_access_hint(file_access_flags) {}
+        [[nodiscard]] virtual result<void> create() const = 0;
         [[nodiscard]] virtual result<byte_view> read() const = 0;
         [[nodiscard]] virtual result<void> write(byte_view data) = 0;
         [[nodiscard]] virtual result<void> append(byte_view data) = 0;
@@ -41,8 +44,7 @@ namespace rsl::fs
     protected:
         [[nodiscard]] result<void> open_file_for_read() const;
         [[nodiscard]] result<void> open_file_for_write();
-        [[nodiscard]] result<void> close_file() const;
-        [[nodiscard]] result<void> flush_file() const;
+        [[nodiscard]] result<void> open_file_for_append();
 
         archive* m_provider;
     };

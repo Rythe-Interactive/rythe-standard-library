@@ -9,7 +9,9 @@ local project = {
     },
     defines = { "RYTHE_INTERNAL" },
     pch_file_name = "./impl/pch",
-    pch_auto_generate = true
+    pch_auto_generate = true,
+    vector_extensions = "AVX2",
+    isa_extensions = { "AES" }
 }
 
 return project

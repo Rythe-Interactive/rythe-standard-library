@@ -28,6 +28,7 @@ namespace rsl
             [[rythe_always_inline]] result<void> prefetch_solution(bool ignoreMultipleSolutions = !rythe_validate_high_impact) const;
 
             [[nodiscard]] bool exists() const;
+            [[nodiscard]] result<void> create() const;
 
             [[nodiscard]] file_traits file_info() const;
             [[nodiscard]] filesystem_traits filesystem_info() const;
@@ -50,6 +51,9 @@ namespace rsl
             [[nodiscard]] result<void> write(byte_view data);
             [[nodiscard]] result<void> append(byte_view data);
             [[nodiscard]] result<void> flush() const;
+
+            [[nodiscard]] pointer<file_solution> get_solution();
+            [[nodiscard]] pointer<const file_solution> get_solution() const;
 
         protected:
             void set_path(dynamic_string&& path);

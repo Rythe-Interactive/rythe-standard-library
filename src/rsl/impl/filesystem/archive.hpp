@@ -37,8 +37,7 @@ namespace rsl::fs
 
         [[nodiscard]] virtual result<void> open_file_for_read(const file_solution* solution) const = 0;
         [[nodiscard]] virtual result<void> open_file_for_write(file_solution* solution) = 0;
-        [[nodiscard]] virtual result<void> close_file(const file_solution* solution) const = 0;
-        [[nodiscard]] virtual result<void> flush_file(const file_solution* solution) const = 0;
+        [[nodiscard]] virtual result<void> open_file_for_append(file_solution* solution) = 0;
 
         pair<index_type, bool> create_solution_reference(string_view path);
         void destroy_solution_reference(string_view path);

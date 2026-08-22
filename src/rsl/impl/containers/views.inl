@@ -558,7 +558,7 @@ namespace rsl
             bool found = true;
             for (auto it = keyBegin; it != keyEnd; ++it)
             {
-                if (*iter == *it)
+                if (*iter == *it || *it == *iter)
                 {
                     found = false;
                     break;

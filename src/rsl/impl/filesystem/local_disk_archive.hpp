@@ -23,6 +23,9 @@ namespace rsl::fs
         [[nodiscard]] bool exists() const override;
 
         [[nodiscard]] result<dynamic_array<view>> ls() const override;
+
+        [[rythe_always_inline]] void set_access_hint(file_access_flags flags) override;
+        [[nodiscard]] result<void> create() const override;
         [[nodiscard]] result<byte_view> read() const override;
         [[nodiscard]] result<void> write(byte_view data) override;
         [[nodiscard]] result<void> append(byte_view data) override;
@@ -32,9 +35,9 @@ namespace rsl::fs
         friend class local_disk_archive;
         dynamic_string m_virtualPath;
         dynamic_string m_absolutePath;
-        mutable bool m_openForWrite;
+        file_access_flags m_accessFlags = file_access_flags::no_preference;
         mutable file m_openFile;
-        mutable dynamic_array<byte> m_dataCache;
+        mutable file_mapping m_fileMapping;
     };
 
     class local_disk_archive : public archive
@@ -55,8 +58,7 @@ namespace rsl::fs
         friend class local_disk_file_solution;
         [[nodiscard]] result<void> open_file_for_read(const file_solution* solution) const override;
         [[nodiscard]] result<void> open_file_for_write(file_solution* solution) override;
-        [[nodiscard]] result<void> close_file(const file_solution* solution) const override;
-        [[nodiscard]] result<void> flush_file(const file_solution* solution) const override;
+        [[nodiscard]] result<void> open_file_for_append(file_solution* solution) override;
 
         dynamic_string m_rootPath;
         dynamic_array<local_disk_file_solution> m_solutions;

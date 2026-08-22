@@ -12,7 +12,7 @@ namespace rsl
         pointer<log::logger> logger = { nullptr };
         pointer<log::logger> undecoratedLogger = { nullptr };
         size_type indent;
-        char indentChar;
+        char indentChar = ' ';
     };
     RYTHE_DECLARE_SINGLETON(logging_context)
 

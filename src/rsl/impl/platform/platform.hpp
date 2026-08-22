@@ -63,8 +63,13 @@ namespace rsl
         static bool next_directory_entry(directory_iterator& iter);
         static result<dynamic_array<dynamic_string>> enumerate_directory(string_view absolutePath);
 
+        static result<void> create_directory(string_view absolutePath);
+        static result<void> create_file(string_view absolutePath);
+
         static result<file> open_file(string_view absolutePath, file_access_mode mode, file_access_flags flags = file_access_flags::no_preference);
         static void close_file(file& file);
+        static result<file_mapping> create_file_mapping(file file, byte_range range = {});
+        static void release_file_mapping(file_mapping& mapping);
         static result<size_type> read_file_section(file file, mutable_byte_view target, byte_range range); // Read until end of range, or EOF.
         static result<size_type> read_file(file file, mutable_byte_view target, size_type offset = npos); // Read until EOF.
         static result<void> write_file(file file, byte_view data, size_type offset = npos);

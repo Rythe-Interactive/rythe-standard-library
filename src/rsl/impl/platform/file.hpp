@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "../filesystem/filesystem_error.hpp"
 #include "../time/time_span.hpp"
 
 namespace rsl
@@ -44,16 +45,19 @@ namespace rsl
     [[nodiscard]] [[rythe_always_inline]] constexpr bool mode_available_for_read(file_access_mode mode) noexcept;
 
     RYTHE_DECLARE_NATIVE_API_TYPE(file)
-    [[maybe_unused]] [[rythe_always_inline]] static void set_file_access_mode(file&, file_access_mode) noexcept;
-    [[maybe_unused]] [[rythe_always_inline]] static void set_file_access_flags(file&, file_access_flags) noexcept;
+    namespace internal
+    {
+        [[maybe_unused]] [[rythe_always_inline]] static void set_file_access_mode(file&, file_access_mode) noexcept;
+        [[maybe_unused]] [[rythe_always_inline]] static void set_file_access_flags(file&, file_access_flags) noexcept;
+    } // namespace internal
 
     class file
     {
     public:
         RULE_OF_5_CONSTEXPR_NOEXCEPT(file);
 
-        bool operator==(const file& other) const;
-        bool operator!=(const file& other) const;
+        [[nodiscard]] bool operator==(const file& other) const;
+        [[nodiscard]] [[rythe_always_inline]] bool operator!=(const file& other) const;
 
         [[nodiscard]] [[rythe_always_inline]] file_access_mode get_mode() const noexcept;
         [[nodiscard]] [[rythe_always_inline]] file_access_flags get_flags() const noexcept;
@@ -63,11 +67,44 @@ namespace rsl
 
     private:
         RYTHE_NATIVE_API_TYPE_PRIVATE_MEMBERS(file)
-        friend void set_file_access_mode(file&, file_access_mode) noexcept;
-        friend void set_file_access_flags(file&, file_access_flags) noexcept;
+        friend void ::rsl::internal::set_file_access_mode(file&, file_access_mode) noexcept;
+        friend void ::rsl::internal::set_file_access_flags(file&, file_access_flags) noexcept;
 
         file_access_mode m_accessMode;
         file_access_flags m_accessFlags;
+    };
+
+    RYTHE_DECLARE_NATIVE_API_TYPE(file_mapping)
+    namespace internal
+    {
+        [[maybe_unused]] [[rythe_always_inline]] static void set_file_mapping_file(file_mapping&, file) noexcept;
+        [[maybe_unused]] [[rythe_always_inline]] static void set_file_mapping_view(file_mapping&, mutable_byte_view) noexcept;
+    }
+
+    class file_mapping
+    {
+    public:
+        RULE_OF_5_CONSTEXPR_NOEXCEPT(file_mapping);
+
+        [[nodiscard]] bool operator==(const file_mapping& other) const;
+        [[nodiscard]] [[rythe_always_inline]] bool operator!=(const file_mapping& other) const;
+
+        [[nodiscard]] [[rythe_always_inline]] file_access_mode get_mode() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] file_access_flags get_flags() const noexcept;
+        void release();
+
+        [[nodiscard]] [[rythe_always_inline]] result<byte_view> view_read() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] result<mutable_byte_view> view_write() const noexcept;
+
+        [[nodiscard]] [[rythe_always_inline]] operator bool() const noexcept;
+
+    private:
+        RYTHE_NATIVE_API_TYPE_PRIVATE_MEMBERS(file_mapping)
+        friend void ::rsl::internal::set_file_mapping_file(file_mapping&, file) noexcept;
+        friend void ::rsl::internal::set_file_mapping_view(file_mapping&, mutable_byte_view) noexcept;
+
+        mutable_byte_view m_view;
+        file m_file;
     };
 }
 

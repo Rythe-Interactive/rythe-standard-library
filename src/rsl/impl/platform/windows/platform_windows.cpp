@@ -33,36 +33,50 @@
 
 namespace rsl
 {
-    struct native_win_directory_iterator_handle
+    namespace
     {
-        managed_resource<HANDLE> directory;
-        WIN32_FIND_DATAW findData;
-    };
+        struct native_win_directory_iterator_handle
+        {
+            managed_resource<HANDLE> directory;
+            WIN32_FIND_DATAW findData;
+        };
+    } // namespace
 
     RYTHE_NATIVE_API_TYPE_ACCESSORS(file, HANDLE)
+    RYTHE_NATIVE_API_TYPE_ACCESSORS(file_mapping, HANDLE)
     RYTHE_NATIVE_API_TYPE_ACCESSORS(directory_iterator, native_win_directory_iterator_handle*)
     RYTHE_NATIVE_API_TYPE_ACCESSORS(dynamic_library, HMODULE)
     RYTHE_NATIVE_API_TYPE_ACCESSORS(thread, HANDLE)
 
-    [[rythe_always_inline]] static void set_file_access_mode(file& val, const file_access_mode mode) noexcept
+    namespace internal
     {
-        val.m_accessMode = mode;
-    }
+        [[rythe_always_inline]] static void set_file_access_mode(file& val, const file_access_mode mode) noexcept
+        {
+            val.m_accessMode = mode;
+        }
 
-    [[rythe_always_inline]] static void set_file_access_flags(file& val, const file_access_flags flags) noexcept
-    {
-        val.m_accessFlags = flags;
-    }
+        [[rythe_always_inline]] static void set_file_access_flags(file& val, const file_access_flags flags) noexcept
+        {
+            val.m_accessFlags = flags;
+        }
+
+        [[rythe_always_inline]] static void set_file_mapping_file(file_mapping& val, file f) noexcept
+        {
+            val.m_file = f;
+        }
+
+        [[rythe_always_inline]] static void set_file_mapping_view(file_mapping& val, mutable_byte_view view) noexcept
+        {
+            val.m_view = view;
+        }
+    } // namespace internal
 
     namespace
     {
         bool is_regular_file_attributes(const DWORD attributes)
         {
             constexpr static DWORD excludingAttributes =
-                    FILE_ATTRIBUTE_DIRECTORY |
-                    FILE_ATTRIBUTE_ARCHIVE |
-                    FILE_ATTRIBUTE_DEVICE |
-                    FILE_ATTRIBUTE_REPARSE_POINT;
+                    FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_REPARSE_POINT;
 
             return (attributes & excludingAttributes) == 0u;
         }
@@ -139,6 +153,11 @@ namespace rsl
             return (static_cast<uint64>(upper) << 32ull) | static_cast<uint64>(lower);
         }
 
+        pair<DWORD, DWORD> split_dwords(uint64 input)
+        {
+            return { static_cast<DWORD>(input), static_cast<DWORD>(input >> 32ull) };
+        }
+
         time_span translate_timestamp(const FILETIME fileTime) noexcept
         {
             const uint64 windowsTime = combine_dwords(fileTime.dwLowDateTime, fileTime.dwHighDateTime);
@@ -213,23 +232,15 @@ namespace rsl
                 flagsAndAttributes |= FILE_FLAG_SEQUENTIAL_SCAN;
             }
 
-            HANDLE fileHandle = CreateFileW(
-                    absolutePath.data(),
-                    accessMode,
-                    shareMode,
-                    NULL,
-                    creationDisposition,
-                    flagsAndAttributes,
-                    NULL
-                    );
+            HANDLE fileHandle =
+                    CreateFileW(absolutePath.data(), accessMode, shareMode, NULL, creationDisposition, flagsAndAttributes, NULL);
 
             if (fileHandle == INVALID_HANDLE_VALUE)
             {
                 return make_error(translate_platform_error(GetLastError()));
             }
 
-            if (mode == file_access_mode::append ||
-                mode == file_access_mode::read_write_append)
+            if (mode == file_access_mode::append || mode == file_access_mode::read_write_append)
             {
                 constexpr LARGE_INTEGER largeOffset{ .QuadPart = static_cast<LONGLONG>(0) };
                 if (!SetFilePointerEx(fileHandle, largeOffset, nullptr, FILE_END))
@@ -242,8 +253,8 @@ namespace rsl
 
             file result;
             set_native_handle(result, fileHandle);
-            set_file_access_mode(result, mode);
-            set_file_access_flags(result, flags);
+            internal::set_file_access_mode(result, mode);
+            internal::set_file_access_flags(result, flags);
 
             return result;
         }
@@ -271,7 +282,7 @@ namespace rsl
             }
             return static_cast<size_type>(bytesWritten);
         }
-    }
+    } // namespace
 
     dynamic_library platform::load_library(const cstring path)
     {
@@ -296,11 +307,7 @@ namespace rsl
     }
 
     thread platform::create_thread(
-            const native_thread_start startFunction,
-            void* userData,
-            const string_view name,
-            allocator_storage allocator
-            )
+            const native_thread_start startFunction, void* userData, const string_view name, allocator_storage allocator)
     {
         rsl_assert_always(startFunction);
         if (!allocator)
@@ -329,8 +336,7 @@ namespace rsl
                 &internal_native_thread_start,
                 threadContext,
                 CREATE_SUSPENDED | STACK_SIZE_PARAM_IS_A_RESERVATION,
-                nullptr
-                );
+                nullptr);
 
         if (!threadHandle)
         {
@@ -371,8 +377,8 @@ namespace rsl
         DWORD exitCode = 0u;
         const bool exitCodeResult = GetExitCodeThread(threadHandle, &exitCode);
 
-        const bool threadIsInactive = (waitResult == WAIT_OBJECT_0 || waitResult == WAIT_FAILED) && (
-            exitCode != STILL_ACTIVE || !exitCodeResult);
+        const bool threadIsInactive =
+                (waitResult == WAIT_OBJECT_0 || waitResult == WAIT_FAILED) && (exitCode != STILL_ACTIVE || !exitCodeResult);
         return !threadIsInactive;
     }
 
@@ -398,10 +404,11 @@ namespace rsl
 
     void platform::set_thread_name(const thread_id threadId, const string_view name)
     {
-        const dynamic_wstring& wideName = thread_names.emplace_or_replace(
-                threadId,
-                native_thread_name{ .wideName = to_utf16(name), .name = dynamic_string::from_view(name) }
-                ).wideName;
+        const dynamic_wstring& wideName =
+                thread_names
+                        .emplace_or_replace(
+                                threadId, native_thread_name{ .wideName = to_utf16(name), .name = dynamic_string::from_view(name) })
+                        .wideName;
         [[maybe_unused]] HRESULT _ = SetThreadDescription(GetCurrentThread(), wideName.data());
     }
 
@@ -461,9 +468,9 @@ namespace rsl
         }
 
         if (linear_search_collection(
-                absolutePath,
-                "\x00\x01\x02\x03\x04\x05\x06\x07\x09\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x20\x21\x22\x23\x24\x25\x26\x27\x28\x29"_sv
-                ) != npos)
+                    absolutePath,
+                    "\x00\x01\x02\x03\x04\x05\x06\x07\x09\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x20\x21\x22\x23\x24\x25\x26\x27\x28\x29"_sv) !=
+            npos)
         {
             return false;
         }
@@ -492,7 +499,8 @@ namespace rsl
                 {
                     return false;
                 }
-                const HANDLE h = CreateFileA(absolutePath.data(),GENERIC_WRITE,NULL,NULL,OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL); // NOLINT
+                const HANDLE h = CreateFileA(
+                        absolutePath.data(), GENERIC_WRITE, NULL, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL); // NOLINT
                 if (h == INVALID_HANDLE_VALUE)
                 {
                     if (GetLastError() == ERROR_SHARING_VIOLATION)
@@ -520,7 +528,8 @@ namespace rsl
             return false;
         }
 
-        const HANDLE h = CreateFileA(absolutePath.data(),GENERIC_READ,NULL,NULL,OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL); // NOLINT
+        const HANDLE h =
+                CreateFileA(absolutePath.data(), GENERIC_READ, NULL, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL); // NOLINT
         if (h == INVALID_HANDLE_VALUE)
         {
             if (GetLastError() == ERROR_SHARING_VIOLATION)
@@ -560,8 +569,7 @@ namespace rsl
         set_native_handle(
                 startIterator,
                 new native_win_directory_iterator_handle{ .directory = managed_resource<HANDLE>(FindClose, directory),
-                                                          .findData = findData }
-                );
+                                                          .findData = findData });
 
         if (!next_directory_entry(startIterator))
         {
@@ -615,16 +623,102 @@ namespace rsl
         return result;
     }
 
+    result<void> platform::create_directory(string_view absolutePath)
+    {
+        const dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
+        if (CreateDirectory(widePath.data(), NULL) == FALSE)
+        {
+            return make_error(translate_platform_error(GetLastError()));
+        }
+        return okay;
+    }
+
+    result<void> platform::create_file(string_view absolutePath)
+    {
+        const dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
+
+        const HANDLE fileHandle = CreateFileW(
+                widePath.data(), 0u, FILE_SHARE_WRITE, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_BACKUP_SEMANTICS, NULL);
+        if (fileHandle == INVALID_HANDLE_VALUE)
+        {
+            return make_error(translate_platform_error(GetLastError()));
+        }
+
+        CloseHandle(fileHandle);
+        return okay;
+    }
+
     result<file> platform::open_file(const string_view absolutePath, const file_access_mode mode, const file_access_flags flags)
     {
         return open_file_impl(to_utf16(fs::localize(absolutePath)), mode, flags);
     }
 
-    result<size_type> platform::read_file(
-            const file file,
-            mutable_byte_view target,
-            const size_type offset
-            )
+    result<file_mapping> platform::create_file_mapping(const file file, const byte_range range)
+    {
+        result<size_type> fileSize = get_file_size(file);
+        if (fileSize.has_errors())
+        {
+            return fileSize.propagate();
+        }
+
+        if (*fileSize == 0ull)
+        {
+            return make_error(platform_error::eof_reached);
+        }
+
+        // TODO(Glyn): Large-page support
+        DWORD accessFlags;
+        DWORD pageProtectionFlags;
+        const file_access_mode accessMode = file.get_mode();
+        const bool canRead = mode_available_for_read(accessMode);
+        const bool canWrite = mode_available_for_write(accessMode);
+        if (canRead && canWrite)
+        {
+            accessFlags = FILE_MAP_ALL_ACCESS;
+            pageProtectionFlags = PAGE_READWRITE;
+        }
+        else if (canWrite)
+        {
+            accessFlags = FILE_MAP_WRITE;
+            pageProtectionFlags = PAGE_READWRITE;
+        }
+        else if (canRead)
+        {
+            accessFlags = FILE_MAP_READ;
+            pageProtectionFlags = PAGE_READONLY;
+        }
+        else
+        {
+            return make_error(platform_error::no_permission);
+        }
+
+        HANDLE nativeFileHandle = get_native_handle(file);
+
+        const auto [lowerSize, upperSize] = split_dwords(range.size);
+        HANDLE nativeMapHandle = CreateFileMapping(nativeFileHandle, NULL, pageProtectionFlags, upperSize, lowerSize, NULL);
+        if (nativeMapHandle == 0)
+        {
+            return make_error(translate_platform_error(GetLastError()));
+        }
+
+        const auto [lowerOffset, upperOffset] = split_dwords(range.size);
+        LPVOID lpBasePtr = MapViewOfFile(nativeMapHandle, accessFlags, upperOffset, lowerOffset, range.size);
+        if (lpBasePtr == NULL)
+        {
+            DWORD platformError = GetLastError();
+            CloseHandle(nativeMapHandle);
+            return make_error(translate_platform_error(platformError));
+        }
+
+        file_mapping result;
+        set_native_handle(result, nativeMapHandle);
+        internal::set_file_mapping_file(result, file);
+        internal::set_file_mapping_view(result, mutable_byte_view::from_buffer(static_cast<byte*>(lpBasePtr), *fileSize));
+
+        return result;
+    }
+
+    result<size_type> platform::read_file(const file file, mutable_byte_view target, const size_type offset)
     {
         rsl_assert_invalid_operation(mode_available_for_read(file.get_mode()));
 
@@ -652,9 +746,7 @@ namespace rsl
             if (!ReadFile(nativeFileHandle, readPointer, readBatchSize, &bytesRead, nullptr))
             {
                 return make_partial_result<size_type>(
-                        make_error(translate_platform_error(GetLastError())),
-                        totalBytesRead + bytesRead
-                        );
+                        make_error(translate_platform_error(GetLastError())), totalBytesRead + bytesRead);
             }
 
             totalBytesRead += bytesRead;
@@ -665,7 +757,8 @@ namespace rsl
             }
 
             bytesToRead -= readBatchSize;
-            readPointer += readBatchSize;;
+            readPointer += readBatchSize;
+            ;
         }
 
         if (totalBytesRead > 0ull)
@@ -674,9 +767,7 @@ namespace rsl
             if (!ReadFile(nativeFileHandle, readPointer, bytesToRead, &bytesRead, nullptr))
             {
                 return make_partial_result<size_type>(
-                        make_error(translate_platform_error(GetLastError())),
-                        totalBytesRead + bytesRead
-                        );
+                        make_error(translate_platform_error(GetLastError())), totalBytesRead + bytesRead);
             }
 
             totalBytesRead += bytesRead;
@@ -688,8 +779,7 @@ namespace rsl
     result<void> platform::write_file(const file file, const byte_view data, const size_type offset)
     {
         rsl_assert_invalid_operation(
-                mode_available_for_write(file.get_mode()) || (mode_available_for_append(file.get_mode()) && offset == npos)
-                );
+                mode_available_for_write(file.get_mode()) || (mode_available_for_append(file.get_mode()) && offset == npos));
 
         size_type bytesWritten = 0ull;
         size_type writeOffset = offset;
@@ -834,14 +924,7 @@ namespace rsl
         const dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
 
         const HANDLE fileHandle = CreateFileW(
-                widePath.data(),
-                0u,
-                FILE_SHARE_READ,
-                NULL,
-                OPEN_EXISTING,
-                FILE_ATTRIBUTE_NORMAL | FILE_FLAG_BACKUP_SEMANTICS,
-                NULL
-                );
+                widePath.data(), 0u, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_BACKUP_SEMANTICS, NULL);
         if (fileHandle == INVALID_HANDLE_VALUE)
         {
             return make_error(translate_platform_error(GetLastError()));
@@ -858,12 +941,12 @@ namespace rsl
         CloseHandle(fileHandle);
 
         return file_info{
-                    .lastWriteTimestamp = translate_timestamp(information.ftLastWriteTime),
-                    .size = combine_dwords(information.nFileSizeLow, information.nFileSizeHigh),
-                    .isWritable = (information.dwFileAttributes & FILE_ATTRIBUTE_READONLY) == 0u,
-                    .isDirectory = (information.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0u,
-                    .isFile = is_regular_file_attributes(information.dwFileAttributes),
-                };
+            .lastWriteTimestamp = translate_timestamp(information.ftLastWriteTime),
+            .size = combine_dwords(information.nFileSizeLow, information.nFileSizeHigh),
+            .isWritable = (information.dwFileAttributes & FILE_ATTRIBUTE_READONLY) == 0u,
+            .isDirectory = (information.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0u,
+            .isFile = is_regular_file_attributes(information.dwFileAttributes),
+        };
     }
 
     result<file_info> platform::get_file_info(const file file) noexcept
@@ -875,15 +958,20 @@ namespace rsl
         }
 
         return file_info{
-                    .lastWriteTimestamp = translate_timestamp(information.ftLastWriteTime),
-                    .size = combine_dwords(information.nFileSizeLow, information.nFileSizeHigh),
-                    .isWritable = (information.dwFileAttributes & FILE_ATTRIBUTE_READONLY) == 0u,
-                    .isDirectory = (information.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0u,
-                    .isFile = is_regular_file_attributes(information.dwFileAttributes),
-                };
+            .lastWriteTimestamp = translate_timestamp(information.ftLastWriteTime),
+            .size = combine_dwords(information.nFileSizeLow, information.nFileSizeHigh),
+            .isWritable = (information.dwFileAttributes & FILE_ATTRIBUTE_READONLY) == 0u,
+            .isDirectory = (information.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0u,
+            .isFile = is_regular_file_attributes(information.dwFileAttributes),
+        };
     }
 
     bool file::operator==(const file& other) const
+    {
+        return m_handle == other.m_handle;
+    }
+
+    bool file_mapping::operator==(const file_mapping& other) const
     {
         return m_handle == other.m_handle;
     }
@@ -892,6 +980,15 @@ namespace rsl
     {
         CloseHandle(get_native_handle(*this));
         m_handle = native_file::invalid;
+    }
+
+    void file_mapping::release()
+    {
+        UnmapViewOfFile(m_view.data());
+        CloseHandle(get_native_handle(*this));
+        m_handle = native_file_mapping::invalid;
+        m_view = {};
+        m_file = {};
     }
 
     directory_iterator::directory_iterator(directory_iterator&& other) noexcept
@@ -1005,14 +1102,14 @@ namespace rsl
     {
         uint64 performanceCounterFrequency;
         ULONG timerResolution = 0u;
-        
+
         using MMRESULT = UINT;
         using NtSetTimerResolutionFunc = LONG(NTAPI*)(ULONG DesiredResolution, BOOLEAN SetResolution, PULONG CurrentResolution);
         NtSetTimerResolutionFunc NtSetTimerResolution;
 
         using TimeEndPeriodFunc = MMRESULT(WINAPI*)(_In_ UINT uPeriod);
         TimeEndPeriodFunc TimeEndPeriod;
-    }
+    } // namespace
 
     time_span system_clock::current_time() noexcept
     {
@@ -1038,12 +1135,11 @@ namespace rsl
         TimeEndPeriod(1u);
     }
 
-    system_clock initialize_main_clock()
+    system_clock initialize_main_clock() noexcept
     {
         using NtQueryTimerResolutionFunc = LONG(NTAPI*)(PULONG MinimumResolution, PULONG MaximumResolution, PULONG CurrentResolution);
 
         using TimeBeginPeriodFunc = MMRESULT(WINAPI*)(_In_ UINT uPeriod);
-        using TimeEndPeriodFunc = MMRESULT(WINAPI*)(_In_ UINT uPeriod);
 
         const HMODULE ntDll = ::GetModuleHandle(TEXT("ntdll.dll"));
         NtSetTimerResolution = (NtSetTimerResolutionFunc)(void*)GetProcAddress(ntDll, "NtSetTimerResolution");
@@ -1066,7 +1162,7 @@ namespace rsl
         ULONG maximumResolution = 0u;
         ULONG currentResolution = 0u;
 
-        if (NtQueryTimerResolution(&minimumResolution, &maximumResolution, &currentResolution) == 0u)
+        if (NtQueryTimerResolution(&minimumResolution, &maximumResolution, &currentResolution) == 0)
         {
             ULONG newResolution = 0u;
             NtSetTimerResolution(max<ULONG>(maximumResolution, 5000u), TRUE, &newResolution);

@@ -1,3 +1,4 @@
+#include "platform.hpp"
 #pragma once
 
 namespace rsl
@@ -59,6 +60,11 @@ namespace rsl
     inline void platform::close_file(file& file)
     {
         file.close();
+    }
+
+    inline void rsl::platform::release_file_mapping(file_mapping& mapping)
+    {
+        mapping.release();
     }
 
     inline result<size_type> platform::read_file_section(

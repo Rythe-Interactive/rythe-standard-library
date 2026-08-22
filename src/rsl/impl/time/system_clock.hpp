@@ -28,7 +28,7 @@ namespace rsl
 
     private:
         system_clock() = default;
-        friend system_clock initialize_main_clock();
+        friend system_clock initialize_main_clock() noexcept;
         time_span m_start;
     };
 

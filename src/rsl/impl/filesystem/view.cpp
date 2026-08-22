@@ -28,6 +28,16 @@ namespace rsl::fs
         return file_info().exists;
     }
 
+    result<void> view::create() const
+    {
+        result<const file_solution*> solution = find_solution();
+        if (solution.has_errors())
+        {
+            return solution.propagate();
+        }
+        return solution.value()->create();
+    }
+
     file_traits view::file_info() const
     {
         result<const file_solution*> solution = find_solution();
@@ -116,6 +126,28 @@ namespace rsl::fs
             return solution.propagate();
         }
         return solution.value()->flush();
+    }
+
+    pointer<file_solution> view::get_solution()
+    {
+        result<file_solution*> solution = find_solution();
+        if (solution.has_errors())
+        {
+            solution.resolve();
+            return { nullptr };
+        }
+        return { *solution };
+    }
+
+    pointer<const file_solution> view::get_solution() const
+    {
+        result<const file_solution*> solution = find_solution();
+        if (solution.has_errors())
+        {
+            solution.resolve();
+            return { nullptr };
+        }
+        return { *solution };
     }
 
     void view::set_path(dynamic_string&& path)

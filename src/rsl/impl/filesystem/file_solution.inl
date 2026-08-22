@@ -1,4 +1,5 @@
-﻿namespace rsl::fs
+﻿#include "file_solution.hpp"
+namespace rsl::fs
 {
     inline const archive* file_solution::get_provider() const noexcept
     {
@@ -93,8 +94,7 @@
 
         return m_provider->open_file_for_write(this);
     }
-
-    inline result<void> file_solution::close_file() const
+    inline result<void> rsl::fs::file_solution::open_file_for_append()
     {
         if constexpr (rythe_validate_low_impact)
         {
@@ -104,19 +104,6 @@
             }
         }
 
-        return m_provider->close_file(this);
-    }
-
-    inline result<void> file_solution::flush_file() const
-    {
-        if constexpr (rythe_validate_low_impact)
-        {
-            if (!m_provider || !m_provider->is_valid()) [[unlikely]]
-            {
-                return make_error(filesystem_error::invalid_filesystem, "Invalid drive filesystem provider.");
-            }
-        }
-
-        return m_provider->flush_file(this);
+        return m_provider->open_file_for_append(this);
     }
 }

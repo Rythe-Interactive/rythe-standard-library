@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿#include "local_disk_archive.hpp"
+#pragma once
 
 namespace rsl::fs
 {
@@ -18,5 +19,10 @@ namespace rsl::fs
         {
             m_rootPath.append(separator_char{});
         }
+    }
+
+    inline void local_disk_file_solution::set_access_hint(file_access_flags flags)
+    {
+        m_accessFlags = flags;
     }
 }

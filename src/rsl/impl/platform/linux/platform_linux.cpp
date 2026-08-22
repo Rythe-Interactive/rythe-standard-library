@@ -26,15 +26,23 @@ namespace rsl
     NATIVE_API_TYPE_ACCESSORS(dynamic_library, void*)
     NATIVE_API_TYPE_ACCESSORS(thread, void*)
 
-    [[maybe_unused]] [[rythe_always_inline]] static void set_file_access_mode(file& val, const file_access_mode mode) noexcept
+    namespace internal
     {
-        val.m_accessMode = mode;
-    }
+        [[maybe_unused]] [[rythe_always_inline]] static void set_file_access_mode(file& val, const file_access_mode mode) noexcept
+        {
+            val.m_accessMode = mode;
+        }
 
-   [[maybe_unused]] [[rythe_always_inline]] static void set_file_access_flags(file& val, const file_access_flags flags) noexcept
-    {
-        val.m_accessFlags = flags;
-    }
+        [[maybe_unused]] [[rythe_always_inline]] static void set_file_access_flags(file& val, const file_access_flags flags) noexcept
+        {
+            val.m_accessFlags = flags;
+        }
+
+        [[maybe_unused]] [[rythe_always_inline]] static void set_file_mapping_file(file_mapping& val, file f) noexcept
+        {
+            val.m_file = f;
+        }
+    } // namespace internal
 
     dynamic_library platform::load_library(cstring path)
     {
@@ -61,25 +69,24 @@ namespace rsl
     }
 
     thread platform::create_thread(
-                const native_thread_start startFunction,
-                void* userData,
-                const string_view name,
-                allocator_storage allocator
-                )
+            [[maybe_unused]] const native_thread_start startFunction,
+            [[maybe_unused]] void* userData,
+            [[maybe_unused]] const string_view name,
+            [[maybe_unused]] allocator_storage allocator)
     {
         // TODO: Implement
         rsl_assert_unimplemented();
         return {};
     }
 
-    uint32 platform::destroy_thread(const thread thread)
+    uint32 platform::destroy_thread([[maybe_unused]] const thread thread)
     {
         // TODO: Implement
         rsl_assert_unimplemented();
         return 1u;
     }
 
-    bool platform::is_thread_active(const thread thread)
+    bool platform::is_thread_active([[maybe_unused]] const thread thread)
     {
         // TODO: Implement
         rsl_assert_unimplemented();
@@ -124,13 +131,13 @@ namespace rsl
         }
     }
 
-    void platform::set_thread_name(const thread_id threadId, const string_view name)
+    void platform::set_thread_name([[maybe_unused]] const thread_id threadId, [[maybe_unused]] const string_view name)
     {
         // TODO: Implement
         rsl_assert_unimplemented();
     }
 
-    string_view platform::get_thread_name(const thread_id threadId)
+    string_view platform::get_thread_name([[maybe_unused]] const thread_id threadId)
     {
         // TODO: Implement
         rsl_assert_unimplemented();
@@ -144,70 +151,77 @@ namespace rsl
         return {};
     }
 
-    bool platform::is_path_valid(const string_view absolutePath)
+    bool platform::is_path_valid([[maybe_unused]] const string_view absolutePath)
     {
         // TODO: Implement
         rsl_assert_unimplemented();
         return false;
     }
 
-    bool platform::is_path_readable(const string_view absolutePath)
+    bool platform::is_path_readable([[maybe_unused]] const string_view absolutePath)
     {
         // TODO: Implement
         rsl_assert_unimplemented();
         return false;
     }
 
-    bool platform::is_file_writable(const string_view absolutePath)
+    bool platform::is_file_writable([[maybe_unused]] const string_view absolutePath)
     {
         // TODO: Implement
         rsl_assert_unimplemented();
         return false;
     }
 
-    bool platform::is_file_readable(string_view absolutePath)
+    bool platform::is_file_readable([[maybe_unused]] string_view absolutePath)
     {
         // TODO: Implement
         rsl_assert_unimplemented();
         return false;
     }
 
-    bool platform::does_path_entry_exist(const string_view absolutePath)
+    bool platform::does_path_entry_exist([[maybe_unused]] const string_view absolutePath)
     {
         // TODO: Implement
         rsl_assert_unimplemented();
         return false;
     }
 
-    iterator_view<directory_iterator> platform::iterate_directory(const string_view absolutePath, platform_error& errc)
+    iterator_view<directory_iterator> platform::iterate_directory([[maybe_unused]] const string_view absolutePath, [[maybe_unused]] platform_error& errc)
     {
         // TODO: Implement
         rsl_assert_unimplemented();
         return {};
     }
 
-    bool platform::next_directory_entry(directory_iterator& iter)
+    bool platform::next_directory_entry([[maybe_unused]] directory_iterator& iter)
     {
         // TODO: Implement
         rsl_assert_unimplemented();
         return false;
     }
 
-    result<dynamic_array<dynamic_string>> platform::enumerate_directory(const string_view absolutePath)
+    result<dynamic_array<dynamic_string>> platform::enumerate_directory([[maybe_unused]] const string_view absolutePath)
     {
         // TODO: implement
         rsl_assert_unimplemented();
         return error;
     }
 
-    result<file> platform::open_file(const string_view absolutePath, const file_access_mode mode, const file_access_flags flags)
+    result<file> platform::open_file([[maybe_unused]] const string_view absolutePath, [[maybe_unused]] const file_access_mode mode, [[maybe_unused]] const file_access_flags flags)
     {
         // TODO: implement
         rsl_assert_unimplemented();
         return error;
     }
 
-    result<size_type> platform::read_file_section([[maybe_unused]] file file, [[maybe_unused]] mutable_byte_view target, [[maybe_unused]] byte_range range)
+    result<file_mapping> platform::create_file_mapping([[maybe_unused]] const file file, [[maybe_unused]] const byte_range range)
+    {
+        // TODO: implement
+        rsl_assert_unimplemented();
+        return error;
+    }
+
+    result<file_mapping> platform::create_file_mapping([[maybe_unused]] file file)
     {
         // TODO: implement
         rsl_assert_unimplemented();
@@ -221,7 +235,7 @@ namespace rsl
         return error;
     }
 
-    result<void> platform::write_file(const file file, const byte_view data, const size_type offset)
+    result<void> platform::write_file([[maybe_unused]] const file file, [[maybe_unused]] const byte_view data, [[maybe_unused]] const size_type offset)
     {
         // TODO: implement
         rsl_assert_unimplemented();
@@ -277,21 +291,28 @@ namespace rsl
         return error;
     }
 
-    result<file_info> platform::get_file_info(const string_view absolutePath) noexcept
+    result<file_info> platform::get_file_info([[maybe_unused]] const string_view absolutePath) noexcept
     {
         // TODO: implement
         rsl_assert_unimplemented();
         return error;
     }
 
-    result<file_info> platform::get_file_info(const file file) noexcept
+    result<file_info> platform::get_file_info([[maybe_unused]] const file file) noexcept
     {
         // TODO: implement
         rsl_assert_unimplemented();
         return error;
     }
 
-    bool file::operator==(const file& other) const
+    bool file::operator==([[maybe_unused]] const file& other) const
+    {
+        // TODO: implement
+        rsl_assert_unimplemented();
+        return false;
+    }
+
+    bool file_mapping::operator==([[maybe_unused]] const file_mapping& other) const
     {
         // TODO: implement
         rsl_assert_unimplemented();
@@ -304,13 +325,19 @@ namespace rsl
         rsl_assert_unimplemented();
     }
 
+    void file_mapping::release()
+    {
+        // TODO: implement
+        rsl_assert_unimplemented();
+    }
+
     directory_iterator::directory_iterator(directory_iterator&& other) noexcept
         : m_handle(other.m_handle)
     {
         other.m_handle = native_directory_iterator::invalid;
     }
 
-    directory_iterator::directory_iterator(const directory_iterator& other) noexcept
+    directory_iterator::directory_iterator([[maybe_unused]] const directory_iterator& other) noexcept
     {
         // TODO: implement
         rsl_assert_unimplemented();
@@ -323,7 +350,7 @@ namespace rsl
         return *this;
     }
 
-    directory_iterator& directory_iterator::operator=(const directory_iterator& other) noexcept
+    directory_iterator& directory_iterator::operator=([[maybe_unused]] const directory_iterator& other) noexcept
     {
         // TODO: implement
         rsl_assert_unimplemented();
@@ -364,14 +391,14 @@ namespace rsl
         return false;
     }
 
-    result<file> directory_iterator::open_file(const file_access_mode mode, const file_access_flags flags) const
+    result<file> directory_iterator::open_file([[maybe_unused]] const file_access_mode mode, [[maybe_unused]] const file_access_flags flags) const
     {
         // TODO: implement
         rsl_assert_unimplemented();
         return error;
     }
 
-    bool directory_iterator::operator==(const directory_iterator& other) const
+    bool directory_iterator::operator==([[maybe_unused]] const directory_iterator& other) const
     {
         // TODO: Implement
         rsl_assert_unimplemented();
@@ -419,7 +446,7 @@ namespace rsl
         rsl_assert_unimplemented();
     }
 
-    system_clock initialize_main_clock()
+    system_clock initialize_main_clock() noexcept
     {
         // TODO: Implement
         rsl_assert_unimplemented();
