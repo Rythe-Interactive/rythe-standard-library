@@ -1,8 +1,16 @@
 ﻿namespace rsl::fs
 {
-    constexpr view::view(const string_view path) noexcept : m_path(dynamic_string::from_view(path)) {}
+    constexpr view::view(const string_view path) noexcept
+        : m_path(dynamic_string::from_view(path))
+    {
+        standardize(in_place_signal, m_path);
+    }
 
-    constexpr view::view(dynamic_string&& path) noexcept : m_path(rsl::move(path)) {}
+    constexpr view::view(dynamic_string&& path) noexcept
+        : m_path(rsl::move(path))
+    {
+        standardize(in_place_signal, m_path);
+    }
 
     inline view::operator bool() const noexcept
     {

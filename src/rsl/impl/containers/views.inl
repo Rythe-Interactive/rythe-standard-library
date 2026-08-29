@@ -328,6 +328,20 @@ namespace rsl
         m_count = 0ull;
     }
 
+    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
+    array_view<T, Iter, ConstIter>::operator array_view<const byte>() const noexcept
+        requires not_same_as<remove_cvr_t<value_type>, byte>
+    {
+        return byte_view::from_buffer(bit_cast<const byte*>(m_src), sizeof(value_type) * m_count);
+    }
+
+    template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
+    array_view<T, Iter, ConstIter>::operator array_view<byte>() noexcept
+        requires(!is_same_v<remove_cvr_t<value_type>, byte> && !is_const_v<value_type>)
+    {
+        return mutable_byte_view::from_buffer(bit_cast<byte*>(m_src), sizeof(value_type) * m_count);
+    }
+
     template <
             contiguous_container_like ArrayType,
             weakly_equality_comparable_with<container_value_type<ArrayType>> Comparable,

@@ -98,6 +98,11 @@ namespace rsl
         [[rythe_always_inline]] constexpr void set_data(pointer data, size_type count) noexcept;
         [[rythe_always_inline]] constexpr void reset() noexcept;
 
+        [[rythe_always_inline]] operator array_view<const byte>() const noexcept
+            requires not_same_as<remove_cvr_t<value_type>, byte>;
+        [[rythe_always_inline]] operator array_view<byte>() noexcept
+            requires(!is_same_v<remove_cvr_t<value_type>, byte> && !is_const_v<value_type>);
+
     private:
         pointer m_src = nullptr;
         size_type m_count = 0; // the length of our view relative to m_position

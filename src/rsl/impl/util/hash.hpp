@@ -123,6 +123,20 @@ namespace rsl
 
     content_hash hash_content(byte_view bytes) noexcept;
 
+    struct hash_state
+    {
+        struct alignas(16) internal_state
+        {
+            byte data[432];
+        } internalState;
+
+        size_type size;
+    };
+
+    void begin_content_hash(hash_state& hashState) noexcept;
+    void append_content_hash(hash_state& hashState, byte_view bytes) noexcept;
+    content_hash end_content_hash(hash_state& hashState) noexcept;
+
 } // namespace rsl
 
 #include "hash.inl"
