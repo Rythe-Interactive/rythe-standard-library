@@ -37,7 +37,7 @@ namespace rsl
     concept standard_layout_type = is_standard_layout_v<remove_cvr_t<T>>;
 
     template <typename T>
-    concept integral_type = is_integral_v<remove_cvr_t<T>>;
+    concept integer_type = is_integer_v<remove_cvr_t<T>>;
 
     template <typename T>
     concept floating_point_type = is_floating_point_v<remove_cvr_t<T>>;

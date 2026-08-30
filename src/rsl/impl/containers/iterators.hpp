@@ -11,7 +11,7 @@ namespace rsl
         concept has_member_difference_type = requires { typename T::difference_type; };
 
         template <typename T>
-        concept can_difference = requires(const T& lhs, const T& rhs) { { lhs - rhs } -> integral_type; };
+        concept can_difference = requires(const T& lhs, const T& rhs) { { lhs - rhs } -> integer_type; };
     } // namespace internal
 
     template <typename>
@@ -141,7 +141,7 @@ namespace rsl
     constexpr bool iter_noexcept_deref = noexcept(*declval<T&>());
 
     template <internal::can_difference T>
-    constexpr bool iter_noexcept_diff = requires(const T& lhs, const T& rhs) { { lhs - rhs } noexcept -> integral_type; };
+    constexpr bool iter_noexcept_diff = requires(const T& lhs, const T& rhs) { { lhs - rhs } noexcept -> integer_type; };
 
     namespace internal
     {

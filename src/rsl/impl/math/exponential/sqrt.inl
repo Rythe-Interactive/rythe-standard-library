@@ -83,7 +83,7 @@ namespace rsl::math
         }
 #endif
 
-        template <integral_type Integer>
+        template <integer_type Integer>
             requires unsigned_type<Integer>
         [[nodiscard]] constexpr Integer constexpr_sqrt_impl(Integer value, Integer lo, Integer hi)
         {
@@ -104,7 +104,7 @@ namespace rsl::math
             }
         }
 
-        template <integral_type Integer>
+        template <integer_type Integer>
         [[nodiscard]] constexpr Integer constexpr_sqrt(const Integer value)
         {
             using unsigned_integer = make_unsigned_t<Integer>;

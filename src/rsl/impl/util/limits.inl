@@ -6,7 +6,7 @@ namespace rsl
         struct bit_rep_impl;
 
         template <arithmetic_type T>
-            requires integral_type<T>
+            requires integer_type<T>
         struct bit_rep_impl<T>
         {
             using type = T;
@@ -77,7 +77,7 @@ namespace rsl
     };
 
     template <arithmetic_type T>
-        requires integral_type<T> && unsigned_type<T>
+        requires integer_type<T> && unsigned_type<T>
     struct limits<T>
     {
         constexpr static size_type bit_count = sizeof(T) * 8;
@@ -86,7 +86,7 @@ namespace rsl
     };
 
     template <arithmetic_type T>
-        requires integral_type<T> && signed_type<T>
+        requires integer_type<T> && signed_type<T>
     struct limits<T>
     {
         constexpr static size_type bit_count = sizeof(T) * 8;

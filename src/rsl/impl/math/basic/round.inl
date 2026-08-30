@@ -9,7 +9,7 @@ namespace rsl::math
         [[nodiscard]] [[rythe_always_inline]] constexpr Target _round_impl_(T val) noexcept
         {
             using value_type = ::std::remove_cvref_t<T>;
-            if constexpr (::std::is_integral_v<value_type>)
+            if constexpr (::std::is_integer_v<value_type>)
             {
                 return static_cast<Target>(val);
             }

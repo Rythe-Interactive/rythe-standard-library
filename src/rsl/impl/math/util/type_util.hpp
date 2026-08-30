@@ -530,7 +530,7 @@ namespace rsl::math
                 elevated_storage_mode_v<A::mode, B::mode>>;
         };
 
-        template <integral_type A, integral_type B>
+        template <integer_type A, integer_type B>
         struct elevated_impl<A, B> :
             conditional_t<
                 is_signed_v<A> || is_signed_v<B>, make_signed<largest_t<A, B>>, make_unsigned<largest_t<A, B>>>

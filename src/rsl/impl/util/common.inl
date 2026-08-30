@@ -60,10 +60,11 @@ namespace rsl
     struct is_empty : bool_constant<is_empty_v<T>> {};
 
     template <typename T>
-    struct is_complete {
+    struct is_complete
+    {
         template <typename U>
-        static auto test(U*)  -> bool_constant<sizeof(U) == sizeof(U)>; // NOLINT
-        static auto test(...) -> false_type; // NOLINT
+        static auto test(U*) -> bool_constant<sizeof(U) == sizeof(U)>; // NOLINT
+        static auto test(...) -> false_type;                           // NOLINT
 
         static constexpr bool value = decltype(test(static_cast<T*>(nullptr)))::value;
     };
@@ -105,11 +106,11 @@ namespace rsl
     struct is_enum : bool_constant<is_enum_v<T>> {};
 
     template <typename EnumType>
-        requires (is_enum_v<EnumType>)
+        requires(is_enum_v<EnumType>)
     using underlying_type_t = __underlying_type(EnumType);
 
     template <typename EnumType>
-        requires (is_enum_v<EnumType>)
+        requires(is_enum_v<EnumType>)
     struct underlying_type
     {
         using type = underlying_type_t<EnumType>;
@@ -305,12 +306,27 @@ namespace rsl
     using bool_t = bool;
 
     template <typename T>
-    inline constexpr bool is_integral_v = is_any_of_v<
-        remove_cv_t<T>, bool, char, signed char, unsigned char, wchar_t, char8_t, char16_t, char32_t, short,
-        unsigned short, int, unsigned int, long, unsigned long, long long, unsigned long long>;
+    inline constexpr bool is_integer_v = is_any_of_v<
+            remove_cv_t<T>,
+            bool,
+            char,
+            signed char,
+            unsigned char,
+            wchar_t,
+            char8_t,
+            char16_t,
+            char32_t,
+            short,
+            unsigned short,
+            int,
+            unsigned int,
+            long,
+            unsigned long,
+            long long,
+            unsigned long long>;
 
     template <typename T>
-    struct is_integral : bool_constant<is_integral_v<T>> {};
+    struct is_integer : bool_constant<is_integer_v<T>> {};
 
     template <typename T>
     inline constexpr bool is_floating_point_v = is_any_of_v<remove_cv_t<T>, float, double, long double>;
@@ -320,21 +336,21 @@ namespace rsl
 
     template <typename T>
     inline constexpr bool is_arithmetic_v = // determine whether T is an arithmetic type
-            is_integral_v<T> || is_floating_point_v<T>;
+            is_integer_v<T> || is_floating_point_v<T>;
 
     template <typename T>
     struct is_arithmetic : bool_constant<is_arithmetic_v<T>> {};
 
     template <typename T>
-    inline constexpr bool is_char_v = is_any_of_v<
-        remove_cv_t<T>, char, signed char, unsigned char, wchar_t, char8_t, char16_t, char32_t>;
+    inline constexpr bool is_char_v =
+            is_any_of_v<remove_cv_t<T>, char, signed char, unsigned char, wchar_t, char8_t, char16_t, char32_t>;
 
     template <typename T>
     struct is_char : bool_constant<is_char_v<T>> {};
 
     namespace internal
     {
-        template <typename T, bool = is_integral_v<T>>
+        template <typename T, bool = is_integer_v<T>>
         struct sign_info
         {
             static constexpr bool is_signed = static_cast<remove_cv_t<T>>(-1) < static_cast<remove_cv_t<T>>(0);
@@ -362,7 +378,7 @@ namespace rsl
     struct is_signed : bool_constant<is_signed_v<T>> {};
 
     template <typename T>
-    constexpr bool is_nonbool_integral_v = is_integral_v<T> && !is_same_v<remove_cv_t<T>, bool>;
+    constexpr bool is_nonbool_integral_v = is_integer_v<T> && !is_same_v<remove_cv_t<T>, bool>;
 
     template <typename T>
     struct is_nonbool_integral : bool_constant<is_nonbool_integral_v<T>> {};
@@ -561,9 +577,7 @@ namespace rsl
     struct is_constructible : bool_constant<is_constructible_v<T, Args...>> {};
 
     template <typename T, typename = void>
-    struct is_implicitly_default_constructible : false_type
-    {
-    };
+    struct is_implicitly_default_constructible : false_type {};
 
     namespace internal
     {
@@ -572,8 +586,8 @@ namespace rsl
     }
 
     template <typename T>
-    struct is_implicitly_default_constructible<T, void_t<decltype(internal::_implicitly_default_construct_impl<T>({}))>> : true_type
-    {};
+    struct is_implicitly_default_constructible<T, void_t<decltype(internal::_implicitly_default_construct_impl<T>({}))>> :
+        true_type {};
 
     template <typename T>
     struct is_copy_constructible : is_constructible<T, typename add_lval_ref<typename add_const<T>::type>::type> {};
@@ -588,82 +602,73 @@ namespace rsl
     inline constexpr bool is_move_constructible_v = is_move_constructible<T>::value;
 
     template <typename T, typename... Args>
-    inline constexpr bool is_nothrow_constructible_v = requires(Args... args)
-        {
-            { T(args...) } noexcept;
-        };
+    inline constexpr bool is_nothrow_constructible_v = requires(Args... args) {
+        { T(args...) } noexcept;
+    };
 
     template <typename T, typename... Args>
     struct is_nothrow_constructible : bool_constant<is_nothrow_constructible_v<T, Args...>> {};
 
     template <typename T>
-    inline constexpr bool is_nothrow_copy_constructible_v = requires(const T& src)
-        {
-            { T(src) } noexcept;
-        };
+    inline constexpr bool is_nothrow_copy_constructible_v = requires(const T& src) {
+        { T(src) } noexcept;
+    };
 
     template <typename T>
     struct is_nothrow_copy_constructible : bool_constant<is_nothrow_copy_constructible_v<T>> {};
 
     template <typename T>
-    inline constexpr bool is_nothrow_move_constructible_v = requires(T&& src)
-        {
-            { T(move(src)) } noexcept;
-        };
+    inline constexpr bool is_nothrow_move_constructible_v = requires(T&& src) {
+        { T(move(src)) } noexcept;
+    };
 
     template <typename T>
     struct is_nothrow_move_constructible : bool_constant<is_nothrow_move_constructible_v<T>> {};
 
     template <typename To, typename From>
-    constexpr bool is_assignable_v = requires(add_lval_ref_t<To> to, add_lval_ref_t<From> from)
-        {
-            { to = from };
-        };
+    constexpr bool is_assignable_v = requires(add_lval_ref_t<To> to, add_lval_ref_t<From> from) {
+        { to = from };
+    };
 
     template <typename To, typename From>
     struct is_assignable : bool_constant<is_assignable_v<To, From>> {};
 
     template <typename T>
-    constexpr bool is_copy_assignable_v = requires(add_lval_ref_t<T> dst, const T& src)
-        {
-            { dst = src };
-        };
+    constexpr bool is_copy_assignable_v = requires(add_lval_ref_t<T> dst, const T& src) {
+        { dst = src };
+    };
 
     template <typename T>
     struct is_copy_assignable : bool_constant<is_copy_assignable_v<T>> {};
 
     template <typename T>
-    constexpr bool is_move_assignable_v = requires(add_lval_ref_t<T> dst, T&& src)
-        {
-            { dst = move(src) };
-        };
+    constexpr bool is_move_assignable_v = requires(add_lval_ref_t<T> dst, T&& src) {
+        { dst = move(src) };
+    };
 
     template <typename T>
     struct is_move_assignable : bool_constant<is_move_assignable_v<T>> {};
 
     template <typename To, typename From>
-    constexpr bool is_nothrow_assignable_v = requires(add_lval_ref_t<To> to, add_lval_ref_t<From> from)
-        {
-            { to = from } noexcept;
-        };
+    constexpr bool is_nothrow_assignable_v = requires(add_lval_ref_t<To> to, add_lval_ref_t<From> from) {
+        { to = from } noexcept;
+    };
 
     template <typename To, typename From>
     struct is_nothrow_assignable : bool_constant<is_nothrow_assignable_v<To, From>> {};
 
     template <typename T>
-    constexpr bool is_nothrow_copy_assignable_v = requires(add_lval_ref_t<T> dst, const T& src)
-        {
-            { dst = src } noexcept;
-        };
+    constexpr bool is_nothrow_copy_assignable_v = requires(add_lval_ref_t<T> dst, const T& src) {
+        { dst = src } noexcept;
+    };
 
     template <typename T>
     struct is_nothrow_copy_assignable : bool_constant<is_nothrow_copy_assignable_v<T>> {};
 
     template <typename T>
-    constexpr bool is_nothrow_move_assignable_v = requires(add_lval_ref_t<T> dst, T&& src)
-        {
-            { dst = move(src) } noexcept;
-        };
+    constexpr bool is_nothrow_move_assignable_v = requires(add_lval_ref_t<T> dst, T&& src) {
+        { dst = move(src) } noexcept;
+    };
 
     template <typename T>
     struct is_nothrow_move_assignable : bool_constant<is_nothrow_move_assignable_v<T>> {};
@@ -687,7 +692,8 @@ namespace rsl
     struct is_trivially_destructible : bool_constant<is_trivially_destructible_v<T>> {};
 
     template <typename T>
-    inline constexpr bool is_trivially_copy_constructible_v = is_trivially_constructible_v<T, add_lval_ref_t<const T>>; // Compiler magic.
+    inline constexpr bool is_trivially_copy_constructible_v =
+            is_trivially_constructible_v<T, add_lval_ref_t<const T>>; // Compiler magic.
 
     template <typename T>
     struct is_trivially_copy_constructible : bool_constant<is_trivially_copy_constructible_v<T>> {};
@@ -713,7 +719,7 @@ namespace rsl
     namespace internal
     {
         template <typename To, typename From>
-            requires (sizeof(To) == sizeof(From)) && is_trivially_copyable_v<To> && is_trivially_copyable_v<From>
+            requires(sizeof(To) == sizeof(From)) && is_trivially_copyable_v<To> && is_trivially_copyable_v<From>
         [[nodiscard]] [[rythe_always_inline]] constexpr To compiler_native_bit_cast(const From& value) noexcept
         {
             return __builtin_bit_cast(To, value);
@@ -723,7 +729,7 @@ namespace rsl
         // Might still break on some compilers if From is byte and To is unsigned long long
         template <typename To, typename From>
             requires is_trivially_copyable_v<To> && is_trivially_constructible_v<To> && is_trivially_copyable_v<From> &&
-            (sizeof(To) >= sizeof(From))
+                (sizeof(To) >= sizeof(From))
         [[rythe_always_inline]] constexpr void constexpr_memcpy_impl(To* dst, const From* src, const size_type count)
         {
             const size_type itemCount = count / sizeof(To);
@@ -1045,11 +1051,10 @@ namespace rsl
 
     template <typename T, typename... Types>
     concept in_place_constructable =
-            requires(T* location, Types&&... args) { ::new(static_cast<void*>(location)) T(forward<Types>(args)...); };
+            requires(T* location, Types&&... args) { ::new (static_cast<void*>(location)) T(forward<Types>(args)...); };
 
     template <typename T, typename... Types>
-    constexpr bool is_nothrow_in_place_constructable_v =
-            noexcept(::new(declval<void*>()) T(forward<Types>(declval<Types>())...));
+    constexpr bool is_nothrow_in_place_constructable_v = noexcept(::new (declval<void*>()) T(forward<Types>(declval<Types>())...));
 
     template <typename T, typename... Types>
     struct is_nothrow_in_place_constructable
@@ -1059,13 +1064,9 @@ namespace rsl
 
     template <typename T, typename... Types>
         requires in_place_constructable<T, Types...>
-    constexpr T* construct_at(
-            T* const location,
-            Types&&... args
-            )
-        noexcept(is_nothrow_in_place_constructable_v<T, Types...>)
+    constexpr T* construct_at(T* const location, Types&&... args) noexcept(is_nothrow_in_place_constructable_v<T, Types...>)
     {
-        return ::new(static_cast<void*>(location)) T(forward<Types>(args)...);
+        return ::new (static_cast<void*>(location)) T(forward<Types>(args)...);
     }
 
     template <typename T>
@@ -1103,12 +1104,11 @@ namespace rsl
         auto test_is_base_of(int) -> decltype(test_ptr_conv<Base>(static_cast<Derived*>(nullptr))); // NOLINT
         template <typename, typename>
         auto test_is_base_of(...) -> true_type; // Private or ambiguous base. NOLINT
-    }                                           // namespace internal
+    } // namespace internal
 
     template <typename Base, typename Derived>
-    struct is_base_of
-            : bool_constant<
-                is_class_v<Base> && is_class_v<Derived> && decltype(internal::test_is_base_of<Base, Derived>(0))::value> {};
+    struct is_base_of :
+        bool_constant<is_class_v<Base> && is_class_v<Derived>&& decltype(internal::test_is_base_of<Base, Derived>(0))::value> {};
 
     template <typename Base, typename Derived>
     inline constexpr bool is_base_of_v = is_base_of<Base, Derived>::value;
@@ -1128,13 +1128,13 @@ namespace rsl
             -> decltype((void)(::rsl::declval<void (&)(To)>()(::rsl::declval<From>())), true_type{});
         template <typename, typename>
         auto test_implicitly_convertible(...) -> false_type; // NOLINT
-    }                                                        // namespace internal
+    } // namespace internal
 
     template <typename From, typename To>
-    struct is_convertible
-            : bool_constant<
+    struct is_convertible :
+        bool_constant<
                 (decltype(internal::test_returnable<To>(0))::value &&
-                    decltype(internal::test_implicitly_convertible<From, To>(0))::value) ||
+                 decltype(internal::test_implicitly_convertible<From, To>(0))::value) ||
                 (is_void_v<From> && is_void_v<To>)> {};
 
     template <typename From, typename To>
@@ -1151,7 +1151,7 @@ namespace rsl
 
         template <typename From, typename To>
         constexpr bool is_nothrow_convertible_impl_v<From, To, true, true> = true;
-    }
+    } // namespace internal
 
     template <typename From, typename To>
     constexpr bool is_nothrow_convertible_v = internal::is_nothrow_convertible_impl_v<From, To>;
@@ -1319,8 +1319,10 @@ namespace rsl
 
         template <typename T1, typename T2>
         using basic_specialization = basic_common_reference<
-            remove_cvr_t<T1>, remove_cvr_t<T2>, add_qualifiers<T1>::template apply,
-            add_qualifiers<T2>::template apply>::type;
+                remove_cvr_t<T1>,
+                remove_cvr_t<T2>,
+                add_qualifiers<T1>::template apply,
+                add_qualifiers<T2>::template apply>::type;
 
         template <typename T1, typename T2, typename = void>
         struct common_reference2_b : common_reference2_c<T1, T2> {};
@@ -1373,8 +1375,7 @@ namespace rsl
         using rvalue_common_ref = remove_reference_t<lvalue_common_ref<T1, T2>>&&;
 
         template <typename T1, typename T2>
-            requires is_convertible_v<T1&&, rvalue_common_ref<T1, T2>> &&
-            is_convertible_v<T1&&, rvalue_common_ref<T1, T2>>
+            requires is_convertible_v<T1&&, rvalue_common_ref<T1, T2>> && is_convertible_v<T1&&, rvalue_common_ref<T1, T2>>
         struct common_reference2_ax<T1&&, T2&&>
         {
             using type = rvalue_common_ref<T1, T2>;
@@ -1385,7 +1386,7 @@ namespace rsl
 
         template <typename T1, typename T2>
             requires is_convertible_v<add_pointer_t<T1>, add_pointer_t<common_ref_2_ax_t<T1, T2>>> &&
-            is_convertible_v<add_pointer_t<T2>, add_pointer_t<common_ref_2_ax_t<T1, T2>>>
+                is_convertible_v<add_pointer_t<T2>, add_pointer_t<common_ref_2_ax_t<T1, T2>>>
         struct common_reference2_a<T1, T2>
         {
             using type = common_ref_2_ax_t<T1, T2>;
@@ -1395,8 +1396,8 @@ namespace rsl
         struct fold_common_reference {};
 
         template <typename T1, typename T2, typename... Types>
-        struct fold_common_reference<void_t<common_reference_t<T1, T2>>, T1, T2, Types...>
-                : common_reference<common_reference_t<T1, T2>, Types...> {};
+        struct fold_common_reference<void_t<common_reference_t<T1, T2>>, T1, T2, Types...> :
+            common_reference<common_reference_t<T1, T2>, Types...> {};
     } // namespace internal
 
     template <typename T1, typename T2>
@@ -1415,8 +1416,9 @@ namespace rsl
     struct is_specialization : bool_constant<is_specialization_v<Type, Template>> {};
 
     template <typename T>
-    [[nodiscard]] [[rythe_always_inline]] constexpr conditional_t<
-        !is_nothrow_move_constructible_v<T> && is_copy_constructible_v<T>, const T&, T&&> move_if_noexcept(T& val) noexcept
+    [[nodiscard]]
+    [[rythe_always_inline]] constexpr conditional_t<!is_nothrow_move_constructible_v<T> && is_copy_constructible_v<T>, const T&, T&&>
+            move_if_noexcept(T& val) noexcept
     {
         return ::rsl::move(val);
     }
@@ -1426,11 +1428,8 @@ namespace rsl
 
     template <typename T>
         requires swappable<T>
-    [[rythe_always_inline]] constexpr void swap(
-            T& lhs,
-            T& rhs
-            )
-        noexcept(is_nothrow_move_constructible_v<T> && is_nothrow_move_assignable_v<T>)
+    [[rythe_always_inline]] constexpr void swap(T& lhs, T& rhs)
+            noexcept(is_nothrow_move_constructible_v<T> && is_nothrow_move_assignable_v<T>)
     {
         T tmp = move(lhs);
         lhs = move(rhs);
@@ -1485,9 +1484,8 @@ namespace rsl
     namespace internal
     {
         template <size_type I, typename T, typename Type, typename... Types>
-        struct index_of_element_impl
-                : conditional_t<
-                    is_same_v<T, Type>, integral_constant<size_type, I>, index_of_element_impl<I + 1, T, Types...>> {};
+        struct index_of_element_impl :
+            conditional_t<is_same_v<T, Type>, integral_constant<size_type, I>, index_of_element_impl<I + 1, T, Types...>> {};
     } // namespace internal
 
     // Gets index of first occurrence of T in type list.
@@ -1556,8 +1554,8 @@ namespace rsl
     struct type_sequence_conjunction;
 
     template <typename... TypesA, typename... TypesB>
-    struct type_sequence_conjunction<type_sequence<TypesA...>, type_sequence<TypesB...>>
-            : conjunction<
+    struct type_sequence_conjunction<type_sequence<TypesA...>, type_sequence<TypesB...>> :
+        conjunction<
                 conjunction<type_sequence_contains<type_sequence<TypesA...>, TypesB>...>,
                 conjunction<type_sequence_contains<type_sequence<TypesB...>, TypesA>...>> {};
 
@@ -1574,13 +1572,11 @@ namespace rsl
                     Traits,
                     Sequence,
                     typename Sequence::template type_at<I>,
-                    Selected...>
-        {};
+                    Selected...> {};
 
         template <size_type I, type_sequence_c Traits, type_sequence_c Sequence, typename... Selected>
         struct _select_from_type_sequence_impl<I, false, Traits, Sequence, Selected...> :
-            _select_from_type_sequence_impl<I - 1, Traits::template type_at<I - 1>::value, Traits, Sequence, Selected...>
-        {};
+            _select_from_type_sequence_impl<I - 1, Traits::template type_at<I - 1>::value, Traits, Sequence, Selected...> {};
 
         template <type_sequence_c Traits, type_sequence_c Sequence, typename... Selected>
         struct _select_from_type_sequence_impl<0, true, Traits, Sequence, Selected...>
@@ -1593,14 +1589,16 @@ namespace rsl
         {
             using type = type_sequence<Selected...>;
         };
-    }
+    } // namespace internal
 
     template <type_sequence_c Traits, type_sequence_c Sequence>
-        requires (Traits::size == Sequence::size)
+        requires(Traits::size == Sequence::size)
     struct select_from_type_sequence :
-        internal::_select_from_type_sequence_impl<Traits::size - 1, Traits::template type_at<Traits::size - 1>::value, Traits, Sequence>
-    {
-    };
+        internal::_select_from_type_sequence_impl<
+                Traits::size - 1,
+                Traits::template type_at<Traits::size - 1>::value,
+                Traits,
+                Sequence> {};
 
     template <type_sequence_c Traits, type_sequence_c Sequence>
     using select_from_type_sequence_t = select_from_type_sequence<Traits, Sequence>::type;
@@ -1614,8 +1612,7 @@ namespace rsl
                 SequenceA,
                 select_from_type_sequence_t<
                         type_sequence<negation<type_sequence_contains<SequenceA, TypesB>>...>,
-                        type_sequence<TypesB...>>>
-    {};
+                        type_sequence<TypesB...>>> {};
 
     template <type_sequence_c SequenceA>
     struct combine_type_sequences<SequenceA, type_sequence<>>
@@ -1633,8 +1630,7 @@ namespace rsl
             _combine_type_sequences_from_sequence_impl<
                     I - 1,
                     Sequence,
-                    typename combine_type_sequences<typename Sequence::template type_at<I>, Result>::type>
-        {};
+                    typename combine_type_sequences<typename Sequence::template type_at<I>, Result>::type> {};
 
         template <type_sequence_c... Sequences, type_sequence_c Result>
         struct _combine_type_sequences_from_sequence_impl<0, type_sequence<Sequences...>, Result>
@@ -1644,8 +1640,8 @@ namespace rsl
     } // namespace internal
 
     template <type_sequence_c Sequence>
-    struct combine_type_sequences_from_sequence : internal::_combine_type_sequences_from_sequence_impl<Sequence::size - 1, Sequence>
-    {};
+    struct combine_type_sequences_from_sequence :
+        internal::_combine_type_sequences_from_sequence_impl<Sequence::size - 1, Sequence> {};
 
     template <>
     struct combine_type_sequences_from_sequence<type_sequence<>>
@@ -1656,7 +1652,7 @@ namespace rsl
     template <type_sequence_c Sequence>
     using combine_type_sequences_from_sequence_t = combine_type_sequences_from_sequence<Sequence>::type;
 
-    template<template<typename>typename Transform, type_sequence_c Sequence>
+    template <template <typename> typename Transform, type_sequence_c Sequence>
     struct transform_type_sequence_types;
 
     template <template <typename> typename Transform, typename... Types>
@@ -1672,7 +1668,7 @@ namespace rsl
     struct integer_sequence
     {
         // sequence of integer parameters
-        static_assert(is_integral_v<T>, "integer_sequence<T, I...> requires T to be an integral type.");
+        static_assert(is_integer_v<T>, "integer_sequence<T, I...> requires T to be an integral type.");
 
         using value_type = T;
 
@@ -1732,10 +1728,10 @@ namespace rsl
 
             template <typename RetType>
             using is_nothrow_invocable_ret = bool_constant<conjunction_v<
-                is_nothrow_invocable,
-                disjunction<
-                    is_void<RetType>,
-                    conjunction<invoke_convertible<type, RetType>, invoke_nothrow_convertible<type, RetType>>>>>;
+                    is_nothrow_invocable,
+                    disjunction<
+                            is_void<RetType>,
+                            conjunction<invoke_convertible<type, RetType>, invoke_nothrow_convertible<type, RetType>>>>>;
         };
 
         template <typename Void, typename Callable>
@@ -1756,8 +1752,8 @@ namespace rsl
         using decltype_invoke_zero = decltype(declval<Callable>()());
 
         template <typename Callable>
-        struct invoke_traits_zero<void_t<decltype_invoke_zero<Callable>>, Callable>
-                : invoke_traits<decltype_invoke_zero<Callable>, noexcept(declval<Callable>()())> {};
+        struct invoke_traits_zero<void_t<decltype_invoke_zero<Callable>>, Callable> :
+            invoke_traits<decltype_invoke_zero<Callable>, noexcept(declval<Callable>()())> {};
 
         template <typename Void, typename... Types>
         struct invoke_traits_nonzero
@@ -1774,23 +1770,25 @@ namespace rsl
         };
 
         template <typename Callable, typename T1, typename... Types2>
-        using decltype_invoke_nonzero =
-        decltype(::std::invoke(declval<Callable>(), declval<T1>(), declval<Types2>()...)); // TODO: figure out the mess that is std::invoke, or whether it's even necessary.
+        using decltype_invoke_nonzero = decltype(::std::invoke(
+                declval<Callable>(),
+                declval<T1>(),
+                declval<Types2>()...)); // TODO: figure out the mess that is std::invoke, or whether it's even necessary.
 
         template <typename Callable, typename T1, typename... Types2>
-        struct invoke_traits_nonzero<
-                    void_t<decltype_invoke_nonzero<Callable, T1, Types2...>>, Callable, T1, Types2...>
-                : invoke_traits<
+        struct invoke_traits_nonzero<void_t<decltype_invoke_nonzero<Callable, T1, Types2...>>, Callable, T1, Types2...> :
+            invoke_traits<
                     decltype_invoke_nonzero<Callable, T1, Types2...>,
                     noexcept(::std::invoke(declval<Callable>(), declval<T1>(), declval<Types2>()...))> {};
 
         template <typename Callable, typename... Args>
         using select_invoke_traits = conditional_t<
-            sizeof...(Args) == 0, invoke_traits_zero<void, Callable>, invoke_traits_nonzero<void, Callable, Args...>>;
+                sizeof...(Args) == 0,
+                invoke_traits_zero<void, Callable>,
+                invoke_traits_nonzero<void, Callable, Args...>>;
 
         template <typename ReturnType, typename Callable, typename... Args>
-        using is_invocable_ret_impl =
-        select_invoke_traits<Callable, Args...>::template is_invocable_ret<ReturnType>;
+        using is_invocable_ret_impl = select_invoke_traits<Callable, Args...>::template is_invocable_ret<ReturnType>;
     } // namespace internal
 
     template <typename Callable, typename... Args>
@@ -1818,8 +1816,7 @@ namespace rsl
     };
 
     template <typename Callable, typename... Args>
-    inline constexpr bool is_nothrow_invocable_v =
-            internal::select_invoke_traits<Callable, Args...>::is_nothrow_invocable::value;
+    inline constexpr bool is_nothrow_invocable_v = internal::select_invoke_traits<Callable, Args...>::is_nothrow_invocable::value;
 
     template <typename ReturnType, typename Callable, typename... Args>
     struct is_invocable_ret : internal::is_invocable_ret_impl<ReturnType, Callable, Args...>
@@ -1842,13 +1839,13 @@ namespace rsl
 
     struct any_type
     {
-        #if defined(RYTHE_MSVC)
+#if defined(RYTHE_MSVC)
         template <typename T>
         constexpr operator T&(); // implicit conversion to any type. NOLINT
-        #else
+#else
         template <typename T>
         constexpr operator T(); // implicit conversion to any type. NOLINT
-        #endif
+#endif
         template <typename T>
         constexpr any_type(const T&); // implicit conversion from any type. NOLINT
     };
@@ -2014,7 +2011,7 @@ namespace rsl
     }
 
     template <typename T>
-        requires (is_empty_v<T>)
+        requires(is_empty_v<T>)
     [[nodiscard]] [[rythe_always_inline]] constexpr T* address_of_empty() noexcept
     {
         if (is_constant_evaluated())
@@ -2041,5 +2038,6 @@ namespace rsl
     }
 
     template <typename... Types>
-    constexpr void surpress_unused(Types&&...) {}
+    constexpr void surpress_unused(Types&&...)
+    {}
 } // namespace rsl
