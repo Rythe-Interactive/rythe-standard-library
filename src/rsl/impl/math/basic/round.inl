@@ -8,8 +8,8 @@ namespace rsl::math
         template <typename Target, round_mode Mode, typename T>
         [[nodiscard]] [[rythe_always_inline]] constexpr Target _round_impl_(T val) noexcept
         {
-            using value_type = ::std::remove_cvref_t<T>;
-            if constexpr (::std::is_integer_v<value_type>)
+            using value_type = remove_cvr_t<T>;
+            if constexpr (is_integer_v<value_type>)
             {
                 return static_cast<Target>(val);
             }
@@ -33,7 +33,7 @@ namespace rsl::math
                     pretrunc = val;
                 }
 
-                if constexpr (::std::is_signed_v<Target>)
+                if constexpr (is_signed_v<Target>)
                 {
                     return static_cast<Target>(static_cast<int_max>(pretrunc));
                 }
@@ -82,7 +82,7 @@ namespace rsl::math
         template <round_mode Mode, typename T>
         [[nodiscard]] [[rythe_always_inline]] constexpr auto _auto_adv_round_(T&& val) noexcept
         {
-            using value_type = ::std::remove_cvref_t<T>;
+            using value_type = remove_cvr_t<T>;
             if constexpr (is_vector_v<value_type>)
             {
                 return internal::compute_round<make_vector_t<value_type>, Mode>::template compute<
@@ -98,7 +98,7 @@ namespace rsl::math
     template <typename Target, round_mode Mode, typename T>
     [[nodiscard]] constexpr auto adv_round(T&& val) noexcept
     {
-        using value_type = ::std::remove_cvref_t<T>;
+        using value_type = remove_cvr_t<T>;
         if constexpr (is_vector_v<value_type>)
         {
             return internal::compute_round<make_vector_t<value_type>, Mode>::template compute<Target>(val);

@@ -439,6 +439,20 @@ namespace rsl
     };                                                                                                                                \
     [[maybe_unused]] constexpr name invalid_##name = name::invalid;
 
+#define RYTHE_DECLARE_OPAQUE_HANDLE_BIT_COUNT(name, bitCount)                                                                         \
+    enum struct [[rythe_open_enum]] name : rsl::unsigned_integer_of_size_t<rsl::align_value(bitCount, 8ull) / 8ull>                   \
+    {                                                                                                                                 \
+        invalid = 0                                                                                                                   \
+    };                                                                                                                                \
+    [[maybe_unused]] constexpr name invalid_##name = name::invalid;
+
+#define RYTHE_DECLARE_OPAQUE_HANDLE_BIT_COUNT_INVALID_VALUE(name, bitCount, invalidValue)                                             \
+    enum struct [[rythe_open_enum]] name : rsl::unsigned_integer_of_size_t<rsl::align_value(bitCount, 8ull) / 8ull>                   \
+    {                                                                                                                                 \
+        invalid = invalidValue                                                                                                        \
+    };                                                                                                                                \
+    [[maybe_unused]] constexpr name invalid_##name = name::invalid;
+
 #define RYTHE_DECLARE_NATIVE_API_TYPE(type)                                                                                           \
     RYTHE_DECLARE_OPAQUE_HANDLE(native_##type);                                                                                       \
     class type;                                                                                                                       \
@@ -474,8 +488,8 @@ namespace rsl
         [[nodiscard]] name& get_default_##name() noexcept;                                                                            \
     }                                                                                                                                 \
                                                                                                                                       \
-using get_##name##_func = name& (*)();                                                                                                \
-extern get_##name##_func get_##name;
+    using get_##name##_func = name& (*)();                                                                                            \
+    extern get_##name##_func get_##name;
 
 #define RULE_OF_5(type)                                                                                                               \
     [[rythe_always_inline]] type() = default;                                                                                         \

@@ -143,10 +143,17 @@ namespace rsl
         };
 
         template <typename T>
+        struct make_unsigned_impl<T, 3> : make_unsigned_impl<T, 4> {};
+
+        template <typename T>
         struct make_unsigned_impl<T, 8>
         {
             using type = unsigned long long;
         };
+
+        template <typename T, size_type N>
+            requires(N > 4ull && N < 8ull)
+        struct make_unsigned_impl<T, N> : make_unsigned_impl<T, 8> {};
     } // namespace internal
 
     template <typename T>

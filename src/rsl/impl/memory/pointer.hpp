@@ -4,7 +4,10 @@
 
 namespace rsl
 {
+    //TODO(Glyn): not so sure about this name tbh
+
     /// Non owning pointer to an object managed somewhere else.
+    /// Used to seperate unmanaged and managed pointers and crucially, can be nullptr!
     template<typename T>
     struct pointer final
     {

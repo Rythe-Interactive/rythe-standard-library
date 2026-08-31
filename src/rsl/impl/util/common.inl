@@ -2040,4 +2040,16 @@ namespace rsl
     template <typename... Types>
     constexpr void surpress_unused(Types&&...)
     {}
+
+    template <typename T>
+    [[nodiscard]] [[rythe_always_inline]] constexpr T align_value(T src, T alignment) noexcept
+    {
+        return (src % alignment) ? (src + alignment - (src % alignment)) : src;
+    }
+
+    template <typename T>
+    [[nodiscard]] [[rythe_always_inline]] constexpr T* align_pointer(T* src, size_type alignment) noexcept
+    {
+        return bit_cast<T*>(align_value(bit_cast<ptr_type>(src), static_cast<ptr_type>(alignment)));
+    }
 } // namespace rsl

@@ -78,6 +78,7 @@
 #include "util\source_location.hpp"
 #include "util\string_util.hpp"
 #include "util\type_traits.hpp"
+#include "util\versioned_handle.hpp"
 #include "containers\graphs\dependency_graph.hpp"
 #include "containers\graphs\graph_error.hpp"
 #include "containers\graphs\task_graph.hpp"

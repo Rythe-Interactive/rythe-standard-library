@@ -37,7 +37,10 @@ namespace rsl
             }
         }
 
-        errors.back().severity = error_severity::fatal;
+        if (!errors.is_empty())
+        {
+            errors.back().severity = error_severity::fatal;
+        }
     }
 
     inline bool result_base::is_okay() const noexcept
