@@ -2,8 +2,10 @@
 #include "../rsl_core.hpp"
 
 #include "../containers/string.hpp"
+#include "../platform/file.hpp"
 #include "../util/error_handling.hpp"
 
+#include "file_solution.hpp"
 #include "path_util.hpp"
 #include "traits.hpp"
 
@@ -11,7 +13,6 @@ namespace rsl
 {
     namespace fs
     {
-        class file_solution;
         struct view_list;
 
         class view
@@ -19,16 +20,22 @@ namespace rsl
         public:
             RULE_OF_5_CONSTEXPR_NOEXCEPT(view)
 
-            constexpr view(string_view path) noexcept;
-            constexpr view(dynamic_string&& path) noexcept;
+            explicit constexpr view(string_view path, bool standardizePath = true) noexcept;
+            constexpr view(dynamic_string&& path, bool standardizePath = true) noexcept;
+
+            [[rythe_always_inline]] constexpr void standardize() noexcept;
 
             [[nodiscard]] [[rythe_always_inline]] operator bool() const noexcept;
             [[nodiscard]] [[rythe_always_inline]] bool is_valid(bool deepCheck = false) const;
 
             [[rythe_always_inline]] result<void> prefetch_solution(bool ignoreMultipleSolutions = !rythe_validate_high_impact) const;
 
-            [[nodiscard]] bool exists() const;
+            [[nodiscard]] [[rythe_always_inline]] bool exists() const;
+            [[nodiscard]] [[rythe_always_inline]] bool is_file() const;
+            [[nodiscard]] [[rythe_always_inline]] bool is_directory() const;
+            [[nodiscard]] [[rythe_always_inline]] bool is_empty() const;
             [[nodiscard]] result<void> create() const;
+            [[nodiscard]] result<void> delete_entry(file_delete_flags flags = file_delete_flags::none) const;
 
             [[nodiscard]] file_traits file_info() const;
             [[nodiscard]] filesystem_traits filesystem_info() const;
@@ -44,6 +51,9 @@ namespace rsl
             [[nodiscard]] [[rythe_always_inline]] view operator/(string_view identifier) const;
 
             [[nodiscard]] result<view_list> ls() const;
+
+            template <invocable<void(view&)> Func>
+            void iterate_recursive(Func&& func, bool reportErrors = false) const;
 
             view& replace_extension(string_view extension, bool fullExtension = false);
 
@@ -63,7 +73,7 @@ namespace rsl
 
         private:
             dynamic_string m_path;
-            mutable file_solution* m_solution = nullptr;
+            mutable file_solution m_solution;
         };
 
         constexpr fs::view test()

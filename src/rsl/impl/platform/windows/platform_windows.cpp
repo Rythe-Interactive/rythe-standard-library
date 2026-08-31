@@ -19,6 +19,8 @@
 #include <winbase.h>
 #include <processthreadsapi.h>
 #include <process.h>
+#include <shlwapi.h>
+#pragma comment(lib, "Shlwapi.lib")
 
 #include "../platform.hpp"
 
@@ -542,6 +544,16 @@ namespace rsl
         return true;
     }
 
+    bool platform::is_directory_empty(string_view absolutePath)
+    {
+        if (!does_path_entry_exist(absolutePath))
+        {
+            return false;
+        }
+
+        return PathIsDirectoryEmptyA(absolutePath.data()) == TRUE;
+    }
+
     bool platform::does_path_entry_exist(const string_view absolutePath)
     {
         const dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
@@ -550,7 +562,12 @@ namespace rsl
 
     iterator_view<directory_iterator> platform::iterate_directory(const string_view absolutePath, platform_error& errc)
     {
-        const dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
+        dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
+        if (widePath.back() != L'\\')
+        {
+            widePath.push_back(L'\\');
+        }
+        widePath.push_back(L'*');
 
         WIN32_FIND_DATAW findData;
         const HANDLE directory = FindFirstFileW(widePath.data(), &findData);
@@ -568,10 +585,13 @@ namespace rsl
         directory_iterator startIterator;
         set_native_handle(
                 startIterator,
-                new native_win_directory_iterator_handle{ .directory = managed_resource<HANDLE>(FindClose, directory),
-                                                          .findData = findData });
+                new native_win_directory_iterator_handle{
+                        .directory = managed_resource<HANDLE>(FindClose, directory),
+                        .findData = findData,
+                });
 
-        if (!next_directory_entry(startIterator))
+        // Skip "." and ".."
+        if (!next_directory_entry(startIterator) || !next_directory_entry(startIterator))
         {
             return {};
         }
@@ -608,7 +628,7 @@ namespace rsl
 
         while (FindNextFileW(directory, &findData))
         {
-            result.push_back(fs::standardize(to_utf8(findData.cFileName)));
+            result.push_back(fs::standardize(to_utf8(wstring_view::from_string_length(findData.cFileName))));
         }
 
         const platform_error err = translate_platform_error(GetLastError());
@@ -646,6 +666,58 @@ namespace rsl
 
         CloseHandle(fileHandle);
         return okay;
+    }
+
+    result<void> rsl::platform::delete_directory(string_view absolutePath, file_delete_flags flags)
+    {
+        const dynamic_wstring widePath = to_utf16(fs::localize(absolutePath));
+
+        if (RemoveDirectoryW(widePath.data()))
+        {
+            return okay;
+        }
+
+        const DWORD errorCode = GetLastError();
+        if (errorCode == ERROR_FILE_NOT_FOUND || errorCode == ERROR_PATH_NOT_FOUND)
+        {
+            return okay;
+        }
+
+        if (errorCode == ERROR_DIR_NOT_EMPTY && enum_flags::has_flag(flags, file_delete_flags::recursive))
+        {
+            result<iterator_view<directory_iterator>> entries = iterate_directory(absolutePath);
+            if (entries.has_errors())
+            {
+                return entries.propagate();
+            }
+
+            for (const directory_entry& entry : *entries)
+            {
+                if (entry.is_regular_file())
+                {
+                    result<void> deletionResult = delete_file(entry.get_path(), flags);
+                    if (deletionResult.has_errors())
+                    {
+                        return deletionResult.propagate();
+                    }
+                }
+                else if (entry.is_directory())
+                {
+                    result<void> deletionResult = delete_directory(entry.get_path(), flags);
+                    if (deletionResult.has_errors())
+                    {
+                        return deletionResult.propagate();
+                    }
+                }
+            }
+
+            if (RemoveDirectoryW(widePath.data()))
+            {
+                return okay;
+            }
+        }
+
+        return make_error(translate_platform_error(errorCode));
     }
 
     result<file> platform::open_file(const string_view absolutePath, const file_access_mode mode, const file_access_flags flags)
@@ -1042,7 +1114,7 @@ namespace rsl
 
     dynamic_string directory_iterator::get_path() const
     {
-        return fs::standardize(to_utf8(get_native_handle(*this)->findData.cFileName));
+        return fs::standardize(to_utf8(wstring_view::from_string_length(get_native_handle(*this)->findData.cFileName)));
     }
 
     bool directory_iterator::is_regular_file() const
@@ -1062,7 +1134,7 @@ namespace rsl
 
     result<file> directory_iterator::open_file(const file_access_mode mode, const file_access_flags flags) const
     {
-        return open_file_impl(get_native_handle(*this)->findData.cFileName, mode, flags);
+        return open_file_impl(wstring_view::from_string_length(get_native_handle(*this)->findData.cFileName), mode, flags);
     }
 
     bool directory_iterator::operator==(const directory_iterator& other) const

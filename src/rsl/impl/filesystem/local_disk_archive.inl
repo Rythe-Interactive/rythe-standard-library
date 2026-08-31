@@ -21,8 +21,26 @@ namespace rsl::fs
         }
     }
 
-    inline void local_disk_file_solution::set_access_hint(file_access_flags flags)
+    constexpr pointer<local_disk_file_solution_data> local_disk_archive::get_solution_data(const file_solution_handle handle) noexcept
     {
-        m_accessFlags = flags;
+        const index_type solutionIndex = get_solution_index(handle);
+        if (solutionIndex == npos) [[unlikely]]
+        {
+            return { nullptr };
+        }
+
+        return { &m_solutions[solutionIndex] };
+    }
+
+    constexpr pointer<const local_disk_file_solution_data>
+        local_disk_archive::get_solution_data(const file_solution_handle handle) const noexcept
+    {
+        const index_type solutionIndex = get_solution_index(handle);
+        if (solutionIndex == npos) [[unlikely]]
+        {
+            return { nullptr };
+        }
+
+        return { &m_solutions[solutionIndex] };
     }
 }

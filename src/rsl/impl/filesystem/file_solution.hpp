@@ -1,53 +1,57 @@
 ﻿#pragma once
-#include "../util/error_handling.hpp"
 #include "../platform/file.hpp"
+#include "../util/error_handling.hpp"
 
-#include "archive.hpp"
 #include "filesystem_error.hpp"
 #include "traits.hpp"
+#include "archive.hpp"
 
 namespace rsl::fs
 {
     class view;
+    class archive;
 
-    class file_solution
+    class file_solution final
     {
+        friend class archive_registry;
         friend class archive;
 
     public:
-        VIRTUAL_RULE_OF_5(file_solution)
+        RULE_OF_5(file_solution)
 
-        [[nodiscard]] [[rythe_always_inline]] const archive* get_provider() const noexcept;
-        [[nodiscard]] [[rythe_always_inline]] archive* get_provider() noexcept;
+        [[nodiscard]] [[rythe_always_inline]] pointer<const archive> get_provider() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] pointer<archive> get_provider() noexcept;
         [[rythe_always_inline]] void release();
 
-        [[nodiscard]] file_traits file_info() const;
+        [[nodiscard]] [[rythe_always_inline]] bool is_valid() const noexcept;
+        [[nodiscard]] [[rythe_always_inline]] operator bool() const noexcept;
 
-        [[nodiscard]] virtual bool is_file() const = 0;
-        [[nodiscard]] virtual bool is_directory() const = 0;
-        [[nodiscard]] virtual bool is_valid_path() const = 0;
-        [[nodiscard]] virtual bool can_be_written() const = 0;
-        [[nodiscard]] virtual bool can_be_read() const = 0;
-        [[nodiscard]] virtual bool can_be_created() const = 0;
-        [[nodiscard]] virtual bool exists() const = 0;
+        [[nodiscard]] [[rythe_always_inline]] file_traits file_info() const;
+
+        [[nodiscard]] [[rythe_always_inline]] bool is_file() const;
+        [[nodiscard]] [[rythe_always_inline]] bool is_directory() const;
+        [[nodiscard]] [[rythe_always_inline]] bool is_empty() const;
+        [[nodiscard]] [[rythe_always_inline]] bool is_valid_path() const;
+        [[nodiscard]] [[rythe_always_inline]] bool can_be_written() const;
+        [[nodiscard]] [[rythe_always_inline]] bool can_be_read() const;
+        [[nodiscard]] [[rythe_always_inline]] bool can_be_created() const;
+        [[nodiscard]] [[rythe_always_inline]] bool exists() const;
 
         [[nodiscard]] [[rythe_always_inline]] filesystem_traits filesystem_info() const;
-        [[nodiscard]] virtual result<dynamic_array<view>> ls() const = 0;
+        [[nodiscard]] result<dynamic_array<view>> ls() const;
 
-        virtual void set_access_hint(file_access_flags) {}
-        [[nodiscard]] virtual result<void> create() const = 0;
-        [[nodiscard]] virtual result<byte_view> read() const = 0;
-        [[nodiscard]] virtual result<void> write(byte_view data) = 0;
-        [[nodiscard]] virtual result<void> append(byte_view data) = 0;
-        [[nodiscard]] virtual result<void> flush() const = 0;
+        [[rythe_always_inline]] void set_access_hint(file_access_flags flags);
+        [[nodiscard]] [[rythe_always_inline]] result<void> create() const;
+        [[nodiscard]] [[rythe_always_inline]] result<void> delete_entry(file_delete_flags flags) const;
+        [[nodiscard]] [[rythe_always_inline]] result<byte_view> read() const;
+        [[nodiscard]] [[rythe_always_inline]] result<void> write(byte_view data);
+        [[nodiscard]] [[rythe_always_inline]] result<void> append(byte_view data);
+        [[nodiscard]] [[rythe_always_inline]] result<void> flush() const;
 
     protected:
-        [[nodiscard]] result<void> open_file_for_read() const;
-        [[nodiscard]] result<void> open_file_for_write();
-        [[nodiscard]] result<void> open_file_for_append();
-
-        archive* m_provider;
+        file_solution_handle m_handle = invalid_file_solution_handle;
+        pointer<archive> m_provider = { nullptr };
     };
-}
+} // namespace rsl::fs
 
 #include "file_solution.inl"

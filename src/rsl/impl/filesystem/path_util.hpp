@@ -44,9 +44,9 @@ namespace rsl::fs
     template <string_like StringType>
     [[rythe_always_inline]] constexpr StringType& subdir(in_place_signal_type, StringType& path, string_view sub);
     template<string_like StringType>
-    [[rythe_always_inline]] constexpr StringType& localize(in_place_signal_type, StringType& path);
+    [[rythe_always_inline]] constexpr StringType& localize(in_place_signal_type, StringType& path) noexcept;
     template<string_like StringType>
-    [[rythe_always_inline]] constexpr StringType& standardize(in_place_signal_type, StringType& path);
+    [[rythe_always_inline]] constexpr StringType& standardize(in_place_signal_type, StringType& path) noexcept;
 
     [[nodiscard]] [[rythe_always_inline]] constexpr string_view strip_domain(string_view path) noexcept;
     [[nodiscard]] [[rythe_always_inline]] constexpr dynamic_string replace_domain(string_view path, string_view replacement) noexcept;

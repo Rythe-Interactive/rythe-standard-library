@@ -6,48 +6,107 @@
 
 namespace rsl::fs
 {
-    bool local_disk_file_solution::is_file() const
+    string_view local_disk_archive::get_absolute_path(file_solution solution) const noexcept
     {
-        return m_provider && m_provider->is_valid() && platform::is_regular_file(m_absolutePath);
+        if (solution.get_provider().ptr != this)
+        {
+            return {};
+        }
+
+        return get_absolute_path(get_solution_handle(solution));
     }
 
-    bool local_disk_file_solution::is_directory() const
+    string_view local_disk_archive::get_absolute_path(file_solution_handle handle) const noexcept
     {
-        return m_provider && m_provider->is_valid() && platform::is_directory(m_absolutePath);
+        pointer<const local_disk_file_solution_data> data = get_solution_data(handle);
+        if (!data)
+        {
+            return {};
+        }
+
+        return data->absolutePath;
     }
 
-    bool local_disk_file_solution::is_valid_path() const
+    bool local_disk_archive::is_file(file_solution_handle handle) const
     {
-        return platform::is_path_valid(m_absolutePath);
+        const string_view path = get_absolute_path(handle);
+        return !path.is_empty() && platform::is_regular_file(path);
     }
 
-    bool local_disk_file_solution::can_be_written() const
+    bool local_disk_archive::is_directory(file_solution_handle handle) const
     {
-        return (is_file() && platform::is_file_writable(m_absolutePath)) ||
-                (is_directory() && platform::is_path_writable(m_absolutePath));
+        const string_view path = get_absolute_path(handle);
+        return !path.is_empty() && platform::is_directory(path);
     }
 
-    bool local_disk_file_solution::can_be_read() const
+    bool local_disk_archive::is_empty(file_solution_handle handle) const
     {
-        return (is_file() && platform::is_file_readable(m_absolutePath)) ||
-                (is_directory() && platform::is_path_readable(m_absolutePath));
+        const string_view path = get_absolute_path(handle);
+        if (path.is_empty())
+        {
+            return false;
+        }
+        return (platform::is_regular_file(path) && platform::is_file_empty(path)) ||
+                (platform::is_directory(path) && platform::is_directory_empty(path));
     }
 
-    bool local_disk_file_solution::can_be_created() const
+    bool local_disk_archive::is_valid_path(file_solution_handle handle) const
     {
-        return m_provider && m_provider->is_valid() && is_valid_path() && !platform::does_path_entry_exist(m_absolutePath);
+        const string_view path = get_absolute_path(handle);
+        return !path.is_empty() && platform::is_path_valid(path);
     }
 
-    bool local_disk_file_solution::exists() const
+    bool local_disk_archive::can_be_written(file_solution_handle handle) const
     {
-        return m_provider && m_provider->is_valid() && platform::does_path_entry_exist(m_absolutePath);
+        const string_view path = get_absolute_path(handle);
+        if (path.is_empty())
+        {
+            return false;
+        }
+
+        return (platform::is_regular_file(path) && platform::is_file_writable(path)) ||
+                 (platform::is_directory(path) && platform::is_path_writable(path));
     }
 
-    result<dynamic_array<view>> local_disk_file_solution::ls() const
+    bool local_disk_archive::can_be_read(file_solution_handle handle) const
+    {
+        const string_view path = get_absolute_path(handle);
+        if (path.is_empty())
+        {
+            return false;
+        }
+
+        return (platform::is_regular_file(path) && platform::is_file_readable(path)) ||
+                (platform::is_directory(path) && platform::is_path_readable(path));
+    }
+
+    bool local_disk_archive::can_be_created(file_solution_handle handle) const
+    {
+        const string_view path = get_absolute_path(handle);
+        if (path.is_empty())
+        {
+            return false;
+        }
+
+        return platform::is_path_valid(path) && !platform::does_path_entry_exist(path);
+    }
+
+    bool local_disk_archive::exists(file_solution_handle handle) const
+    {
+        const string_view path = get_absolute_path(handle);
+        if (path.is_empty())
+        {
+            return false;
+        }
+
+        return platform::does_path_entry_exist(path);
+    }
+
+    result<dynamic_array<view>> local_disk_archive::ls(file_solution_handle handle) const
     {
         if constexpr (rythe_validate_low_impact)
         {
-            if (!m_provider->is_valid()) [[unlikely]]
+            if (!is_valid()) [[unlikely]]
             {
                 return make_error(filesystem_error::invalid_filesystem, "Invalid drive filesystem provider.");
             }
@@ -55,42 +114,60 @@ namespace rsl::fs
 
         if constexpr (rythe_validate_high_impact)
         {
-            if (!is_valid_path()) [[unlikely]]
+            if (!is_valid_path(handle)) [[unlikely]]
             {
                 return make_error(filesystem_error::invalid_solution, "Invalid drive file solution path.");
             }
 
-            if (!exists()) [[unlikely]]
+            if (!exists(handle)) [[unlikely]]
             {
                 return make_error(filesystem_error::directory_not_found);
             }
 
-            if (!is_directory()) [[unlikely]]
+            if (!is_directory(handle)) [[unlikely]]
             {
                 return make_error(filesystem_error::invalid_operation, "Solution is not a directory to enumerate.");
             }
         }
 
-        result<iterator_view<directory_iterator>> iteratorViewResult = platform::iterate_directory(m_absolutePath);
+        const string_view path = get_absolute_path(handle);
+        if (path.is_empty())
+        {
+            return make_error(filesystem_error::invalid_solution, "Invalid drive file solution.");
+        }
+
+        result<iterator_view<directory_iterator>> iteratorViewResult = platform::iterate_directory(path);
         if (!iteratorViewResult.carries_value()) [[unlikely]]
         {
             return iteratorViewResult.propagate();
         }
 
+        view rootPath{ path };
         dynamic_array<view> result;
-        for (auto path : iteratorViewResult.value())
+        for (const directory_entry& entry : iteratorViewResult.value())
         {
-            result.emplace_back(path.get_path());
+            result.emplace_back(rootPath/entry.get_path());
         }
 
         return result;
     }
 
+    void local_disk_archive::set_access_hint(file_solution_handle solutionHandle, file_access_flags flags)
+    {
+        pointer<local_disk_file_solution_data> data = get_solution_data(solutionHandle);
+        if (!data)
+        {
+            return;
+        }
+
+        data->accessFlags = flags;
+    }
+
     namespace
     {
-        result<void> create_directory_recursive(string_view path)
+        result<void> create_directory_recursive(const string_view path)
         {
-            string_view parentPath = parent(path);
+            const string_view parentPath = parent(path);
             if (!platform::does_path_entry_exist(parentPath))
             {
                 result<void> parentCreationResult = create_directory_recursive(parentPath);
@@ -104,14 +181,20 @@ namespace rsl::fs
         }
     } // namespace
 
-    result<void> local_disk_file_solution::create() const
+    result<void> local_disk_archive::create(file_solution_handle handle) const
     {
-        if (m_absolutePath[m_absolutePath.size() - 1ull] == '\\')
+        const string_view path = get_absolute_path(handle);
+        if (path.is_empty())
         {
-            return create_directory_recursive(m_absolutePath);
+            return make_error(filesystem_error::invalid_solution, "Invalid drive file solution.");
         }
 
-        string_view parentPath = parent(m_absolutePath);
+        if (path[path.size() - 1ull] == separator_char{})
+        {
+            return create_directory_recursive(path);
+        }
+
+        string_view parentPath = parent(path);
         if (!platform::does_path_entry_exist(parentPath))
         {
             result<void> parentCreationResult = create_directory_recursive(parentPath);
@@ -121,77 +204,96 @@ namespace rsl::fs
             }
         }
 
-        return platform::create_file(m_absolutePath);
+        return platform::create_file(path);
     }
 
-    result<byte_view> local_disk_file_solution::read() const
+    result<void> local_disk_archive::delete_entry(file_solution_handle handle, file_delete_flags flags) const
     {
-        if (!exists()) [[unlikely]]
+        const string_view path = get_absolute_path(handle);
+        if (path.is_empty())
+        {
+            return make_error(filesystem_error::invalid_solution, "Invalid drive file solution.");
+        }
+
+        if (is_directory(handle))
+        {
+            return platform::delete_directory(path, flags);
+        }
+
+        return platform::delete_file(path, flags);
+    }
+
+    result<byte_view> local_disk_archive::read(file_solution_handle handle) const
+    {
+        if (!exists(handle)) [[unlikely]]
         {
             return make_error(filesystem_error::file_not_found);
         }
 
-        if (!can_be_read()) [[unlikely]]
+        if (!can_be_read(handle)) [[unlikely]]
         {
             return make_error(filesystem_error::invalid_operation, "File can not be read.");
         }
 
-        result<void> result = open_file_for_read();
+        result<void> result = open_file_for_read(handle);
         if (result.has_errors()) [[unlikely]]
         {
             return result.propagate();
         }
 
-        return m_fileMapping.view_read();
+        pointer<const local_disk_file_solution_data> solutionData = get_solution_data(handle);
+        return solutionData->fileMapping.view_read();
     }
 
-    result<void> local_disk_file_solution::write(byte_view data)
+    result<void> local_disk_archive::write(file_solution_handle handle,byte_view data)
     {
-        if (!exists()) [[unlikely]]
+        if (!exists(handle)) [[unlikely]]
         {
             return make_error(filesystem_error::file_not_found);
         }
 
-        if (!can_be_written()) [[unlikely]]
+        if (!can_be_written(handle)) [[unlikely]]
         {
             return make_error(filesystem_error::invalid_operation, "File can not be written.");
         }
 
-        result<void> result = open_file_for_write();
+        result<void> result = open_file_for_write(handle);
         if (result.has_errors()) [[unlikely]]
         {
             return result.propagate();
         }
 
-        return platform::write_file(m_openFile, data);
+        pointer<local_disk_file_solution_data> solutionData = get_solution_data(handle);
+        return platform::write_file(solutionData->openFile, data);
     }
 
-    result<void> local_disk_file_solution::append(byte_view data)
+    result<void> local_disk_archive::append(file_solution_handle handle,byte_view data)
     {
-        if (!exists()) [[unlikely]]
+        if (!exists(handle)) [[unlikely]]
         {
             return make_error(filesystem_error::file_not_found);
         }
 
-        if (!can_be_written()) [[unlikely]]
+        if (!can_be_written(handle)) [[unlikely]]
         {
             return make_error(filesystem_error::invalid_operation, "File can not be written.");
         }
 
-        result<void> result = open_file_for_append();
+        result<void> result = open_file_for_append(handle);
         if (result.has_errors()) [[unlikely]]
         {
             return result.propagate();
         }
 
-        return platform::append_file(m_openFile, data);
+        pointer<local_disk_file_solution_data> solutionData = get_solution_data(handle);
+        return platform::append_file(solutionData->openFile, data);
     }
 
-    result<void> local_disk_file_solution::flush() const
+    result<void> local_disk_archive::flush(file_solution_handle) const
     {
         if constexpr (rythe_validate_low_impact)
         {
-            if (!m_provider || !m_provider->is_valid()) [[unlikely]]
+            if (!is_valid()) [[unlikely]]
             {
                 return make_error(filesystem_error::invalid_filesystem, "Invalid drive filesystem provider.");
             }
@@ -234,7 +336,7 @@ namespace rsl::fs
         return !m_rootPath.is_empty();
     }
 
-    result<file_solution*> local_disk_archive::create_solution(const string_view path)
+    result<file_solution_handle> local_disk_archive::create_solution(const string_view path)
     {
         if constexpr (rythe_validate_low_impact)
         {
@@ -256,6 +358,9 @@ namespace rsl::fs
         }
 
         auto [index, newValue] = create_solution_reference(path);
+
+        file_solution_handle handle = get_solution_handle(index);
+
         if (newValue)
         {
             if (index >= m_solutions.size())
@@ -264,61 +369,54 @@ namespace rsl::fs
             }
 
             auto& solution = m_solutions[index];
-
-            set_solution_provider(&solution, this);
-            solution.m_virtualPath = dynamic_string::from_view(path);
-            solution.m_absolutePath = rsl::move(absolutePath);
+            solution.virtualPath = dynamic_string::from_view(path);
+            solution.absolutePath = rsl::move(absolutePath);
         }
 
-        return &m_solutions[index];
+        return handle;
     }
 
-    void local_disk_archive::release_solution(file_solution* solution)
+    void local_disk_archive::release_solution(file_solution_handle solutionHandle)
     {
-        local_disk_file_solution* driveSolution = dynamic_cast<local_disk_file_solution*>(solution);
-        if (!driveSolution) [[unlikely]]
-        {
-            return;
-        }
-
-        const size_type solutionIndex = find_existing_solution(driveSolution->m_virtualPath);
+        const index_type solutionIndex = get_solution_index(solutionHandle);
         if (solutionIndex == npos) [[unlikely]]
         {
             return;
         }
 
-        destroy_solution_reference(driveSolution->m_virtualPath);
+        local_disk_file_solution_data& driveSolution = m_solutions[solutionIndex];
+
+        destroy_solution_reference(driveSolution.virtualPath);
         if (get_reference_count_status(solutionIndex).is_free())
         {
-            if (driveSolution->m_fileMapping)
+            if (driveSolution.fileMapping)
             {
-                platform::release_file_mapping(driveSolution->m_fileMapping);
+                platform::release_file_mapping(driveSolution.fileMapping);
             }
-            if (driveSolution->m_openFile)
+            if (driveSolution.openFile)
             {
-                platform::close_file(driveSolution->m_openFile);
+                platform::close_file(driveSolution.openFile);
             }
 
-            driveSolution->m_virtualPath.clear();
-            driveSolution->m_absolutePath.clear();
-            set_solution_provider(driveSolution, nullptr);
+            driveSolution.virtualPath.clear();
+            driveSolution.absolutePath.clear();
         }
     }
 
-    result<void> local_disk_archive::open_file_for_read(const file_solution* solution) const
+    result<void> local_disk_archive::open_file_for_read(file_solution_handle solutionHandle) const
     {
-        const local_disk_file_solution* driveSolution = dynamic_cast<const local_disk_file_solution*>(solution);
+        pointer<const local_disk_file_solution_data> driveSolution = get_solution_data(solutionHandle);
         if (!driveSolution) [[unlikely]]
         {
             return make_error(filesystem_error::invalid_filesystem);
         }
 
-        if (driveSolution->m_fileMapping)
+        if (driveSolution->fileMapping)
         {
             return okay;
         }
 
-        file& platformFile = driveSolution->m_openFile;
+        file& platformFile = driveSolution->openFile;
         file_access_mode accessMode = file_access_mode::read;
 
         if (platformFile && !mode_available_for_read(platformFile.get_mode()))
@@ -329,7 +427,7 @@ namespace rsl::fs
 
         if (!platformFile)
         {
-            result<file> openResult = platform::open_file(driveSolution->m_absolutePath, accessMode, driveSolution->m_accessFlags);
+            result<file> openResult = platform::open_file(driveSolution->absolutePath, accessMode, driveSolution->accessFlags);
             if (openResult.has_errors()) [[unlikely]]
             {
                 return openResult.propagate();
@@ -344,31 +442,31 @@ namespace rsl::fs
             return mappingResult.propagate();
         }
 
-        driveSolution->m_fileMapping = *mappingResult;
+        driveSolution->fileMapping = *mappingResult;
         return okay;
     }
 
-    result<void> local_disk_archive::open_file_for_write(file_solution* solution)
+    result<void> local_disk_archive::open_file_for_write(file_solution_handle solutionHandle)
     {
-        const local_disk_file_solution* driveSolution = dynamic_cast<const local_disk_file_solution*>(solution);
+        pointer<local_disk_file_solution_data> driveSolution = get_solution_data(solutionHandle);
         if (!driveSolution) [[unlikely]]
         {
             return make_error(filesystem_error::invalid_filesystem);
         }
 
-        if (driveSolution->m_fileMapping)
+        if (driveSolution->fileMapping)
         {
             return okay;
         }
 
-        file& platformFile = driveSolution->m_openFile;
+        file& platformFile = driveSolution->openFile;
         file_access_mode accessMode = file_access_mode::write;
 
         if (platformFile && !mode_available_for_write(platformFile.get_mode()))
         {
-            if (driveSolution->m_fileMapping)
+            if (driveSolution->fileMapping)
             {
-                platform::release_file_mapping(driveSolution->m_fileMapping);
+                platform::release_file_mapping(driveSolution->fileMapping);
             }
             platform::close_file(platformFile);
             accessMode = file_access_mode::read_write_append;
@@ -376,7 +474,7 @@ namespace rsl::fs
 
         if (!platformFile)
         {
-            result<file> openResult = platform::open_file(driveSolution->m_absolutePath, accessMode, driveSolution->m_accessFlags);
+            result<file> openResult = platform::open_file(driveSolution->absolutePath, accessMode, driveSolution->accessFlags);
             if (openResult.has_errors()) [[unlikely]]
             {
                 return openResult.propagate();
@@ -388,27 +486,27 @@ namespace rsl::fs
         return okay;
     }
 
-    result<void> local_disk_archive::open_file_for_append(file_solution* solution)
+    result<void> local_disk_archive::open_file_for_append(file_solution_handle solutionHandle)
     {
-        const local_disk_file_solution* driveSolution = dynamic_cast<const local_disk_file_solution*>(solution);
+        pointer<local_disk_file_solution_data> driveSolution = get_solution_data(solutionHandle);
         if (!driveSolution) [[unlikely]]
         {
             return make_error(filesystem_error::invalid_filesystem);
         }
 
-        if (driveSolution->m_fileMapping)
+        if (driveSolution->fileMapping)
         {
             return okay;
         }
 
-        file& platformFile = driveSolution->m_openFile;
+        file& platformFile = driveSolution->openFile;
         file_access_mode accessMode = file_access_mode::append;
 
         if (platformFile && !mode_available_for_append(platformFile.get_mode()))
         {
-            if (driveSolution->m_fileMapping)
+            if (driveSolution->fileMapping)
             {
-                platform::release_file_mapping(driveSolution->m_fileMapping);
+                platform::release_file_mapping(driveSolution->fileMapping);
             }
             platform::close_file(platformFile);
             accessMode = file_access_mode::read_write_append;
@@ -416,7 +514,7 @@ namespace rsl::fs
 
         if (!platformFile)
         {
-            result<file> openResult = platform::open_file(driveSolution->m_absolutePath, accessMode, driveSolution->m_accessFlags);
+            result<file> openResult = platform::open_file(driveSolution->absolutePath, accessMode, driveSolution->accessFlags);
             if (openResult.has_errors()) [[unlikely]]
             {
                 return openResult.propagate();

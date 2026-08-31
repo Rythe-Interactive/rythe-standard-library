@@ -6,6 +6,7 @@ namespace rsl
     {
         bool isFile{};
         bool isDirectory{};
+        bool isEmpty{};
         bool isValidPath{};
 
         bool canBeWritten{};

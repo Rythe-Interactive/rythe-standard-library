@@ -7,7 +7,7 @@ namespace rsl::fs
 {
     result<void> view::prefetch_solution(const bool ignoreMultipleSolutions) const
     {
-        if (m_solution == nullptr)
+        if (!m_solution.is_valid())
         {
             auto result = get_filesystem().find_solution(m_path, ignoreMultipleSolutions);
             if (result.is_okay())
@@ -23,11 +23,6 @@ namespace rsl::fs
         return okay;
     }
 
-    bool view::exists() const
-    {
-        return file_info().exists;
-    }
-
     result<void> view::create() const
     {
         result<const file_solution*> solution = find_solution();
@@ -36,6 +31,16 @@ namespace rsl::fs
             return solution.propagate();
         }
         return solution.value()->create();
+    }
+
+    result<void> view::delete_entry(file_delete_flags flags) const
+    {
+        result<const file_solution*> solution = find_solution();
+        if (solution.has_errors())
+        {
+            return solution.propagate();
+        }
+        return solution.value()->delete_entry(flags);
     }
 
     file_traits view::file_info() const
@@ -160,9 +165,8 @@ namespace rsl::fs
     {
         if (m_solution)
         {
-            m_solution->release();
+            m_solution.release();
         }
-        m_solution = nullptr;
     }
 
     result<const file_solution*> view::find_solution() const
@@ -172,7 +176,7 @@ namespace rsl::fs
         {
             return result.propagate();
         }
-        return m_solution;
+        return &m_solution;
     }
 
     result<file_solution*> view::find_solution()
@@ -182,6 +186,6 @@ namespace rsl::fs
         {
             return result.propagate();
         }
-        return m_solution;
+        return &m_solution;
     }
 } // namespace rsl::fs

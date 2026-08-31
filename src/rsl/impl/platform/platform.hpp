@@ -57,6 +57,8 @@ namespace rsl
         static bool is_path_readable(string_view absolutePath);
         static bool is_file_writable(string_view absolutePath);
         static bool is_file_readable(string_view absolutePath);
+        static bool is_file_empty(string_view absolutePath);
+        static bool is_directory_empty(string_view absolutePath);
         static bool does_path_entry_exist(string_view absolutePath);
         static result<iterator_view<directory_iterator>> iterate_directory(string_view absolutePath);
         static iterator_view<directory_iterator> iterate_directory(string_view absolutePath, platform_error& errc);
@@ -65,6 +67,8 @@ namespace rsl
 
         static result<void> create_directory(string_view absolutePath);
         static result<void> create_file(string_view absolutePath);
+
+        static result<void> delete_directory(string_view absolutePath, file_delete_flags flags = file_delete_flags::none);
 
         static result<file> open_file(string_view absolutePath, file_access_mode mode, file_access_flags flags = file_access_flags::no_preference);
         static void close_file(file& file);

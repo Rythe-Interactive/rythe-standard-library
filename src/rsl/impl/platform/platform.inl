@@ -46,6 +46,17 @@ namespace rsl
         return result->isWritable;
     }
 
+    inline bool platform::is_file_empty(string_view absolutePath)
+    {
+        result<size_type> result = get_file_size(absolutePath);
+        if (!result.reduce_and_discard())
+        {
+            return false;
+        }
+
+        return *result == 0ull;
+    }
+
     inline result<iterator_view<directory_iterator>> platform::iterate_directory(const string_view absolutePath)
     {
         platform_error errc;

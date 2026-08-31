@@ -147,14 +147,14 @@
     }
 
     template <string_like StringType>
-    constexpr StringType& localize(in_place_signal_type, StringType& path)
+    constexpr StringType& localize(in_place_signal_type, StringType& path) noexcept
     {
         linear_search_and_replace(path, anti_separator(), separator());
         return path;
     }
 
     template <string_like StringType>
-    constexpr StringType& standardize(in_place_signal_type, StringType& path)
+    constexpr StringType& standardize(in_place_signal_type, StringType& path) noexcept
     {
         linear_search_and_replace(path, '\\', '/');
         return path;
@@ -180,7 +180,7 @@
     template <string_like StringType>
     constexpr StringType& replace_domain(in_place_signal_type, StringType& path, const string_view replacement) noexcept
     {
-        const size_type idx = linear_search_sequence(view(path).subview(0ull, 64ull), "://"_sv);
+        const size_type idx = linear_search_sequence(rsl::view(path).subview(0ull, 64ull), "://"_sv);
         if (idx == npos)
         {
             return path;

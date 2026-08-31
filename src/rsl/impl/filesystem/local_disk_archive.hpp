@@ -2,42 +2,17 @@
 #include "../platform/platform.hpp"
 
 #include "archive.hpp"
-#include "file_solution.hpp"
-#include "path_util.hpp"
+#include "view.hpp"
 
 namespace rsl::fs
 {
-    class local_disk_file_solution : public file_solution
+    struct local_disk_file_solution_data
     {
-    public:
-        VIRTUAL_RULE_OF_5(local_disk_file_solution)
-
-        [[nodiscard]] [[rythe_always_inline]] string_view get_absolute_path() const noexcept { return m_absolutePath; }
-
-        [[nodiscard]] bool is_file() const override;
-        [[nodiscard]] bool is_directory() const override;
-        [[nodiscard]] bool is_valid_path() const override;
-        [[nodiscard]] bool can_be_written() const override;
-        [[nodiscard]] bool can_be_read() const override;
-        [[nodiscard]] bool can_be_created() const override;
-        [[nodiscard]] bool exists() const override;
-
-        [[nodiscard]] result<dynamic_array<view>> ls() const override;
-
-        [[rythe_always_inline]] void set_access_hint(file_access_flags flags) override;
-        [[nodiscard]] result<void> create() const override;
-        [[nodiscard]] result<byte_view> read() const override;
-        [[nodiscard]] result<void> write(byte_view data) override;
-        [[nodiscard]] result<void> append(byte_view data) override;
-        [[nodiscard]] result<void> flush() const override;
-
-    private:
-        friend class local_disk_archive;
-        dynamic_string m_virtualPath;
-        dynamic_string m_absolutePath;
-        file_access_flags m_accessFlags = file_access_flags::no_preference;
-        mutable file m_openFile;
-        mutable file_mapping m_fileMapping;
+        dynamic_string virtualPath;
+        dynamic_string absolutePath;
+        file_access_flags accessFlags = file_access_flags::no_preference;
+        mutable file openFile;
+        mutable file_mapping fileMapping;
     };
 
     class local_disk_archive : public archive
@@ -51,17 +26,40 @@ namespace rsl::fs
         [[nodiscard]] result<dynamic_array<view>> ls() const override;
         [[nodiscard]] bool is_readonly() const override;
         [[nodiscard]] bool is_valid() const override;
-        [[nodiscard]] result<file_solution*> create_solution(string_view path) override;
-        void release_solution(file_solution* solution) override;
+        [[nodiscard]] result<file_solution_handle> create_solution(string_view path) override;
+        void release_solution(file_solution_handle solution) override;
+
+        [[nodiscard]] string_view get_absolute_path(file_solution solution) const noexcept;
+        [[nodiscard]] string_view get_absolute_path(file_solution_handle handle) const noexcept;
+        [[nodiscard]] bool is_file(file_solution_handle solutionHandle) const override;
+        [[nodiscard]] bool is_directory(file_solution_handle solutionHandle) const override;
+        [[nodiscard]] bool is_empty(file_solution_handle solutionHandle) const override;
+        [[nodiscard]] bool is_valid_path(file_solution_handle solutionHandle) const override;
+        [[nodiscard]] bool can_be_written(file_solution_handle solutionHandle) const override;
+        [[nodiscard]] bool can_be_read(file_solution_handle solutionHandle) const override;
+        [[nodiscard]] bool can_be_created(file_solution_handle solutionHandle) const override;
+        [[nodiscard]] bool exists(file_solution_handle solutionHandle) const override;
+        [[nodiscard]] result<dynamic_array<view>> ls(file_solution_handle solutionHandle) const override;
+        void set_access_hint(file_solution_handle solutionHandle, file_access_flags flags) override;
+        [[nodiscard]] result<void> create(file_solution_handle solutionHandle) const override;
+        [[nodiscard]] result<void> delete_entry(file_solution_handle solutionHandle, file_delete_flags flags) const override;
+        [[nodiscard]] result<byte_view> read(file_solution_handle solutionHandle) const override;
+        [[nodiscard]] result<void> write(file_solution_handle solutionHandle, byte_view data) override;
+        [[nodiscard]] result<void> append(file_solution_handle solutionHandle, byte_view data) override;
+        [[nodiscard]] result<void> flush(file_solution_handle solutionHandle) const override;
 
     protected:
-        friend class local_disk_file_solution;
-        [[nodiscard]] result<void> open_file_for_read(const file_solution* solution) const override;
-        [[nodiscard]] result<void> open_file_for_write(file_solution* solution) override;
-        [[nodiscard]] result<void> open_file_for_append(file_solution* solution) override;
+        [[nodiscard]] [[rythe_always_inline]] constexpr pointer<local_disk_file_solution_data>
+                get_solution_data(file_solution_handle handle) noexcept;
+        [[nodiscard]] [[rythe_always_inline]] constexpr pointer<const local_disk_file_solution_data>
+                get_solution_data(file_solution_handle handle) const noexcept;
+
+        [[nodiscard]] result<void> open_file_for_read(file_solution_handle solutionHandle) const;
+        [[nodiscard]] result<void> open_file_for_write(file_solution_handle solutionHandle);
+        [[nodiscard]] result<void> open_file_for_append(file_solution_handle solutionHandle);
 
         dynamic_string m_rootPath;
-        dynamic_array<local_disk_file_solution> m_solutions;
+        dynamic_array<local_disk_file_solution_data> m_solutions;
     };
 }
 

@@ -23,9 +23,9 @@ namespace rsl::fs
         };
     }
 
-    void archive::set_solution_provider(file_solution* solution, archive* provider)
+    file_solution_handle archive::get_solution_handle(file_solution solution) noexcept
     {
-        solution->m_provider = provider;
+        return solution.m_handle;
     }
 
     pair<index_type, bool> archive::create_solution_reference(const string_view path)
@@ -37,7 +37,9 @@ namespace rsl::fs
             if (index >= m_solutionReferences.size())
             {
                 m_solutionReferences.resize(index + 1ull);
+                m_solutionVersions.resize(index + 1ull, counter_of_handle<file_solution_handle>{0});
             }
+            m_solutionVersions[index].value++;
         }
 
         m_solutionReferences[index].borrow();
@@ -55,20 +57,5 @@ namespace rsl::fs
             m_solutionMap.erase(path);
             m_solutionIndexAllocator.free_index(index);
         }
-    }
-
-    index_type archive::find_existing_solution(const string_view path)
-    {
-        if (const index_type* result = m_solutionMap.find(path))
-        {
-            return *result;
-        }
-
-        return npos;
-    }
-
-    const manual_reference_counter& archive::get_reference_count_status(const index_type index) const
-    {
-        return m_solutionReferences[index];
     }
 }

@@ -45,14 +45,14 @@ namespace rsl::fs
         void register_provider(Args&&... args);
         void register_provider(temporary_object<archive>&& provider);
 
-        result<file_solution*> find_solution(string_view path, bool ignoreMultipleSolutions = false);
+        result<file_solution> find_solution(string_view path, bool ignoreMultipleSolutions = false);
 
         bool has_domain(string_view domain) const noexcept;
         array_view<const unique_object<archive>> providers() const noexcept;
         iterator_view<domain_iterator> domains() const noexcept;
 
     protected:
-        dynamic_map<string_view, dynamic_array<archive*>> m_domainMap;
+        dynamic_map<string_view, dynamic_array<pointer<archive>>> m_domainMap;
         dynamic_array<unique_object<archive>> m_providers;
     };
 }

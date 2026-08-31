@@ -31,13 +31,13 @@ namespace rsl::fs
         }
     } // namespace internal
 
-    result<file_solution*> filesystem::find_solution(const string_view path, const bool ignoreMultipleSolutions)
+    result<file_solution> filesystem::find_solution(const string_view path, const bool ignoreMultipleSolutions)
     {
         if (ignoreMultipleSolutions)
         {
             for (auto* registry : m_archiveRegistries)
             {
-                result<file_solution*> solution = registry->find_solution(path, true);
+                result<file_solution> solution = registry->find_solution(path, true);
                 if (solution.carries_value())
                 {
                     return solution;
@@ -47,19 +47,19 @@ namespace rsl::fs
             return make_error(filesystem_error::no_solution_found);
         }
 
-        file_solution* solution = nullptr;
+        file_solution solution{};
         for (auto* registry : m_archiveRegistries)
         {
             if (auto result = registry->find_solution(path); result.carries_value())
             {
                 if (solution) [[unlikely]]
                 {
-                    solution->release();
-                    result.value()->release();
+                    solution.release();
+                    result->release();
                     return make_error(filesystem_error::multiple_solutions_found);
                 }
 
-                solution = result.value();
+                solution = *result;
             }
             else
             {

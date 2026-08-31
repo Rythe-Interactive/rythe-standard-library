@@ -37,7 +37,7 @@ namespace rsl::fs
     public:
         void add_registry(archive_registry* registry);
 
-        result<file_solution*> find_solution(string_view path, bool ignoreMultipleSolutions = false);
+        result<file_solution> find_solution(string_view path, bool ignoreMultipleSolutions = false);
         bool has_domain(string_view domain) const noexcept;
         iterator_view<registry_iterator> registries() noexcept;
 
