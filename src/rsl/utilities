@@ -4,6 +4,7 @@
 
 #include "impl/util/cli_parser.hpp"
 #include "impl/util/container_util.hpp"
+#include "impl/util/defer_execution.hpp"
 #include "impl/util/enum_flags.hpp"
 #include "impl/util/error_handling.hpp"
 #include "impl/util/hash.hpp"

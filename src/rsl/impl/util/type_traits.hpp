@@ -93,11 +93,9 @@ namespace rsl
             auto end = reverse_linear_search(functionName, '>');
 
             ret.copy_from(functionName.subview(first, end - first));
-#elif defined(RYTHE_GCC)
-            auto first = linear_search_not_eq(functionName, ' ', linear_search(functionName, '=') + 1);
-            ret.copy_from(functionName.subview(first, reverse_linear_search(functionName, ']') - first));
-#elif defined(RYTHE_CLANG)
-            auto first = linear_search_not_eq(functionName, ' ', linear_search(functionName, '=') + 1);
+#elif defined(RYTHE_GCC) || defined(RYTHE_CLANG)
+            auto searchStart = linear_search(functionName, '=') + 1ull;
+            auto first = linear_search_not_eq(functionName.subview(searchStart), ' ') + searchStart;
             ret.copy_from(functionName.subview(first, reverse_linear_search(functionName, ']') - first));
 #else
             ret.copy_from(functionName);

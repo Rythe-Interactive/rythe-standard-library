@@ -69,6 +69,7 @@
 #include "time\time_span.hpp"
 #include "util\cli_parser.hpp"
 #include "util\container_util.hpp"
+#include "util\defer_execution.hpp"
 #include "util\enum_flags.hpp"
 #include "util\error_handling.hpp"
 #include "util\hash.hpp"
