@@ -230,11 +230,6 @@ namespace rsl::fs
             return make_error(filesystem_error::file_not_found);
         }
 
-        if (!can_be_read(handle)) [[unlikely]]
-        {
-            return make_error(filesystem_error::invalid_operation, "File can not be read.");
-        }
-
         result<void> result = open_file_for_read(handle);
         if (result.has_errors()) [[unlikely]]
         {
@@ -252,11 +247,6 @@ namespace rsl::fs
             return make_error(filesystem_error::file_not_found);
         }
 
-        if (!can_be_written(handle)) [[unlikely]]
-        {
-            return make_error(filesystem_error::invalid_operation, "File can not be written.");
-        }
-
         result<void> result = open_file_for_write(handle);
         if (result.has_errors()) [[unlikely]]
         {
@@ -272,11 +262,6 @@ namespace rsl::fs
         if (!exists(handle)) [[unlikely]]
         {
             return make_error(filesystem_error::file_not_found);
-        }
-
-        if (!can_be_written(handle)) [[unlikely]]
-        {
-            return make_error(filesystem_error::invalid_operation, "File can not be written.");
         }
 
         result<void> result = open_file_for_append(handle);
@@ -421,22 +406,22 @@ namespace rsl::fs
         file& platformFile = driveSolution->openFile;
         file_access_mode accessMode = file_access_mode::read;
 
-        if (platformFile && !mode_available_for_read(platformFile.get_mode()))
+        if (platformFile)
         {
+            rsl_assert_medium_impact(!mode_available_for_read(platformFile.get_mode()));
             platform::close_file(platformFile);
             accessMode = file_access_mode::read_write_append;
         }
 
-        if (!platformFile)
-        {
-            result<file> openResult = platform::open_file(driveSolution->absolutePath, accessMode, driveSolution->accessFlags);
-            if (openResult.has_errors()) [[unlikely]]
-            {
-                return openResult.propagate();
-            }
+        rsl_assert_medium_impact(!platformFile);
 
-            platformFile = *openResult;
+        result<file> openResult = platform::open_file(driveSolution->absolutePath, accessMode, driveSolution->accessFlags);
+        if (openResult.has_errors()) [[unlikely]]
+        {
+            return openResult.propagate();
         }
+
+        platformFile = *openResult;
 
         result<file_mapping> mappingResult = platform::create_file_mapping(platformFile);
         if (mappingResult.has_errors()) [[unlikely]]
@@ -445,6 +430,7 @@ namespace rsl::fs
         }
 
         driveSolution->fileMapping = *mappingResult;
+
         return okay;
     }
 
@@ -454,11 +440,6 @@ namespace rsl::fs
         if (!driveSolution) [[unlikely]]
         {
             return make_error(filesystem_error::invalid_filesystem);
-        }
-
-        if (driveSolution->fileMapping)
-        {
-            return okay;
         }
 
         file& platformFile = driveSolution->openFile;
@@ -483,6 +464,17 @@ namespace rsl::fs
             }
 
             platformFile = *openResult;
+
+            if (mode_available_for_read(accessMode))
+            {
+                result<file_mapping> mappingResult = platform::create_file_mapping(platformFile);
+                if (mappingResult.has_errors()) [[unlikely]]
+                {
+                    return mappingResult.propagate();
+                }
+
+                driveSolution->fileMapping = *mappingResult;
+            }
         }
 
         return okay;
@@ -494,11 +486,6 @@ namespace rsl::fs
         if (!driveSolution) [[unlikely]]
         {
             return make_error(filesystem_error::invalid_filesystem);
-        }
-
-        if (driveSolution->fileMapping)
-        {
-            return okay;
         }
 
         file& platformFile = driveSolution->openFile;
@@ -523,6 +510,17 @@ namespace rsl::fs
             }
 
             platformFile = *openResult;
+
+            if (mode_available_for_read(accessMode))
+            {
+                result<file_mapping> mappingResult = platform::create_file_mapping(platformFile);
+                if (mappingResult.has_errors()) [[unlikely]]
+                {
+                    return mappingResult.propagate();
+                }
+
+                driveSolution->fileMapping = *mappingResult;
+            }
         }
 
         return okay;
