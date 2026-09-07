@@ -36,8 +36,6 @@ namespace rsl
         [[nodiscard]] [[rythe_always_inline]] constexpr float32 microseconds() const noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr float32 nanoseconds() const noexcept;
 
-        [[nodiscard]] [[rythe_always_inline]] constexpr operator float32() const noexcept;
-
         [[rythe_always_inline]] constexpr time_span operator-() const noexcept;
 
         [[rythe_always_inline]] constexpr time_span& operator+=(const time_span& rhs) noexcept;
@@ -46,11 +44,21 @@ namespace rsl
         [[rythe_always_inline]] constexpr time_span& operator/=(const time_span& rhs) noexcept;
         [[rythe_always_inline]] constexpr time_span& operator%=(const time_span& rhs) noexcept;
 
+        template <arithmetic_type Scalar>
+        [[rythe_always_inline]] constexpr time_span& operator*=(Scalar rhs) noexcept;
+        template <arithmetic_type Scalar>
+        [[rythe_always_inline]] constexpr time_span& operator/=(Scalar rhs) noexcept;
+
         [[nodiscard]] [[rythe_always_inline]] constexpr time_span operator+(const time_span& rhs) const noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr time_span operator-(const time_span& rhs) const noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr time_span operator*(const time_span& rhs) const noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr time_span operator/(const time_span& rhs) const noexcept;
         [[nodiscard]] [[rythe_always_inline]] constexpr time_span operator%(const time_span& rhs) const noexcept;
+
+        template<arithmetic_type Scalar>
+        [[nodiscard]] [[rythe_always_inline]] constexpr time_span operator*(Scalar rhs) const noexcept;
+        template <arithmetic_type Scalar>
+        [[nodiscard]] [[rythe_always_inline]] constexpr time_span operator/(Scalar rhs) const noexcept;
 
         [[nodiscard]] [[rythe_always_inline]] constexpr auto operator<=>(const time_span& rhs) const noexcept;
 

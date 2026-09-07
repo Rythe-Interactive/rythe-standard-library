@@ -122,11 +122,6 @@ namespace rsl
         return nanoseconds<float32>();
     }
 
-    constexpr time_span::operator float32() const noexcept
-    {
-        return seconds();
-    }
-
     constexpr time_span time_span::operator-() const noexcept
     {
         return { -value };
@@ -162,6 +157,20 @@ namespace rsl
         return *this;
     }
 
+    template<arithmetic_type Scalar>
+    constexpr time_span& time_span::operator*=(Scalar rhs) noexcept
+    {
+        value = narrowing_cast<int64>(value * rhs);
+        return *this;
+    }
+
+    template <arithmetic_type Scalar>
+    constexpr time_span& time_span::operator/=(Scalar rhs) noexcept
+    {
+        value = narrowing_cast<int64>(value / rhs);
+        return *this;
+    }
+
     constexpr time_span time_span::operator+(const time_span& rhs) const noexcept
     {
         return { value + rhs.value };
@@ -185,6 +194,18 @@ namespace rsl
     constexpr time_span time_span::operator%(const time_span& rhs) const noexcept
     {
         return { value % rhs.value };
+    }
+
+    template <arithmetic_type Scalar>
+    constexpr time_span time_span::operator*(Scalar rhs) const noexcept
+    {
+        return { narrowing_cast<int64>(value * rhs) };
+    }
+
+    template <arithmetic_type Scalar>
+    constexpr time_span time_span::operator/(Scalar rhs) const noexcept
+    {
+        return { narrowing_cast<int64>(value / rhs) };
     }
 
     constexpr auto time_span::operator<=>(const time_span& rhs) const noexcept
