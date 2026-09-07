@@ -969,9 +969,16 @@ namespace rsl
                 m_maxPsl = searchResult.unpackedPsl.psl;
             }
 
+            insertBucket.pslAndFingerprint = pack_bucket_psl(searchResult.unpackedPsl);
             currentIndex = index_add(homeIndex, searchResult.unpackedPsl.psl);
 
             rsl_assert_frequent(searchResult.type != search_result_type::existing_item);
+        }
+
+        if (searchResult.type == search_result_type::new_insertion)
+        {
+            rsl_assert_invalid_object(currentIndex < m_buckets.size());
+            m_buckets[currentIndex] = insertBucket;
         }
 
         if (recalcMin)
@@ -979,18 +986,21 @@ namespace rsl
             m_minPsl = limits<storage_type>::max;
             for (const bucket_type& bucket : m_buckets)
             {
+                if (bucket.pslAndFingerprint == 0ull)
+                {
+                    continue;
+                }
+
                 psl_type unpackedPsl = unpack_bucket_psl(bucket);
                 if (unpackedPsl.psl < m_minPsl)
                 {
                     m_minPsl = unpackedPsl.psl;
+                    if (m_minPsl == 0ull)
+                    {
+                        break;
+                    }
                 }
             }
-        }
-
-        if (searchResult.type == search_result_type::new_insertion)
-        {
-            rsl_assert_invalid_object(currentIndex < m_buckets.size());
-            m_buckets[currentIndex] = insertBucket;
         }
 
         return result;
