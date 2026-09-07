@@ -42,6 +42,7 @@ namespace rsl::fs
     [[nodiscard]] [[rythe_always_inline]] constexpr dynamic_string domain(string_view path);
     [[nodiscard]] [[rythe_always_inline]] constexpr string_view parent(string_view path) noexcept;
     [[nodiscard]] [[rythe_always_inline]] constexpr string_view filename(string_view path) noexcept;
+    [[nodiscard]] [[rythe_always_inline]] constexpr string_view strip_extension(string_view path, bool fullExtension = false) noexcept;
     [[nodiscard]] [[rythe_always_inline]] constexpr string_view extension(string_view path, bool fullExtension = false) noexcept;
     [[nodiscard]] [[rythe_always_inline]] constexpr string_view stem(string_view path) noexcept;
     [[nodiscard]] [[rythe_always_inline]] constexpr dynamic_string subdir(string_view path, string_view sub);

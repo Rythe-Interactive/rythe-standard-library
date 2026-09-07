@@ -45,6 +45,17 @@
         return path.subview(reverse_linear_search(path, separator_char{}) + 1ull);
     }
 
+    constexpr string_view strip_extension(string_view path, bool fullExtension) noexcept
+    {
+        const string_view fullname = filename(path);
+        if (fullExtension)
+        {
+            return fullname.subview(0ull, linear_search(fullname, '.'));
+        }
+
+        return fullname.subview(0ull, reverse_linear_search(fullname, '.'));
+    }
+
     constexpr string_view extension(const string_view path, const bool fullExtension) noexcept
     {
         const string_view fullname = filename(path);
