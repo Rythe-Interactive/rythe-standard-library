@@ -42,7 +42,7 @@
 
     constexpr string_view filename(const string_view path) noexcept
     {
-        return path.subview(reverse_linear_search(path, separator_char{}));
+        return path.subview(reverse_linear_search(path, separator_char{}) + 1ull);
     }
 
     constexpr string_view extension(const string_view path, const bool fullExtension) noexcept
@@ -141,7 +141,10 @@
             path.resize(sanitizedPath.size());
         }
         path.reserve(sanitizedPath.size() + sub.size() + 1ull);
-        path.append('/');
+        if (sub.is_empty() || sub[0ull] != separator_char{})
+        {
+            path.append('/');
+        }
         path.append(sub);
         return path;
     }

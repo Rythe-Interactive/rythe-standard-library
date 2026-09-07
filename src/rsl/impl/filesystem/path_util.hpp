@@ -29,6 +29,16 @@ namespace rsl::fs
         }
     };
 
+    [[nodiscard]] [[rythe_always_inline]] inline bool operator==(const char ch, separator_char) noexcept
+    {
+        return ch == '\\' || ch == '/';
+    }
+
+    [[nodiscard]] [[rythe_always_inline]] inline bool operator!=(const char ch, separator_char) noexcept
+    {
+        return !(separator_char{} == ch);
+    }
+
     [[nodiscard]] [[rythe_always_inline]] constexpr dynamic_string domain(string_view path);
     [[nodiscard]] [[rythe_always_inline]] constexpr string_view parent(string_view path) noexcept;
     [[nodiscard]] [[rythe_always_inline]] constexpr string_view filename(string_view path) noexcept;
