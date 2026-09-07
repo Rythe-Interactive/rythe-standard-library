@@ -142,7 +142,7 @@ namespace rsl::fs
             return iteratorViewResult.propagate();
         }
 
-        view rootPath{ path };
+        view rootPath( path, true );
         dynamic_array<view> result;
         for (const directory_entry& entry : iteratorViewResult.value())
         {
@@ -357,7 +357,9 @@ namespace rsl::fs
             }
         }
 
-        auto [index, newValue] = create_solution_reference(path);
+        dynamic_string standardizedPath = standardize(path);
+
+        auto [index, newValue] = create_solution_reference(standardizedPath);
 
         file_solution_handle handle = get_solution_handle(index);
 
@@ -369,7 +371,7 @@ namespace rsl::fs
             }
 
             auto& solution = m_solutions[index];
-            solution.virtualPath = dynamic_string::from_view(path);
+            solution.virtualPath = rsl::move(standardizedPath);
             solution.absolutePath = rsl::move(absolutePath);
         }
 

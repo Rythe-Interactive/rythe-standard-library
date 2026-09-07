@@ -1,5 +1,10 @@
 ﻿namespace rsl::fs
 {
+    inline view::~view()
+    {
+        release_solution();
+    }
+
     constexpr view::view(const string_view path, bool standardizePath) noexcept
         : m_path(dynamic_string::from_view(path))
     {
@@ -41,6 +46,32 @@
         }
 
         return true;
+    }
+
+    inline result<void> view::prefetch_solution(const bool ignoreMultipleSolutions) const
+    {
+        if (!m_solution.is_valid())
+        {
+            auto result = get_filesystem().find_solution(m_path, ignoreMultipleSolutions);
+            if (result.is_okay())
+            {
+                m_solution = result.value();
+            }
+            else
+            {
+                return result.propagate();
+            }
+        }
+
+        return okay;
+    }
+
+    inline void view::release_solution() const
+    {
+        if (m_solution)
+        {
+            m_solution.release();
+        }
     }
 
     inline bool view::exists() const

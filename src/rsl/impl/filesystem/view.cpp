@@ -1,28 +1,7 @@
 ﻿#include "view.hpp"
 
-#include "file_solution.hpp"
-#include "filesystem.hpp"
-
 namespace rsl::fs
 {
-    result<void> view::prefetch_solution(const bool ignoreMultipleSolutions) const
-    {
-        if (!m_solution.is_valid())
-        {
-            auto result = get_filesystem().find_solution(m_path, ignoreMultipleSolutions);
-            if (result.is_okay())
-            {
-                m_solution = result.value();
-            }
-            else
-            {
-                return result.propagate();
-            }
-        }
-
-        return okay;
-    }
-
     result<void> view::create() const
     {
         result<const file_solution*> solution = find_solution();
@@ -159,14 +138,6 @@ namespace rsl::fs
     {
         m_path = rsl::move(path);
         release_solution();
-    }
-
-    void view::release_solution() const
-    {
-        if (m_solution)
-        {
-            m_solution.release();
-        }
     }
 
     result<const file_solution*> view::find_solution() const

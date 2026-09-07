@@ -6,8 +6,10 @@
 #include "../util/error_handling.hpp"
 
 #include "file_solution.hpp"
+#include "filesystem.hpp"
 #include "path_util.hpp"
 #include "traits.hpp"
+
 
 namespace rsl
 {
@@ -18,10 +20,11 @@ namespace rsl
         class view
         {
         public:
-            RULE_OF_5_CONSTEXPR_NOEXCEPT(view)
+            NO_DTOR_RULE5_CONSTEXPR_NOEXCEPT(view)
+            [[rythe_always_inline]] ~view();
 
-            explicit constexpr view(string_view path, bool standardizePath = true) noexcept;
-            constexpr view(dynamic_string&& path, bool standardizePath = true) noexcept;
+            explicit constexpr view(string_view path, bool standardizePath = false) noexcept;
+            constexpr view(dynamic_string&& path, bool standardizePath = false) noexcept;
 
             [[rythe_always_inline]] constexpr void standardize() noexcept;
 
@@ -29,6 +32,7 @@ namespace rsl
             [[nodiscard]] [[rythe_always_inline]] bool is_valid(bool deepCheck = false) const;
 
             [[rythe_always_inline]] result<void> prefetch_solution(bool ignoreMultipleSolutions = !rythe_validate_high_impact) const;
+            [[rythe_always_inline]] void release_solution() const;
 
             [[nodiscard]] [[rythe_always_inline]] bool exists() const;
             [[nodiscard]] [[rythe_always_inline]] bool is_file() const;
@@ -67,7 +71,6 @@ namespace rsl
 
         protected:
             void set_path(dynamic_string&& path);
-            void release_solution() const;
             [[nodiscard]] result<const file_solution*> find_solution() const;
             [[nodiscard]] result<file_solution*> find_solution();
 

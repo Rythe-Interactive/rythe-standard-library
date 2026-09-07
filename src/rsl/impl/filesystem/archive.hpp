@@ -1,5 +1,6 @@
 #pragma once
 #include "../containers/array.hpp"
+#include "../containers/map/dynamic_map.hpp"
 #include "../memory/index_allocator.hpp"
 #include "../memory/reference_counter.hpp"
 #include "../platform/file.hpp"
