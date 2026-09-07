@@ -37,14 +37,14 @@ namespace rsl::log
     inline void indent(size_type amount)
     {
         logging_context& context = get_logging_context();
-        rsl_assert_consistent(context.indent + amount >= context.indent);
+        rsl_assert_medium_impact(context.indent + amount >= context.indent);
         context.indent += amount;
     }
 
     inline void unindent(size_type amount)
     {
         logging_context& context = get_logging_context();
-        rsl_assert_consistent(context.indent >= amount);
+        rsl_assert_medium_impact(context.indent >= amount);
         context.indent -= amount;
     }
 

@@ -84,7 +84,7 @@ namespace rsl
     template <arithmetic_type To, arithmetic_type From>
     [[rythe_always_inline]] constexpr To narrowing_cast(const From& f) noexcept
     {
-        rsl_assert_msg_soft_frequent(is_within_limits<To>(f), "Narrowing cast failed, value {} is out of range [{}, {}]", f, limits<To>::min, limits<To>::max)
+        rsl_assert_msg_soft_high_impact(is_within_limits<To>(f), "Narrowing cast failed, value {} is out of range [{}, {}]", f, limits<To>::min, limits<To>::max)
         return static_cast<To>(f);
     }
 } // namespace rsl

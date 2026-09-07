@@ -741,7 +741,7 @@ namespace rsl
                         );
                 currentIndex = index_add(homeIndex, searchResult.unpackedPsl.psl);
 
-                rsl_assert_frequent(searchResult.type != search_result_type::existing_item);
+                rsl_assert_high_impact(searchResult.type != search_result_type::existing_item);
             }
 
             rsl_assert_invalid_object(searchResult.type == search_result_type::new_insertion);
@@ -897,7 +897,7 @@ namespace rsl
             }
         }
 
-        rsl_assert_consistent(insertPsl.psl == (m_buckets.size() - homeIndex));
+        rsl_assert_medium_impact(insertPsl.psl == (m_buckets.size() - homeIndex));
         return bucket_search_result{ .unpackedPsl = insertPsl, .type = search_result_type::new_insertion };
     }
 
@@ -972,7 +972,7 @@ namespace rsl
             insertBucket.pslAndFingerprint = pack_bucket_psl(searchResult.unpackedPsl);
             currentIndex = index_add(homeIndex, searchResult.unpackedPsl.psl);
 
-            rsl_assert_frequent(searchResult.type != search_result_type::existing_item);
+            rsl_assert_high_impact(searchResult.type != search_result_type::existing_item);
         }
 
         if (searchResult.type == search_result_type::new_insertion)

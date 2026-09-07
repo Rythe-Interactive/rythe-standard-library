@@ -172,7 +172,7 @@ namespace rsl
             {
                 if (data)
                 {
-                    rsl_assert_rarely(map);
+                    rsl_assert_low_impact(map);
                     (*deallocateEntry)(*map, *this);
                 }
             }

@@ -2,8 +2,8 @@
 #include "../util/container_util.hpp"
 
 #define FMT_HEADER_ONLY
-#include <fmt/format.h>
 #include <fmt/chrono.h> // NOLINT
+#include <fmt/format.h>
 
 namespace rsl
 {
@@ -140,70 +140,70 @@ namespace rsl
     #define rsl_assert_msg_soft(expr, msg, ...) rsl_assert_msg_soft_always(expr, msg, __VA_ARGS__)
 
     #if RYTHE_VALIDATION_LEVEL >= RYTHE_HIGH_IMPACT_VALIDATION_LEVEL
-        #define rsl_assert_frequent(expr) rsl_assert_hard(expr)
-        #define rsl_assert_consistent(expr) rsl_assert_hard(expr)
-        #define rsl_assert_rarely(expr) rsl_assert_hard(expr)
+        #define rsl_assert_high_impact(expr) rsl_assert_hard(expr)
+        #define rsl_assert_medium_impact(expr) rsl_assert_hard(expr)
+        #define rsl_assert_low_impact(expr) rsl_assert_hard(expr)
 
-        #define rsl_assert_msg_frequent(expr, msg, ...) rsl_assert_msg_hard(expr, msg, __VA_ARGS__)
-        #define rsl_assert_msg_consistent(expr, msg, ...) rsl_assert_msg_hard(expr, msg, __VA_ARGS__)
-        #define rsl_assert_msg_rarely(expr, msg, ...) rsl_assert_msg_hard(expr, msg, __VA_ARGS__)
+        #define rsl_assert_msg_high_impact(expr, msg, ...) rsl_assert_msg_hard(expr, msg, __VA_ARGS__)
+        #define rsl_assert_msg_medium_impact(expr, msg, ...) rsl_assert_msg_hard(expr, msg, __VA_ARGS__)
+        #define rsl_assert_msg_low_impact(expr, msg, ...) rsl_assert_msg_hard(expr, msg, __VA_ARGS__)
 
-        #define rsl_assert_soft_frequent(expr) rsl_assert_soft(expr)
-        #define rsl_assert_soft_consistent(expr) rsl_assert_soft(expr)
-        #define rsl_assert_soft_rarely(expr) rsl_assert_soft(expr)
+        #define rsl_assert_soft_high_impact(expr) rsl_assert_soft(expr)
+        #define rsl_assert_soft_medium_impact(expr) rsl_assert_soft(expr)
+        #define rsl_assert_soft_low_impact(expr) rsl_assert_soft(expr)
 
-        #define rsl_assert_msg_soft_frequent(expr, msg, ...) rsl_assert_msg_soft(expr, msg, __VA_ARGS__)
-        #define rsl_assert_msg_soft_consistent(expr, msg, ...) rsl_assert_msg_soft(expr, msg, __VA_ARGS__)
-        #define rsl_assert_msg_soft_rarely(expr, msg, ...) rsl_assert_msg_soft(expr, msg, __VA_ARGS__)
+        #define rsl_assert_msg_soft_high_impact(expr, msg, ...) rsl_assert_msg_soft(expr, msg, __VA_ARGS__)
+        #define rsl_assert_msg_soft_medium_impact(expr, msg, ...) rsl_assert_msg_soft(expr, msg, __VA_ARGS__)
+        #define rsl_assert_msg_soft_low_impact(expr, msg, ...) rsl_assert_msg_soft(expr, msg, __VA_ARGS__)
     #elif RYTHE_VALIDATION_LEVEL == RYTHE_MEDIUM_IMPACT_VALIDATION_LEVEL
-        #define rsl_assert_frequent(expr) rsl_mock_assert(expr)
-        #define rsl_assert_consistent(expr) rsl_assert_hard(expr)
-        #define rsl_assert_rarely(expr) rsl_assert_hard(expr)
+        #define rsl_assert_high_impact(expr) rsl_mock_assert(expr)
+        #define rsl_assert_medium_impact(expr) rsl_assert_hard(expr)
+        #define rsl_assert_low_impact(expr) rsl_assert_hard(expr)
 
-        #define rsl_assert_msg_frequent(expr, msg, ...) rsl_mock_assert_msg(expr, msg, __VA_ARGS__)
-        #define rsl_assert_msg_consistent(expr, msg, ...) rsl_assert_msg_hard(expr, msg, __VA_ARGS__)
-        #define rsl_assert_msg_rarely(expr, msg, ...) rsl_assert_msg_hard(expr, msg, __VA_ARGS__)
+        #define rsl_assert_msg_high_impact(expr, msg, ...) rsl_mock_assert_msg(expr, msg, __VA_ARGS__)
+        #define rsl_assert_msg_medium_impact(expr, msg, ...) rsl_assert_msg_hard(expr, msg, __VA_ARGS__)
+        #define rsl_assert_msg_low_impact(expr, msg, ...) rsl_assert_msg_hard(expr, msg, __VA_ARGS__)
 
-        #define rsl_assert_soft_frequent(expr) rsl_mock_assert_soft(expr)
-        #define rsl_assert_soft_consistent(expr) rsl_assert_soft(expr)
-        #define rsl_assert_soft_rarely(expr) rsl_assert_soft(expr)
+        #define rsl_assert_soft_high_impact(expr) rsl_mock_assert_soft(expr)
+        #define rsl_assert_soft_medium_impact(expr) rsl_assert_soft(expr)
+        #define rsl_assert_soft_low_impact(expr) rsl_assert_soft(expr)
 
-        #define rsl_assert_msg_soft_frequent(expr, msg, ...) rsl_mock_assert_msg_soft(expr, msg, __VA_ARGS__)
-        #define rsl_assert_msg_soft_consistent(expr, msg, ...) rsl_assert_msg_soft(expr, msg, __VA_ARGS__)
-        #define rsl_assert_msg_soft_rarely(expr, msg, ...) rsl_assert_msg_soft(expr, msg, __VA_ARGS__)
+        #define rsl_assert_msg_soft_high_impact(expr, msg, ...) rsl_mock_assert_msg_soft(expr, msg, __VA_ARGS__)
+        #define rsl_assert_msg_soft_medium_impact(expr, msg, ...) rsl_assert_msg_soft(expr, msg, __VA_ARGS__)
+        #define rsl_assert_msg_soft_low_impact(expr, msg, ...) rsl_assert_msg_soft(expr, msg, __VA_ARGS__)
     #elif RYTHE_VALIDATION_LEVEL == RYTHE_LOW_IMPACT_VALIDATION_LEVEL
-        #define rsl_assert_frequent(expr) rsl_mock_assert(expr)
-        #define rsl_assert_consistent(expr) rsl_mock_assert(expr)
-        #define rsl_assert_rarely(expr) rsl_assert_hard(expr)
+        #define rsl_assert_high_impact(expr) rsl_mock_assert(expr)
+        #define rsl_assert_medium_impact(expr) rsl_mock_assert(expr)
+        #define rsl_assert_low_impact(expr) rsl_assert_hard(expr)
 
-        #define rsl_assert_msg_frequent(expr, msg, ...) rsl_mock_assert_msg(expr, msg, __VA_ARGS__)
-        #define rsl_assert_msg_consistent(expr, msg, ...) rsl_mock_assert_msg(expr, msg, __VA_ARGS__)
-        #define rsl_assert_msg_rarely(expr, msg, ...) rsl_assert_msg_hard(expr, msg, __VA_ARGS__)
+        #define rsl_assert_msg_high_impact(expr, msg, ...) rsl_mock_assert_msg(expr, msg, __VA_ARGS__)
+        #define rsl_assert_msg_medium_impact(expr, msg, ...) rsl_mock_assert_msg(expr, msg, __VA_ARGS__)
+        #define rsl_assert_msg_low_impact(expr, msg, ...) rsl_assert_msg_hard(expr, msg, __VA_ARGS__)
 
-        #define rsl_assert_soft_frequent(expr) rsl_mock_assert_soft(expr)
-        #define rsl_assert_soft_consistent(expr) rsl_mock_assert_soft(expr)
-        #define rsl_assert_soft_rarely(expr) rsl_assert_soft(expr)
+        #define rsl_assert_soft_high_impact(expr) rsl_mock_assert_soft(expr)
+        #define rsl_assert_soft_medium_impact(expr) rsl_mock_assert_soft(expr)
+        #define rsl_assert_soft_low_impact(expr) rsl_assert_soft(expr)
 
-        #define rsl_assert_msg_soft_frequent(expr, msg, ...) rsl_mock_assert_msg_soft(expr, msg, __VA_ARGS__)
-        #define rsl_assert_msg_soft_consistent(expr, msg, ...) rsl_mock_assert_msg_soft(expr, msg, __VA_ARGS__)
-        #define rsl_assert_msg_soft_rarely(expr, msg, ...) rsl_assert_msg_soft(expr, msg, __VA_ARGS__)
+        #define rsl_assert_msg_soft_high_impact(expr, msg, ...) rsl_mock_assert_msg_soft(expr, msg, __VA_ARGS__)
+        #define rsl_assert_msg_soft_medium_impact(expr, msg, ...) rsl_mock_assert_msg_soft(expr, msg, __VA_ARGS__)
+        #define rsl_assert_msg_soft_low_impact(expr, msg, ...) rsl_assert_msg_soft(expr, msg, __VA_ARGS__)
     #endif
 #else
-    #define rsl_assert_frequent(expr) rsl_mock_assert(expr)
-    #define rsl_assert_consistent(expr) rsl_mock_assert(expr)
-    #define rsl_assert_rarely(expr) rsl_mock_assert(expr)
+    #define rsl_assert_high_impact(expr) rsl_mock_assert(expr)
+    #define rsl_assert_medium_impact(expr) rsl_mock_assert(expr)
+    #define rsl_assert_low_impact(expr) rsl_mock_assert(expr)
 
-    #define rsl_assert_msg_frequent(expr, msg, ...) rsl_mock_assert_msg(expr, msg, __VA_ARGS__)
-    #define rsl_assert_msg_consistent(expr, msg, ...) rsl_mock_assert_msg(expr, msg, __VA_ARGS__)
-    #define rsl_assert_msg_rarely(expr, msg, ...) rsl_mock_assert_msg(expr, msg, __VA_ARGS__)
+    #define rsl_assert_msg_high_impact(expr, msg, ...) rsl_mock_assert_msg(expr, msg, __VA_ARGS__)
+    #define rsl_assert_msg_medium_impact(expr, msg, ...) rsl_mock_assert_msg(expr, msg, __VA_ARGS__)
+    #define rsl_assert_msg_low_impact(expr, msg, ...) rsl_mock_assert_msg(expr, msg, __VA_ARGS__)
 
-    #define rsl_assert_soft_frequent(expr) rsl_mock_assert_soft(expr)
-    #define rsl_assert_soft_consistent(expr) rsl_mock_assert_soft(expr)
-    #define rsl_assert_soft_rarely(expr) rsl_mock_assert_soft(expr)
+    #define rsl_assert_soft_high_impact(expr) rsl_mock_assert_soft(expr)
+    #define rsl_assert_soft_medium_impact(expr) rsl_mock_assert_soft(expr)
+    #define rsl_assert_soft_low_impact(expr) rsl_mock_assert_soft(expr)
 
-    #define rsl_assert_msg_soft_frequent(expr, msg, ...) rsl_mock_assert_msg_soft(expr, msg, __VA_ARGS__)
-    #define rsl_assert_msg_soft_consistent(expr, msg, ...) rsl_mock_assert_msg_soft(expr, msg, __VA_ARGS__)
-    #define rsl_assert_msg_soft_rarely(expr, msg, ...) rsl_mock_assert_msg_soft(expr, msg, __VA_ARGS__)
+    #define rsl_assert_msg_soft_high_impact(expr, msg, ...) rsl_mock_assert_msg_soft(expr, msg, __VA_ARGS__)
+    #define rsl_assert_msg_soft_medium_impact(expr, msg, ...) rsl_mock_assert_msg_soft(expr, msg, __VA_ARGS__)
+    #define rsl_assert_msg_soft_low_impact(expr, msg, ...) rsl_mock_assert_msg_soft(expr, msg, __VA_ARGS__)
 
     #define rsl_assert_hard(expr) rsl_mock_assert(expr)
     #define rsl_assert_msg_hard(expr, msg, ...) rsl_mock_assert_msg(expr, msg, __VA_ARGS__)
@@ -217,19 +217,19 @@ namespace rsl
 #define rsl_assert_unimplemented() rsl_assert_msg_always(false, "function not implemented")
 #define rsl_assert_unreachable() rsl_assert_msg_always(false, "reached unreachable code")
 #define rsl_assert_ptr_out_of_range(ptr, begin, end)                                                                                  \
-    rsl_assert_msg_frequent(((ptr) > (begin)) && ((ptr) < (end)), "pointer out of range")
+    rsl_assert_msg_high_impact(((ptr) > (begin)) && ((ptr) < (end)), "pointer out of range")
 #define rsl_assert_ptr_out_of_range_msg(ptr, begin, end, msg, ...)                                                                    \
-    rsl_assert_msg_frequent(((ptr) > (begin)) && ((ptr) < (end)), msg, __VA_ARGS__)
-#define rsl_assert_out_of_range(expr) rsl_assert_msg_frequent(expr, "out of range")
-#define rsl_assert_out_of_range_msg(expr, msg, ...) rsl_assert_msg_frequent(expr, msg, __VA_ARGS__)
-#define rsl_assert_invalid_access(expr) rsl_assert_msg_frequent(expr, "invalid access")
-#define rsl_assert_invalid_parameters(expr) rsl_assert_msg_rarely(expr, "invalid parameters")
-#define rsl_assert_invalid_operation(expr) rsl_assert_msg_rarely(expr, "invalid operation")
-#define rsl_assert_invalid_operation_frequent(expr) rsl_assert_msg_frequent(expr, "invalid operation")
-#define rsl_assert_invalid_object(expr) rsl_assert_msg_rarely(expr, "invalid object")
-#define rsl_assert_duplicate_object(expr) rsl_assert_msg_consistent(expr, "duplicate object")
-#define rsl_assert_borrow_release_mismatch(expr) rsl_assert_msg_consistent(expr, "borrow release mismatch")
-#define rsl_assert_invalid_cast(expr) rsl_assert_msg_rarely(expr, "invalid cast")
-#define rsl_assert_invalid_pattern(expr) rsl_assert_msg_rarely(expr, "invalid pattern")
+    rsl_assert_msg_high_impact(((ptr) > (begin)) && ((ptr) < (end)), msg, __VA_ARGS__)
+#define rsl_assert_out_of_range(expr) rsl_assert_msg_high_impact(expr, "out of range")
+#define rsl_assert_out_of_range_msg(expr, msg, ...) rsl_assert_msg_high_impact(expr, msg, __VA_ARGS__)
+#define rsl_assert_invalid_access(expr) rsl_assert_msg_high_impact(expr, "invalid access")
+#define rsl_assert_invalid_parameters(expr) rsl_assert_msg_low_impact(expr, "invalid parameters")
+#define rsl_assert_invalid_operation(expr) rsl_assert_msg_low_impact(expr, "invalid operation")
+#define rsl_assert_invalid_operation_frequent(expr) rsl_assert_msg_high_impact(expr, "invalid operation")
+#define rsl_assert_invalid_object(expr) rsl_assert_msg_low_impact(expr, "invalid object")
+#define rsl_assert_duplicate_object(expr) rsl_assert_msg_medium_impact(expr, "duplicate object")
+#define rsl_assert_borrow_release_mismatch(expr) rsl_assert_msg_medium_impact(expr, "borrow release mismatch")
+#define rsl_assert_invalid_cast(expr) rsl_assert_msg_low_impact(expr, "invalid cast")
+#define rsl_assert_invalid_pattern(expr) rsl_assert_msg_low_impact(expr, "invalid pattern")
 #define rsl_assert_alignment(ptr, alignment)                                                                                          \
-    rsl_assert_msg_rarely((reinterpret_cast<size_type>(ptr) & ((alignment) - 1)) == 0, "wrong alignment")
+    rsl_assert_msg_low_impact((reinterpret_cast<size_type>(ptr) & ((alignment) - 1)) == 0, "wrong alignment")

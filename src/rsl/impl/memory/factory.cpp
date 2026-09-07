@@ -19,7 +19,7 @@ namespace rsl
 
     void type_erased_factory::destroy(void* ptr, const size_type count) const noexcept
     {
-        rsl_assert_frequent(m_destroyFunc);
+        rsl_assert_high_impact(m_destroyFunc);
         (m_destroyFunc)(ptr, count);
     }
 

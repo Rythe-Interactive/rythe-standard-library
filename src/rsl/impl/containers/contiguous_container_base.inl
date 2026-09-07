@@ -2036,8 +2036,8 @@ namespace rsl
                     m_size = 0;
                 }
 
-                rsl_assert_frequent(m_size == 0);
-                rsl_assert_frequent(m_memorySize == 0);
+                rsl_assert_high_impact(m_size == 0);
+                rsl_assert_high_impact(m_memorySize == 0);
 
                 if (allocOrFactory)
                 {
@@ -2104,8 +2104,8 @@ namespace rsl
                     m_size = 0;
                 }
 
-                rsl_assert_frequent(m_size == 0);
-                rsl_assert_frequent(m_memorySize == 0);
+                rsl_assert_high_impact(m_size == 0);
+                rsl_assert_high_impact(m_memorySize == 0);
 
                 rsl_ensure(resize_capacity_unsafe(srcFootprint));
             }

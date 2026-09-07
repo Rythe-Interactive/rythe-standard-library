@@ -23,7 +23,7 @@ namespace rsl
             {
                 if (assertError)
                 {
-                    rsl_assert_msg_soft_consistent(false, err.message);
+                    rsl_assert_msg_soft_medium_impact(false, err.message);
                 }
                 else
                 {

@@ -73,7 +73,7 @@ namespace rsl
 
         void deallocate(T* ptr) noexcept
         {
-            rsl_assert_frequent(ptr);
+            rsl_assert_high_impact(ptr);
             element_node* node = bit_cast<element_node*>(ptr);
             node->next = m_head;
             m_head = node;
