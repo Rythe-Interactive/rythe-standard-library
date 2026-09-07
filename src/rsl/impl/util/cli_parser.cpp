@@ -116,16 +116,16 @@ namespace rsl
         return false;
     }
 
-    string_view cli_parser::get_param(const string_view name) const noexcept
+    string_view cli_parser::get_param(const string_view name, const string_view defaultValue) const noexcept
     {
         args_view view = get_params(name);
-        return view.is_empty() ? string_view{} : view[0ull];
+        return view.is_empty() ? defaultValue : view[0ull];
     }
 
-    string_view cli_parser::get_param(const array_view<const string_view> aliases) const noexcept
+    string_view cli_parser::get_param(const array_view<const string_view> aliases, const string_view defaultValue) const noexcept
     {
         args_view view = get_params(aliases);
-        return view.is_empty() ? string_view{} : view[0ull];
+        return view.is_empty() ? defaultValue : view[0ull];
     }
 
     cli_parser::args_view cli_parser::get_params(const string_view name) const noexcept

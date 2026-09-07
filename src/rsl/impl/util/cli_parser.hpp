@@ -41,8 +41,8 @@ namespace rsl
         [[nodiscard]] bool has_flag(array_view<const string_view> aliases) const noexcept;
 
         // Get first param in the list of values, or an invalid string view if not present
-        [[nodiscard]] string_view get_param(string_view name) const noexcept;
-        [[nodiscard]] string_view get_param(array_view<const string_view> aliases) const noexcept;
+        [[nodiscard]] string_view get_param(string_view name, string_view defaultValue = {}) const noexcept;
+        [[nodiscard]] string_view get_param(array_view<const string_view> aliases, string_view defaultValue = {}) const noexcept;
 
         [[nodiscard]] args_view get_params(string_view name) const noexcept;
         [[nodiscard]] args_view get_params(array_view<const string_view> aliases) const noexcept;
