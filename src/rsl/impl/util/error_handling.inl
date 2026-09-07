@@ -25,6 +25,12 @@ namespace rsl
         set_error(get_error_context().currentError);
     }
 
+    inline result_base& result_base::operator=(error_signal) noexcept
+    {
+        set_error(get_error_context().currentError);
+        return *this;
+    }
+
     inline void result_base::set_error(const errid errId) noexcept
     {
         m_errid = errId;

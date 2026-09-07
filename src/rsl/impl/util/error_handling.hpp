@@ -132,9 +132,12 @@ namespace rsl
     protected:
         errid m_errid = invalid_err_id;
 
-        constexpr result_base() noexcept = default;
-        result_base(error_signal) noexcept;
+        [[rythe_always_inline]] constexpr result_base() noexcept = default;
+        [[rythe_always_inline]] result_base(error_signal) noexcept;
         friend errid& internal::get_errid(result_base&) noexcept;
+
+        [[rythe_always_inline]] constexpr result_base& operator=(const result_base&) noexcept = default;
+        [[rythe_always_inline]] result_base& operator=(error_signal) noexcept;
 
         void set_error(errid errId) noexcept;
     public:
@@ -174,6 +177,13 @@ namespace rsl
             requires(rsl::constructible_from<T, Args...>)
         [[rythe_always_inline]] constexpr result(Args&&... args) noexcept(rsl::is_nothrow_constructible_v<T, Args...>);
 
+        [[rythe_always_inline]] constexpr result& operator=(result&&) noexcept = default;
+        [[rythe_always_inline]] result& operator=(error_signal) noexcept
+        {
+            result_base::operator=(error_signal{});
+            return *this;
+        }
+
         [[nodiscard]] [[rythe_always_inline]] bool carries_value() const noexcept;
 
         template <typename... Args>
@@ -204,7 +214,16 @@ namespace rsl
     {
     public:
         [[rythe_always_inline]] result(error_signal) noexcept : result_base(error_signal{}) {}
-        [[rythe_always_inline]] constexpr result() noexcept : result_base() {}
+        [[rythe_always_inline]] constexpr result() noexcept
+            : result_base()
+        {}
+
+        [[rythe_always_inline]] constexpr result& operator=(const result&) noexcept = default;
+        [[rythe_always_inline]] result& operator=(error_signal) noexcept
+        {
+            result_base::operator=(error_signal{});
+            return *this;
+        }
     };
 
     template <error_code ErrorType>
