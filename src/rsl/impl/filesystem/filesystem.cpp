@@ -20,7 +20,7 @@ namespace rsl::fs
             }
 
             filesystem instance;
-            instance.add_registry(&registry);
+            instance.add_registry({ &registry });
             return instance;
         }
 
@@ -35,7 +35,7 @@ namespace rsl::fs
     {
         if (ignoreMultipleSolutions)
         {
-            for (auto* registry : m_archiveRegistries)
+            for (pointer<archive_registry> registry : m_archiveRegistries)
             {
                 result<file_solution> solution = registry->find_solution(path, true);
                 if (solution.carries_value())
@@ -48,7 +48,7 @@ namespace rsl::fs
         }
 
         file_solution solution{};
-        for (auto* registry : m_archiveRegistries)
+        for (pointer<archive_registry> registry : m_archiveRegistries)
         {
             if (auto result = registry->find_solution(path); result.carries_value())
             {
