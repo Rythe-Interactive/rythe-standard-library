@@ -385,7 +385,15 @@ namespace rsl
         }
 
         mapped_type& value = m_values[m_buckets[insertResult.index].index].value();
-        value = move(mapped_type(forward<Args>(args)...));
+        if constexpr (is_multi)
+        {
+            value.clear();
+            value.emplace_back(forward<Args>(args)...);
+        }
+        else
+        {
+            value = move(mapped_type(forward<Args>(args)...));
+        }
         return value;
     }
 
@@ -402,7 +410,15 @@ namespace rsl
         }
 
         mapped_type& value = m_values[m_buckets[insertResult.index].index].value();
-        value = move(mapped_type(forward<Args>(args)...));
+        if constexpr (is_multi)
+        {
+            value.clear();
+            value.emplace_back(forward<Args>(args)...);
+        }
+        else
+        {
+            value = move(mapped_type(forward<Args>(args)...));
+        }
         return value;
     }
 
@@ -419,7 +435,15 @@ namespace rsl
         }
 
         mapped_type& value = m_values[m_buckets[insertResult.index].index].value();
-        value = move(mapped_type(forward<Args>(args)...));
+        if constexpr (is_multi)
+        {
+            value.clear();
+            value.emplace_back(forward<Args>(args)...);
+        }
+        else
+        {
+            value = move(mapped_type(forward<Args>(args)...));
+        }
         return value;
     }
 
@@ -436,6 +460,16 @@ namespace rsl
         {
             return { rsl::ref(m_values.emplace_back(create_node(key, rsl::forward<Args>(args)...)).value()), true };
         }
+        else
+        {
+            if constexpr (is_multi)
+            {
+                if (insertResult.type == insert_result_type::existing_item)
+                {
+                    m_values[m_buckets[insertResult.index].index].value().emplace_back(rsl::forward<Args>(args)...);
+                }
+            }
+        }
 
         return { rsl::ref(m_values[m_buckets[insertResult.index].index].value()), false };
     }
@@ -451,6 +485,16 @@ namespace rsl
         {
             return { rsl::ref(m_values.emplace_back(create_node(rsl::move(key), rsl::forward<Args>(args)...)).value()), true };
         }
+        else
+        {
+            if constexpr (is_multi)
+            {
+                if (insertResult.type == insert_result_type::existing_item)
+                {
+                    m_values[m_buckets[insertResult.index].index].value().emplace_back(rsl::forward<Args>(args)...);
+                }
+            }
+        }
 
         return { rsl::ref(m_values[m_buckets[insertResult.index].index].value()), false };
     }
@@ -465,6 +509,16 @@ namespace rsl
         if (insertResult.type == insert_result_type::new_insertion)
         {
             return { rsl::ref(m_values.emplace_back(create_node(key_type::from_view(key), rsl::forward<Args>(args)...)).value()), true };
+        }
+        else
+        {
+            if constexpr (is_multi)
+            {
+                if (insertResult.type == insert_result_type::existing_item)
+                {
+                    m_values[m_buckets[insertResult.index].index].value().emplace_back(rsl::forward<Args>(args)...);
+                }
+            }
         }
 
         return { rsl::ref(m_values[m_buckets[insertResult.index].index].value()), false };
