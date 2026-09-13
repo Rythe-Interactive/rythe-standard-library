@@ -5,7 +5,8 @@ local project = {
     additional_types = { "test" },
     dependencies = {
         "public third_party/fmt:header-only",
-        "private third_party/meow_hash:header-only"
+        "private third_party/meow_hash:header-only",
+        "public third_party/semver:header-only"
     },
     defines = { "RYTHE_INTERNAL" },
     pch_file_name = "./impl/pch",
