@@ -185,4 +185,15 @@ namespace rsl
         fmt::vformat_to(back_inserter(result), fmt::string_view(fmt.data(), fmt.size()), args);
         return result;
     }
+
+    template <typename... Args>
+    back_insert_iterator<dynamic_string> format_to(dynamic_string& target, fmt::format_string<Args...> fmt, Args&&... args)
+    {
+        return fmt::format_to(back_inserter(target), fmt, rsl::forward<Args>(args)...);
+    }
+
+    inline back_insert_iterator<dynamic_string> format_to(dynamic_string& target, string_view fmt, fmt::format_args args)
+    {
+        return fmt::vformat_to(back_inserter(target), fmt::string_view(fmt.data(), fmt.size()), args);
+    }
 } // namespace rsl

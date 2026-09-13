@@ -88,6 +88,11 @@ namespace rsl
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>
     constexpr bool array_view<T, Iter, ConstIter>::operator==(const array_view& rhs) const noexcept
     {
+        if (this->size() != rhs.size())
+        {
+            return false;
+        }
+
         for (size_type i = 0; i < this->size(); ++i)
         {
             if (this->at(i) != rhs.at(i))
@@ -109,13 +114,20 @@ namespace rsl
     template <size_type N>
     constexpr bool array_view<T, Iter, ConstIter>::operator==(const value_type (&rhs)[N]) const noexcept
     {
-        bool result = true;
-        for (size_type i = 0; i < this->size(); ++i)
+        if (this->size() != N)
         {
-            result &= this->at(i) == rhs[i];
+            return false;
         }
 
-        return result;
+        for (size_type i = 0; i < this->size(); ++i)
+        {
+            if (this->at(i) != rhs[i])
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     template <typename T, contiguous_iterator Iter, contiguous_iterator ConstIter>

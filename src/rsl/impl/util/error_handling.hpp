@@ -217,7 +217,7 @@ namespace rsl
         [[rythe_always_inline]] constexpr result() noexcept
             : result_base()
         {}
-
+        [[rythe_always_inline]] constexpr result(const result&) noexcept = default;
         [[rythe_always_inline]] constexpr result& operator=(const result&) noexcept = default;
         [[rythe_always_inline]] result& operator=(error_signal) noexcept
         {

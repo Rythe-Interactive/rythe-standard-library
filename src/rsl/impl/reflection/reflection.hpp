@@ -1,5 +1,6 @@
 #pragma once
 #include "../memory/pointer.hpp"
+#include "../containers/array.hpp"
 
 #include "reflection_registry.hpp"
 

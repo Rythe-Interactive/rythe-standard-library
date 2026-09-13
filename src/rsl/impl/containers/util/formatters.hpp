@@ -18,6 +18,19 @@ namespace fmt
         }
     };
 
+    template <>
+    struct formatter<rsl::array_view<char>>
+    {
+        formatter<fmt::string_view> stringViewFormatter;
+        constexpr const char* parse(format_parse_context& ctx) { return stringViewFormatter.parse(ctx); }
+
+        template <typename FormatContext>
+        auto format(const rsl::array_view<char>& str, FormatContext& ctx) const
+        {
+            return stringViewFormatter.format(fmt::string_view(str.data(), str.size()), ctx);
+        }
+    };
+
     template <rsl::char_type CharType, rsl::size_type StaticCapacity, bool CanAllocate>
     struct formatter<rsl::basic_dynamic_string<CharType, StaticCapacity, CanAllocate>>
     {

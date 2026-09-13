@@ -36,10 +36,11 @@ namespace rsl::log
     void undecorated_formatter::format(const message& msg, fmt::memory_buffer& dest)
     {
         logging_context& context = get_logging_context();
-        dest.try_reserve(dest.size() + context.indent);
+        const size_t destOffset = dest.size();
+        dest.try_resize(destOffset + context.indent);
         for (size_type i = 0ull; i < context.indent; ++i)
         {
-            dest.push_back(context.indentChar);
+            dest[destOffset + i] = context.indentChar;
         }
 
         fmt::vformat_to(fmt::appender(dest), fmt::string_view(msg.msg.data(), msg.msg.size()), msg.formatArgs);
@@ -50,10 +51,11 @@ namespace rsl::log
         const time_span time = main_clock.current_time();
 
         logging_context& context = get_logging_context();
-        dest.try_reserve(dest.size() + context.indent);
+        const size_t destOffset = dest.size();
+        dest.try_resize(destOffset + context.indent);
         for (size_type i = 0ull; i < context.indent; ++i)
         {
-            dest.push_back(context.indentChar);
+            dest[destOffset + i] = context.indentChar;
         }
 
         for (auto& formatter : m_formatters)

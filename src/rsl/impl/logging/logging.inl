@@ -28,6 +28,13 @@ namespace rsl::log
         context.undecoratedLogger->flush_at(level);
     }
 
+    inline void flush()
+    {
+        logging_context& context = get_logging_context();
+        context.logger->flush();
+        context.undecoratedLogger->flush();
+    }
+
     inline void set_indent_char(char indentChar)
     {
         logging_context& context = get_logging_context();

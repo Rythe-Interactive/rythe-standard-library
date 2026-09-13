@@ -112,13 +112,12 @@ namespace rsl
         [[rythe_always_inline]] constexpr void reset() noexcept;
 
     private:
-        bool m_hasValue;
-
         union
         {
             value_type m_value;
-            byte m_dummy;
         };
+
+        bool m_hasValue;
     };
 } // namespace rsl
 

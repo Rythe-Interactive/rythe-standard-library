@@ -25,6 +25,7 @@ namespace rsl
 
         [[rythe_always_inline]] inline void filter(severity level);
         [[rythe_always_inline]] inline void flush_at(severity level);
+        [[rythe_always_inline]] inline void flush();
 
         [[rythe_always_inline]] inline void set_indent_char(char indentChar);
         [[rythe_always_inline]] inline void indent(size_type amount = 1ull);
@@ -42,6 +43,8 @@ namespace rsl
         private:
             size_type m_amount;
         };
+
+        #define RYTHE_LOG_INDENT_SCOPE rsl::log::indent_scope RYTHE_ANONYMOUS_NAME(rlog_indent_scope)
 
         template <typename... Args>
         [[rythe_always_inline]] void trace(format_string format, Args&&... args);

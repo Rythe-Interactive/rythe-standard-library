@@ -144,6 +144,10 @@ namespace rsl
     template <typename... Args>
     [[nodiscard]] [[rythe_always_inline]] dynamic_string format(fmt::format_string<Args...> fmt, Args&&... args);
     [[nodiscard]] [[rythe_always_inline]] dynamic_string format(string_view fmt, fmt::format_args args);
+    template <typename... Args>
+    [[rythe_always_inline]] back_insert_iterator<dynamic_string> format_to(dynamic_string& target, fmt::format_string<Args...> fmt, Args&&... args);
+    [[rythe_always_inline]] back_insert_iterator<dynamic_string>
+            format_to(dynamic_string& target, string_view fmt, fmt::format_args args);
 } // namespace rsl
 
 #include "string.inl"

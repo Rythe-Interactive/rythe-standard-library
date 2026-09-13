@@ -95,7 +95,7 @@ namespace rsl
 
     inline namespace literals
     {
-        constexpr fs::view operator""_fsview(const cstring str, const size_type len) noexcept
+        constexpr fs::view operator""_fsv(const cstring str, const size_type len) noexcept
         {
             return fs::view(string_view::from_buffer(str, len));
         }

@@ -1,9 +1,12 @@
+
 #include "../containers/views.hpp"
 #include "../util/container_util.hpp"
 
+#if !defined(RSL_REFLECTION_PARSE)
 #define FMT_HEADER_ONLY
 #include <fmt/chrono.h> // NOLINT
 #include <fmt/format.h>
+#endif
 
 namespace rsl
 {
@@ -16,6 +19,7 @@ namespace rsl
             [[rythe_never_inline]] void
                     raw_assert_handler(string_view expression, string_view file, size_type line, string_view message);
 
+#if !defined(RSL_REFLECTION_PARSE)
             void forward_to_assert_handler(
                     string_view expression,
                     string_view file,
@@ -24,6 +28,7 @@ namespace rsl
                     fmt::format_args args,
                     bool soft,
                     bool* ignore);
+#endif
         } // namespace internal
 
         using assert_handler_function =
@@ -38,6 +43,7 @@ namespace rsl
         constexpr void __rsl_assert_impl(
                 ExprType&& expr, FileType&& file, const size_type line, MsgType&& msg, const bool soft, bool* ignore, Args&&... args)
         {
+#if !defined(RSL_REFLECTION_PARSE)
             if (!is_constant_evaluated())
             {
                 const string_view exprView = view_from_stringish(expr);
@@ -45,6 +51,7 @@ namespace rsl
                 asserts::internal::forward_to_assert_handler(
                         exprView, fileView, line, msg, fmt::vargs<Args...>{ { args... } }, soft, ignore);
             }
+#endif
         }
 
         template <typename ExprType, typename FileType, typename MsgType, typename... Args>
