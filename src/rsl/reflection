@@ -9,3 +9,5 @@
 #include "impl/reflection/reflection_registry.hpp"
 #include "impl/reflection/reflection_type.hpp"
 #include "impl/reflection/reflection_value.hpp"
+
+namespace rrfl = rsl::rfl;

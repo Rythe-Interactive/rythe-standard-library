@@ -165,6 +165,7 @@ namespace rsl
         return (ch >= '0' && ch <= '9') ? static_cast<uint8>(ch - '0') : 0xFFu;
     }
 
+#if !defined(RSL_REFLECTION_PARSE)
     template <typename T>
     dynamic_string to_string(const T& value)
     {
@@ -196,4 +197,5 @@ namespace rsl
     {
         return fmt::vformat_to(back_inserter(target), fmt::string_view(fmt.data(), fmt.size()), args);
     }
+#endif
 } // namespace rsl
