@@ -14,6 +14,10 @@
 
 // ReSharper disable once CppUnusedIncludeDirective
 #include "../reference_wrapper.hpp" // used in .inl
+#if RYTHE_VALIDATE_HIGH_IMPACT
+// ReSharper disable once CppUnusedIncludeDirective
+    #include "../../util/defer_execution.hpp" // used in .inl
+#endif
 
 namespace rsl
 {
@@ -262,6 +266,10 @@ namespace rsl
         constexpr insert_result insert_key_internal(
             const KeyType& key, index_type valueIndexHint
         ) noexcept(noexcept(reserve(0)));
+
+#if RYTHE_VALIDATE_HIGH_IMPACT
+        constexpr void validate_state() const;
+#endif
 
     private:
         template<typename KeyType>

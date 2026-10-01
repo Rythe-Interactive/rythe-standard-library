@@ -64,6 +64,28 @@
     #undef RYTHE_VALIDATE
 #endif
 
+#define RYTHE_VALIDATE_HIGH_IMPACT (RYTHE_VALIDATION_LEVEL >= RYTHE_HIGH_IMPACT_VALIDATION_LEVEL)
+#define RYTHE_VALIDATE_MEDIUM_IMPACT (RYTHE_VALIDATION_LEVEL >= RYTHE_MEDIUM_IMPACT_VALIDATION_LEVEL)
+#define RYTHE_VALIDATE_LOW_IMPACT (RYTHE_VALIDATION_LEVEL >= RYTHE_LOW_IMPACT_VALIDATION_LEVEL)
+
+#if RYTHE_VALIDATE_HIGH_IMPACT
+    #define RYTHE_HIGH_IMPACT_VALIDATION(x) x
+    #define RYTHE_MEDIUM_IMPACT_VALIDATION(x) x
+    #define RYTHE_LOW_IMPACT_VALIDATION(x) x
+#elif RYTHE_VALIDATE_MEDIUM_IMPACT
+    #define RYTHE_HIGH_IMPACT_VALIDATION(x)
+    #define RYTHE_MEDIUM_IMPACT_VALIDATION(x) x
+    #define RYTHE_LOW_IMPACT_VALIDATION(x) x
+#elif RYTHE_VALIDATE_LOW_IMPACT
+    #define RYTHE_HIGH_IMPACT_VALIDATION(x)
+    #define RYTHE_MEDIUM_IMPACT_VALIDATION(x)
+    #define RYTHE_LOW_IMPACT_VALIDATION(x) x
+#else
+    #define RYTHE_HIGH_IMPACT_VALIDATION(x)
+    #define RYTHE_MEDIUM_IMPACT_VALIDATION(x)
+    #define RYTHE_LOW_IMPACT_VALIDATION(x)
+#endif
+
 namespace rsl
 {
 #if defined(RYTHE_VALIDATE)
@@ -71,9 +93,9 @@ namespace rsl
 #else
     constexpr bool rythe_validate_on = false;
 #endif
-    constexpr bool rythe_validate_high_impact = RYTHE_VALIDATION_LEVEL >= RYTHE_HIGH_IMPACT_VALIDATION_LEVEL;
-    constexpr bool rythe_validate_medium_impact = RYTHE_VALIDATION_LEVEL >= RYTHE_MEDIUM_IMPACT_VALIDATION_LEVEL;
-    constexpr bool rythe_validate_low_impact = RYTHE_VALIDATION_LEVEL >= RYTHE_LOW_IMPACT_VALIDATION_LEVEL;
+    constexpr bool rythe_validate_high_impact = RYTHE_VALIDATE_HIGH_IMPACT;
+    constexpr bool rythe_validate_medium_impact = RYTHE_VALIDATE_MEDIUM_IMPACT;
+    constexpr bool rythe_validate_low_impact = RYTHE_VALIDATE_LOW_IMPACT;
 } // namespace rsl
 
 

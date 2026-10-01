@@ -1166,9 +1166,10 @@ namespace rsl
             size_type pos, const value_type (&src)[N]) noexcept(move_construct_noexcept && copy_construct_noexcept)
         requires(can_resize)
     {
-        split_reserve(pos, N);
+        const size_type stringSize = src[N - 1ull] == '\0' ? N - 1ull : N;
+        split_reserve(pos, stringSize);
 
-        copy_construct_from_unsafe_impl(pos, pos + N, src);
+        copy_construct_from_unsafe_impl(pos, pos + stringSize, src);
 
         return pos;
     }

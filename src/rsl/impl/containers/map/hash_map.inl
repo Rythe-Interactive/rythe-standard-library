@@ -306,6 +306,8 @@ namespace rsl
     template <typename MapInfo>
     bool hash_map_base<MapInfo>::insert(const key_type& key)
     {
+        RYTHE_HIGH_IMPACT_VALIDATION(rythe_defer_execution{ validate_state(); };)
+
         insert_result insertResult = insert_key_internal(key, m_values.size());
 
         if (insertResult.type == insert_result_type::new_insertion)
@@ -320,6 +322,8 @@ namespace rsl
     template <typename MapInfo>
     bool hash_map_base<MapInfo>::insert(key_type&& key)
     {
+        RYTHE_HIGH_IMPACT_VALIDATION(rythe_defer_execution { validate_state(); };)
+
         insert_result insertResult = insert_key_internal(key, m_values.size());
 
         if (insertResult.type == insert_result_type::new_insertion)
@@ -335,6 +339,8 @@ namespace rsl
     bool hash_map_base<MapInfo>::insert(key_view_alternative key)
         requires(has_key_view_alternative)
     {
+        RYTHE_HIGH_IMPACT_VALIDATION(rythe_defer_execution { validate_state(); };)
+
         insert_result insertResult = insert_key_internal(key, m_values.size());
 
         if (insertResult.type == insert_result_type::new_insertion)
@@ -377,6 +383,8 @@ namespace rsl
             Args&&... args)
         requires(MapInfo::is_map)
     {
+        RYTHE_HIGH_IMPACT_VALIDATION(rythe_defer_execution { validate_state(); };)
+
         insert_result insertResult = insert_key_internal(key, m_values.size());
 
         if (insertResult.type == insert_result_type::new_insertion)
@@ -402,6 +410,8 @@ namespace rsl
     typename MapInfo::mapped_type_ref hash_map_base<MapInfo>::emplace_or_replace(key_type&& key, Args&&... args)
         requires(MapInfo::is_map)
     {
+        RYTHE_HIGH_IMPACT_VALIDATION(rythe_defer_execution { validate_state(); };)
+
         insert_result insertResult = insert_key_internal(key, m_values.size());
 
         if (insertResult.type == insert_result_type::new_insertion)
@@ -427,6 +437,8 @@ namespace rsl
     typename MapInfo::mapped_type_ref hash_map_base<MapInfo>::emplace_or_replace(key_view_alternative key, Args&&... args)
         requires(MapInfo::is_map)
     {
+        RYTHE_HIGH_IMPACT_VALIDATION(rythe_defer_execution { validate_state(); };)
+
         insert_result insertResult = insert_key_internal(key, m_values.size());
 
         if (insertResult.type == insert_result_type::new_insertion)
@@ -454,6 +466,8 @@ namespace rsl
             Args&&... args)
         requires(MapInfo::is_map)
     {
+        RYTHE_HIGH_IMPACT_VALIDATION(rythe_defer_execution { validate_state(); };)
+
         insert_result insertResult = insert_key_internal(key, m_values.size());
 
         if (insertResult.type == insert_result_type::new_insertion)
@@ -479,6 +493,8 @@ namespace rsl
     pair<typename MapInfo::mapped_type_ref, bool> hash_map_base<MapInfo>::try_emplace(key_type&& key, Args&&... args)
         requires(MapInfo::is_map)
     {
+        RYTHE_HIGH_IMPACT_VALIDATION(rythe_defer_execution { validate_state(); };)
+
         insert_result insertResult = insert_key_internal(key, m_values.size());
 
         if (insertResult.type == insert_result_type::new_insertion)
@@ -504,6 +520,8 @@ namespace rsl
     pair<typename MapInfo::mapped_type_ref, bool> hash_map_base<MapInfo>::try_emplace(key_view_alternative key, Args&&... args)
         requires(MapInfo::is_map && has_key_view_alternative)
     {
+        RYTHE_HIGH_IMPACT_VALIDATION(rythe_defer_execution { validate_state(); };)
+
         insert_result insertResult = insert_key_internal(key, m_values.size());
 
         if (insertResult.type == insert_result_type::new_insertion)
@@ -751,6 +769,8 @@ namespace rsl
     template <typename MapInfo>
     constexpr void hash_map_base<MapInfo>::rehash(const bucket_container& oldBuckets) noexcept
     {
+        RYTHE_HIGH_IMPACT_VALIDATION(rythe_defer_execution { validate_state(); };)
+
         for (const bucket_type& bucket : oldBuckets)
         {
             if (bucket.pslAndFingerprint == 0u)
@@ -887,6 +907,20 @@ namespace rsl
         size_type bucketCount = m_buckets.size();
         return (index + bucketCount - offset) % bucketCount;
     }
+
+#if RYTHE_VALIDATE_HIGH_IMPACT
+    template <typename MapInfo>
+    inline constexpr void hash_map_base<MapInfo>::validate_state() const
+    {
+        for (auto& bucket : m_buckets)
+        {
+            if (bucket.pslAndFingerprint != 0u)
+            {
+                rsl_assert_high_impact(bucket.index < m_values.size());
+            }
+        }
+    }
+#endif
 
     template <typename MapInfo>
     template <typename KeyType>
@@ -1040,7 +1074,7 @@ namespace rsl
             m_minPsl = limits<storage_type>::max;
             for (const bucket_type& bucket : m_buckets)
             {
-                if (bucket.pslAndFingerprint == 0ull)
+                if (bucket.pslAndFingerprint == 0u)
                 {
                     continue;
                 }
@@ -1049,7 +1083,7 @@ namespace rsl
                 if (unpackedPsl.psl < m_minPsl)
                 {
                     m_minPsl = unpackedPsl.psl;
-                    if (m_minPsl == 0ull)
+                    if (m_minPsl == 0u)
                     {
                         break;
                     }
@@ -1100,6 +1134,8 @@ namespace rsl
             return;
         }
 
+        RYTHE_HIGH_IMPACT_VALIDATION(rythe_defer_execution { validate_state(); };)
+
         index_type index = index_add(hash.homeIndex, searchResult.unpackedPsl.psl);
         index_type valueIndex = m_buckets[index].index;
         destroy_node(m_values[valueIndex]);
@@ -1126,6 +1162,9 @@ namespace rsl
             currentPsl = unpack_bucket_psl(m_buckets[nextIndex]);
         }
 
+        m_buckets[index].pslAndFingerprint = 0u;
+        m_buckets[index].index = 0u;
+
         m_maxPsl = 0;
         m_lastValueBucketIndex = 0;
         for (size_type i = 0; i < m_buckets.size(); ++i)
@@ -1141,7 +1180,5 @@ namespace rsl
                 m_lastValueBucketIndex = i;
             }
         }
-
-        m_buckets[index].pslAndFingerprint = 0;
     }
 }

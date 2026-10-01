@@ -92,4 +92,10 @@ namespace rsl
     };
 } // namespace rsl
 
+#define rythe_debugbreak_if_debugger_attached()                                                                                       \
+    if (rsl::platform::is_debugger_attached())                                                                                        \
+    {                                                                                                                                 \
+        rythe_debugbreak_instruction();                                                                                               \
+    }
+
 #include "platform.inl"
