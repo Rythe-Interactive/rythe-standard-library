@@ -106,9 +106,91 @@ namespace rsl
         {
             return static_cast<::rsl::id_type>(value);
         }
-    }
+    } // namespace literals
 
-    #define invalid_id 0
+#define invalid_id 0
+
+    union id128
+    {
+        uint64 data64[2];
+        uint32 data32[4];
+    };
+
+    struct guid_v4
+    {
+        uint64 randomA : 48;
+        const uint64 version : 4 = 0b0100;
+        uint64 randomB : 12;
+        const uint64 variant : 2 = 0b10;
+        uint64 randomC : 62;
+    };
+
+    struct guid_v5
+    {
+        uint64 sha1High : 48;
+        const uint64 version : 4 = 0b0101;
+        uint64 sha1Mid : 12;
+        const uint64 variant : 2 = 0b10;
+        uint64 sha1Low : 62;
+    };
+
+    struct guid_v6
+    {
+        uint64 timeHigh : 32;
+        uint64 timeMid : 16;
+        const uint64 version : 4 = 0b0110;
+        uint64 timeLow : 12;
+        const uint64 variant : 2 = 0b10;
+        uint64 clockSeq : 14;
+        uint64 node : 48;
+    };
+
+    struct guid_v7
+    {
+        uint64 unixMs : 48;
+        const uint64 version : 4 = 0b0111;
+        uint64 randomA : 12;
+        const uint64 variant : 2 = 0b10;
+        uint64 randomB : 62;
+    };
+
+    struct guid_v8
+    {
+        uint64 customA : 48;
+        const uint64 version : 4 = 0b1000;
+        uint64 customB : 12;
+        const uint64 variant : 2 = 0b10;
+        uint64 customC : 62;
+    };
+
+    union guid_type
+    {
+        id128 id;
+        guid_v4 v4;
+        guid_v5 v5;
+        guid_v6 v6;
+        guid_v7 v7;
+        guid_v8 v8;
+        struct
+        {
+            uint64 dataA : 48;
+            uint64 version : 4;
+            uint64 dataB : 12;
+            uint64 variant : 2 = 0b10;
+            uint64 dataC : 62;
+        };
+    };
+
+    // TODO(Glyn): this
+    //inline namespace literals
+    //{
+    //    consteval guid_type operator""_guid(const char* pString, size_t size) noexcept
+    //    {
+    //        
+    //    }
+    //} // namespace literals
+
+    constexpr guid_type invalid_guid = { .id = { .data64 = { 0xFFFFFFFFFFFFFFFFull, 0xFFFFFFFFFFFFFFFFull } } };
 
     enum npos_type : size_type {};
 

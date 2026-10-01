@@ -276,7 +276,7 @@ namespace rsl
 
     namespace internal
     {
-        template <typename T, input_or_output_iterator<T> Iter, input_or_output_iterator<T> ConstIter>
+        template <typename T, typename Iter, typename ConstIter>
         struct select_contiguous_view_impl
         {
             using contiguous_view = void;
