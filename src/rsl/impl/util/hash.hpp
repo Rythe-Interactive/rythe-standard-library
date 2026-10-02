@@ -111,11 +111,7 @@ namespace rsl
     struct content_hash
     {
         size_type size;
-        union hash
-        {
-            uint64 u64[2];
-            uint32 u32[4];
-        } value;
+        id128 value;
     };
 
     [[nodiscard]] [[rythe_always_inline]] constexpr bool operator==(const content_hash& lhs, const content_hash& rhs) noexcept;

@@ -9,12 +9,15 @@ namespace rsl
         meow_u128 meow = MeowHash(MeowDefaultSeed, bytes.size(), bytes.data());
         return content_hash{
             .size = bytes.size(),
-            .value = unaligned_load<content_hash::hash>(&meow),
+            .value = unaligned_load<id128>(&meow),
         };
     }
 
     static_assert(alignof(hash_state::internal_state) == alignof(meow_state));
     static_assert(sizeof(hash_state::internal_state) >= sizeof(meow_state));
+
+    static_assert(alignof(decltype(content_hash::value)) == alignof(meow_u128));
+    static_assert(sizeof(decltype(content_hash::value)) == sizeof(meow_u128));
 
     void begin_content_hash(hash_state& hashState) noexcept
     {
@@ -33,7 +36,7 @@ namespace rsl
         meow_u128 meow = MeowEnd(reinterpret_cast<meow_state*>(&hashState.internalState), nullptr);
         return content_hash{
             .size = hashState.size,
-            .value = unaligned_load<content_hash::hash>(&meow),
+            .value = unaligned_load<id128>(&meow),
         };
     }
 } // namespace rsl
